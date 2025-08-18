@@ -1,0 +1,185 @@
+digraph Helix_16GPU_TwoLevel_Partitioning {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Courier"];
+    
+    // Global parameters
+    params [label="Model Parameters:\nB=1024, L=2048, D=4096\nh=128 heads, d=32/head\nm=4, n=4 → 16 partitions\nFP16 precision", shape=note, fillcolor=lightgray, pos="0,10!"];
+    
+    // Input
+    Input [label="Input X\n[B×L×D]\n1024×2048×4096", shape=ellipse, fillcolor=yellow, penwidth=3];
+    
+    // ===== LAYER 1: MHA with Two-Level Partitioning =====
+    subgraph cluster_layer1 {
+        label="Layer 1: Multi-Head Attention (m=4, n=4)";
+        style=rounded;
+        
+        // Query projections - Column Parallel Linear (Megatron style)
+        Q0 [label="Q Proj\nGPU0\nColParallel\nW_Q[0,0]\n[B×L×d_s×h_g]\n1024×2048×8×32", fillcolor=lightgreen];
+        Q1 [label="Q Proj\nGPU1\nColParallel\nW_Q[0,1]", fillcolor=lightgreen];
+        Q2 [label="Q Proj\nGPU2\nColParallel\nW_Q[0,2]", fillcolor=lightgreen];
+        Q3 [label="Q Proj\nGPU3\nColParallel\nW_Q[0,3]", fillcolor=lightgreen];
+        Q4 [label="Q Proj\nGPU4\nColParallel\nW_Q[1,0]", fillcolor=lightgreen];
+        Q5 [label="Q Proj\nGPU5\nColParallel\nW_Q[1,1]", fillcolor=lightgreen];
+        Q6 [label="Q Proj\nGPU6\nColParallel\nW_Q[1,2]", fillcolor=lightgreen];
+        Q7 [label="Q Proj\nGPU7\nColParallel\nW_Q[1,3]", fillcolor=lightgreen];
+        Q8 [label="Q Proj\nGPU8\nColParallel\nW_Q[2,0]", fillcolor=lightgreen];
+        Q9 [label="Q Proj\nGPU9\nColParallel\nW_Q[2,1]", fillcolor=lightgreen];
+        Q10 [label="Q Proj\nGPU10\nColParallel\nW_Q[2,2]", fillcolor=lightgreen];
+        Q11 [label="Q Proj\nGPU11\nColParallel\nW_Q[2,3]", fillcolor=lightgreen];
+        Q12 [label="Q Proj\nGPU12\nColParallel\nW_Q[3,0]", fillcolor=lightgreen];
+        Q13 [label="Q Proj\nGPU13\nColParallel\nW_Q[3,1]", fillcolor=lightgreen];
+        Q14 [label="Q Proj\nGPU14\nColParallel\nW_Q[3,2]", fillcolor=lightgreen];
+        Q15 [label="Q Proj\nGPU15\nColParallel\nW_Q[3,3]", fillcolor=lightgreen];
+        
+        // Key projections
+        K0 [label="K Proj\nGPU0\nColParallel\nW_K[0,0]", fillcolor=lightgreen];
+        K1 [label="K Proj\nGPU1\nColParallel\nW_K[0,1]", fillcolor=lightgreen];
+        K2 [label="K Proj\nGPU2\nColParallel\nW_K[0,2]", fillcolor=lightgreen];
+        K3 [label="K Proj\nGPU3\nColParallel\nW_K[0,3]", fillcolor=lightgreen];
+        K4 [label="K Proj\nGPU4\nColParallel\nW_K[1,0]", fillcolor=lightgreen];
+        K5 [label="K Proj\nGPU5\nColParallel\nW_K[1,1]", fillcolor=lightgreen];
+        K6 [label="K Proj\nGPU6\nColParallel\nW_K[1,2]", fillcolor=lightgreen];
+        K7 [label="K Proj\nGPU7\nColParallel\nW_K[1,3]", fillcolor=lightgreen];
+        K8 [label="K Proj\nGPU8\nColParallel\nW_K[2,0]", fillcolor=lightgreen];
+        K9 [label="K Proj\nGPU9\nColParallel\nW_K[2,1]", fillcolor=lightgreen];
+        K10 [label="K Proj\nGPU10\nColParallel\nW_K[2,2]", fillcolor=lightgreen];
+        K11 [label="K Proj\nGPU11\nColParallel\nW_K[2,3]", fillcolor=lightgreen];
+        K12 [label="K Proj\nGPU12\nColParallel\nW_K[3,0]", fillcolor=lightgreen];
+        K13 [label="K Proj\nGPU13\nColParallel\nW_K[3,1]", fillcolor=lightgreen];
+        K14 [label="K Proj\nGPU14\nColParallel\nW_K[3,2]", fillcolor=lightgreen];
+        K15 [label="K Proj\nGPU15\nColParallel\nW_K[3,3]", fillcolor=lightgreen];
+        
+        // Value projections
+        V0 [label="V Proj\nGPU0\nColParallel\nW_V[0,0]", fillcolor=lightgreen];
+        V1 [label="V Proj\nGPU1\nColParallel\nW_V[0,1]", fillcolor=lightgreen];
+        V2 [label="V Proj\nGPU2\nColParallel\nW_V[0,2]", fillcolor=lightgreen];
+        V3 [label="V Proj\nGPU3\nColParallel\nW_V[0,3]", fillcolor=lightgreen];
+        V4 [label="V Proj\nGPU4\nColParallel\nW_V[1,0]", fillcolor=lightgreen];
+        V5 [label="V Proj\nGPU5\nColParallel\nW_V[1,1]", fillcolor=lightgreen];
+        V6 [label="V Proj\nGPU6\nColParallel\nW_V[1,2]", fillcolor=lightgreen];
+        V7 [label="V Proj\nGPU7\nColParallel\nW_V[1,3]", fillcolor=lightgreen];
+        V8 [label="V Proj\nGPU8\nColParallel\nW_V[2,0]", fillcolor=lightgreen];
+        V9 [label="V Proj\nGPU9\nColParallel\nW_V[2,1]", fillcolor=lightgreen];
+        V10 [label="V Proj\nGPU10\nColParallel\nW_V[2,2]", fillcolor=lightgreen];
+        V11 [label="V Proj\nGPU11\nColParallel\nW_V[2,3]", fillcolor=lightgreen];
+        V12 [label="V Proj\nGPU12\nColParallel\nW_V[3,0]", fillcolor=lightgreen];
+        V13 [label="V Proj\nGPU13\nColParallel\nW_V[3,1]", fillcolor=lightgreen];
+        V14 [label="V Proj\nGPU14\nColParallel\nW_V[3,2]", fillcolor=lightgreen];
+        V15 [label="V Proj\nGPU15\nColParallel\nW_V[3,3]", fillcolor=lightgreen];
+        
+        // Attention computations
+        Attn0 [label="Attention\nGPU0\nSoftmax(QK^T/√d_s)V\n[B×L×d_s×h_g]", fillcolor=orange];
+        Attn1 [label="Attention\nGPU1\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn2 [label="Attention\nGPU2\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn3 [label="Attention\nGPU3\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn4 [label="Attention\nGPU4\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn5 [label="Attention\nGPU5\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn6 [label="Attention\nGPU6\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn7 [label="Attention\nGPU7\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn8 [label="Attention\nGPU8\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn9 [label="Attention\nGPU9\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn10 [label="Attention\nGPU10\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn11 [label="Attention\nGPU11\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn12 [label="Attention\nGPU12\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn13 [label="Attention\nGPU13\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn14 [label="Attention\nGPU14\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        Attn15 [label="Attention\nGPU15\nSoftmax(QK^T/√d_s)V", fillcolor=orange];
+        
+        // Concatenation phases
+        Concat_dim_0 [label="Concat Dim Slices\nGPU0-3\nAllGather within group 0\n[B×L×d×h_g]\n1024×2048×32×32", fillcolor=purple];
+        Concat_dim_1 [label="Concat Dim Slices\nGPU4-7\nAllGather within group 1", fillcolor=purple];
+        Concat_dim_2 [label="Concat Dim Slices\nGPU8-11\nAllGather within group 2", fillcolor=purple];
+        Concat_dim_3 [label="Concat Dim Slices\nGPU12-15\nAllGather within group 3", fillcolor=purple];
+        
+        Concat_heads [label="Concat Head Groups\nAll GPUs\nAllGather across groups\n[B×L×D]\n1024×2048×4096", fillcolor=purple];
+        
+        // Output projection
+        Out_proj [label="Output Projection\nAll GPUs\nRowParallel Linear\nW_O\nAllReduce\n[B×L×D]", fillcolor=lightblue];
+        
+        LayerNorm1 [label="Residual + LayerNorm\nAll GPUs\n[B×L×D]", fillcolor=pink];
+    }
+    
+    // ===== LAYER 2: Feed Forward Network =====
+    subgraph cluster_layer2 {
+        label="Layer 2: Feed Forward Network";
+        style=rounded;
+        
+        FFN_expand_0 [label="FFN Expand\nGPU0-7\nColParallel\nW1\n[B×L×4D/8]\n1024×2048×2048", fillcolor=gray];
+        FFN_expand_1 [label="FFN Expand\nGPU8-15\nColParallel\nW1\n[B×L×4D/8]", fillcolor=gray];
+        
+        GELU_0 [label="GELU Activation\nGPU0-7\n[B×L×4D/8]", fillcolor=gray];
+        GELU_1 [label="GELU Activation\nGPU8-15\n[B×L×4D/8]", fillcolor=gray];
+        
+        FFN_contract_0 [label="FFN Contract\nGPU0-7\nRowParallel\nW2\n[B×L×D/8]\n1024×2048×512", fillcolor=gray];
+        FFN_contract_1 [label="FFN Contract\nGPU8-15\nRowParallel\nW2\n[B×L×D/8]", fillcolor=gray];
+        
+        FFN_allreduce [label="AllReduce\nAll GPUs\nSum partial results\n[B×L×D]\n1024×2048×4096", fillcolor=gray];
+        
+        LayerNorm2 [label="Residual + LayerNorm\nAll GPUs\n[B×L×D]", fillcolor=pink];
+    }
+    
+    // ===== LAYER 3: MHA (same as Layer 1) =====
+    subgraph cluster_layer3 {
+        label="Layer 3: Multi-Head Attention (m=4, n=4)";
+        style=rounded;
+        
+        MHA2_out [label="MHA Layer 3\nAll GPUs\n[B×L×D]\n1024×2048×4096", fillcolor=lightgreen];
+        LayerNorm3 [label="Residual + LayerNorm\nAll GPUs\n[B×L×D]", fillcolor=pink];
+    }
+    
+    // ===== LAYER 4: FFN (same as Layer 2) =====
+    subgraph cluster_layer4 {
+        label="Layer 4: Feed Forward Network";
+        style=rounded;
+        
+        FFN2_out [label="FFN Layer 4\nAll GPUs\n[B×L×D]\n1024×2048×4096", fillcolor=gray];
+        Output [label="Final Output\nAll GPUs\n[B×L×D]\n1024×2048×4096", shape=ellipse, fillcolor=yellow, penwidth=3];
+    }
+    
+    // ===== CONNECTIONS =====
+    // Input to Layer 1 projections
+    Input -> Q0 [label="Broadcast"];
+    Input -> Q1 [label="Broadcast"];
+    Input -> Q2 [label="Broadcast"];
+    Input -> Q3 [label="Broadcast"];
+    Input -> Q4 [label="Broadcast"];
+    Input -> Q5 [label="Broadcast"];
+    Input -> Q6 [label="Broadcast"];
+    Input -> Q7 [label="Broadcast"];
+    Input -> Q8 [label="Broadcast"];
+    Input -> Q9 [label="Broadcast"];
+    Input -> Q10 [label="Broadcast"];
+    Input -> Q11 [label="Broadcast"];
+    Input -> Q12 [label="Broadcast"];
+    Input -> Q13 [label="Broadcast"];
+    Input -> Q14 [label="Broadcast"];
+    Input -> Q15 [label="Broadcast"];
+    
+    Input -> {K0 K1 K2 K3 K4 K5 K6 K7 K8 K9 K10 K11 K12 K13 K14 K15} [label="Broadcast"];
+    Input -> {V0 V1 V2 V3 V4 V5 V6 V7 V8 V9 V10 V11 V12 V13 V14 V15} [label="Broadcast"];
+    
+    // QKV to Attention
+    Q0 -> Attn0; K0 -> Attn0; V0 -> Attn0;
+    Q1 -> Attn1; K1 -> Attn1; V1 -> Attn1;
+    Q2 -> Attn2; K2 -> Attn2; V2 -> Attn2;
+    Q3 -> Attn3; K3 -> Attn3; V3 -> Attn3;
+    Q4 -> Attn4; K4 -> Attn4; V4 -> Attn4;
+    Q5 -> Attn5; K5 -> Attn5; V5 -> Attn5;
+    Q6 -> Attn6; K6 -> Attn6; V6 -> Attn6;
+    Q7 -> Attn7; K7 -> Attn7; V7 -> Attn7;
+    Q8 -> Attn8; K8 -> Attn8; V8 -> Attn8;
+    Q9 -> Attn9; K9 -> Attn9; V9 -> Attn9;
+    Q10 -> Attn10; K10 -> Attn10; V10 -> Attn10;
+    Q11 -> Attn11; K11 -> Attn11; V11 -> Attn11;
+    Q12 -> Attn12; K12 -> Attn12; V12 -> Attn12;
+    Q13 -> Attn13; K13 -> Attn13; V13 -> Attn13;
+    Q14 -> Attn14; K14 -> Attn14; V14 -> Attn14;
+    Q15 -> Attn15; K15 -> Attn15; V15 -> Attn15;
+    
+    // Attention to concatenation
+    Attn0 -> Concat_dim_0;
+    Attn1 -> Concat_dim_0;
+    Attn2 -> Concat_dim_0;
+    Attn3 -> Concat_dim_0;
+    Attn4 -> Concat_dim_1;
+    Attn5

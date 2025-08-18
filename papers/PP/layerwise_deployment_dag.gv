@@ -1,0 +1,251 @@
+digraph LayerwiseDeployment {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Courier"];
+    
+    // Define GPU clusters
+    subgraph cluster_gpu0 {
+        label="GPU 0 (SRAM: 40MB)";
+        style=dashed;
+        color=blue;
+        gpu0_layer1_part1 [label="Dense Layer 1\nPart 1/4\nLinear: 1024×4096\nCol Parallel", fillcolor=lightblue];
+    }
+    
+    subgraph cluster_gpu1 {
+        label="GPU 1 (SRAM: 40MB)";
+        style=dashed;
+        color=blue;
+        gpu1_layer1_part2 [label="Dense Layer 1\nPart 2/4\nLinear: 1024×4096\nCol Parallel", fillcolor=lightblue];
+    }
+    
+    subgraph cluster_gpu2 {
+        label="GPU 2 (SRAM: 40MB)";
+        style=dashed;
+        color=blue;
+        gpu2_layer1_part3 [label="Dense Layer 1\nPart 3/4\nLinear: 1024×4096\nCol Parallel", fillcolor=lightblue];
+    }
+    
+    subgraph cluster_gpu3 {
+        label="GPU 3 (SRAM: 40MB)";
+        style=dashed;
+        color=blue;
+        gpu3_layer1_part4 [label="Dense Layer 1\nPart 4/4\nLinear: 1024×4096\nCol Parallel", fillcolor=lightblue];
+    }
+    
+    subgraph cluster_gpu4 {
+        label="GPU 4 (SRAM: 40MB)";
+        style=dashed;
+        color=green;
+        gpu4_layer2_part1 [label="Dense Layer 2\nPart 1/4\nLinear: 4096×4096\nCol Parallel", fillcolor=lightgreen];
+    }
+    
+    subgraph cluster_gpu5 {
+        label="GPU 5 (SRAM: 40MB)";
+        style=dashed;
+        color=green;
+        gpu5_layer2_part2 [label="Dense Layer 2\nPart 2/4\nLinear: 4096×4096\nCol Parallel", fillcolor=lightgreen];
+    }
+    
+    subgraph cluster_gpu6 {
+        label="GPU 6 (SRAM: 40MB)";
+        style=dashed;
+        color=green;
+        gpu6_layer2_part3 [label="Dense Layer 2\nPart 3/4\nLinear: 4096×4096\nCol Parallel", fillcolor=lightgreen];
+    }
+    
+    subgraph cluster_gpu7 {
+        label="GPU 7 (SRAM: 40MB)";
+        style=dashed;
+        color=green;
+        gpu7_layer2_part4 [label="Dense Layer 2\nPart 4/4\nLinear: 4096×4096\nCol Parallel", fillcolor=lightgreen];
+    }
+    
+    subgraph cluster_gpu8 {
+        label="GPU 8 (SRAM: 40MB)";
+        style=dashed;
+        color=orange;
+        gpu8_layer3_part1 [label="Dense Layer 3\nPart 1/4\nLinear: 4096×4096\nCol Parallel", fillcolor=lightyellow];
+    }
+    
+    subgraph cluster_gpu9 {
+        label="GPU 9 (SRAM: 40MB)";
+        style=dashed;
+        color=orange;
+        gpu9_layer3_part2 [label="Dense Layer 3\nPart 2/4\nLinear: 4096×4096\nCol Parallel", fillcolor=lightyellow];
+    }
+    
+    subgraph cluster_gpu10 {
+        label="GPU 10 (SRAM: 40MB)";
+        style=dashed;
+        color=orange;
+        gpu10_layer3_part3 [label="Dense Layer 3\nPart 3/4\nLinear: 4096×4096\nCol Parallel", fillcolor=lightyellow];
+    }
+    
+    subgraph cluster_gpu11 {
+        label="GPU 11 (SRAM: 40MB)";
+        style=dashed;
+        color=orange;
+        gpu11_layer3_part4 [label="Dense Layer 3\nPart 4/4\nLinear: 4096×4096\nCol Parallel", fillcolor=lightyellow];
+    }
+    
+    subgraph cluster_gpu12 {
+        label="GPU 12 (SRAM: 40MB)";
+        style=dashed;
+        color=red;
+        gpu12_layer4_part1 [label="Dense Layer 4\nPart 1/4\nLinear: 4096×1024\nCol Parallel", fillcolor=lightcoral];
+    }
+    
+    subgraph cluster_gpu13 {
+        label="GPU 13 (SRAM: 40MB)";
+        style=dashed;
+        color=red;
+        gpu13_layer4_part2 [label="Dense Layer 4\nPart 2/4\nLinear: 4096×1024\nCol Parallel", fillcolor=lightcoral];
+    }
+    
+    subgraph cluster_gpu14 {
+        label="GPU 14 (SRAM: 40MB)";
+        style=dashed;
+        color=red;
+        gpu14_layer4_part3 [label="Dense Layer 4\nPart 3/4\nLinear: 4096×1024\nCol Parallel", fillcolor=lightcoral];
+    }
+    
+    subgraph cluster_gpu15 {
+        label="GPU 15 (SRAM: 40MB)";
+        style=dashed;
+        color=red;
+        gpu15_layer4_part4 [label="Dense Layer 4\nPart 4/4\nLinear: 4096×1024\nCol Parallel", fillcolor=lightcoral];
+    }
+    
+    // Input processing
+    input [label="Input\nBatch: 1024×1024\nFP16", shape=ellipse, fillcolor=white];
+    
+    // Communication nodes for AllGather
+    ag1 [label="AllGather\n1024×4096", shape=diamond, fillcolor=gray];
+    ag2 [label="AllGather\n4096×4096", shape=diamond, fillcolor=gray];
+    ag3 [label="AllGather\n4096×4096", shape=diamond, fillcolor=gray];
+    ag4 [label="AllGather\n4096×1024", shape=diamond, fillcolor=gray];
+    
+    // MoE variant nodes
+    moe_gpu0 [label="MoE Layer 1\nExpert 0-1\n2 experts\n1024×4096 each", fillcolor=lightblue, style=dotted];
+    moe_gpu1 [label="MoE Layer 1\nExpert 2-3\n2 experts\n1024×4096 each", fillcolor=lightblue, style=dotted];
+    moe_gpu2 [label="MoE Layer 1\nExpert 4-5\n2 experts\n1024×4096 each", fillcolor=lightblue, style=dotted];
+    moe_gpu3 [label="MoE Layer 1\nExpert 6-7\n2 experts\n1024×4096 each", fillcolor=lightblue, style=dotted];
+    
+    moe_gpu4 [label="MoE Layer 2\nExpert 0-1\n2 experts\n4096×4096 each", fillcolor=lightgreen, style=dotted];
+    moe_gpu5 [label="MoE Layer 2\nExpert 2-3\n2 experts\n4096×4096 each", fillcolor=lightgreen, style=dotted];
+    moe_gpu6 [label="MoE Layer 2\nExpert 4-5\n2 experts\n4096×4096 each", fillcolor=lightgreen, style=dotted];
+    moe_gpu7 [label="MoE Layer 2\nExpert 6-7\n2 experts\n4096×4096 each", fillcolor=lightgreen, style=dotted];
+    
+    moe_gpu8 [label="MoE Layer 3\nExpert 0-1\n2 experts\n4096×4096 each", fillcolor=lightyellow, style=dotted];
+    moe_gpu9 [label="MoE Layer 3\nExpert 2-3\n2 experts\n4096×4096 each", fillcolor=lightyellow, style=dotted];
+    moe_gpu10 [label="MoE Layer 3\nExpert 4-5\n2 experts\n4096×4096 each", fillcolor=lightyellow, style=dotted];
+    moe_gpu11 [label="MoE Layer 3\nExpert 6-7\n2 experts\n4096×4096 each", fillcolor=lightyellow, style=dotted];
+    
+    moe_gpu12 [label="MoE Layer 4\nExpert 0-1\n2 experts\n4096×1024 each", fillcolor=lightcoral, style=dotted];
+    moe_gpu13 [label="MoE Layer 4\nExpert 2-3\n2 experts\n4096×1024 each", fillcolor=lightcoral, style=dotted];
+    moe_gpu14 [label="MoE Layer 4\nExpert 4-5\n2 experts\n4096×1024 each", fillcolor=lightcoral, style=dotted];
+    moe_gpu15 [label="MoE Layer 4\nExpert 6-7\n2 experts\n4096×1024 each", fillcolor=lightcoral, style=dotted];
+    
+    // Router nodes for MoE
+    router1 [label="Router\nTop-2 gating\n1024×8", shape=hexagon, fillcolor=pink];
+    router2 [label="Router\nTop-2 gating\n4096×8", shape=hexagon, fillcolor=pink];
+    router3 [label="Router\nTop-2 gating\n4096×8", shape=hexagon, fillcolor=pink];
+    router4 [label="Router\nTop-2 gating\n4096×8", shape=hexagon, fillcolor=pink];
+    
+    // Output
+    output [label="Output\nBatch: 1024×1024\nFP16", shape=ellipse, fillcolor=white];
+    
+    // Edges for dense model
+    input -> gpu0_layer1_part1 [label="1024×1024", color=blue];
+    input -> gpu1_layer1_part2 [label="1024×1024", color=blue];
+    input -> gpu2_layer1_part3 [label="1024×1024", color=blue];
+    input -> gpu3_layer1_part4 [label="1024×1024", color=blue];
+    
+    gpu0_layer1_part1 -> ag1 [label="1024×1024"];
+    gpu1_layer1_part2 -> ag1 [label="1024×1024"];
+    gpu2_layer1_part3 -> ag1 [label="1024×1024"];
+    gpu3_layer1_part4 -> ag1 [label="1024×1024"];
+    
+    ag1 -> gpu4_layer2_part1 [label="1024×4096", color=green];
+    ag1 -> gpu5_layer2_part2 [label="1024×4096", color=green];
+    ag1 -> gpu6_layer2_part3 [label="1024×4096", color=green];
+    ag1 -> gpu7_layer2_part4 [label="1024×4096", color=green];
+    
+    gpu4_layer2_part1 -> ag2 [label="1024×1024"];
+    gpu5_layer2_part2 -> ag2 [label="1024×1024"];
+    gpu6_layer2_part3 -> ag2 [label="1024×1024"];
+    gpu7_layer2_part4 -> ag2 [label="1024×1024"];
+    
+    ag2 -> gpu8_layer3_part1 [label="1024×4096", color=orange];
+    ag2 -> gpu9_layer3_part2 [label="1024×4096", color=orange];
+    ag2 -> gpu10_layer3_part3 [label="1024×4096", color=orange];
+    ag2 -> gpu11_layer3_part4 [label="1024×4096", color=orange];
+    
+    gpu8_layer3_part1 -> ag3 [label="1024×1024"];
+    gpu9_layer3_part2 -> ag3 [label="1024×1024"];
+    gpu10_layer3_part3 -> ag3 [label="1024×1024"];
+    gpu11_layer3_part4 -> ag3 [label="1024×1024"];
+    
+    ag3 -> gpu12_layer4_part1 [label="1024×4096", color=red];
+    ag3 -> gpu13_layer4_part2 [label="1024×4096", color=red];
+    ag3 -> gpu14_layer4_part3 [label="1024×4096", color=red];
+    ag3 -> gpu15_layer4_part4 [label="1024×4096", color=red];
+    
+    gpu12_layer4_part1 -> ag4 [label="1024×256"];
+    gpu13_layer4_part2 -> ag4 [label="1024×256"];
+    gpu14_layer4_part3 -> ag4 [label="1024×256"];
+    gpu15_layer4_part4 -> ag4 [label="1024×256"];
+    
+    ag4 -> output [label="1024×1024"];
+    
+    // Edges for MoE model (shown as dotted)
+    input -> router1 [label="1024×1024", style=dotted];
+    router1 -> moe_gpu0 [label="256×1024", style=dotted];
+    router1 -> moe_gpu1 [label="256×1024", style=dotted];
+    router1 -> moe_gpu2 [label="256×1024", style=dotted];
+    router1 -> moe_gpu3 [label="256×1024", style=dotted];
+    
+    moe_gpu0 -> router2 [label="256×4096", style=dotted];
+    moe_gpu1 -> router2 [label="256×4096", style=dotted];
+    moe_gpu2 -> router2 [label="256×4096", style=dotted];
+    moe_gpu3 -> router2 [label="256×4096", style=dotted];
+    
+    router2 -> moe_gpu4 [label="256×4096", style=dotted];
+    router2 -> moe_gpu5 [label="256×4096", style=dotted];
+    router2 -> moe_gpu6 [label="256×4096", style=dotted];
+    router2 -> moe_gpu7 [label="256×4096", style=dotted];
+    
+    moe_gpu4 -> router3 [label="256×4096", style=dotted];
+    moe_gpu5 -> router3 [label="256×4096", style=dotted];
+    moe_gpu6 -> router3 [label="256×4096", style=dotted];
+    moe_gpu7 -> router3 [label="256×4096", style=dotted];
+    
+    router3 -> moe_gpu8 [label="256×4096", style=dotted];
+    router3 -> moe_gpu9 [label="256×4096", style=dotted];
+    router3 -> moe_gpu10 [label="256×4096", style=dotted];
+    router3 -> moe_gpu11 [label="256×4096", style=dotted];
+    
+    moe_gpu8 -> router4 [label="256×4096", style=dotted];
+    moe_gpu9 -> router4 [label="256×4096", style=dotted];
+    moe_gpu10 -> router4 [label="256×4096", style=dotted];
+    moe_gpu11 -> router4 [label="256×4096", style=dotted];
+    
+    router4 -> moe_gpu12 [label="256×4096", style=dotted];
+    router4 -> moe_gpu13 [label="256×4096", style=dotted];
+    router4 -> moe_gpu14 [label="256×4096", style=dotted];
+    router4 -> moe_gpu15 [label="256×4096", style=dotted];
+    
+    moe_gpu12 -> output [label="256×1024", style=dotted];
+    moe_gpu13 -> output [label="256×1024", style=dotted];
+    moe_gpu14 -> output [label="256×1024", style=dotted];
+    moe_gpu15 -> output [label="256×1024", style=dotted];
+    
+    // Legend
+    legend [label=<<table border="0" cellborder="1" cellspacing="0">
+        <tr><td><b>Legend</b></td></tr>
+        <tr><td>Blue: Layer 1</td></tr>
+        <tr><td>Green: Layer 2</td></tr>
+        <tr><td>Orange: Layer 3</td></tr>
+        <tr><td>Red: Layer 4</td></tr>
+        <tr><td>Solid: Dense Model</td></tr>
+        <tr><td>Dotted: MoE Model</td></tr>
+        <tr><td>Diamond

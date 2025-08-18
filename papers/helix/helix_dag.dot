@@ -1,0 +1,67 @@
+digraph Helix_16GPU_TwoLevel_Partitioning {
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Courier"];
+    
+    // Define GPU clusters
+    subgraph cluster_gpu0 { label="GPU 0"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu1 { label="GPU 1"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu2 { label="GPU 2"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu3 { label="GPU 3"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu4 { label="GPU 4"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu5 { label="GPU 5"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu6 { label="GPU 6"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu7 { label="GPU 7"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu8 { label="GPU 8"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu9 { label="GPU 9"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu10 { label="GPU 10"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu11 { label="GPU 11"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu12 { label="GPU 12"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu13 { label="GPU 13"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu14 { label="GPU 14"; color=lightblue; style=dashed; }
+    subgraph cluster_gpu15 { label="GPU 15"; color=lightblue; style=dashed; }
+    
+    // Input layer
+    Input [label="Input X\n[B×L×D]", shape=ellipse, fillcolor=yellow];
+    
+    // Legend
+    Legend [label="Legend:\nGreen: Query/K/V Projections\nOrange: Attention Computation\nPurple: Concatenation\nGray: FeedForward\nPink: Residual/Norm", shape=note, fillcolor=lightgray];
+    
+    // Layer 1: MHA with two-level partitioning (m=4, n=4)
+    // Query projections (Column Parallel Linear)
+    Q_proj_0 [label="Q Proj GPU0\nW_Q[0,0]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_1 [label="Q Proj GPU1\nW_Q[0,1]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_2 [label="Q Proj GPU2\nW_Q[0,2]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_3 [label="Q Proj GPU3\nW_Q[0,3]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_4 [label="Q Proj GPU4\nW_Q[1,0]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_5 [label="Q Proj GPU5\nW_Q[1,1]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_6 [label="Q Proj GPU6\nW_Q[1,2]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_7 [label="Q Proj GPU7\nW_Q[1,3]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_8 [label="Q Proj GPU8\nW_Q[2,0]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_9 [label="Q Proj GPU9\nW_Q[2,1]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_10 [label="Q Proj GPU10\nW_Q[2,2]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_11 [label="Q Proj GPU11\nW_Q[2,3]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_12 [label="Q Proj GPU12\nW_Q[3,0]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_13 [label="Q Proj GPU13\nW_Q[3,1]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_14 [label="Q Proj GPU14\nW_Q[3,2]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    Q_proj_15 [label="Q Proj GPU15\nW_Q[3,3]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    
+    // Key projections (Column Parallel Linear)
+    K_proj_0 [label="K Proj GPU0\nW_K[0,0]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_1 [label="K Proj GPU1\nW_K[0,1]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_2 [label="K Proj GPU2\nW_K[0,2]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_3 [label="K Proj GPU3\nW_K[0,3]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_4 [label="K Proj GPU4\nW_K[1,0]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_5 [label="K Proj GPU5\nW_K[1,1]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_6 [label="K Proj GPU6\nW_K[1,2]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_7 [label="K Proj GPU7\nW_K[1,3]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_8 [label="K Proj GPU8\nW_K[2,0]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_9 [label="K Proj GPU9\nW_K[2,1]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_10 [label="K Proj GPU10\nW_K[2,2]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_11 [label="K Proj GPU11\nW_K[2,3]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_12 [label="K Proj GPU12\nW_K[3,0]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_13 [label="K Proj GPU13\nW_K[3,1]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_14 [label="K Proj GPU14\nW_K[3,2]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    K_proj_15 [label="K Proj GPU15\nW_K[3,3]\nColParallel\n[B×L×d_s×h_g]", fillcolor=lightgreen];
+    
+    // Value projections (Column Parallel Linear)
+    V_proj_0 [label="V Proj GPU0\nW_V[0,0]\nColParallel\n[B×L

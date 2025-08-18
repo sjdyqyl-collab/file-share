@@ -1,0 +1,2317 @@
+// Large-scale Cross-Node Expert Parallelism DAG
+digraph MoE_Cross_Node_Expert_Parallelism {
+	graph [nodesep=0.8 rankdir=TB ranksep=1.2 splines=ortho]
+	input [label="Input\nBatch=1024, Seq=512, Hidden=4096" fillcolor=lightblue shape=box style=filled]
+	ln1 [label="LayerNorm\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	input -> ln1
+	attn_qkv_0 [label="Layer 0 QKV Linear\nTP=8 Column Parallel\nShape: [1024, 512, 4096] → [1024, 512, 12288]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_split_0 [label="Split QKV\nShape: Q[1024, 512, 4096], K/V same" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_score_0 [label="Attention Scores\nShape: [1024, 32, 512, 512]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_out_0 [label="Attention Output Linear\nTP=8 Row Parallel\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_residual_0 [label="Residual Add\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	ln2_0 [label="Post-Attention LayerNorm\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	moe_gate_0 [label="MoE Gate\nShape: [524288, 4096] → Top-2 routing" fillcolor=lightyellow shape=diamond style=filled]
+	expert_0_0 [label="Expert 0\nGPU 0\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_0 [label="Token Routing\nGPU 0→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_0
+	comm_gate_expert_0_0 -> expert_0_0
+	comm_expert_agg_0_0 [label="Expert Output\nGPU 0→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_0 -> comm_expert_agg_0_0
+	expert_0_1 [label="Expert 1\nGPU 1\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_1 [label="Token Routing\nGPU 0→1\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_1
+	comm_gate_expert_0_1 -> expert_0_1
+	comm_expert_agg_0_1 [label="Expert Output\nGPU 1→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_1 -> comm_expert_agg_0_1
+	expert_0_2 [label="Expert 2\nGPU 2\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_2 [label="Token Routing\nGPU 0→2\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_2
+	comm_gate_expert_0_2 -> expert_0_2
+	comm_expert_agg_0_2 [label="Expert Output\nGPU 2→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_2 -> comm_expert_agg_0_2
+	expert_0_3 [label="Expert 3\nGPU 3\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_3 [label="Token Routing\nGPU 0→3\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_3
+	comm_gate_expert_0_3 -> expert_0_3
+	comm_expert_agg_0_3 [label="Expert Output\nGPU 3→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_3 -> comm_expert_agg_0_3
+	expert_0_4 [label="Expert 4\nGPU 4\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_4 [label="Token Routing\nGPU 0→4\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_4
+	comm_gate_expert_0_4 -> expert_0_4
+	comm_expert_agg_0_4 [label="Expert Output\nGPU 4→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_4 -> comm_expert_agg_0_4
+	expert_0_5 [label="Expert 5\nGPU 5\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_5 [label="Token Routing\nGPU 0→5\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_5
+	comm_gate_expert_0_5 -> expert_0_5
+	comm_expert_agg_0_5 [label="Expert Output\nGPU 5→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_5 -> comm_expert_agg_0_5
+	expert_0_6 [label="Expert 6\nGPU 6\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_6 [label="Token Routing\nGPU 0→6\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_6
+	comm_gate_expert_0_6 -> expert_0_6
+	comm_expert_agg_0_6 [label="Expert Output\nGPU 6→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_6 -> comm_expert_agg_0_6
+	expert_0_7 [label="Expert 7\nGPU 7\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_7 [label="Token Routing\nGPU 0→7\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_7
+	comm_gate_expert_0_7 -> expert_0_7
+	comm_expert_agg_0_7 [label="Expert Output\nGPU 7→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_7 -> comm_expert_agg_0_7
+	expert_0_8 [label="Expert 8\nGPU 8\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_8 [label="Token Routing\nGPU 0→8\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_8
+	comm_gate_expert_0_8 -> expert_0_8
+	comm_expert_agg_0_8 [label="Expert Output\nGPU 8→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_8 -> comm_expert_agg_0_8
+	expert_0_9 [label="Expert 9\nGPU 9\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_9 [label="Token Routing\nGPU 0→9\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_9
+	comm_gate_expert_0_9 -> expert_0_9
+	comm_expert_agg_0_9 [label="Expert Output\nGPU 9→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_9 -> comm_expert_agg_0_9
+	expert_0_10 [label="Expert 10\nGPU 10\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_10 [label="Token Routing\nGPU 0→10\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_10
+	comm_gate_expert_0_10 -> expert_0_10
+	comm_expert_agg_0_10 [label="Expert Output\nGPU 10→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_10 -> comm_expert_agg_0_10
+	expert_0_11 [label="Expert 11\nGPU 11\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_11 [label="Token Routing\nGPU 0→11\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_11
+	comm_gate_expert_0_11 -> expert_0_11
+	comm_expert_agg_0_11 [label="Expert Output\nGPU 11→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_11 -> comm_expert_agg_0_11
+	expert_0_12 [label="Expert 12\nGPU 12\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_12 [label="Token Routing\nGPU 0→12\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_12
+	comm_gate_expert_0_12 -> expert_0_12
+	comm_expert_agg_0_12 [label="Expert Output\nGPU 12→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_12 -> comm_expert_agg_0_12
+	expert_0_13 [label="Expert 13\nGPU 13\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_13 [label="Token Routing\nGPU 0→13\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_13
+	comm_gate_expert_0_13 -> expert_0_13
+	comm_expert_agg_0_13 [label="Expert Output\nGPU 13→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_13 -> comm_expert_agg_0_13
+	expert_0_14 [label="Expert 14\nGPU 14\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_14 [label="Token Routing\nGPU 0→14\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_14
+	comm_gate_expert_0_14 -> expert_0_14
+	comm_expert_agg_0_14 [label="Expert Output\nGPU 14→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_14 -> comm_expert_agg_0_14
+	expert_0_15 [label="Expert 15\nGPU 15\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_15 [label="Token Routing\nGPU 0→15\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_15
+	comm_gate_expert_0_15 -> expert_0_15
+	comm_expert_agg_0_15 [label="Expert Output\nGPU 15→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_15 -> comm_expert_agg_0_15
+	expert_0_16 [label="Expert 16\nGPU 16\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_16 [label="Token Routing\nGPU 0→16\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_16
+	comm_gate_expert_0_16 -> expert_0_16
+	comm_expert_agg_0_16 [label="Expert Output\nGPU 16→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_16 -> comm_expert_agg_0_16
+	expert_0_17 [label="Expert 17\nGPU 17\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_17 [label="Token Routing\nGPU 0→17\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_17
+	comm_gate_expert_0_17 -> expert_0_17
+	comm_expert_agg_0_17 [label="Expert Output\nGPU 17→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_17 -> comm_expert_agg_0_17
+	expert_0_18 [label="Expert 18\nGPU 18\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_18 [label="Token Routing\nGPU 0→18\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_18
+	comm_gate_expert_0_18 -> expert_0_18
+	comm_expert_agg_0_18 [label="Expert Output\nGPU 18→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_18 -> comm_expert_agg_0_18
+	expert_0_19 [label="Expert 19\nGPU 19\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_19 [label="Token Routing\nGPU 0→19\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_19
+	comm_gate_expert_0_19 -> expert_0_19
+	comm_expert_agg_0_19 [label="Expert Output\nGPU 19→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_19 -> comm_expert_agg_0_19
+	expert_0_20 [label="Expert 20\nGPU 20\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_20 [label="Token Routing\nGPU 0→20\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_20
+	comm_gate_expert_0_20 -> expert_0_20
+	comm_expert_agg_0_20 [label="Expert Output\nGPU 20→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_20 -> comm_expert_agg_0_20
+	expert_0_21 [label="Expert 21\nGPU 21\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_21 [label="Token Routing\nGPU 0→21\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_21
+	comm_gate_expert_0_21 -> expert_0_21
+	comm_expert_agg_0_21 [label="Expert Output\nGPU 21→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_21 -> comm_expert_agg_0_21
+	expert_0_22 [label="Expert 22\nGPU 22\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_22 [label="Token Routing\nGPU 0→22\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_22
+	comm_gate_expert_0_22 -> expert_0_22
+	comm_expert_agg_0_22 [label="Expert Output\nGPU 22→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_22 -> comm_expert_agg_0_22
+	expert_0_23 [label="Expert 23\nGPU 23\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_23 [label="Token Routing\nGPU 0→23\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_23
+	comm_gate_expert_0_23 -> expert_0_23
+	comm_expert_agg_0_23 [label="Expert Output\nGPU 23→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_23 -> comm_expert_agg_0_23
+	expert_0_24 [label="Expert 24\nGPU 24\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_24 [label="Token Routing\nGPU 0→24\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_24
+	comm_gate_expert_0_24 -> expert_0_24
+	comm_expert_agg_0_24 [label="Expert Output\nGPU 24→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_24 -> comm_expert_agg_0_24
+	expert_0_25 [label="Expert 25\nGPU 25\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_25 [label="Token Routing\nGPU 0→25\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_25
+	comm_gate_expert_0_25 -> expert_0_25
+	comm_expert_agg_0_25 [label="Expert Output\nGPU 25→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_25 -> comm_expert_agg_0_25
+	expert_0_26 [label="Expert 26\nGPU 26\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_26 [label="Token Routing\nGPU 0→26\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_26
+	comm_gate_expert_0_26 -> expert_0_26
+	comm_expert_agg_0_26 [label="Expert Output\nGPU 26→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_26 -> comm_expert_agg_0_26
+	expert_0_27 [label="Expert 27\nGPU 27\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_27 [label="Token Routing\nGPU 0→27\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_27
+	comm_gate_expert_0_27 -> expert_0_27
+	comm_expert_agg_0_27 [label="Expert Output\nGPU 27→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_27 -> comm_expert_agg_0_27
+	expert_0_28 [label="Expert 28\nGPU 28\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_28 [label="Token Routing\nGPU 0→28\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_28
+	comm_gate_expert_0_28 -> expert_0_28
+	comm_expert_agg_0_28 [label="Expert Output\nGPU 28→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_28 -> comm_expert_agg_0_28
+	expert_0_29 [label="Expert 29\nGPU 29\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_29 [label="Token Routing\nGPU 0→29\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_29
+	comm_gate_expert_0_29 -> expert_0_29
+	comm_expert_agg_0_29 [label="Expert Output\nGPU 29→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_29 -> comm_expert_agg_0_29
+	expert_0_30 [label="Expert 30\nGPU 30\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_30 [label="Token Routing\nGPU 0→30\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_30
+	comm_gate_expert_0_30 -> expert_0_30
+	comm_expert_agg_0_30 [label="Expert Output\nGPU 30→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_30 -> comm_expert_agg_0_30
+	expert_0_31 [label="Expert 31\nGPU 31\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_31 [label="Token Routing\nGPU 0→31\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_31
+	comm_gate_expert_0_31 -> expert_0_31
+	comm_expert_agg_0_31 [label="Expert Output\nGPU 31→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_31 -> comm_expert_agg_0_31
+	expert_0_32 [label="Expert 32\nGPU 32\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_32 [label="Token Routing\nGPU 0→32\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_32
+	comm_gate_expert_0_32 -> expert_0_32
+	comm_expert_agg_0_32 [label="Expert Output\nGPU 32→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_32 -> comm_expert_agg_0_32
+	expert_0_33 [label="Expert 33\nGPU 33\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_33 [label="Token Routing\nGPU 0→33\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_33
+	comm_gate_expert_0_33 -> expert_0_33
+	comm_expert_agg_0_33 [label="Expert Output\nGPU 33→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_33 -> comm_expert_agg_0_33
+	expert_0_34 [label="Expert 34\nGPU 34\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_34 [label="Token Routing\nGPU 0→34\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_34
+	comm_gate_expert_0_34 -> expert_0_34
+	comm_expert_agg_0_34 [label="Expert Output\nGPU 34→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_34 -> comm_expert_agg_0_34
+	expert_0_35 [label="Expert 35\nGPU 35\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_35 [label="Token Routing\nGPU 0→35\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_35
+	comm_gate_expert_0_35 -> expert_0_35
+	comm_expert_agg_0_35 [label="Expert Output\nGPU 35→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_35 -> comm_expert_agg_0_35
+	expert_0_36 [label="Expert 36\nGPU 36\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_36 [label="Token Routing\nGPU 0→36\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_36
+	comm_gate_expert_0_36 -> expert_0_36
+	comm_expert_agg_0_36 [label="Expert Output\nGPU 36→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_36 -> comm_expert_agg_0_36
+	expert_0_37 [label="Expert 37\nGPU 37\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_37 [label="Token Routing\nGPU 0→37\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_37
+	comm_gate_expert_0_37 -> expert_0_37
+	comm_expert_agg_0_37 [label="Expert Output\nGPU 37→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_37 -> comm_expert_agg_0_37
+	expert_0_38 [label="Expert 38\nGPU 38\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_38 [label="Token Routing\nGPU 0→38\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_38
+	comm_gate_expert_0_38 -> expert_0_38
+	comm_expert_agg_0_38 [label="Expert Output\nGPU 38→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_38 -> comm_expert_agg_0_38
+	expert_0_39 [label="Expert 39\nGPU 39\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_39 [label="Token Routing\nGPU 0→39\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_39
+	comm_gate_expert_0_39 -> expert_0_39
+	comm_expert_agg_0_39 [label="Expert Output\nGPU 39→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_39 -> comm_expert_agg_0_39
+	expert_0_40 [label="Expert 40\nGPU 40\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_40 [label="Token Routing\nGPU 0→40\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_40
+	comm_gate_expert_0_40 -> expert_0_40
+	comm_expert_agg_0_40 [label="Expert Output\nGPU 40→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_40 -> comm_expert_agg_0_40
+	expert_0_41 [label="Expert 41\nGPU 41\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_41 [label="Token Routing\nGPU 0→41\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_41
+	comm_gate_expert_0_41 -> expert_0_41
+	comm_expert_agg_0_41 [label="Expert Output\nGPU 41→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_41 -> comm_expert_agg_0_41
+	expert_0_42 [label="Expert 42\nGPU 42\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_42 [label="Token Routing\nGPU 0→42\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_42
+	comm_gate_expert_0_42 -> expert_0_42
+	comm_expert_agg_0_42 [label="Expert Output\nGPU 42→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_42 -> comm_expert_agg_0_42
+	expert_0_43 [label="Expert 43\nGPU 43\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_43 [label="Token Routing\nGPU 0→43\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_43
+	comm_gate_expert_0_43 -> expert_0_43
+	comm_expert_agg_0_43 [label="Expert Output\nGPU 43→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_43 -> comm_expert_agg_0_43
+	expert_0_44 [label="Expert 44\nGPU 44\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_44 [label="Token Routing\nGPU 0→44\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_44
+	comm_gate_expert_0_44 -> expert_0_44
+	comm_expert_agg_0_44 [label="Expert Output\nGPU 44→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_44 -> comm_expert_agg_0_44
+	expert_0_45 [label="Expert 45\nGPU 45\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_45 [label="Token Routing\nGPU 0→45\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_45
+	comm_gate_expert_0_45 -> expert_0_45
+	comm_expert_agg_0_45 [label="Expert Output\nGPU 45→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_45 -> comm_expert_agg_0_45
+	expert_0_46 [label="Expert 46\nGPU 46\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_46 [label="Token Routing\nGPU 0→46\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_46
+	comm_gate_expert_0_46 -> expert_0_46
+	comm_expert_agg_0_46 [label="Expert Output\nGPU 46→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_46 -> comm_expert_agg_0_46
+	expert_0_47 [label="Expert 47\nGPU 47\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_47 [label="Token Routing\nGPU 0→47\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_47
+	comm_gate_expert_0_47 -> expert_0_47
+	comm_expert_agg_0_47 [label="Expert Output\nGPU 47→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_47 -> comm_expert_agg_0_47
+	expert_0_48 [label="Expert 48\nGPU 48\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_48 [label="Token Routing\nGPU 0→48\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_48
+	comm_gate_expert_0_48 -> expert_0_48
+	comm_expert_agg_0_48 [label="Expert Output\nGPU 48→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_48 -> comm_expert_agg_0_48
+	expert_0_49 [label="Expert 49\nGPU 49\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_49 [label="Token Routing\nGPU 0→49\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_49
+	comm_gate_expert_0_49 -> expert_0_49
+	comm_expert_agg_0_49 [label="Expert Output\nGPU 49→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_49 -> comm_expert_agg_0_49
+	expert_0_50 [label="Expert 50\nGPU 50\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_50 [label="Token Routing\nGPU 0→50\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_50
+	comm_gate_expert_0_50 -> expert_0_50
+	comm_expert_agg_0_50 [label="Expert Output\nGPU 50→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_50 -> comm_expert_agg_0_50
+	expert_0_51 [label="Expert 51\nGPU 51\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_51 [label="Token Routing\nGPU 0→51\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_51
+	comm_gate_expert_0_51 -> expert_0_51
+	comm_expert_agg_0_51 [label="Expert Output\nGPU 51→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_51 -> comm_expert_agg_0_51
+	expert_0_52 [label="Expert 52\nGPU 52\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_52 [label="Token Routing\nGPU 0→52\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_52
+	comm_gate_expert_0_52 -> expert_0_52
+	comm_expert_agg_0_52 [label="Expert Output\nGPU 52→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_52 -> comm_expert_agg_0_52
+	expert_0_53 [label="Expert 53\nGPU 53\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_53 [label="Token Routing\nGPU 0→53\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_53
+	comm_gate_expert_0_53 -> expert_0_53
+	comm_expert_agg_0_53 [label="Expert Output\nGPU 53→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_53 -> comm_expert_agg_0_53
+	expert_0_54 [label="Expert 54\nGPU 54\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_54 [label="Token Routing\nGPU 0→54\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_54
+	comm_gate_expert_0_54 -> expert_0_54
+	comm_expert_agg_0_54 [label="Expert Output\nGPU 54→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_54 -> comm_expert_agg_0_54
+	expert_0_55 [label="Expert 55\nGPU 55\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_55 [label="Token Routing\nGPU 0→55\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_55
+	comm_gate_expert_0_55 -> expert_0_55
+	comm_expert_agg_0_55 [label="Expert Output\nGPU 55→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_55 -> comm_expert_agg_0_55
+	expert_0_56 [label="Expert 56\nGPU 56\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_56 [label="Token Routing\nGPU 0→56\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_56
+	comm_gate_expert_0_56 -> expert_0_56
+	comm_expert_agg_0_56 [label="Expert Output\nGPU 56→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_56 -> comm_expert_agg_0_56
+	expert_0_57 [label="Expert 57\nGPU 57\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_57 [label="Token Routing\nGPU 0→57\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_57
+	comm_gate_expert_0_57 -> expert_0_57
+	comm_expert_agg_0_57 [label="Expert Output\nGPU 57→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_57 -> comm_expert_agg_0_57
+	expert_0_58 [label="Expert 58\nGPU 58\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_58 [label="Token Routing\nGPU 0→58\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_58
+	comm_gate_expert_0_58 -> expert_0_58
+	comm_expert_agg_0_58 [label="Expert Output\nGPU 58→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_58 -> comm_expert_agg_0_58
+	expert_0_59 [label="Expert 59\nGPU 59\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_59 [label="Token Routing\nGPU 0→59\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_59
+	comm_gate_expert_0_59 -> expert_0_59
+	comm_expert_agg_0_59 [label="Expert Output\nGPU 59→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_59 -> comm_expert_agg_0_59
+	expert_0_60 [label="Expert 60\nGPU 60\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_60 [label="Token Routing\nGPU 0→60\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_60
+	comm_gate_expert_0_60 -> expert_0_60
+	comm_expert_agg_0_60 [label="Expert Output\nGPU 60→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_60 -> comm_expert_agg_0_60
+	expert_0_61 [label="Expert 61\nGPU 61\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_61 [label="Token Routing\nGPU 0→61\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_61
+	comm_gate_expert_0_61 -> expert_0_61
+	comm_expert_agg_0_61 [label="Expert Output\nGPU 61→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_61 -> comm_expert_agg_0_61
+	expert_0_62 [label="Expert 62\nGPU 62\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_62 [label="Token Routing\nGPU 0→62\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_62
+	comm_gate_expert_0_62 -> expert_0_62
+	comm_expert_agg_0_62 [label="Expert Output\nGPU 62→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_62 -> comm_expert_agg_0_62
+	expert_0_63 [label="Expert 63\nGPU 63\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_0_63 [label="Token Routing\nGPU 0→63\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_0 -> comm_gate_expert_0_63
+	comm_gate_expert_0_63 -> expert_0_63
+	comm_expert_agg_0_63 [label="Expert Output\nGPU 63→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_0_63 -> comm_expert_agg_0_63
+	expert_agg_0 [label="Expert Output Aggregation\nAll-Reduce across GPUs\nShape: [524288, 4096]" fillcolor=lightyellow shape=hexagon style=filled]
+	comm_expert_agg_0_0 -> expert_agg_0
+	comm_expert_agg_0_1 -> expert_agg_0
+	comm_expert_agg_0_2 -> expert_agg_0
+	comm_expert_agg_0_3 -> expert_agg_0
+	comm_expert_agg_0_4 -> expert_agg_0
+	comm_expert_agg_0_5 -> expert_agg_0
+	comm_expert_agg_0_6 -> expert_agg_0
+	comm_expert_agg_0_7 -> expert_agg_0
+	comm_expert_agg_0_8 -> expert_agg_0
+	comm_expert_agg_0_9 -> expert_agg_0
+	comm_expert_agg_0_10 -> expert_agg_0
+	comm_expert_agg_0_11 -> expert_agg_0
+	comm_expert_agg_0_12 -> expert_agg_0
+	comm_expert_agg_0_13 -> expert_agg_0
+	comm_expert_agg_0_14 -> expert_agg_0
+	comm_expert_agg_0_15 -> expert_agg_0
+	comm_expert_agg_0_16 -> expert_agg_0
+	comm_expert_agg_0_17 -> expert_agg_0
+	comm_expert_agg_0_18 -> expert_agg_0
+	comm_expert_agg_0_19 -> expert_agg_0
+	comm_expert_agg_0_20 -> expert_agg_0
+	comm_expert_agg_0_21 -> expert_agg_0
+	comm_expert_agg_0_22 -> expert_agg_0
+	comm_expert_agg_0_23 -> expert_agg_0
+	comm_expert_agg_0_24 -> expert_agg_0
+	comm_expert_agg_0_25 -> expert_agg_0
+	comm_expert_agg_0_26 -> expert_agg_0
+	comm_expert_agg_0_27 -> expert_agg_0
+	comm_expert_agg_0_28 -> expert_agg_0
+	comm_expert_agg_0_29 -> expert_agg_0
+	comm_expert_agg_0_30 -> expert_agg_0
+	comm_expert_agg_0_31 -> expert_agg_0
+	comm_expert_agg_0_32 -> expert_agg_0
+	comm_expert_agg_0_33 -> expert_agg_0
+	comm_expert_agg_0_34 -> expert_agg_0
+	comm_expert_agg_0_35 -> expert_agg_0
+	comm_expert_agg_0_36 -> expert_agg_0
+	comm_expert_agg_0_37 -> expert_agg_0
+	comm_expert_agg_0_38 -> expert_agg_0
+	comm_expert_agg_0_39 -> expert_agg_0
+	comm_expert_agg_0_40 -> expert_agg_0
+	comm_expert_agg_0_41 -> expert_agg_0
+	comm_expert_agg_0_42 -> expert_agg_0
+	comm_expert_agg_0_43 -> expert_agg_0
+	comm_expert_agg_0_44 -> expert_agg_0
+	comm_expert_agg_0_45 -> expert_agg_0
+	comm_expert_agg_0_46 -> expert_agg_0
+	comm_expert_agg_0_47 -> expert_agg_0
+	comm_expert_agg_0_48 -> expert_agg_0
+	comm_expert_agg_0_49 -> expert_agg_0
+	comm_expert_agg_0_50 -> expert_agg_0
+	comm_expert_agg_0_51 -> expert_agg_0
+	comm_expert_agg_0_52 -> expert_agg_0
+	comm_expert_agg_0_53 -> expert_agg_0
+	comm_expert_agg_0_54 -> expert_agg_0
+	comm_expert_agg_0_55 -> expert_agg_0
+	comm_expert_agg_0_56 -> expert_agg_0
+	comm_expert_agg_0_57 -> expert_agg_0
+	comm_expert_agg_0_58 -> expert_agg_0
+	comm_expert_agg_0_59 -> expert_agg_0
+	comm_expert_agg_0_60 -> expert_agg_0
+	comm_expert_agg_0_61 -> expert_agg_0
+	comm_expert_agg_0_62 -> expert_agg_0
+	comm_expert_agg_0_63 -> expert_agg_0
+	moe_residual_0 [label="MoE Residual Add\nShape: [1024, 512, 4096]" fillcolor=lightyellow shape=ellipse style=filled]
+	ln1 -> attn_qkv_0
+	attn_qkv_0 -> attn_split_0
+	attn_split_0 -> attn_score_0
+	attn_score_0 -> attn_out_0
+	attn_out_0 -> attn_residual_0
+	attn_residual_0 -> ln2_0
+	ln2_0 -> moe_gate_0
+	expert_agg_0 -> moe_residual_0
+	attn_qkv_1 [label="Layer 1 QKV Linear\nTP=8 Column Parallel\nShape: [1024, 512, 4096] → [1024, 512, 12288]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_split_1 [label="Split QKV\nShape: Q[1024, 512, 4096], K/V same" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_score_1 [label="Attention Scores\nShape: [1024, 32, 512, 512]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_out_1 [label="Attention Output Linear\nTP=8 Row Parallel\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_residual_1 [label="Residual Add\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	ln2_1 [label="Post-Attention LayerNorm\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	moe_gate_1 [label="MoE Gate\nShape: [524288, 4096] → Top-2 routing" fillcolor=lightyellow shape=diamond style=filled]
+	expert_1_0 [label="Expert 64\nGPU 0\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_0 [label="Token Routing\nGPU 0→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_0
+	comm_gate_expert_1_0 -> expert_1_0
+	comm_expert_agg_1_0 [label="Expert Output\nGPU 0→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_0 -> comm_expert_agg_1_0
+	expert_1_1 [label="Expert 65\nGPU 1\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_1 [label="Token Routing\nGPU 0→1\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_1
+	comm_gate_expert_1_1 -> expert_1_1
+	comm_expert_agg_1_1 [label="Expert Output\nGPU 1→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_1 -> comm_expert_agg_1_1
+	expert_1_2 [label="Expert 66\nGPU 2\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_2 [label="Token Routing\nGPU 0→2\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_2
+	comm_gate_expert_1_2 -> expert_1_2
+	comm_expert_agg_1_2 [label="Expert Output\nGPU 2→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_2 -> comm_expert_agg_1_2
+	expert_1_3 [label="Expert 67\nGPU 3\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_3 [label="Token Routing\nGPU 0→3\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_3
+	comm_gate_expert_1_3 -> expert_1_3
+	comm_expert_agg_1_3 [label="Expert Output\nGPU 3→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_3 -> comm_expert_agg_1_3
+	expert_1_4 [label="Expert 68\nGPU 4\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_4 [label="Token Routing\nGPU 0→4\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_4
+	comm_gate_expert_1_4 -> expert_1_4
+	comm_expert_agg_1_4 [label="Expert Output\nGPU 4→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_4 -> comm_expert_agg_1_4
+	expert_1_5 [label="Expert 69\nGPU 5\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_5 [label="Token Routing\nGPU 0→5\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_5
+	comm_gate_expert_1_5 -> expert_1_5
+	comm_expert_agg_1_5 [label="Expert Output\nGPU 5→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_5 -> comm_expert_agg_1_5
+	expert_1_6 [label="Expert 70\nGPU 6\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_6 [label="Token Routing\nGPU 0→6\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_6
+	comm_gate_expert_1_6 -> expert_1_6
+	comm_expert_agg_1_6 [label="Expert Output\nGPU 6→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_6 -> comm_expert_agg_1_6
+	expert_1_7 [label="Expert 71\nGPU 7\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_7 [label="Token Routing\nGPU 0→7\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_7
+	comm_gate_expert_1_7 -> expert_1_7
+	comm_expert_agg_1_7 [label="Expert Output\nGPU 7→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_7 -> comm_expert_agg_1_7
+	expert_1_8 [label="Expert 72\nGPU 8\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_8 [label="Token Routing\nGPU 0→8\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_8
+	comm_gate_expert_1_8 -> expert_1_8
+	comm_expert_agg_1_8 [label="Expert Output\nGPU 8→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_8 -> comm_expert_agg_1_8
+	expert_1_9 [label="Expert 73\nGPU 9\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_9 [label="Token Routing\nGPU 0→9\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_9
+	comm_gate_expert_1_9 -> expert_1_9
+	comm_expert_agg_1_9 [label="Expert Output\nGPU 9→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_9 -> comm_expert_agg_1_9
+	expert_1_10 [label="Expert 74\nGPU 10\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_10 [label="Token Routing\nGPU 0→10\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_10
+	comm_gate_expert_1_10 -> expert_1_10
+	comm_expert_agg_1_10 [label="Expert Output\nGPU 10→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_10 -> comm_expert_agg_1_10
+	expert_1_11 [label="Expert 75\nGPU 11\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_11 [label="Token Routing\nGPU 0→11\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_11
+	comm_gate_expert_1_11 -> expert_1_11
+	comm_expert_agg_1_11 [label="Expert Output\nGPU 11→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_11 -> comm_expert_agg_1_11
+	expert_1_12 [label="Expert 76\nGPU 12\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_12 [label="Token Routing\nGPU 0→12\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_12
+	comm_gate_expert_1_12 -> expert_1_12
+	comm_expert_agg_1_12 [label="Expert Output\nGPU 12→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_12 -> comm_expert_agg_1_12
+	expert_1_13 [label="Expert 77\nGPU 13\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_13 [label="Token Routing\nGPU 0→13\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_13
+	comm_gate_expert_1_13 -> expert_1_13
+	comm_expert_agg_1_13 [label="Expert Output\nGPU 13→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_13 -> comm_expert_agg_1_13
+	expert_1_14 [label="Expert 78\nGPU 14\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_14 [label="Token Routing\nGPU 0→14\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_14
+	comm_gate_expert_1_14 -> expert_1_14
+	comm_expert_agg_1_14 [label="Expert Output\nGPU 14→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_14 -> comm_expert_agg_1_14
+	expert_1_15 [label="Expert 79\nGPU 15\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_15 [label="Token Routing\nGPU 0→15\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_15
+	comm_gate_expert_1_15 -> expert_1_15
+	comm_expert_agg_1_15 [label="Expert Output\nGPU 15→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_15 -> comm_expert_agg_1_15
+	expert_1_16 [label="Expert 80\nGPU 16\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_16 [label="Token Routing\nGPU 0→16\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_16
+	comm_gate_expert_1_16 -> expert_1_16
+	comm_expert_agg_1_16 [label="Expert Output\nGPU 16→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_16 -> comm_expert_agg_1_16
+	expert_1_17 [label="Expert 81\nGPU 17\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_17 [label="Token Routing\nGPU 0→17\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_17
+	comm_gate_expert_1_17 -> expert_1_17
+	comm_expert_agg_1_17 [label="Expert Output\nGPU 17→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_17 -> comm_expert_agg_1_17
+	expert_1_18 [label="Expert 82\nGPU 18\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_18 [label="Token Routing\nGPU 0→18\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_18
+	comm_gate_expert_1_18 -> expert_1_18
+	comm_expert_agg_1_18 [label="Expert Output\nGPU 18→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_18 -> comm_expert_agg_1_18
+	expert_1_19 [label="Expert 83\nGPU 19\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_19 [label="Token Routing\nGPU 0→19\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_19
+	comm_gate_expert_1_19 -> expert_1_19
+	comm_expert_agg_1_19 [label="Expert Output\nGPU 19→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_19 -> comm_expert_agg_1_19
+	expert_1_20 [label="Expert 84\nGPU 20\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_20 [label="Token Routing\nGPU 0→20\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_20
+	comm_gate_expert_1_20 -> expert_1_20
+	comm_expert_agg_1_20 [label="Expert Output\nGPU 20→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_20 -> comm_expert_agg_1_20
+	expert_1_21 [label="Expert 85\nGPU 21\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_21 [label="Token Routing\nGPU 0→21\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_21
+	comm_gate_expert_1_21 -> expert_1_21
+	comm_expert_agg_1_21 [label="Expert Output\nGPU 21→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_21 -> comm_expert_agg_1_21
+	expert_1_22 [label="Expert 86\nGPU 22\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_22 [label="Token Routing\nGPU 0→22\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_22
+	comm_gate_expert_1_22 -> expert_1_22
+	comm_expert_agg_1_22 [label="Expert Output\nGPU 22→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_22 -> comm_expert_agg_1_22
+	expert_1_23 [label="Expert 87\nGPU 23\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_23 [label="Token Routing\nGPU 0→23\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_23
+	comm_gate_expert_1_23 -> expert_1_23
+	comm_expert_agg_1_23 [label="Expert Output\nGPU 23→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_23 -> comm_expert_agg_1_23
+	expert_1_24 [label="Expert 88\nGPU 24\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_24 [label="Token Routing\nGPU 0→24\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_24
+	comm_gate_expert_1_24 -> expert_1_24
+	comm_expert_agg_1_24 [label="Expert Output\nGPU 24→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_24 -> comm_expert_agg_1_24
+	expert_1_25 [label="Expert 89\nGPU 25\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_25 [label="Token Routing\nGPU 0→25\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_25
+	comm_gate_expert_1_25 -> expert_1_25
+	comm_expert_agg_1_25 [label="Expert Output\nGPU 25→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_25 -> comm_expert_agg_1_25
+	expert_1_26 [label="Expert 90\nGPU 26\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_26 [label="Token Routing\nGPU 0→26\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_26
+	comm_gate_expert_1_26 -> expert_1_26
+	comm_expert_agg_1_26 [label="Expert Output\nGPU 26→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_26 -> comm_expert_agg_1_26
+	expert_1_27 [label="Expert 91\nGPU 27\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_27 [label="Token Routing\nGPU 0→27\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_27
+	comm_gate_expert_1_27 -> expert_1_27
+	comm_expert_agg_1_27 [label="Expert Output\nGPU 27→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_27 -> comm_expert_agg_1_27
+	expert_1_28 [label="Expert 92\nGPU 28\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_28 [label="Token Routing\nGPU 0→28\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_28
+	comm_gate_expert_1_28 -> expert_1_28
+	comm_expert_agg_1_28 [label="Expert Output\nGPU 28→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_28 -> comm_expert_agg_1_28
+	expert_1_29 [label="Expert 93\nGPU 29\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_29 [label="Token Routing\nGPU 0→29\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_29
+	comm_gate_expert_1_29 -> expert_1_29
+	comm_expert_agg_1_29 [label="Expert Output\nGPU 29→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_29 -> comm_expert_agg_1_29
+	expert_1_30 [label="Expert 94\nGPU 30\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_30 [label="Token Routing\nGPU 0→30\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_30
+	comm_gate_expert_1_30 -> expert_1_30
+	comm_expert_agg_1_30 [label="Expert Output\nGPU 30→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_30 -> comm_expert_agg_1_30
+	expert_1_31 [label="Expert 95\nGPU 31\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_31 [label="Token Routing\nGPU 0→31\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_31
+	comm_gate_expert_1_31 -> expert_1_31
+	comm_expert_agg_1_31 [label="Expert Output\nGPU 31→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_31 -> comm_expert_agg_1_31
+	expert_1_32 [label="Expert 96\nGPU 32\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_32 [label="Token Routing\nGPU 0→32\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_32
+	comm_gate_expert_1_32 -> expert_1_32
+	comm_expert_agg_1_32 [label="Expert Output\nGPU 32→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_32 -> comm_expert_agg_1_32
+	expert_1_33 [label="Expert 97\nGPU 33\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_33 [label="Token Routing\nGPU 0→33\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_33
+	comm_gate_expert_1_33 -> expert_1_33
+	comm_expert_agg_1_33 [label="Expert Output\nGPU 33→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_33 -> comm_expert_agg_1_33
+	expert_1_34 [label="Expert 98\nGPU 34\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_34 [label="Token Routing\nGPU 0→34\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_34
+	comm_gate_expert_1_34 -> expert_1_34
+	comm_expert_agg_1_34 [label="Expert Output\nGPU 34→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_34 -> comm_expert_agg_1_34
+	expert_1_35 [label="Expert 99\nGPU 35\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_35 [label="Token Routing\nGPU 0→35\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_35
+	comm_gate_expert_1_35 -> expert_1_35
+	comm_expert_agg_1_35 [label="Expert Output\nGPU 35→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_35 -> comm_expert_agg_1_35
+	expert_1_36 [label="Expert 100\nGPU 36\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_36 [label="Token Routing\nGPU 0→36\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_36
+	comm_gate_expert_1_36 -> expert_1_36
+	comm_expert_agg_1_36 [label="Expert Output\nGPU 36→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_36 -> comm_expert_agg_1_36
+	expert_1_37 [label="Expert 101\nGPU 37\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_37 [label="Token Routing\nGPU 0→37\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_37
+	comm_gate_expert_1_37 -> expert_1_37
+	comm_expert_agg_1_37 [label="Expert Output\nGPU 37→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_37 -> comm_expert_agg_1_37
+	expert_1_38 [label="Expert 102\nGPU 38\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_38 [label="Token Routing\nGPU 0→38\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_38
+	comm_gate_expert_1_38 -> expert_1_38
+	comm_expert_agg_1_38 [label="Expert Output\nGPU 38→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_38 -> comm_expert_agg_1_38
+	expert_1_39 [label="Expert 103\nGPU 39\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_39 [label="Token Routing\nGPU 0→39\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_39
+	comm_gate_expert_1_39 -> expert_1_39
+	comm_expert_agg_1_39 [label="Expert Output\nGPU 39→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_39 -> comm_expert_agg_1_39
+	expert_1_40 [label="Expert 104\nGPU 40\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_40 [label="Token Routing\nGPU 0→40\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_40
+	comm_gate_expert_1_40 -> expert_1_40
+	comm_expert_agg_1_40 [label="Expert Output\nGPU 40→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_40 -> comm_expert_agg_1_40
+	expert_1_41 [label="Expert 105\nGPU 41\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_41 [label="Token Routing\nGPU 0→41\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_41
+	comm_gate_expert_1_41 -> expert_1_41
+	comm_expert_agg_1_41 [label="Expert Output\nGPU 41→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_41 -> comm_expert_agg_1_41
+	expert_1_42 [label="Expert 106\nGPU 42\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_42 [label="Token Routing\nGPU 0→42\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_42
+	comm_gate_expert_1_42 -> expert_1_42
+	comm_expert_agg_1_42 [label="Expert Output\nGPU 42→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_42 -> comm_expert_agg_1_42
+	expert_1_43 [label="Expert 107\nGPU 43\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_43 [label="Token Routing\nGPU 0→43\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_43
+	comm_gate_expert_1_43 -> expert_1_43
+	comm_expert_agg_1_43 [label="Expert Output\nGPU 43→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_43 -> comm_expert_agg_1_43
+	expert_1_44 [label="Expert 108\nGPU 44\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_44 [label="Token Routing\nGPU 0→44\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_44
+	comm_gate_expert_1_44 -> expert_1_44
+	comm_expert_agg_1_44 [label="Expert Output\nGPU 44→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_44 -> comm_expert_agg_1_44
+	expert_1_45 [label="Expert 109\nGPU 45\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_45 [label="Token Routing\nGPU 0→45\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_45
+	comm_gate_expert_1_45 -> expert_1_45
+	comm_expert_agg_1_45 [label="Expert Output\nGPU 45→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_45 -> comm_expert_agg_1_45
+	expert_1_46 [label="Expert 110\nGPU 46\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_46 [label="Token Routing\nGPU 0→46\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_46
+	comm_gate_expert_1_46 -> expert_1_46
+	comm_expert_agg_1_46 [label="Expert Output\nGPU 46→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_46 -> comm_expert_agg_1_46
+	expert_1_47 [label="Expert 111\nGPU 47\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_47 [label="Token Routing\nGPU 0→47\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_47
+	comm_gate_expert_1_47 -> expert_1_47
+	comm_expert_agg_1_47 [label="Expert Output\nGPU 47→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_47 -> comm_expert_agg_1_47
+	expert_1_48 [label="Expert 112\nGPU 48\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_48 [label="Token Routing\nGPU 0→48\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_48
+	comm_gate_expert_1_48 -> expert_1_48
+	comm_expert_agg_1_48 [label="Expert Output\nGPU 48→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_48 -> comm_expert_agg_1_48
+	expert_1_49 [label="Expert 113\nGPU 49\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_49 [label="Token Routing\nGPU 0→49\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_49
+	comm_gate_expert_1_49 -> expert_1_49
+	comm_expert_agg_1_49 [label="Expert Output\nGPU 49→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_49 -> comm_expert_agg_1_49
+	expert_1_50 [label="Expert 114\nGPU 50\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_50 [label="Token Routing\nGPU 0→50\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_50
+	comm_gate_expert_1_50 -> expert_1_50
+	comm_expert_agg_1_50 [label="Expert Output\nGPU 50→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_50 -> comm_expert_agg_1_50
+	expert_1_51 [label="Expert 115\nGPU 51\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_51 [label="Token Routing\nGPU 0→51\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_51
+	comm_gate_expert_1_51 -> expert_1_51
+	comm_expert_agg_1_51 [label="Expert Output\nGPU 51→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_51 -> comm_expert_agg_1_51
+	expert_1_52 [label="Expert 116\nGPU 52\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_52 [label="Token Routing\nGPU 0→52\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_52
+	comm_gate_expert_1_52 -> expert_1_52
+	comm_expert_agg_1_52 [label="Expert Output\nGPU 52→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_52 -> comm_expert_agg_1_52
+	expert_1_53 [label="Expert 117\nGPU 53\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_53 [label="Token Routing\nGPU 0→53\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_53
+	comm_gate_expert_1_53 -> expert_1_53
+	comm_expert_agg_1_53 [label="Expert Output\nGPU 53→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_53 -> comm_expert_agg_1_53
+	expert_1_54 [label="Expert 118\nGPU 54\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_54 [label="Token Routing\nGPU 0→54\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_54
+	comm_gate_expert_1_54 -> expert_1_54
+	comm_expert_agg_1_54 [label="Expert Output\nGPU 54→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_54 -> comm_expert_agg_1_54
+	expert_1_55 [label="Expert 119\nGPU 55\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_55 [label="Token Routing\nGPU 0→55\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_55
+	comm_gate_expert_1_55 -> expert_1_55
+	comm_expert_agg_1_55 [label="Expert Output\nGPU 55→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_55 -> comm_expert_agg_1_55
+	expert_1_56 [label="Expert 120\nGPU 56\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_56 [label="Token Routing\nGPU 0→56\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_56
+	comm_gate_expert_1_56 -> expert_1_56
+	comm_expert_agg_1_56 [label="Expert Output\nGPU 56→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_56 -> comm_expert_agg_1_56
+	expert_1_57 [label="Expert 121\nGPU 57\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_57 [label="Token Routing\nGPU 0→57\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_57
+	comm_gate_expert_1_57 -> expert_1_57
+	comm_expert_agg_1_57 [label="Expert Output\nGPU 57→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_57 -> comm_expert_agg_1_57
+	expert_1_58 [label="Expert 122\nGPU 58\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_58 [label="Token Routing\nGPU 0→58\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_58
+	comm_gate_expert_1_58 -> expert_1_58
+	comm_expert_agg_1_58 [label="Expert Output\nGPU 58→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_58 -> comm_expert_agg_1_58
+	expert_1_59 [label="Expert 123\nGPU 59\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_59 [label="Token Routing\nGPU 0→59\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_59
+	comm_gate_expert_1_59 -> expert_1_59
+	comm_expert_agg_1_59 [label="Expert Output\nGPU 59→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_59 -> comm_expert_agg_1_59
+	expert_1_60 [label="Expert 124\nGPU 60\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_60 [label="Token Routing\nGPU 0→60\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_60
+	comm_gate_expert_1_60 -> expert_1_60
+	comm_expert_agg_1_60 [label="Expert Output\nGPU 60→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_60 -> comm_expert_agg_1_60
+	expert_1_61 [label="Expert 125\nGPU 61\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_61 [label="Token Routing\nGPU 0→61\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_61
+	comm_gate_expert_1_61 -> expert_1_61
+	comm_expert_agg_1_61 [label="Expert Output\nGPU 61→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_61 -> comm_expert_agg_1_61
+	expert_1_62 [label="Expert 126\nGPU 62\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_62 [label="Token Routing\nGPU 0→62\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_62
+	comm_gate_expert_1_62 -> expert_1_62
+	comm_expert_agg_1_62 [label="Expert Output\nGPU 62→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_62 -> comm_expert_agg_1_62
+	expert_1_63 [label="Expert 127\nGPU 63\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_1_63 [label="Token Routing\nGPU 0→63\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_1 -> comm_gate_expert_1_63
+	comm_gate_expert_1_63 -> expert_1_63
+	comm_expert_agg_1_63 [label="Expert Output\nGPU 63→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_1_63 -> comm_expert_agg_1_63
+	expert_agg_1 [label="Expert Output Aggregation\nAll-Reduce across GPUs\nShape: [524288, 4096]" fillcolor=lightyellow shape=hexagon style=filled]
+	comm_expert_agg_1_0 -> expert_agg_1
+	comm_expert_agg_1_1 -> expert_agg_1
+	comm_expert_agg_1_2 -> expert_agg_1
+	comm_expert_agg_1_3 -> expert_agg_1
+	comm_expert_agg_1_4 -> expert_agg_1
+	comm_expert_agg_1_5 -> expert_agg_1
+	comm_expert_agg_1_6 -> expert_agg_1
+	comm_expert_agg_1_7 -> expert_agg_1
+	comm_expert_agg_1_8 -> expert_agg_1
+	comm_expert_agg_1_9 -> expert_agg_1
+	comm_expert_agg_1_10 -> expert_agg_1
+	comm_expert_agg_1_11 -> expert_agg_1
+	comm_expert_agg_1_12 -> expert_agg_1
+	comm_expert_agg_1_13 -> expert_agg_1
+	comm_expert_agg_1_14 -> expert_agg_1
+	comm_expert_agg_1_15 -> expert_agg_1
+	comm_expert_agg_1_16 -> expert_agg_1
+	comm_expert_agg_1_17 -> expert_agg_1
+	comm_expert_agg_1_18 -> expert_agg_1
+	comm_expert_agg_1_19 -> expert_agg_1
+	comm_expert_agg_1_20 -> expert_agg_1
+	comm_expert_agg_1_21 -> expert_agg_1
+	comm_expert_agg_1_22 -> expert_agg_1
+	comm_expert_agg_1_23 -> expert_agg_1
+	comm_expert_agg_1_24 -> expert_agg_1
+	comm_expert_agg_1_25 -> expert_agg_1
+	comm_expert_agg_1_26 -> expert_agg_1
+	comm_expert_agg_1_27 -> expert_agg_1
+	comm_expert_agg_1_28 -> expert_agg_1
+	comm_expert_agg_1_29 -> expert_agg_1
+	comm_expert_agg_1_30 -> expert_agg_1
+	comm_expert_agg_1_31 -> expert_agg_1
+	comm_expert_agg_1_32 -> expert_agg_1
+	comm_expert_agg_1_33 -> expert_agg_1
+	comm_expert_agg_1_34 -> expert_agg_1
+	comm_expert_agg_1_35 -> expert_agg_1
+	comm_expert_agg_1_36 -> expert_agg_1
+	comm_expert_agg_1_37 -> expert_agg_1
+	comm_expert_agg_1_38 -> expert_agg_1
+	comm_expert_agg_1_39 -> expert_agg_1
+	comm_expert_agg_1_40 -> expert_agg_1
+	comm_expert_agg_1_41 -> expert_agg_1
+	comm_expert_agg_1_42 -> expert_agg_1
+	comm_expert_agg_1_43 -> expert_agg_1
+	comm_expert_agg_1_44 -> expert_agg_1
+	comm_expert_agg_1_45 -> expert_agg_1
+	comm_expert_agg_1_46 -> expert_agg_1
+	comm_expert_agg_1_47 -> expert_agg_1
+	comm_expert_agg_1_48 -> expert_agg_1
+	comm_expert_agg_1_49 -> expert_agg_1
+	comm_expert_agg_1_50 -> expert_agg_1
+	comm_expert_agg_1_51 -> expert_agg_1
+	comm_expert_agg_1_52 -> expert_agg_1
+	comm_expert_agg_1_53 -> expert_agg_1
+	comm_expert_agg_1_54 -> expert_agg_1
+	comm_expert_agg_1_55 -> expert_agg_1
+	comm_expert_agg_1_56 -> expert_agg_1
+	comm_expert_agg_1_57 -> expert_agg_1
+	comm_expert_agg_1_58 -> expert_agg_1
+	comm_expert_agg_1_59 -> expert_agg_1
+	comm_expert_agg_1_60 -> expert_agg_1
+	comm_expert_agg_1_61 -> expert_agg_1
+	comm_expert_agg_1_62 -> expert_agg_1
+	comm_expert_agg_1_63 -> expert_agg_1
+	moe_residual_1 [label="MoE Residual Add\nShape: [1024, 512, 4096]" fillcolor=lightyellow shape=ellipse style=filled]
+	moe_residual_0 -> attn_qkv_1
+	attn_qkv_1 -> attn_split_1
+	attn_split_1 -> attn_score_1
+	attn_score_1 -> attn_out_1
+	attn_out_1 -> attn_residual_1
+	attn_residual_1 -> ln2_1
+	ln2_1 -> moe_gate_1
+	expert_agg_1 -> moe_residual_1
+	attn_qkv_2 [label="Layer 2 QKV Linear\nTP=8 Column Parallel\nShape: [1024, 512, 4096] → [1024, 512, 12288]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_split_2 [label="Split QKV\nShape: Q[1024, 512, 4096], K/V same" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_score_2 [label="Attention Scores\nShape: [1024, 32, 512, 512]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_out_2 [label="Attention Output Linear\nTP=8 Row Parallel\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_residual_2 [label="Residual Add\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	ln2_2 [label="Post-Attention LayerNorm\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	moe_gate_2 [label="MoE Gate\nShape: [524288, 4096] → Top-2 routing" fillcolor=lightyellow shape=diamond style=filled]
+	expert_2_0 [label="Expert 128\nGPU 0\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_0 [label="Token Routing\nGPU 0→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_0
+	comm_gate_expert_2_0 -> expert_2_0
+	comm_expert_agg_2_0 [label="Expert Output\nGPU 0→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_0 -> comm_expert_agg_2_0
+	expert_2_1 [label="Expert 129\nGPU 1\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_1 [label="Token Routing\nGPU 0→1\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_1
+	comm_gate_expert_2_1 -> expert_2_1
+	comm_expert_agg_2_1 [label="Expert Output\nGPU 1→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_1 -> comm_expert_agg_2_1
+	expert_2_2 [label="Expert 130\nGPU 2\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_2 [label="Token Routing\nGPU 0→2\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_2
+	comm_gate_expert_2_2 -> expert_2_2
+	comm_expert_agg_2_2 [label="Expert Output\nGPU 2→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_2 -> comm_expert_agg_2_2
+	expert_2_3 [label="Expert 131\nGPU 3\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_3 [label="Token Routing\nGPU 0→3\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_3
+	comm_gate_expert_2_3 -> expert_2_3
+	comm_expert_agg_2_3 [label="Expert Output\nGPU 3→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_3 -> comm_expert_agg_2_3
+	expert_2_4 [label="Expert 132\nGPU 4\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_4 [label="Token Routing\nGPU 0→4\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_4
+	comm_gate_expert_2_4 -> expert_2_4
+	comm_expert_agg_2_4 [label="Expert Output\nGPU 4→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_4 -> comm_expert_agg_2_4
+	expert_2_5 [label="Expert 133\nGPU 5\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_5 [label="Token Routing\nGPU 0→5\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_5
+	comm_gate_expert_2_5 -> expert_2_5
+	comm_expert_agg_2_5 [label="Expert Output\nGPU 5→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_5 -> comm_expert_agg_2_5
+	expert_2_6 [label="Expert 134\nGPU 6\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_6 [label="Token Routing\nGPU 0→6\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_6
+	comm_gate_expert_2_6 -> expert_2_6
+	comm_expert_agg_2_6 [label="Expert Output\nGPU 6→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_6 -> comm_expert_agg_2_6
+	expert_2_7 [label="Expert 135\nGPU 7\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_7 [label="Token Routing\nGPU 0→7\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_7
+	comm_gate_expert_2_7 -> expert_2_7
+	comm_expert_agg_2_7 [label="Expert Output\nGPU 7→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_7 -> comm_expert_agg_2_7
+	expert_2_8 [label="Expert 136\nGPU 8\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_8 [label="Token Routing\nGPU 0→8\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_8
+	comm_gate_expert_2_8 -> expert_2_8
+	comm_expert_agg_2_8 [label="Expert Output\nGPU 8→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_8 -> comm_expert_agg_2_8
+	expert_2_9 [label="Expert 137\nGPU 9\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_9 [label="Token Routing\nGPU 0→9\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_9
+	comm_gate_expert_2_9 -> expert_2_9
+	comm_expert_agg_2_9 [label="Expert Output\nGPU 9→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_9 -> comm_expert_agg_2_9
+	expert_2_10 [label="Expert 138\nGPU 10\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_10 [label="Token Routing\nGPU 0→10\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_10
+	comm_gate_expert_2_10 -> expert_2_10
+	comm_expert_agg_2_10 [label="Expert Output\nGPU 10→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_10 -> comm_expert_agg_2_10
+	expert_2_11 [label="Expert 139\nGPU 11\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_11 [label="Token Routing\nGPU 0→11\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_11
+	comm_gate_expert_2_11 -> expert_2_11
+	comm_expert_agg_2_11 [label="Expert Output\nGPU 11→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_11 -> comm_expert_agg_2_11
+	expert_2_12 [label="Expert 140\nGPU 12\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_12 [label="Token Routing\nGPU 0→12\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_12
+	comm_gate_expert_2_12 -> expert_2_12
+	comm_expert_agg_2_12 [label="Expert Output\nGPU 12→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_12 -> comm_expert_agg_2_12
+	expert_2_13 [label="Expert 141\nGPU 13\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_13 [label="Token Routing\nGPU 0→13\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_13
+	comm_gate_expert_2_13 -> expert_2_13
+	comm_expert_agg_2_13 [label="Expert Output\nGPU 13→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_13 -> comm_expert_agg_2_13
+	expert_2_14 [label="Expert 142\nGPU 14\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_14 [label="Token Routing\nGPU 0→14\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_14
+	comm_gate_expert_2_14 -> expert_2_14
+	comm_expert_agg_2_14 [label="Expert Output\nGPU 14→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_14 -> comm_expert_agg_2_14
+	expert_2_15 [label="Expert 143\nGPU 15\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_15 [label="Token Routing\nGPU 0→15\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_15
+	comm_gate_expert_2_15 -> expert_2_15
+	comm_expert_agg_2_15 [label="Expert Output\nGPU 15→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_15 -> comm_expert_agg_2_15
+	expert_2_16 [label="Expert 144\nGPU 16\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_16 [label="Token Routing\nGPU 0→16\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_16
+	comm_gate_expert_2_16 -> expert_2_16
+	comm_expert_agg_2_16 [label="Expert Output\nGPU 16→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_16 -> comm_expert_agg_2_16
+	expert_2_17 [label="Expert 145\nGPU 17\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_17 [label="Token Routing\nGPU 0→17\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_17
+	comm_gate_expert_2_17 -> expert_2_17
+	comm_expert_agg_2_17 [label="Expert Output\nGPU 17→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_17 -> comm_expert_agg_2_17
+	expert_2_18 [label="Expert 146\nGPU 18\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_18 [label="Token Routing\nGPU 0→18\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_18
+	comm_gate_expert_2_18 -> expert_2_18
+	comm_expert_agg_2_18 [label="Expert Output\nGPU 18→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_18 -> comm_expert_agg_2_18
+	expert_2_19 [label="Expert 147\nGPU 19\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_19 [label="Token Routing\nGPU 0→19\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_19
+	comm_gate_expert_2_19 -> expert_2_19
+	comm_expert_agg_2_19 [label="Expert Output\nGPU 19→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_19 -> comm_expert_agg_2_19
+	expert_2_20 [label="Expert 148\nGPU 20\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_20 [label="Token Routing\nGPU 0→20\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_20
+	comm_gate_expert_2_20 -> expert_2_20
+	comm_expert_agg_2_20 [label="Expert Output\nGPU 20→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_20 -> comm_expert_agg_2_20
+	expert_2_21 [label="Expert 149\nGPU 21\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_21 [label="Token Routing\nGPU 0→21\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_21
+	comm_gate_expert_2_21 -> expert_2_21
+	comm_expert_agg_2_21 [label="Expert Output\nGPU 21→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_21 -> comm_expert_agg_2_21
+	expert_2_22 [label="Expert 150\nGPU 22\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_22 [label="Token Routing\nGPU 0→22\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_22
+	comm_gate_expert_2_22 -> expert_2_22
+	comm_expert_agg_2_22 [label="Expert Output\nGPU 22→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_22 -> comm_expert_agg_2_22
+	expert_2_23 [label="Expert 151\nGPU 23\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_23 [label="Token Routing\nGPU 0→23\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_23
+	comm_gate_expert_2_23 -> expert_2_23
+	comm_expert_agg_2_23 [label="Expert Output\nGPU 23→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_23 -> comm_expert_agg_2_23
+	expert_2_24 [label="Expert 152\nGPU 24\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_24 [label="Token Routing\nGPU 0→24\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_24
+	comm_gate_expert_2_24 -> expert_2_24
+	comm_expert_agg_2_24 [label="Expert Output\nGPU 24→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_24 -> comm_expert_agg_2_24
+	expert_2_25 [label="Expert 153\nGPU 25\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_25 [label="Token Routing\nGPU 0→25\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_25
+	comm_gate_expert_2_25 -> expert_2_25
+	comm_expert_agg_2_25 [label="Expert Output\nGPU 25→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_25 -> comm_expert_agg_2_25
+	expert_2_26 [label="Expert 154\nGPU 26\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_26 [label="Token Routing\nGPU 0→26\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_26
+	comm_gate_expert_2_26 -> expert_2_26
+	comm_expert_agg_2_26 [label="Expert Output\nGPU 26→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_26 -> comm_expert_agg_2_26
+	expert_2_27 [label="Expert 155\nGPU 27\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_27 [label="Token Routing\nGPU 0→27\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_27
+	comm_gate_expert_2_27 -> expert_2_27
+	comm_expert_agg_2_27 [label="Expert Output\nGPU 27→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_27 -> comm_expert_agg_2_27
+	expert_2_28 [label="Expert 156\nGPU 28\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_28 [label="Token Routing\nGPU 0→28\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_28
+	comm_gate_expert_2_28 -> expert_2_28
+	comm_expert_agg_2_28 [label="Expert Output\nGPU 28→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_28 -> comm_expert_agg_2_28
+	expert_2_29 [label="Expert 157\nGPU 29\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_29 [label="Token Routing\nGPU 0→29\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_29
+	comm_gate_expert_2_29 -> expert_2_29
+	comm_expert_agg_2_29 [label="Expert Output\nGPU 29→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_29 -> comm_expert_agg_2_29
+	expert_2_30 [label="Expert 158\nGPU 30\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_30 [label="Token Routing\nGPU 0→30\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_30
+	comm_gate_expert_2_30 -> expert_2_30
+	comm_expert_agg_2_30 [label="Expert Output\nGPU 30→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_30 -> comm_expert_agg_2_30
+	expert_2_31 [label="Expert 159\nGPU 31\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_31 [label="Token Routing\nGPU 0→31\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_31
+	comm_gate_expert_2_31 -> expert_2_31
+	comm_expert_agg_2_31 [label="Expert Output\nGPU 31→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_31 -> comm_expert_agg_2_31
+	expert_2_32 [label="Expert 160\nGPU 32\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_32 [label="Token Routing\nGPU 0→32\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_32
+	comm_gate_expert_2_32 -> expert_2_32
+	comm_expert_agg_2_32 [label="Expert Output\nGPU 32→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_32 -> comm_expert_agg_2_32
+	expert_2_33 [label="Expert 161\nGPU 33\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_33 [label="Token Routing\nGPU 0→33\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_33
+	comm_gate_expert_2_33 -> expert_2_33
+	comm_expert_agg_2_33 [label="Expert Output\nGPU 33→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_33 -> comm_expert_agg_2_33
+	expert_2_34 [label="Expert 162\nGPU 34\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_34 [label="Token Routing\nGPU 0→34\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_34
+	comm_gate_expert_2_34 -> expert_2_34
+	comm_expert_agg_2_34 [label="Expert Output\nGPU 34→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_34 -> comm_expert_agg_2_34
+	expert_2_35 [label="Expert 163\nGPU 35\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_35 [label="Token Routing\nGPU 0→35\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_35
+	comm_gate_expert_2_35 -> expert_2_35
+	comm_expert_agg_2_35 [label="Expert Output\nGPU 35→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_35 -> comm_expert_agg_2_35
+	expert_2_36 [label="Expert 164\nGPU 36\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_36 [label="Token Routing\nGPU 0→36\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_36
+	comm_gate_expert_2_36 -> expert_2_36
+	comm_expert_agg_2_36 [label="Expert Output\nGPU 36→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_36 -> comm_expert_agg_2_36
+	expert_2_37 [label="Expert 165\nGPU 37\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_37 [label="Token Routing\nGPU 0→37\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_37
+	comm_gate_expert_2_37 -> expert_2_37
+	comm_expert_agg_2_37 [label="Expert Output\nGPU 37→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_37 -> comm_expert_agg_2_37
+	expert_2_38 [label="Expert 166\nGPU 38\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_38 [label="Token Routing\nGPU 0→38\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_38
+	comm_gate_expert_2_38 -> expert_2_38
+	comm_expert_agg_2_38 [label="Expert Output\nGPU 38→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_38 -> comm_expert_agg_2_38
+	expert_2_39 [label="Expert 167\nGPU 39\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_39 [label="Token Routing\nGPU 0→39\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_39
+	comm_gate_expert_2_39 -> expert_2_39
+	comm_expert_agg_2_39 [label="Expert Output\nGPU 39→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_39 -> comm_expert_agg_2_39
+	expert_2_40 [label="Expert 168\nGPU 40\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_40 [label="Token Routing\nGPU 0→40\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_40
+	comm_gate_expert_2_40 -> expert_2_40
+	comm_expert_agg_2_40 [label="Expert Output\nGPU 40→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_40 -> comm_expert_agg_2_40
+	expert_2_41 [label="Expert 169\nGPU 41\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_41 [label="Token Routing\nGPU 0→41\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_41
+	comm_gate_expert_2_41 -> expert_2_41
+	comm_expert_agg_2_41 [label="Expert Output\nGPU 41→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_41 -> comm_expert_agg_2_41
+	expert_2_42 [label="Expert 170\nGPU 42\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_42 [label="Token Routing\nGPU 0→42\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_42
+	comm_gate_expert_2_42 -> expert_2_42
+	comm_expert_agg_2_42 [label="Expert Output\nGPU 42→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_42 -> comm_expert_agg_2_42
+	expert_2_43 [label="Expert 171\nGPU 43\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_43 [label="Token Routing\nGPU 0→43\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_43
+	comm_gate_expert_2_43 -> expert_2_43
+	comm_expert_agg_2_43 [label="Expert Output\nGPU 43→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_43 -> comm_expert_agg_2_43
+	expert_2_44 [label="Expert 172\nGPU 44\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_44 [label="Token Routing\nGPU 0→44\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_44
+	comm_gate_expert_2_44 -> expert_2_44
+	comm_expert_agg_2_44 [label="Expert Output\nGPU 44→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_44 -> comm_expert_agg_2_44
+	expert_2_45 [label="Expert 173\nGPU 45\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_45 [label="Token Routing\nGPU 0→45\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_45
+	comm_gate_expert_2_45 -> expert_2_45
+	comm_expert_agg_2_45 [label="Expert Output\nGPU 45→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_45 -> comm_expert_agg_2_45
+	expert_2_46 [label="Expert 174\nGPU 46\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_46 [label="Token Routing\nGPU 0→46\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_46
+	comm_gate_expert_2_46 -> expert_2_46
+	comm_expert_agg_2_46 [label="Expert Output\nGPU 46→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_46 -> comm_expert_agg_2_46
+	expert_2_47 [label="Expert 175\nGPU 47\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_47 [label="Token Routing\nGPU 0→47\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_47
+	comm_gate_expert_2_47 -> expert_2_47
+	comm_expert_agg_2_47 [label="Expert Output\nGPU 47→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_47 -> comm_expert_agg_2_47
+	expert_2_48 [label="Expert 176\nGPU 48\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_48 [label="Token Routing\nGPU 0→48\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_48
+	comm_gate_expert_2_48 -> expert_2_48
+	comm_expert_agg_2_48 [label="Expert Output\nGPU 48→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_48 -> comm_expert_agg_2_48
+	expert_2_49 [label="Expert 177\nGPU 49\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_49 [label="Token Routing\nGPU 0→49\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_49
+	comm_gate_expert_2_49 -> expert_2_49
+	comm_expert_agg_2_49 [label="Expert Output\nGPU 49→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_49 -> comm_expert_agg_2_49
+	expert_2_50 [label="Expert 178\nGPU 50\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_50 [label="Token Routing\nGPU 0→50\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_50
+	comm_gate_expert_2_50 -> expert_2_50
+	comm_expert_agg_2_50 [label="Expert Output\nGPU 50→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_50 -> comm_expert_agg_2_50
+	expert_2_51 [label="Expert 179\nGPU 51\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_51 [label="Token Routing\nGPU 0→51\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_51
+	comm_gate_expert_2_51 -> expert_2_51
+	comm_expert_agg_2_51 [label="Expert Output\nGPU 51→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_51 -> comm_expert_agg_2_51
+	expert_2_52 [label="Expert 180\nGPU 52\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_52 [label="Token Routing\nGPU 0→52\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_52
+	comm_gate_expert_2_52 -> expert_2_52
+	comm_expert_agg_2_52 [label="Expert Output\nGPU 52→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_52 -> comm_expert_agg_2_52
+	expert_2_53 [label="Expert 181\nGPU 53\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_53 [label="Token Routing\nGPU 0→53\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_53
+	comm_gate_expert_2_53 -> expert_2_53
+	comm_expert_agg_2_53 [label="Expert Output\nGPU 53→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_53 -> comm_expert_agg_2_53
+	expert_2_54 [label="Expert 182\nGPU 54\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_54 [label="Token Routing\nGPU 0→54\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_54
+	comm_gate_expert_2_54 -> expert_2_54
+	comm_expert_agg_2_54 [label="Expert Output\nGPU 54→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_54 -> comm_expert_agg_2_54
+	expert_2_55 [label="Expert 183\nGPU 55\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_55 [label="Token Routing\nGPU 0→55\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_55
+	comm_gate_expert_2_55 -> expert_2_55
+	comm_expert_agg_2_55 [label="Expert Output\nGPU 55→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_55 -> comm_expert_agg_2_55
+	expert_2_56 [label="Expert 184\nGPU 56\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_56 [label="Token Routing\nGPU 0→56\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_56
+	comm_gate_expert_2_56 -> expert_2_56
+	comm_expert_agg_2_56 [label="Expert Output\nGPU 56→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_56 -> comm_expert_agg_2_56
+	expert_2_57 [label="Expert 185\nGPU 57\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_57 [label="Token Routing\nGPU 0→57\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_57
+	comm_gate_expert_2_57 -> expert_2_57
+	comm_expert_agg_2_57 [label="Expert Output\nGPU 57→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_57 -> comm_expert_agg_2_57
+	expert_2_58 [label="Expert 186\nGPU 58\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_58 [label="Token Routing\nGPU 0→58\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_58
+	comm_gate_expert_2_58 -> expert_2_58
+	comm_expert_agg_2_58 [label="Expert Output\nGPU 58→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_58 -> comm_expert_agg_2_58
+	expert_2_59 [label="Expert 187\nGPU 59\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_59 [label="Token Routing\nGPU 0→59\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_59
+	comm_gate_expert_2_59 -> expert_2_59
+	comm_expert_agg_2_59 [label="Expert Output\nGPU 59→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_59 -> comm_expert_agg_2_59
+	expert_2_60 [label="Expert 188\nGPU 60\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_60 [label="Token Routing\nGPU 0→60\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_60
+	comm_gate_expert_2_60 -> expert_2_60
+	comm_expert_agg_2_60 [label="Expert Output\nGPU 60→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_60 -> comm_expert_agg_2_60
+	expert_2_61 [label="Expert 189\nGPU 61\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_61 [label="Token Routing\nGPU 0→61\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_61
+	comm_gate_expert_2_61 -> expert_2_61
+	comm_expert_agg_2_61 [label="Expert Output\nGPU 61→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_61 -> comm_expert_agg_2_61
+	expert_2_62 [label="Expert 190\nGPU 62\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_62 [label="Token Routing\nGPU 0→62\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_62
+	comm_gate_expert_2_62 -> expert_2_62
+	comm_expert_agg_2_62 [label="Expert Output\nGPU 62→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_62 -> comm_expert_agg_2_62
+	expert_2_63 [label="Expert 191\nGPU 63\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_2_63 [label="Token Routing\nGPU 0→63\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_2 -> comm_gate_expert_2_63
+	comm_gate_expert_2_63 -> expert_2_63
+	comm_expert_agg_2_63 [label="Expert Output\nGPU 63→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_2_63 -> comm_expert_agg_2_63
+	expert_agg_2 [label="Expert Output Aggregation\nAll-Reduce across GPUs\nShape: [524288, 4096]" fillcolor=lightyellow shape=hexagon style=filled]
+	comm_expert_agg_2_0 -> expert_agg_2
+	comm_expert_agg_2_1 -> expert_agg_2
+	comm_expert_agg_2_2 -> expert_agg_2
+	comm_expert_agg_2_3 -> expert_agg_2
+	comm_expert_agg_2_4 -> expert_agg_2
+	comm_expert_agg_2_5 -> expert_agg_2
+	comm_expert_agg_2_6 -> expert_agg_2
+	comm_expert_agg_2_7 -> expert_agg_2
+	comm_expert_agg_2_8 -> expert_agg_2
+	comm_expert_agg_2_9 -> expert_agg_2
+	comm_expert_agg_2_10 -> expert_agg_2
+	comm_expert_agg_2_11 -> expert_agg_2
+	comm_expert_agg_2_12 -> expert_agg_2
+	comm_expert_agg_2_13 -> expert_agg_2
+	comm_expert_agg_2_14 -> expert_agg_2
+	comm_expert_agg_2_15 -> expert_agg_2
+	comm_expert_agg_2_16 -> expert_agg_2
+	comm_expert_agg_2_17 -> expert_agg_2
+	comm_expert_agg_2_18 -> expert_agg_2
+	comm_expert_agg_2_19 -> expert_agg_2
+	comm_expert_agg_2_20 -> expert_agg_2
+	comm_expert_agg_2_21 -> expert_agg_2
+	comm_expert_agg_2_22 -> expert_agg_2
+	comm_expert_agg_2_23 -> expert_agg_2
+	comm_expert_agg_2_24 -> expert_agg_2
+	comm_expert_agg_2_25 -> expert_agg_2
+	comm_expert_agg_2_26 -> expert_agg_2
+	comm_expert_agg_2_27 -> expert_agg_2
+	comm_expert_agg_2_28 -> expert_agg_2
+	comm_expert_agg_2_29 -> expert_agg_2
+	comm_expert_agg_2_30 -> expert_agg_2
+	comm_expert_agg_2_31 -> expert_agg_2
+	comm_expert_agg_2_32 -> expert_agg_2
+	comm_expert_agg_2_33 -> expert_agg_2
+	comm_expert_agg_2_34 -> expert_agg_2
+	comm_expert_agg_2_35 -> expert_agg_2
+	comm_expert_agg_2_36 -> expert_agg_2
+	comm_expert_agg_2_37 -> expert_agg_2
+	comm_expert_agg_2_38 -> expert_agg_2
+	comm_expert_agg_2_39 -> expert_agg_2
+	comm_expert_agg_2_40 -> expert_agg_2
+	comm_expert_agg_2_41 -> expert_agg_2
+	comm_expert_agg_2_42 -> expert_agg_2
+	comm_expert_agg_2_43 -> expert_agg_2
+	comm_expert_agg_2_44 -> expert_agg_2
+	comm_expert_agg_2_45 -> expert_agg_2
+	comm_expert_agg_2_46 -> expert_agg_2
+	comm_expert_agg_2_47 -> expert_agg_2
+	comm_expert_agg_2_48 -> expert_agg_2
+	comm_expert_agg_2_49 -> expert_agg_2
+	comm_expert_agg_2_50 -> expert_agg_2
+	comm_expert_agg_2_51 -> expert_agg_2
+	comm_expert_agg_2_52 -> expert_agg_2
+	comm_expert_agg_2_53 -> expert_agg_2
+	comm_expert_agg_2_54 -> expert_agg_2
+	comm_expert_agg_2_55 -> expert_agg_2
+	comm_expert_agg_2_56 -> expert_agg_2
+	comm_expert_agg_2_57 -> expert_agg_2
+	comm_expert_agg_2_58 -> expert_agg_2
+	comm_expert_agg_2_59 -> expert_agg_2
+	comm_expert_agg_2_60 -> expert_agg_2
+	comm_expert_agg_2_61 -> expert_agg_2
+	comm_expert_agg_2_62 -> expert_agg_2
+	comm_expert_agg_2_63 -> expert_agg_2
+	moe_residual_2 [label="MoE Residual Add\nShape: [1024, 512, 4096]" fillcolor=lightyellow shape=ellipse style=filled]
+	moe_residual_1 -> attn_qkv_2
+	attn_qkv_2 -> attn_split_2
+	attn_split_2 -> attn_score_2
+	attn_score_2 -> attn_out_2
+	attn_out_2 -> attn_residual_2
+	attn_residual_2 -> ln2_2
+	ln2_2 -> moe_gate_2
+	expert_agg_2 -> moe_residual_2
+	attn_qkv_3 [label="Layer 3 QKV Linear\nTP=8 Column Parallel\nShape: [1024, 512, 4096] → [1024, 512, 12288]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_split_3 [label="Split QKV\nShape: Q[1024, 512, 4096], K/V same" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_score_3 [label="Attention Scores\nShape: [1024, 32, 512, 512]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_out_3 [label="Attention Output Linear\nTP=8 Row Parallel\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	attn_residual_3 [label="Residual Add\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	ln2_3 [label="Post-Attention LayerNorm\nShape: [1024, 512, 4096]" fillcolor=lightgreen shape=ellipse style=filled]
+	moe_gate_3 [label="MoE Gate\nShape: [524288, 4096] → Top-2 routing" fillcolor=lightyellow shape=diamond style=filled]
+	expert_3_0 [label="Expert 192\nGPU 0\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_0 [label="Token Routing\nGPU 0→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_0
+	comm_gate_expert_3_0 -> expert_3_0
+	comm_expert_agg_3_0 [label="Expert Output\nGPU 0→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_0 -> comm_expert_agg_3_0
+	expert_3_1 [label="Expert 193\nGPU 1\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_1 [label="Token Routing\nGPU 0→1\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_1
+	comm_gate_expert_3_1 -> expert_3_1
+	comm_expert_agg_3_1 [label="Expert Output\nGPU 1→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_1 -> comm_expert_agg_3_1
+	expert_3_2 [label="Expert 194\nGPU 2\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_2 [label="Token Routing\nGPU 0→2\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_2
+	comm_gate_expert_3_2 -> expert_3_2
+	comm_expert_agg_3_2 [label="Expert Output\nGPU 2→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_2 -> comm_expert_agg_3_2
+	expert_3_3 [label="Expert 195\nGPU 3\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_3 [label="Token Routing\nGPU 0→3\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_3
+	comm_gate_expert_3_3 -> expert_3_3
+	comm_expert_agg_3_3 [label="Expert Output\nGPU 3→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_3 -> comm_expert_agg_3_3
+	expert_3_4 [label="Expert 196\nGPU 4\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_4 [label="Token Routing\nGPU 0→4\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_4
+	comm_gate_expert_3_4 -> expert_3_4
+	comm_expert_agg_3_4 [label="Expert Output\nGPU 4→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_4 -> comm_expert_agg_3_4
+	expert_3_5 [label="Expert 197\nGPU 5\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_5 [label="Token Routing\nGPU 0→5\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_5
+	comm_gate_expert_3_5 -> expert_3_5
+	comm_expert_agg_3_5 [label="Expert Output\nGPU 5→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_5 -> comm_expert_agg_3_5
+	expert_3_6 [label="Expert 198\nGPU 6\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_6 [label="Token Routing\nGPU 0→6\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_6
+	comm_gate_expert_3_6 -> expert_3_6
+	comm_expert_agg_3_6 [label="Expert Output\nGPU 6→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_6 -> comm_expert_agg_3_6
+	expert_3_7 [label="Expert 199\nGPU 7\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_7 [label="Token Routing\nGPU 0→7\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_7
+	comm_gate_expert_3_7 -> expert_3_7
+	comm_expert_agg_3_7 [label="Expert Output\nGPU 7→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_7 -> comm_expert_agg_3_7
+	expert_3_8 [label="Expert 200\nGPU 8\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_8 [label="Token Routing\nGPU 0→8\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_8
+	comm_gate_expert_3_8 -> expert_3_8
+	comm_expert_agg_3_8 [label="Expert Output\nGPU 8→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_8 -> comm_expert_agg_3_8
+	expert_3_9 [label="Expert 201\nGPU 9\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_9 [label="Token Routing\nGPU 0→9\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_9
+	comm_gate_expert_3_9 -> expert_3_9
+	comm_expert_agg_3_9 [label="Expert Output\nGPU 9→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_9 -> comm_expert_agg_3_9
+	expert_3_10 [label="Expert 202\nGPU 10\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_10 [label="Token Routing\nGPU 0→10\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_10
+	comm_gate_expert_3_10 -> expert_3_10
+	comm_expert_agg_3_10 [label="Expert Output\nGPU 10→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_10 -> comm_expert_agg_3_10
+	expert_3_11 [label="Expert 203\nGPU 11\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_11 [label="Token Routing\nGPU 0→11\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_11
+	comm_gate_expert_3_11 -> expert_3_11
+	comm_expert_agg_3_11 [label="Expert Output\nGPU 11→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_11 -> comm_expert_agg_3_11
+	expert_3_12 [label="Expert 204\nGPU 12\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_12 [label="Token Routing\nGPU 0→12\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_12
+	comm_gate_expert_3_12 -> expert_3_12
+	comm_expert_agg_3_12 [label="Expert Output\nGPU 12→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_12 -> comm_expert_agg_3_12
+	expert_3_13 [label="Expert 205\nGPU 13\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_13 [label="Token Routing\nGPU 0→13\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_13
+	comm_gate_expert_3_13 -> expert_3_13
+	comm_expert_agg_3_13 [label="Expert Output\nGPU 13→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_13 -> comm_expert_agg_3_13
+	expert_3_14 [label="Expert 206\nGPU 14\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_14 [label="Token Routing\nGPU 0→14\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_14
+	comm_gate_expert_3_14 -> expert_3_14
+	comm_expert_agg_3_14 [label="Expert Output\nGPU 14→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_14 -> comm_expert_agg_3_14
+	expert_3_15 [label="Expert 207\nGPU 15\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_15 [label="Token Routing\nGPU 0→15\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_15
+	comm_gate_expert_3_15 -> expert_3_15
+	comm_expert_agg_3_15 [label="Expert Output\nGPU 15→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_15 -> comm_expert_agg_3_15
+	expert_3_16 [label="Expert 208\nGPU 16\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_16 [label="Token Routing\nGPU 0→16\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_16
+	comm_gate_expert_3_16 -> expert_3_16
+	comm_expert_agg_3_16 [label="Expert Output\nGPU 16→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_16 -> comm_expert_agg_3_16
+	expert_3_17 [label="Expert 209\nGPU 17\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_17 [label="Token Routing\nGPU 0→17\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_17
+	comm_gate_expert_3_17 -> expert_3_17
+	comm_expert_agg_3_17 [label="Expert Output\nGPU 17→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_17 -> comm_expert_agg_3_17
+	expert_3_18 [label="Expert 210\nGPU 18\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_18 [label="Token Routing\nGPU 0→18\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_18
+	comm_gate_expert_3_18 -> expert_3_18
+	comm_expert_agg_3_18 [label="Expert Output\nGPU 18→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_18 -> comm_expert_agg_3_18
+	expert_3_19 [label="Expert 211\nGPU 19\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_19 [label="Token Routing\nGPU 0→19\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_19
+	comm_gate_expert_3_19 -> expert_3_19
+	comm_expert_agg_3_19 [label="Expert Output\nGPU 19→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_19 -> comm_expert_agg_3_19
+	expert_3_20 [label="Expert 212\nGPU 20\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_20 [label="Token Routing\nGPU 0→20\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_20
+	comm_gate_expert_3_20 -> expert_3_20
+	comm_expert_agg_3_20 [label="Expert Output\nGPU 20→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_20 -> comm_expert_agg_3_20
+	expert_3_21 [label="Expert 213\nGPU 21\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_21 [label="Token Routing\nGPU 0→21\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_21
+	comm_gate_expert_3_21 -> expert_3_21
+	comm_expert_agg_3_21 [label="Expert Output\nGPU 21→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_21 -> comm_expert_agg_3_21
+	expert_3_22 [label="Expert 214\nGPU 22\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_22 [label="Token Routing\nGPU 0→22\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_22
+	comm_gate_expert_3_22 -> expert_3_22
+	comm_expert_agg_3_22 [label="Expert Output\nGPU 22→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_22 -> comm_expert_agg_3_22
+	expert_3_23 [label="Expert 215\nGPU 23\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_23 [label="Token Routing\nGPU 0→23\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_23
+	comm_gate_expert_3_23 -> expert_3_23
+	comm_expert_agg_3_23 [label="Expert Output\nGPU 23→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_23 -> comm_expert_agg_3_23
+	expert_3_24 [label="Expert 216\nGPU 24\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_24 [label="Token Routing\nGPU 0→24\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_24
+	comm_gate_expert_3_24 -> expert_3_24
+	comm_expert_agg_3_24 [label="Expert Output\nGPU 24→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_24 -> comm_expert_agg_3_24
+	expert_3_25 [label="Expert 217\nGPU 25\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_25 [label="Token Routing\nGPU 0→25\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_25
+	comm_gate_expert_3_25 -> expert_3_25
+	comm_expert_agg_3_25 [label="Expert Output\nGPU 25→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_25 -> comm_expert_agg_3_25
+	expert_3_26 [label="Expert 218\nGPU 26\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_26 [label="Token Routing\nGPU 0→26\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_26
+	comm_gate_expert_3_26 -> expert_3_26
+	comm_expert_agg_3_26 [label="Expert Output\nGPU 26→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_26 -> comm_expert_agg_3_26
+	expert_3_27 [label="Expert 219\nGPU 27\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_27 [label="Token Routing\nGPU 0→27\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_27
+	comm_gate_expert_3_27 -> expert_3_27
+	comm_expert_agg_3_27 [label="Expert Output\nGPU 27→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_27 -> comm_expert_agg_3_27
+	expert_3_28 [label="Expert 220\nGPU 28\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_28 [label="Token Routing\nGPU 0→28\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_28
+	comm_gate_expert_3_28 -> expert_3_28
+	comm_expert_agg_3_28 [label="Expert Output\nGPU 28→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_28 -> comm_expert_agg_3_28
+	expert_3_29 [label="Expert 221\nGPU 29\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_29 [label="Token Routing\nGPU 0→29\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_29
+	comm_gate_expert_3_29 -> expert_3_29
+	comm_expert_agg_3_29 [label="Expert Output\nGPU 29→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_29 -> comm_expert_agg_3_29
+	expert_3_30 [label="Expert 222\nGPU 30\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_30 [label="Token Routing\nGPU 0→30\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_30
+	comm_gate_expert_3_30 -> expert_3_30
+	comm_expert_agg_3_30 [label="Expert Output\nGPU 30→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_30 -> comm_expert_agg_3_30
+	expert_3_31 [label="Expert 223\nGPU 31\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_31 [label="Token Routing\nGPU 0→31\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_31
+	comm_gate_expert_3_31 -> expert_3_31
+	comm_expert_agg_3_31 [label="Expert Output\nGPU 31→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_31 -> comm_expert_agg_3_31
+	expert_3_32 [label="Expert 224\nGPU 32\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_32 [label="Token Routing\nGPU 0→32\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_32
+	comm_gate_expert_3_32 -> expert_3_32
+	comm_expert_agg_3_32 [label="Expert Output\nGPU 32→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_32 -> comm_expert_agg_3_32
+	expert_3_33 [label="Expert 225\nGPU 33\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_33 [label="Token Routing\nGPU 0→33\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_33
+	comm_gate_expert_3_33 -> expert_3_33
+	comm_expert_agg_3_33 [label="Expert Output\nGPU 33→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_33 -> comm_expert_agg_3_33
+	expert_3_34 [label="Expert 226\nGPU 34\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_34 [label="Token Routing\nGPU 0→34\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_34
+	comm_gate_expert_3_34 -> expert_3_34
+	comm_expert_agg_3_34 [label="Expert Output\nGPU 34→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_34 -> comm_expert_agg_3_34
+	expert_3_35 [label="Expert 227\nGPU 35\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_35 [label="Token Routing\nGPU 0→35\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_35
+	comm_gate_expert_3_35 -> expert_3_35
+	comm_expert_agg_3_35 [label="Expert Output\nGPU 35→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_35 -> comm_expert_agg_3_35
+	expert_3_36 [label="Expert 228\nGPU 36\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_36 [label="Token Routing\nGPU 0→36\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_36
+	comm_gate_expert_3_36 -> expert_3_36
+	comm_expert_agg_3_36 [label="Expert Output\nGPU 36→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_36 -> comm_expert_agg_3_36
+	expert_3_37 [label="Expert 229\nGPU 37\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_37 [label="Token Routing\nGPU 0→37\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_37
+	comm_gate_expert_3_37 -> expert_3_37
+	comm_expert_agg_3_37 [label="Expert Output\nGPU 37→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_37 -> comm_expert_agg_3_37
+	expert_3_38 [label="Expert 230\nGPU 38\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_38 [label="Token Routing\nGPU 0→38\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_38
+	comm_gate_expert_3_38 -> expert_3_38
+	comm_expert_agg_3_38 [label="Expert Output\nGPU 38→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_38 -> comm_expert_agg_3_38
+	expert_3_39 [label="Expert 231\nGPU 39\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_39 [label="Token Routing\nGPU 0→39\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_39
+	comm_gate_expert_3_39 -> expert_3_39
+	comm_expert_agg_3_39 [label="Expert Output\nGPU 39→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_39 -> comm_expert_agg_3_39
+	expert_3_40 [label="Expert 232\nGPU 40\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_40 [label="Token Routing\nGPU 0→40\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_40
+	comm_gate_expert_3_40 -> expert_3_40
+	comm_expert_agg_3_40 [label="Expert Output\nGPU 40→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_40 -> comm_expert_agg_3_40
+	expert_3_41 [label="Expert 233\nGPU 41\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_41 [label="Token Routing\nGPU 0→41\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_41
+	comm_gate_expert_3_41 -> expert_3_41
+	comm_expert_agg_3_41 [label="Expert Output\nGPU 41→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_41 -> comm_expert_agg_3_41
+	expert_3_42 [label="Expert 234\nGPU 42\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_42 [label="Token Routing\nGPU 0→42\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_42
+	comm_gate_expert_3_42 -> expert_3_42
+	comm_expert_agg_3_42 [label="Expert Output\nGPU 42→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_42 -> comm_expert_agg_3_42
+	expert_3_43 [label="Expert 235\nGPU 43\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_43 [label="Token Routing\nGPU 0→43\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_43
+	comm_gate_expert_3_43 -> expert_3_43
+	comm_expert_agg_3_43 [label="Expert Output\nGPU 43→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_43 -> comm_expert_agg_3_43
+	expert_3_44 [label="Expert 236\nGPU 44\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_44 [label="Token Routing\nGPU 0→44\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_44
+	comm_gate_expert_3_44 -> expert_3_44
+	comm_expert_agg_3_44 [label="Expert Output\nGPU 44→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_44 -> comm_expert_agg_3_44
+	expert_3_45 [label="Expert 237\nGPU 45\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_45 [label="Token Routing\nGPU 0→45\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_45
+	comm_gate_expert_3_45 -> expert_3_45
+	comm_expert_agg_3_45 [label="Expert Output\nGPU 45→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_45 -> comm_expert_agg_3_45
+	expert_3_46 [label="Expert 238\nGPU 46\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_46 [label="Token Routing\nGPU 0→46\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_46
+	comm_gate_expert_3_46 -> expert_3_46
+	comm_expert_agg_3_46 [label="Expert Output\nGPU 46→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_46 -> comm_expert_agg_3_46
+	expert_3_47 [label="Expert 239\nGPU 47\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_47 [label="Token Routing\nGPU 0→47\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_47
+	comm_gate_expert_3_47 -> expert_3_47
+	comm_expert_agg_3_47 [label="Expert Output\nGPU 47→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_47 -> comm_expert_agg_3_47
+	expert_3_48 [label="Expert 240\nGPU 48\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_48 [label="Token Routing\nGPU 0→48\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_48
+	comm_gate_expert_3_48 -> expert_3_48
+	comm_expert_agg_3_48 [label="Expert Output\nGPU 48→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_48 -> comm_expert_agg_3_48
+	expert_3_49 [label="Expert 241\nGPU 49\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_49 [label="Token Routing\nGPU 0→49\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_49
+	comm_gate_expert_3_49 -> expert_3_49
+	comm_expert_agg_3_49 [label="Expert Output\nGPU 49→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_49 -> comm_expert_agg_3_49
+	expert_3_50 [label="Expert 242\nGPU 50\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_50 [label="Token Routing\nGPU 0→50\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_50
+	comm_gate_expert_3_50 -> expert_3_50
+	comm_expert_agg_3_50 [label="Expert Output\nGPU 50→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_50 -> comm_expert_agg_3_50
+	expert_3_51 [label="Expert 243\nGPU 51\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_51 [label="Token Routing\nGPU 0→51\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_51
+	comm_gate_expert_3_51 -> expert_3_51
+	comm_expert_agg_3_51 [label="Expert Output\nGPU 51→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_51 -> comm_expert_agg_3_51
+	expert_3_52 [label="Expert 244\nGPU 52\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_52 [label="Token Routing\nGPU 0→52\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_52
+	comm_gate_expert_3_52 -> expert_3_52
+	comm_expert_agg_3_52 [label="Expert Output\nGPU 52→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_52 -> comm_expert_agg_3_52
+	expert_3_53 [label="Expert 245\nGPU 53\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_53 [label="Token Routing\nGPU 0→53\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_53
+	comm_gate_expert_3_53 -> expert_3_53
+	comm_expert_agg_3_53 [label="Expert Output\nGPU 53→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_53 -> comm_expert_agg_3_53
+	expert_3_54 [label="Expert 246\nGPU 54\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_54 [label="Token Routing\nGPU 0→54\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_54
+	comm_gate_expert_3_54 -> expert_3_54
+	comm_expert_agg_3_54 [label="Expert Output\nGPU 54→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_54 -> comm_expert_agg_3_54
+	expert_3_55 [label="Expert 247\nGPU 55\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_55 [label="Token Routing\nGPU 0→55\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_55
+	comm_gate_expert_3_55 -> expert_3_55
+	comm_expert_agg_3_55 [label="Expert Output\nGPU 55→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_55 -> comm_expert_agg_3_55
+	expert_3_56 [label="Expert 248\nGPU 56\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_56 [label="Token Routing\nGPU 0→56\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_56
+	comm_gate_expert_3_56 -> expert_3_56
+	comm_expert_agg_3_56 [label="Expert Output\nGPU 56→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_56 -> comm_expert_agg_3_56
+	expert_3_57 [label="Expert 249\nGPU 57\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_57 [label="Token Routing\nGPU 0→57\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_57
+	comm_gate_expert_3_57 -> expert_3_57
+	comm_expert_agg_3_57 [label="Expert Output\nGPU 57→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_57 -> comm_expert_agg_3_57
+	expert_3_58 [label="Expert 250\nGPU 58\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_58 [label="Token Routing\nGPU 0→58\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_58
+	comm_gate_expert_3_58 -> expert_3_58
+	comm_expert_agg_3_58 [label="Expert Output\nGPU 58→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_58 -> comm_expert_agg_3_58
+	expert_3_59 [label="Expert 251\nGPU 59\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_59 [label="Token Routing\nGPU 0→59\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_59
+	comm_gate_expert_3_59 -> expert_3_59
+	comm_expert_agg_3_59 [label="Expert Output\nGPU 59→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_59 -> comm_expert_agg_3_59
+	expert_3_60 [label="Expert 252\nGPU 60\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_60 [label="Token Routing\nGPU 0→60\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_60
+	comm_gate_expert_3_60 -> expert_3_60
+	comm_expert_agg_3_60 [label="Expert Output\nGPU 60→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_60 -> comm_expert_agg_3_60
+	expert_3_61 [label="Expert 253\nGPU 61\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_61 [label="Token Routing\nGPU 0→61\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_61
+	comm_gate_expert_3_61 -> expert_3_61
+	comm_expert_agg_3_61 [label="Expert Output\nGPU 61→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_61 -> comm_expert_agg_3_61
+	expert_3_62 [label="Expert 254\nGPU 62\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_62 [label="Token Routing\nGPU 0→62\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_62
+	comm_gate_expert_3_62 -> expert_3_62
+	comm_expert_agg_3_62 [label="Expert Output\nGPU 62→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_62 -> comm_expert_agg_3_62
+	expert_3_63 [label="Expert 255\nGPU 63\nShape: [524288, 4096] → [524288, 16384] → [524288, 4096]" fillcolor=lightyellow shape=box style=filled]
+	comm_gate_expert_3_63 [label="Token Routing\nGPU 0→63\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	moe_gate_3 -> comm_gate_expert_3_63
+	comm_gate_expert_3_63 -> expert_3_63
+	comm_expert_agg_3_63 [label="Expert Output\nGPU 63→0\nShape: Tokens × 4096" fillcolor=lightcoral shape=parallelogram style=filled]
+	expert_3_63 -> comm_expert_agg_3_63
+	expert_agg_3 [label="Expert Output Aggregation\nAll-Reduce across GPUs\nShape: [524288, 4096]" fillcolor=lightyellow shape=hexagon style=filled]
+	comm_expert_agg_3_0 -> expert_agg_3
+	comm_expert_agg_3_1 -> expert_agg_3
+	comm_expert_agg_3_2 -> expert_agg_3
+	comm_expert_agg_3_3 -> expert_agg_3
+	comm_expert_agg_3_4 -> expert_agg_3
+	comm_expert_agg_3_5 -> expert_agg_3
+	comm_expert_agg_3_6 -> expert_agg_3
+	comm_expert_agg_3_7 -> expert_agg_3
+	comm_expert_agg_3_8 -> expert_agg_3
+	comm_expert_agg_3_9 -> expert_agg_3
+	comm_expert_agg_3_10 -> expert_agg_3
+	comm_expert_agg_3_11 -> expert_agg_3
+	comm_expert_agg_3_12 -> expert_agg_3
+	comm_expert_agg_3_13 -> expert_agg_3
+	comm_expert_agg_3_14 -> expert_agg_3
+	comm_expert_agg_3_15 -> expert_agg_3
+	comm_expert_agg_3_16 -> expert_agg_3
+	comm_expert_agg_3_17 -> expert_agg_3
+	comm_expert_agg_3_18 -> expert_agg_3
+	comm_expert_agg_3_19 -> expert_agg_3
+	comm_expert_agg_3_20 -> expert_agg_3
+	comm_expert_agg_3_21 -> expert_agg_3
+	comm_expert_agg_3_22 -> expert_agg_3
+	comm_expert_agg_3_23 -> expert_agg_3
+	comm_expert_agg_3_24 -> expert_agg_3
+	comm_expert_agg_3_25 -> expert_agg_3
+	comm_expert_agg_3_26 -> expert_agg_3
+	comm_expert_agg_3_27 -> expert_agg_3
+	comm_expert_agg_3_28 -> expert_agg_3
+	comm_expert_agg_3_29 -> expert_agg_3
+	comm_expert_agg_3_30 -> expert_agg_3
+	comm_expert_agg_3_31 -> expert_agg_3
+	comm_expert_agg_3_32 -> expert_agg_3
+	comm_expert_agg_3_33 -> expert_agg_3
+	comm_expert_agg_3_34 -> expert_agg_3
+	comm_expert_agg_3_35 -> expert_agg_3
+	comm_expert_agg_3_36 -> expert_agg_3
+	comm_expert_agg_3_37 -> expert_agg_3
+	comm_expert_agg_3_38 -> expert_agg_3
+	comm_expert_agg_3_39 -> expert_agg_3
+	comm_expert_agg_3_40 -> expert_agg_3
+	comm_expert_agg_3_41 -> expert_agg_3
+	comm_expert_agg_3_42 -> expert_agg_3
+	comm_expert_agg_3_43 -> expert_agg_3
+	comm_expert_agg_3_44 -> expert_agg_3
+	comm_expert_agg_3_45 -> expert_agg_3
+	comm_expert_agg_3_46 -> expert_agg_3
+	comm_expert_agg_3_47 -> expert_agg_3
+	comm_expert_agg_3_48 -> expert_agg_3
+	comm_expert_agg_3_49 -> expert_agg_3
+	comm_expert_agg_3_50 -> expert_agg_3
+	comm_expert_agg_3_51 -> expert_agg_3
+	comm_expert_agg_3_52 -> expert_agg_3
+	comm_expert_agg_3_53 -> expert_agg_3
+	comm_expert_agg_3_54 -> expert_agg_3
+	comm_expert_agg_3_55 -> expert_agg_3
+	comm_expert_agg_3_56 -> expert_agg_3
+	comm_expert_agg_3_57 -> expert_agg_3
+	comm_expert_agg_3_58 -> expert_agg_3
+	comm_expert_agg_3_59 -> expert_agg_3
+	comm_expert_agg_3_60 -> expert_agg_3
+	comm_expert_agg_3_61 -> expert_agg_3
+	comm_expert_agg_3_62 -> expert_agg_3
+	comm_expert_agg_3_63 -> expert_agg_3
+	moe_residual_3 [label="MoE Residual Add\nShape: [1024, 512, 4096]" fillcolor=lightyellow shape=ellipse style=filled]
+	moe_residual_2 -> attn_qkv_3
+	attn_qkv_3 -> attn_split_3
+	attn_split_3 -> attn_score_3
+	attn_score_3 -> attn_out_3
+	attn_out_3 -> attn_residual_3
+	attn_residual_3 -> ln2_3
+	ln2_3 -> moe_gate_3
+	expert_agg_3 -> moe_residual_3
+	output [label="Final Output\n[1024, 512, 4096]" fillcolor=lightpink shape=box style=filled]
+	moe_residual_3 -> output
+	subgraph cluster_gpu_0 {
+		color=blue label="GPU 0" style=dashed
+		expert_0_0
+		expert_1_0
+		expert_2_0
+		expert_3_0
+	}
+	subgraph cluster_gpu_1 {
+		color=blue label="GPU 1" style=dashed
+		expert_0_1
+		expert_1_1
+		expert_2_1
+		expert_3_1
+	}
+	subgraph cluster_gpu_2 {
+		color=blue label="GPU 2" style=dashed
+		expert_0_2
+		expert_1_2
+		expert_2_2
+		expert_3_2
+	}
+	subgraph cluster_gpu_3 {
+		color=blue label="GPU 3" style=dashed
+		expert_0_3
+		expert_1_3
+		expert_2_3
+		expert_3_3
+	}
+	subgraph cluster_gpu_4 {
+		color=blue label="GPU 4" style=dashed
+		expert_0_4
+		expert_1_4
+		expert_2_4
+		expert_3_4
+	}
+	subgraph cluster_gpu_5 {
+		color=blue label="GPU 5" style=dashed
+		expert_0_5
+		expert_1_5
+		expert_2_5
+		expert_3_5
+	}
+	subgraph cluster_gpu_6 {
+		color=blue label="GPU 6" style=dashed
+		expert_0_6
+		expert_1_6
+		expert_2_6
+		expert_3_6
+	}
+	subgraph cluster_gpu_7 {
+		color=blue label="GPU 7" style=dashed
+		expert_0_7
+		expert_1_7
+		expert_2_7
+		expert_3_7
+	}
+	subgraph cluster_gpu_8 {
+		color=blue label="GPU 8" style=dashed
+		expert_0_8
+		expert_1_8
+		expert_2_8
+		expert_3_8
+	}
+	subgraph cluster_gpu_9 {
+		color=blue label="GPU 9" style=dashed
+		expert_0_9
+		expert_1_9
+		expert_2_9
+		expert_3_9
+	}
+	subgraph cluster_gpu_10 {
+		color=blue label="GPU 10" style=dashed
+		expert_0_10
+		expert_1_10
+		expert_2_10
+		expert_3_10
+	}
+	subgraph cluster_gpu_11 {
+		color=blue label="GPU 11" style=dashed
+		expert_0_11
+		expert_1_11
+		expert_2_11
+		expert_3_11
+	}
+	subgraph cluster_gpu_12 {
+		color=blue label="GPU 12" style=dashed
+		expert_0_12
+		expert_1_12
+		expert_2_12
+		expert_3_12
+	}
+	subgraph cluster_gpu_13 {
+		color=blue label="GPU 13" style=dashed
+		expert_0_13
+		expert_1_13
+		expert_2_13
+		expert_3_13
+	}
+	subgraph cluster_gpu_14 {
+		color=blue label="GPU 14" style=dashed
+		expert_0_14
+		expert_1_14
+		expert_2_14
+		expert_3_14
+	}
+	subgraph cluster_gpu_15 {
+		color=blue label="GPU 15" style=dashed
+		expert_0_15
+		expert_1_15
+		expert_2_15
+		expert_3_15
+	}
+	subgraph cluster_gpu_16 {
+		color=blue label="GPU 16" style=dashed
+		expert_0_16
+		expert_1_16
+		expert_2_16
+		expert_3_16
+	}
+	subgraph cluster_gpu_17 {
+		color=blue label="GPU 17" style=dashed
+		expert_0_17
+		expert_1_17
+		expert_2_17
+		expert_3_17
+	}
+	subgraph cluster_gpu_18 {
+		color=blue label="GPU 18" style=dashed
+		expert_0_18
+		expert_1_18
+		expert_2_18
+		expert_3_18
+	}
+	subgraph cluster_gpu_19 {
+		color=blue label="GPU 19" style=dashed
+		expert_0_19
+		expert_1_19
+		expert_2_19
+		expert_3_19
+	}
+	subgraph cluster_gpu_20 {
+		color=blue label="GPU 20" style=dashed
+		expert_0_20
+		expert_1_20
+		expert_2_20
+		expert_3_20
+	}
+	subgraph cluster_gpu_21 {
+		color=blue label="GPU 21" style=dashed
+		expert_0_21
+		expert_1_21
+		expert_2_21
+		expert_3_21
+	}
+	subgraph cluster_gpu_22 {
+		color=blue label="GPU 22" style=dashed
+		expert_0_22
+		expert_1_22
+		expert_2_22
+		expert_3_22
+	}
+	subgraph cluster_gpu_23 {
+		color=blue label="GPU 23" style=dashed
+		expert_0_23
+		expert_1_23
+		expert_2_23
+		expert_3_23
+	}
+	subgraph cluster_gpu_24 {
+		color=blue label="GPU 24" style=dashed
+		expert_0_24
+		expert_1_24
+		expert_2_24
+		expert_3_24
+	}
+	subgraph cluster_gpu_25 {
+		color=blue label="GPU 25" style=dashed
+		expert_0_25
+		expert_1_25
+		expert_2_25
+		expert_3_25
+	}
+	subgraph cluster_gpu_26 {
+		color=blue label="GPU 26" style=dashed
+		expert_0_26
+		expert_1_26
+		expert_2_26
+		expert_3_26
+	}
+	subgraph cluster_gpu_27 {
+		color=blue label="GPU 27" style=dashed
+		expert_0_27
+		expert_1_27
+		expert_2_27
+		expert_3_27
+	}
+	subgraph cluster_gpu_28 {
+		color=blue label="GPU 28" style=dashed
+		expert_0_28
+		expert_1_28
+		expert_2_28
+		expert_3_28
+	}
+	subgraph cluster_gpu_29 {
+		color=blue label="GPU 29" style=dashed
+		expert_0_29
+		expert_1_29
+		expert_2_29
+		expert_3_29
+	}
+	subgraph cluster_gpu_30 {
+		color=blue label="GPU 30" style=dashed
+		expert_0_30
+		expert_1_30
+		expert_2_30
+		expert_3_30
+	}
+	subgraph cluster_gpu_31 {
+		color=blue label="GPU 31" style=dashed
+		expert_0_31
+		expert_1_31
+		expert_2_31
+		expert_3_31
+	}
+	subgraph cluster_gpu_32 {
+		color=blue label="GPU 32" style=dashed
+		expert_0_32
+		expert_1_32
+		expert_2_32
+		expert_3_32
+	}
+	subgraph cluster_gpu_33 {
+		color=blue label="GPU 33" style=dashed
+		expert_0_33
+		expert_1_33
+		expert_2_33
+		expert_3_33
+	}
+	subgraph cluster_gpu_34 {
+		color=blue label="GPU 34" style=dashed
+		expert_0_34
+		expert_1_34
+		expert_2_34
+		expert_3_34
+	}
+	subgraph cluster_gpu_35 {
+		color=blue label="GPU 35" style=dashed
+		expert_0_35
+		expert_1_35
+		expert_2_35
+		expert_3_35
+	}
+	subgraph cluster_gpu_36 {
+		color=blue label="GPU 36" style=dashed
+		expert_0_36
+		expert_1_36
+		expert_2_36
+		expert_3_36
+	}
+	subgraph cluster_gpu_37 {
+		color=blue label="GPU 37" style=dashed
+		expert_0_37
+		expert_1_37
+		expert_2_37
+		expert_3_37
+	}
+	subgraph cluster_gpu_38 {
+		color=blue label="GPU 38" style=dashed
+		expert_0_38
+		expert_1_38
+		expert_2_38
+		expert_3_38
+	}
+	subgraph cluster_gpu_39 {
+		color=blue label="GPU 39" style=dashed
+		expert_0_39
+		expert_1_39
+		expert_2_39
+		expert_3_39
+	}
+	subgraph cluster_gpu_40 {
+		color=blue label="GPU 40" style=dashed
+		expert_0_40
+		expert_1_40
+		expert_2_40
+		expert_3_40
+	}
+	subgraph cluster_gpu_41 {
+		color=blue label="GPU 41" style=dashed
+		expert_0_41
+		expert_1_41
+		expert_2_41
+		expert_3_41
+	}
+	subgraph cluster_gpu_42 {
+		color=blue label="GPU 42" style=dashed
+		expert_0_42
+		expert_1_42
+		expert_2_42
+		expert_3_42
+	}
+	subgraph cluster_gpu_43 {
+		color=blue label="GPU 43" style=dashed
+		expert_0_43
+		expert_1_43
+		expert_2_43
+		expert_3_43
+	}
+	subgraph cluster_gpu_44 {
+		color=blue label="GPU 44" style=dashed
+		expert_0_44
+		expert_1_44
+		expert_2_44
+		expert_3_44
+	}
+	subgraph cluster_gpu_45 {
+		color=blue label="GPU 45" style=dashed
+		expert_0_45
+		expert_1_45
+		expert_2_45
+		expert_3_45
+	}
+	subgraph cluster_gpu_46 {
+		color=blue label="GPU 46" style=dashed
+		expert_0_46
+		expert_1_46
+		expert_2_46
+		expert_3_46
+	}
+	subgraph cluster_gpu_47 {
+		color=blue label="GPU 47" style=dashed
+		expert_0_47
+		expert_1_47
+		expert_2_47
+		expert_3_47
+	}
+	subgraph cluster_gpu_48 {
+		color=blue label="GPU 48" style=dashed
+		expert_0_48
+		expert_1_48
+		expert_2_48
+		expert_3_48
+	}
+	subgraph cluster_gpu_49 {
+		color=blue label="GPU 49" style=dashed
+		expert_0_49
+		expert_1_49
+		expert_2_49
+		expert_3_49
+	}
+	subgraph cluster_gpu_50 {
+		color=blue label="GPU 50" style=dashed
+		expert_0_50
+		expert_1_50
+		expert_2_50
+		expert_3_50
+	}
+	subgraph cluster_gpu_51 {
+		color=blue label="GPU 51" style=dashed
+		expert_0_51
+		expert_1_51
+		expert_2_51
+		expert_3_51
+	}
+	subgraph cluster_gpu_52 {
+		color=blue label="GPU 52" style=dashed
+		expert_0_52
+		expert_1_52
+		expert_2_52
+		expert_3_52
+	}
+	subgraph cluster_gpu_53 {
+		color=blue label="GPU 53" style=dashed
+		expert_0_53
+		expert_1_53
+		expert_2_53
+		expert_3_53
+	}
+	subgraph cluster_gpu_54 {
+		color=blue label="GPU 54" style=dashed
+		expert_0_54
+		expert_1_54
+		expert_2_54
+		expert_3_54
+	}
+	subgraph cluster_gpu_55 {
+		color=blue label="GPU 55" style=dashed
+		expert_0_55
+		expert_1_55
+		expert_2_55
+		expert_3_55
+	}
+	subgraph cluster_gpu_56 {
+		color=blue label="GPU 56" style=dashed
+		expert_0_56
+		expert_1_56
+		expert_2_56
+		expert_3_56
+	}
+	subgraph cluster_gpu_57 {
+		color=blue label="GPU 57" style=dashed
+		expert_0_57
+		expert_1_57
+		expert_2_57
+		expert_3_57
+	}
+	subgraph cluster_gpu_58 {
+		color=blue label="GPU 58" style=dashed
+		expert_0_58
+		expert_1_58
+		expert_2_58
+		expert_3_58
+	}
+	subgraph cluster_gpu_59 {
+		color=blue label="GPU 59" style=dashed
+		expert_0_59
+		expert_1_59
+		expert_2_59
+		expert_3_59
+	}
+	subgraph cluster_gpu_60 {
+		color=blue label="GPU 60" style=dashed
+		expert_0_60
+		expert_1_60
+		expert_2_60
+		expert_3_60
+	}
+	subgraph cluster_gpu_61 {
+		color=blue label="GPU 61" style=dashed
+		expert_0_61
+		expert_1_61
+		expert_2_61
+		expert_3_61
+	}
+	subgraph cluster_gpu_62 {
+		color=blue label="GPU 62" style=dashed
+		expert_0_62
+		expert_1_62
+		expert_2_62
+		expert_3_62
+	}
+	subgraph cluster_gpu_63 {
+		color=blue label="GPU 63" style=dashed
+		expert_0_63
+		expert_1_63
+		expert_2_63
+		expert_3_63
+	}
+}
