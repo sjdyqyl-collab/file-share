@@ -1,0 +1,6024 @@
+digraph helix_deployment {
+	graph [bb="0,0,35394,5124.7",
+		nodesep=0.8,
+		rankdir=TB,
+		ranksep=1.2,
+		splines=ortho
+	];
+	node [label="\N",
+		shape=box,
+		style=filled
+	];
+	edge [color=red,
+		constraint=false,
+		style=dashed
+	];
+	subgraph cluster_layer_1 {
+		graph [bb="26212,3889.8,35386,4993.8",
+			color=black,
+			label="Layer 1",
+			lheight=0.21,
+			lp="30799,4982.3",
+			lwidth=0.76,
+			style=dashed
+		];
+		q_proj_1_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="Q Projection 0_0
+[B×L×d_s×h_g]
+W_Q^{0,0}
+GPU: 0",
+			pos="34927,4928.8",
+			width=1.8611];
+		attention_1_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="Attention 0_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 0",
+			pos="35022,4773.8",
+			width=2.4028];
+		q_proj_1_0_0 -> attention_1_0_0	[color="",
+			constraint="",
+			pos="e,34965,4808 34965,4894.8 34965,4894.8 34965,4818 34965,4818",
+			style=""];
+		k_proj_1_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="K Projection 0_0
+[B×L×d_s×h_g]
+W_K^{0,0}
+GPU: 0",
+			pos="35311,4928.8",
+			width=1.8611];
+		k_proj_1_0_0 -> attention_1_0_0	[color="",
+			constraint="",
+			pos="e,35109,4773 35311,4894.6 35311,4848.7 35311,4773 35311,4773 35311,4773 35119,4773 35119,4773",
+			style=""];
+		v_proj_1_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="V Projection 0_0
+[B×L×d_s×h_g]
+W_V^{0,0}
+GPU: 0",
+			pos="35119,4928.8",
+			width=1.8472];
+		v_proj_1_0_0 -> attention_1_0_0	[color="",
+			constraint="",
+			pos="e,35080,4808 35080,4894.8 35080,4894.8 35080,4818 35080,4818",
+			style=""];
+		concat_group_1_0	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 0
+[B×L×d×h_g]
+GPU: 0-3",
+			pos="33967,4585.8",
+			shape=diamond,
+			width=3.5556];
+		attention_1_0_0 -> concat_group_1_0	[color="",
+			constraint="",
+			pos="e,34093,4585 35022,4739.6 35022,4685.2 35022,4585 35022,4585 35022,4585 34103,4585 34103,4585",
+			style=""];
+		q_proj_1_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="Q Projection 0_1
+[B×L×d_s×h_g]
+W_Q^{0,1}
+GPU: 1",
+			pos="34351,4928.8",
+			width=1.8611];
+		attention_1_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="Attention 0_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 1",
+			pos="34399,4773.8",
+			width=2.4028];
+		q_proj_1_0_1 -> attention_1_0_1	[color="",
+			constraint="",
+			pos="e,34365,4808 34365,4894.8 34365,4894.8 34365,4818 34365,4818",
+			style=""];
+		k_proj_1_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="K Projection 0_1
+[B×L×d_s×h_g]
+W_K^{0,1}
+GPU: 1",
+			pos="34735,4928.8",
+			width=1.8611];
+		k_proj_1_0_1 -> attention_1_0_1	[color="",
+			constraint="",
+			pos="e,34486,4773 34735,4894.6 34735,4848.7 34735,4773 34735,4773 34735,4773 34496,4773 34496,4773",
+			style=""];
+		v_proj_1_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="V Projection 0_1
+[B×L×d_s×h_g]
+W_V^{0,1}
+GPU: 1",
+			pos="34543,4928.8",
+			width=1.8472];
+		v_proj_1_0_1 -> attention_1_0_1	[color="",
+			constraint="",
+			pos="e,34481,4808 34481,4894.8 34481,4894.8 34481,4818 34481,4818",
+			style=""];
+		attention_1_0_1 -> concat_group_1_0	[color="",
+			constraint="",
+			pos="e,34066,4597.9 34312,4785 34214,4785 34066,4785 34066,4785 34066,4785 34066,4607.9 34066,4607.9",
+			style=""];
+		attention_1_0_1 -> concat_group_1_0	[label="AllGather GPU0→GPU1",
+			lp="34466,4689.3",
+			pos="e,34079,4592.5 34312,4762 34218,4762 34079,4762 34079,4762 34079,4762 34079,4602.5 34079,4602.5"];
+		q_proj_1_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="Q Projection 0_2
+[B×L×d_s×h_g]
+W_Q^{0,2}
+GPU: 2",
+			pos="33775,4928.8",
+			width=1.8611];
+		attention_1_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="Attention 0_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 2",
+			pos="33967,4773.8",
+			width=2.4028];
+		q_proj_1_0_2 -> attention_1_0_2	[color="",
+			constraint="",
+			pos="e,33890,4808.1 33842,4917 33868,4917 33890,4917 33890,4917 33890,4917 33890,4818.1 33890,4818.1",
+			style=""];
+		k_proj_1_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="K Projection 0_2
+[B×L×d_s×h_g]
+W_K^{0,2}
+GPU: 2",
+			pos="34159,4928.8",
+			width=1.8611];
+		k_proj_1_0_2 -> attention_1_0_2	[color="",
+			constraint="",
+			pos="e,34044,4808 34092,4928 34067,4928 34044,4928 34044,4928 34044,4928 34044,4818 34044,4818",
+			style=""];
+		v_proj_1_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="V Projection 0_2
+[B×L×d_s×h_g]
+W_V^{0,2}
+GPU: 2",
+			pos="33967,4928.8",
+			width=1.8472];
+		v_proj_1_0_2 -> attention_1_0_2	[color="",
+			constraint="",
+			pos="e,33967,4808 33967,4894.8 33967,4894.8 33967,4818 33967,4818",
+			style=""];
+		attention_1_0_2 -> concat_group_1_0	[color="",
+			constraint="",
+			pos="e,33938,4627.1 33938,4739.7 33938,4739.7 33938,4637.1 33938,4637.1",
+			style=""];
+		attention_1_0_2 -> concat_group_1_0	[label="AllGather GPU1→GPU2",
+			lp="34180,4689.3",
+			pos="e,33996,4627.1 33996,4739.7 33996,4739.7 33996,4637.1 33996,4637.1"];
+		q_proj_1_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="Q Projection 0_3
+[B×L×d_s×h_g]
+W_Q^{0,3}
+GPU: 3",
+			pos="33583,4928.8",
+			width=1.8611];
+		attention_1_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="Attention 0_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 3",
+			pos="33488,4773.8",
+			width=2.4028];
+		q_proj_1_0_3 -> attention_1_0_3	[color="",
+			constraint="",
+			pos="e,33545,4808 33545,4894.8 33545,4894.8 33545,4818 33545,4818",
+			style=""];
+		k_proj_1_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="K Projection 0_3
+[B×L×d_s×h_g]
+W_K^{0,3}
+GPU: 3",
+			pos="33391,4928.8",
+			width=1.8611];
+		k_proj_1_0_3 -> attention_1_0_3	[color="",
+			constraint="",
+			pos="e,33430,4808 33430,4894.8 33430,4894.8 33430,4818 33430,4818",
+			style=""];
+		v_proj_1_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="V Projection 0_3
+[B×L×d_s×h_g]
+W_V^{0,3}
+GPU: 3",
+			pos="33199,4928.8",
+			width=1.8472];
+		v_proj_1_0_3 -> attention_1_0_3	[color="",
+			constraint="",
+			pos="e,33401,4762 33199,4894.6 33199,4845.8 33199,4762 33199,4762 33199,4762 33391,4762 33391,4762",
+			style=""];
+		attention_1_0_3 -> concat_group_1_0	[color="",
+			constraint="",
+			pos="e,33861,4595.1 33575,4785 33685,4785 33861,4785 33861,4785 33861,4785 33861,4605.1 33861,4605.1",
+			style=""];
+		attention_1_0_3 -> concat_group_1_0	[label="AllGather GPU2→GPU3",
+			lp="33841,4689.3",
+			pos="e,33852,4591.2 33575,4762 33682,4762 33852,4762 33852,4762 33852,4762 33852,4601.2 33852,4601.2"];
+		q_proj_1_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="Q Projection 1_0
+[B×L×d_s×h_g]
+W_Q^{1,0}
+GPU: 4",
+			pos="33007,4928.8",
+			width=1.8611];
+		attention_1_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="Attention 1_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 4",
+			pos="32673,4773.8",
+			width=2.4028];
+		q_proj_1_1_0 -> attention_1_1_0	[color="",
+			constraint="",
+			pos="e,32760,4785 33007,4894.7 33007,4852.2 33007,4785 33007,4785 33007,4785 32770,4785 32770,4785",
+			style=""];
+		k_proj_1_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="K Projection 1_0
+[B×L×d_s×h_g]
+W_K^{1,0}
+GPU: 4",
+			pos="32815,4928.8",
+			width=1.8611];
+		k_proj_1_1_0 -> attention_1_1_0	[color="",
+			constraint="",
+			pos="e,32754,4808 32754,4894.8 32754,4894.8 32754,4818 32754,4818",
+			style=""];
+		v_proj_1_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="V Projection 1_0
+[B×L×d_s×h_g]
+W_V^{1,0}
+GPU: 4",
+			pos="32623,4928.8",
+			width=1.8472];
+		v_proj_1_1_0 -> attention_1_1_0	[color="",
+			constraint="",
+			pos="e,32638,4808 32638,4894.8 32638,4894.8 32638,4818 32638,4818",
+			style=""];
+		concat_group_1_1	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 1
+[B×L×d×h_g]
+GPU: 4-7",
+			pos="31663,4585.8",
+			shape=diamond,
+			width=3.5556];
+		attention_1_1_0 -> concat_group_1_1	[color="",
+			constraint="",
+			pos="e,31789,4585 32673,4739.6 32673,4685.2 32673,4585 32673,4585 32673,4585 31799,4585 31799,4585",
+			style=""];
+		q_proj_1_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="Q Projection 1_1
+[B×L×d_s×h_g]
+W_Q^{1,1}
+GPU: 5",
+			pos="32431,4928.8",
+			width=1.8611];
+		attention_1_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="Attention 1_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 5",
+			pos="32176,4773.8",
+			width=2.4028];
+		q_proj_1_1_1 -> attention_1_1_1	[color="",
+			constraint="",
+			pos="e,32263,4773 32431,4894.6 32431,4848.7 32431,4773 32431,4773 32431,4773 32273,4773 32273,4773",
+			style=""];
+		k_proj_1_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="K Projection 1_1
+[B×L×d_s×h_g]
+W_K^{1,1}
+GPU: 5",
+			pos="32239,4928.8",
+			width=1.8611];
+		k_proj_1_1_1 -> attention_1_1_1	[color="",
+			constraint="",
+			pos="e,32217,4808 32217,4894.8 32217,4894.8 32217,4818 32217,4818",
+			style=""];
+		v_proj_1_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="V Projection 1_1
+[B×L×d_s×h_g]
+W_V^{1,1}
+GPU: 5",
+			pos="32047,4928.8",
+			width=1.8472];
+		v_proj_1_1_1 -> attention_1_1_1	[color="",
+			constraint="",
+			pos="e,32102,4808 32102,4894.8 32102,4894.8 32102,4818 32102,4818",
+			style=""];
+		attention_1_1_1 -> concat_group_1_1	[color="",
+			constraint="",
+			pos="e,31762,4597.9 32089,4785 31968,4785 31762,4785 31762,4785 31762,4785 31762,4607.9 31762,4607.9",
+			style=""];
+		attention_1_1_1 -> concat_group_1_1	[label="AllGather GPU4→GPU5",
+			lp="32399,4689.3",
+			pos="e,31775,4592.5 32089,4762 31971,4762 31775,4762 31775,4762 31775,4762 31775,4602.5 31775,4602.5"];
+		q_proj_1_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="Q Projection 1_2
+[B×L×d_s×h_g]
+W_Q^{1,2}
+GPU: 6",
+			pos="31855,4928.8",
+			width=1.8611];
+		attention_1_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="Attention 1_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 6",
+			pos="31663,4773.8",
+			width=2.4028];
+		q_proj_1_1_2 -> attention_1_1_2	[color="",
+			constraint="",
+			pos="e,31740,4808 31788,4928 31763,4928 31740,4928 31740,4928 31740,4928 31740,4818 31740,4818",
+			style=""];
+		k_proj_1_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="K Projection 1_2
+[B×L×d_s×h_g]
+W_K^{1,2}
+GPU: 6",
+			pos="31663,4928.8",
+			width=1.8611];
+		k_proj_1_1_2 -> attention_1_1_2	[color="",
+			constraint="",
+			pos="e,31663,4808 31663,4894.8 31663,4894.8 31663,4818 31663,4818",
+			style=""];
+		v_proj_1_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="V Projection 1_2
+[B×L×d_s×h_g]
+W_V^{1,2}
+GPU: 6",
+			pos="31471,4928.8",
+			width=1.8472];
+		v_proj_1_1_2 -> attention_1_1_2	[color="",
+			constraint="",
+			pos="e,31586,4808 31538,4928 31563,4928 31586,4928 31586,4928 31586,4928 31586,4818 31586,4818",
+			style=""];
+		attention_1_1_2 -> concat_group_1_1	[color="",
+			constraint="",
+			pos="e,31634,4627.1 31634,4739.7 31634,4739.7 31634,4637.1 31634,4637.1",
+			style=""];
+		attention_1_1_2 -> concat_group_1_1	[label="AllGather GPU5→GPU6",
+			lp="31833,4689.3",
+			pos="e,31692,4627.1 31692,4739.7 31692,4739.7 31692,4637.1 31692,4637.1"];
+		q_proj_1_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="Q Projection 1_3
+[B×L×d_s×h_g]
+W_Q^{1,3}
+GPU: 7",
+			pos="31279,4928.8",
+			width=1.8611];
+		attention_1_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="Attention 1_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 7",
+			pos="31184,4773.8",
+			width=2.4028];
+		q_proj_1_1_3 -> attention_1_1_3	[color="",
+			constraint="",
+			pos="e,31241,4808 31241,4894.8 31241,4894.8 31241,4818 31241,4818",
+			style=""];
+		k_proj_1_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="K Projection 1_3
+[B×L×d_s×h_g]
+W_K^{1,3}
+GPU: 7",
+			pos="31087,4928.8",
+			width=1.8611];
+		k_proj_1_1_3 -> attention_1_1_3	[color="",
+			constraint="",
+			pos="e,31126,4808 31126,4894.8 31126,4894.8 31126,4818 31126,4818",
+			style=""];
+		v_proj_1_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="V Projection 1_3
+[B×L×d_s×h_g]
+W_V^{1,3}
+GPU: 7",
+			pos="30895,4928.8",
+			width=1.8472];
+		v_proj_1_1_3 -> attention_1_1_3	[color="",
+			constraint="",
+			pos="e,31097,4762 30917,4894.6 30917,4845.8 30917,4762 30917,4762 30917,4762 31087,4762 31087,4762",
+			style=""];
+		attention_1_1_3 -> concat_group_1_1	[color="",
+			constraint="",
+			pos="e,31564,4597.6 31271,4785 31383,4785 31564,4785 31564,4785 31564,4785 31564,4607.6 31564,4607.6",
+			style=""];
+		attention_1_1_3 -> concat_group_1_1	[label="AllGather GPU6→GPU7",
+			lp="31537,4689.3",
+			pos="e,31550,4592.5 31271,4762 31379,4762 31550,4762 31550,4762 31550,4762 31550,4602.5 31550,4602.5"];
+		q_proj_1_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="Q Projection 2_0
+[B×L×d_s×h_g]
+W_Q^{2,0}
+GPU: 8",
+			pos="30703,4928.8",
+			width=1.8611];
+		attention_1_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="Attention 2_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 8",
+			pos="30388,4773.8",
+			width=2.4028];
+		q_proj_1_2_0 -> attention_1_2_0	[color="",
+			constraint="",
+			pos="e,30475,4785 30703,4894.7 30703,4852.2 30703,4785 30703,4785 30703,4785 30485,4785 30485,4785",
+			style=""];
+		k_proj_1_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="K Projection 2_0
+[B×L×d_s×h_g]
+W_K^{2,0}
+GPU: 8",
+			pos="30511,4928.8",
+			width=1.8611];
+		k_proj_1_2_0 -> attention_1_2_0	[color="",
+			constraint="",
+			pos="e,30459,4808 30459,4894.8 30459,4894.8 30459,4818 30459,4818",
+			style=""];
+		v_proj_1_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="V Projection 2_0
+[B×L×d_s×h_g]
+W_V^{2,0}
+GPU: 8",
+			pos="30319,4928.8",
+			width=1.8472];
+		v_proj_1_2_0 -> attention_1_2_0	[color="",
+			constraint="",
+			pos="e,30344,4808 30344,4894.8 30344,4894.8 30344,4818 30344,4818",
+			style=""];
+		concat_group_1_2	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 2
+[B×L×d×h_g]
+GPU: 8-11",
+			pos="29935,4585.8",
+			shape=diamond,
+			width=3.5556];
+		attention_1_2_0 -> concat_group_1_2	[color="",
+			constraint="",
+			pos="e,30041,4595.1 30301,4773 30198,4773 30041,4773 30041,4773 30041,4773 30041,4605.1 30041,4605.1",
+			style=""];
+		q_proj_1_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="Q Projection 2_1
+[B×L×d_s×h_g]
+W_Q^{2,1}
+GPU: 9",
+			pos="30127,4928.8",
+			width=1.8611];
+		attention_1_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="Attention 2_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 9",
+			pos="29935,4773.8",
+			width=2.4028];
+		q_proj_1_2_1 -> attention_1_2_1	[color="",
+			constraint="",
+			pos="e,30012,4808 30060,4928 30035,4928 30012,4928 30012,4928 30012,4928 30012,4818 30012,4818",
+			style=""];
+		k_proj_1_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="K Projection 2_1
+[B×L×d_s×h_g]
+W_K^{2,1}
+GPU: 9",
+			pos="29935,4928.8",
+			width=1.8611];
+		k_proj_1_2_1 -> attention_1_2_1	[color="",
+			constraint="",
+			pos="e,29935,4808 29935,4894.8 29935,4894.8 29935,4818 29935,4818",
+			style=""];
+		v_proj_1_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="V Projection 2_1
+[B×L×d_s×h_g]
+W_V^{2,1}
+GPU: 9",
+			pos="29743,4928.8",
+			width=1.8472];
+		v_proj_1_2_1 -> attention_1_2_1	[color="",
+			constraint="",
+			pos="e,29858,4808 29810,4928 29835,4928 29858,4928 29858,4928 29858,4928 29858,4818 29858,4818",
+			style=""];
+		attention_1_2_1 -> concat_group_1_2	[color="",
+			constraint="",
+			pos="e,29906,4627.1 29906,4739.7 29906,4739.7 29906,4637.1 29906,4637.1",
+			style=""];
+		attention_1_2_1 -> concat_group_1_2	[label="AllGather GPU8→GPU9",
+			lp="30206,4689.3",
+			pos="e,29964,4627.1 29964,4739.7 29964,4739.7 29964,4637.1 29964,4637.1"];
+		q_proj_1_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="Q Projection 2_2
+[B×L×d_s×h_g]
+W_Q^{2,2}
+GPU: 10",
+			pos="29551,4928.8",
+			width=1.8611];
+		attention_1_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="Attention 2_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 10",
+			pos="29421,4773.8",
+			width=2.4028];
+		q_proj_1_2_2 -> attention_1_2_2	[color="",
+			constraint="",
+			pos="e,29496,4808 29496,4894.8 29496,4894.8 29496,4818 29496,4818",
+			style=""];
+		k_proj_1_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="K Projection 2_2
+[B×L×d_s×h_g]
+W_K^{2,2}
+GPU: 10",
+			pos="29359,4928.8",
+			width=1.8611];
+		k_proj_1_2_2 -> attention_1_2_2	[color="",
+			constraint="",
+			pos="e,29380,4808 29380,4894.8 29380,4894.8 29380,4818 29380,4818",
+			style=""];
+		v_proj_1_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="V Projection 2_2
+[B×L×d_s×h_g]
+W_V^{2,2}
+GPU: 10",
+			pos="29167,4928.8",
+			width=1.8472];
+		v_proj_1_2_2 -> attention_1_2_2	[color="",
+			constraint="",
+			pos="e,29334,4773 29206,4894.6 29206,4848.7 29206,4773 29206,4773 29206,4773 29324,4773 29324,4773",
+			style=""];
+		attention_1_2_2 -> concat_group_1_2	[color="",
+			constraint="",
+			pos="e,29836,4597.6 29508,4785 29629,4785 29836,4785 29836,4785 29836,4785 29836,4607.6 29836,4607.6",
+			style=""];
+		attention_1_2_2 -> concat_group_1_2	[label="AllGather GPU9→GPU10",
+			lp="29676,4689.3",
+			pos="e,29822,4592.5 29508,4762 29626,4762 29822,4762 29822,4762 29822,4762 29822,4602.5 29822,4602.5"];
+		q_proj_1_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="Q Projection 2_3
+[B×L×d_s×h_g]
+W_Q^{2,3}
+GPU: 11",
+			pos="28975,4928.8",
+			width=1.8611];
+		attention_1_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="Attention 2_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 11",
+			pos="28880,4773.8",
+			width=2.4028];
+		q_proj_1_2_3 -> attention_1_2_3	[color="",
+			constraint="",
+			pos="e,28937,4808 28937,4894.8 28937,4894.8 28937,4818 28937,4818",
+			style=""];
+		k_proj_1_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="K Projection 2_3
+[B×L×d_s×h_g]
+W_K^{2,3}
+GPU: 11",
+			pos="28783,4928.8",
+			width=1.8611];
+		k_proj_1_2_3 -> attention_1_2_3	[color="",
+			constraint="",
+			pos="e,28822,4808 28822,4894.8 28822,4894.8 28822,4818 28822,4818",
+			style=""];
+		v_proj_1_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="V Projection 2_3
+[B×L×d_s×h_g]
+W_V^{2,3}
+GPU: 11",
+			pos="28591,4928.8",
+			width=1.8472];
+		v_proj_1_2_3 -> attention_1_2_3	[color="",
+			constraint="",
+			pos="e,28793,4762 28644,4894.6 28644,4845.8 28644,4762 28644,4762 28644,4762 28783,4762 28783,4762",
+			style=""];
+		attention_1_2_3 -> concat_group_1_2	[color="",
+			constraint="",
+			pos="e,29848,4603 28959,4739.6 28959,4689.8 28959,4603 28959,4603 28959,4603 29838,4603 29838,4603",
+			style=""];
+		attention_1_2_3 -> concat_group_1_2	[label="AllGather GPU10→GPU11",
+			lp="29349,4689.3",
+			pos="e,29849,4568 28952,4739.3 28952,4680.7 28952,4568 28952,4568 28952,4568 29839,4568 29839,4568"];
+		q_proj_1_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="Q Projection 3_0
+[B×L×d_s×h_g]
+W_Q^{3,0}
+GPU: 12",
+			pos="28399,4928.8",
+			width=1.8611];
+		attention_1_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="Attention 3_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 12",
+			pos="28087,4773.8",
+			width=2.4028];
+		q_proj_1_3_0 -> attention_1_3_0	[color="",
+			constraint="",
+			pos="e,28174,4785 28357,4894.7 28357,4852.2 28357,4785 28357,4785 28357,4785 28184,4785 28184,4785",
+			style=""];
+		k_proj_1_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="K Projection 3_0
+[B×L×d_s×h_g]
+W_K^{3,0}
+GPU: 12",
+			pos="28207,4928.8",
+			width=1.8611];
+		k_proj_1_3_0 -> attention_1_3_0	[color="",
+			constraint="",
+			pos="e,28157,4808 28157,4894.8 28157,4894.8 28157,4818 28157,4818",
+			style=""];
+		v_proj_1_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="V Projection 3_0
+[B×L×d_s×h_g]
+W_V^{3,0}
+GPU: 12",
+			pos="28015,4928.8",
+			width=1.8472];
+		v_proj_1_3_0 -> attention_1_3_0	[color="",
+			constraint="",
+			pos="e,28041,4808 28041,4894.8 28041,4894.8 28041,4818 28041,4818",
+			style=""];
+		concat_group_1_3	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 3
+[B×L×d×h_g]
+GPU: 12-15",
+			pos="27631,4585.8",
+			shape=diamond,
+			width=3.5556];
+		attention_1_3_0 -> concat_group_1_3	[color="",
+			constraint="",
+			pos="e,27737,4595.1 28000,4773 27897,4773 27737,4773 27737,4773 27737,4773 27737,4605.1 27737,4605.1",
+			style=""];
+		q_proj_1_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="Q Projection 3_1
+[B×L×d_s×h_g]
+W_Q^{3,1}
+GPU: 13",
+			pos="27823,4928.8",
+			width=1.8611];
+		attention_1_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="Attention 3_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 13",
+			pos="27631,4773.8",
+			width=2.4028];
+		q_proj_1_3_1 -> attention_1_3_1	[color="",
+			constraint="",
+			pos="e,27708,4808 27756,4928 27731,4928 27708,4928 27708,4928 27708,4928 27708,4818 27708,4818",
+			style=""];
+		k_proj_1_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="K Projection 3_1
+[B×L×d_s×h_g]
+W_K^{3,1}
+GPU: 13",
+			pos="27631,4928.8",
+			width=1.8611];
+		k_proj_1_3_1 -> attention_1_3_1	[color="",
+			constraint="",
+			pos="e,27631,4808 27631,4894.8 27631,4894.8 27631,4818 27631,4818",
+			style=""];
+		v_proj_1_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="V Projection 3_1
+[B×L×d_s×h_g]
+W_V^{3,1}
+GPU: 13",
+			pos="27439,4928.8",
+			width=1.8472];
+		v_proj_1_3_1 -> attention_1_3_1	[color="",
+			constraint="",
+			pos="e,27554,4808 27506,4928 27531,4928 27554,4928 27554,4928 27554,4928 27554,4818 27554,4818",
+			style=""];
+		attention_1_3_1 -> concat_group_1_3	[color="",
+			constraint="",
+			pos="e,27602,4627.1 27602,4739.7 27602,4739.7 27602,4637.1 27602,4637.1",
+			style=""];
+		attention_1_3_1 -> concat_group_1_3	[label="AllGather GPU12→GPU13",
+			lp="27817,4689.3",
+			pos="e,27660,4627.1 27660,4739.7 27660,4739.7 27660,4637.1 27660,4637.1"];
+		q_proj_1_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="Q Projection 3_2
+[B×L×d_s×h_g]
+W_Q^{3,2}
+GPU: 14",
+			pos="27247,4928.8",
+			width=1.8611];
+		attention_1_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="Attention 3_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 14",
+			pos="27151,4773.8",
+			width=2.4028];
+		q_proj_1_3_2 -> attention_1_3_2	[color="",
+			constraint="",
+			pos="e,27209,4808 27209,4894.8 27209,4894.8 27209,4818 27209,4818",
+			style=""];
+		k_proj_1_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="K Projection 3_2
+[B×L×d_s×h_g]
+W_K^{3,2}
+GPU: 14",
+			pos="27055,4928.8",
+			width=1.8611];
+		k_proj_1_3_2 -> attention_1_3_2	[color="",
+			constraint="",
+			pos="e,27093,4808 27093,4894.8 27093,4894.8 27093,4818 27093,4818",
+			style=""];
+		v_proj_1_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="V Projection 3_2
+[B×L×d_s×h_g]
+W_V^{3,2}
+GPU: 14",
+			pos="26863,4928.8",
+			width=1.8472];
+		v_proj_1_3_2 -> attention_1_3_2	[color="",
+			constraint="",
+			pos="e,27064,4773 26910,4894.6 26910,4848.7 26910,4773 26910,4773 26910,4773 27054,4773 27054,4773",
+			style=""];
+		attention_1_3_2 -> concat_group_1_3	[color="",
+			constraint="",
+			pos="e,27532,4597.6 27238,4785 27350,4785 27532,4785 27532,4785 27532,4785 27532,4607.6 27532,4607.6",
+			style=""];
+		attention_1_3_2 -> concat_group_1_3	[label="AllGather GPU13→GPU14",
+			lp="27498,4689.3",
+			pos="e,27518,4592.5 27238,4762 27346,4762 27518,4762 27518,4762 27518,4762 27518,4602.5 27518,4602.5"];
+		q_proj_1_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="Q Projection 3_3
+[B×L×d_s×h_g]
+W_Q^{3,3}
+GPU: 15",
+			pos="26671,4928.8",
+			width=1.8611];
+		attention_1_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="Attention 3_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 15",
+			pos="26529,4773.8",
+			width=2.4028];
+		q_proj_1_3_3 -> attention_1_3_3	[color="",
+			constraint="",
+			pos="e,26610,4808 26610,4894.8 26610,4894.8 26610,4818 26610,4818",
+			style=""];
+		k_proj_1_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="K Projection 3_3
+[B×L×d_s×h_g]
+W_K^{3,3}
+GPU: 15",
+			pos="26479,4928.8",
+			width=1.8611];
+		k_proj_1_3_3 -> attention_1_3_3	[color="",
+			constraint="",
+			pos="e,26494,4808 26494,4894.8 26494,4894.8 26494,4818 26494,4818",
+			style=""];
+		v_proj_1_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="V Projection 3_3
+[B×L×d_s×h_g]
+W_V^{3,3}
+GPU: 15",
+			pos="26287,4928.8",
+			width=1.8472];
+		v_proj_1_3_3 -> attention_1_3_3	[color="",
+			constraint="",
+			pos="e,26442,4773 26334,4894.6 26334,4848.7 26334,4773 26334,4773 26334,4773 26432,4773 26432,4773",
+			style=""];
+		attention_1_3_3 -> concat_group_1_3	[color="",
+			constraint="",
+			pos="e,27544,4603 26579,4739.6 26579,4689.8 26579,4603 26579,4603 26579,4603 27534,4603 27534,4603",
+			style=""];
+		attention_1_3_3 -> concat_group_1_3	[label="AllGather GPU14→GPU15",
+			lp="27040,4689.3",
+			pos="e,27546,4568 26543,4739.3 26543,4680.7 26543,4568 26543,4568 26543,4568 27536,4568 27536,4568"];
+		final_concat_1	[fillcolor="#FFA500",
+			height=1.4722,
+			label="Final Concat Layer 1
+[B×L×D]
+GPU: 0-15",
+			pos="30800,4392.8",
+			shape=diamond,
+			width=4.5833];
+		concat_group_1_0 -> final_concat_1	[color="",
+			constraint="",
+			pos="e,30963,4392 33967,4532.6 33967,4475.2 33967,4392 33967,4392 33967,4392 30973,4392 30973,4392",
+			style=""];
+		ffn_1_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="FFN Dense 0
+[B×L×D/16]
+GPU: 0",
+			pos="30800,4226.3",
+			width=1.5278];
+		final_concat_1 -> ffn_1_0	[color="",
+			constraint="",
+			pos="e,30800,4252.9 30800,4339.6 30800,4339.6 30800,4262.9 30800,4262.9",
+			style=""];
+		concat_group_1_1 -> final_concat_1	[color="",
+			constraint="",
+			pos="e,30873,4422.4 31536,4585 31313,4585 30873,4585 30873,4585 30873,4585 30873,4432.4 30873,4432.4",
+			style=""];
+		concat_group_1_2 -> final_concat_1	[color="",
+			constraint="",
+			pos="e,30689,4410 30056,4582.7 30056,4559.4 30056,4410 30056,4410 30056,4410 30679,4410 30679,4410",
+			style=""];
+		concat_group_1_3 -> final_concat_1	[color="",
+			constraint="",
+			pos="e,30690,4375 27709,4564.8 27709,4511.5 27709,4375 27709,4375 27709,4375 30680,4375 30680,4375",
+			style=""];
+		ffn_out_1_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="FFN Output 0
+[B×L×D/16]
+GPU: 0",
+			pos="30800,4086.3",
+			width=1.6111];
+		ffn_1_0 -> ffn_out_1_0	[color="",
+			constraint="",
+			pos="e,30800,4112.8 30800,4199.6 30800,4199.6 30800,4122.8 30800,4122.8",
+			style=""];
+		layer_norm_1	[fillcolor="#E6E6E6",
+			height=1.041,
+			label="Layer Norm 1
+[B×L×D]
+GPU: All",
+			pos="29454,3935.3",
+			shape=ellipse,
+			width=2.2785];
+		ffn_out_1_0 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29508,3907 30800,4059.4 30800,4009.4 30800,3907 30800,3907 30800,3907 29518,3907 29518,3907",
+			style=""];
+		ffn_1_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="FFN Dense 1
+[B×L×D/16]
+GPU: 1",
+			pos="30626,4226.3",
+			width=1.5278];
+		ffn_out_1_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="FFN Output 1
+[B×L×D/16]
+GPU: 1",
+			pos="30626,4086.3",
+			width=1.6111];
+		ffn_1_1 -> ffn_out_1_1	[color="",
+			constraint="",
+			pos="e,30626,4112.8 30626,4199.6 30626,4199.6 30626,4122.8 30626,4122.8",
+			style=""];
+		ffn_out_1_1 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29525,3916 30626,4059.7 30626,4011.8 30626,3916 30626,3916 30626,3916 29535,3916 29535,3916",
+			style=""];
+		ffn_1_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="FFN Dense 2
+[B×L×D/16]
+GPU: 2",
+			pos="30452,4226.3",
+			width=1.5278];
+		ffn_out_1_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="FFN Output 2
+[B×L×D/16]
+GPU: 2",
+			pos="30452,4086.3",
+			width=1.6111];
+		ffn_1_2 -> ffn_out_1_2	[color="",
+			constraint="",
+			pos="e,30452,4112.8 30452,4199.6 30452,4199.6 30452,4122.8 30452,4122.8",
+			style=""];
+		ffn_out_1_2 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29533,3925 30452,4059.6 30452,4013.8 30452,3925 30452,3925 30452,3925 29543,3925 29543,3925",
+			style=""];
+		ffn_1_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="FFN Dense 3
+[B×L×D/16]
+GPU: 3",
+			pos="30278,4226.3",
+			width=1.5278];
+		ffn_out_1_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="FFN Output 3
+[B×L×D/16]
+GPU: 3",
+			pos="30278,4086.3",
+			width=1.6111];
+		ffn_1_3 -> ffn_out_1_3	[color="",
+			constraint="",
+			pos="e,30278,4112.8 30278,4199.6 30278,4199.6 30278,4122.8 30278,4122.8",
+			style=""];
+		ffn_out_1_3 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29536,3935 30278,4059.6 30278,4016.1 30278,3935 30278,3935 30278,3935 29546,3935 29546,3935",
+			style=""];
+		ffn_1_4	[fillcolor="#99FF99",
+			height=0.73611,
+			label="FFN Dense 4
+[B×L×D/16]
+GPU: 4",
+			pos="30104,4226.3",
+			width=1.5278];
+		ffn_out_1_4	[fillcolor="#99FF99",
+			height=0.73611,
+			label="FFN Output 4
+[B×L×D/16]
+GPU: 4",
+			pos="30104,4086.3",
+			width=1.6111];
+		ffn_1_4 -> ffn_out_1_4	[color="",
+			constraint="",
+			pos="e,30104,4112.8 30104,4199.6 30104,4199.6 30104,4122.8 30104,4122.8",
+			style=""];
+		ffn_out_1_4 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29534,3944 30104,4059.5 30104,4018.3 30104,3944 30104,3944 30104,3944 29544,3944 29544,3944",
+			style=""];
+		ffn_1_5	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="FFN Dense 5
+[B×L×D/16]
+GPU: 5",
+			pos="29930,4226.3",
+			width=1.5278];
+		ffn_out_1_5	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="FFN Output 5
+[B×L×D/16]
+GPU: 5",
+			pos="29930,4086.3",
+			width=1.6111];
+		ffn_1_5 -> ffn_out_1_5	[color="",
+			constraint="",
+			pos="e,29930,4112.8 29930,4199.6 29930,4199.6 29930,4122.8 29930,4122.8",
+			style=""];
+		ffn_out_1_5 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29525,3954 29930,4059.5 29930,4020.9 29930,3954 29930,3954 29930,3954 29535,3954 29535,3954",
+			style=""];
+		ffn_1_6	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="FFN Dense 6
+[B×L×D/16]
+GPU: 6",
+			pos="29756,4226.3",
+			width=1.5278];
+		ffn_out_1_6	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="FFN Output 6
+[B×L×D/16]
+GPU: 6",
+			pos="29756,4086.3",
+			width=1.6111];
+		ffn_1_6 -> ffn_out_1_6	[color="",
+			constraint="",
+			pos="e,29756,4112.8 29756,4199.6 29756,4199.6 29756,4122.8 29756,4122.8",
+			style=""];
+		ffn_out_1_6 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29509,3963 29756,4059.5 29756,4023.3 29756,3963 29756,3963 29756,3963 29519,3963 29519,3963",
+			style=""];
+		ffn_1_7	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="FFN Dense 7
+[B×L×D/16]
+GPU: 7",
+			pos="29582,4226.3",
+			width=1.5278];
+		ffn_out_1_7	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="FFN Output 7
+[B×L×D/16]
+GPU: 7",
+			pos="29582,4086.3",
+			width=1.6111];
+		ffn_1_7 -> ffn_out_1_7	[color="",
+			constraint="",
+			pos="e,29582,4112.8 29582,4199.6 29582,4199.6 29582,4122.8 29582,4122.8",
+			style=""];
+		ffn_out_1_7 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29530,3949.4 29530,4059.6 29530,4059.6 29530,3959.4 29530,3959.4",
+			style=""];
+		ffn_1_8	[fillcolor="#9999FF",
+			height=0.73611,
+			label="FFN Dense 8
+[B×L×D/16]
+GPU: 8",
+			pos="29408,4226.3",
+			width=1.5278];
+		ffn_out_1_8	[fillcolor="#9999FF",
+			height=0.73611,
+			label="FFN Output 8
+[B×L×D/16]
+GPU: 8",
+			pos="29408,4086.3",
+			width=1.6111];
+		ffn_1_8 -> ffn_out_1_8	[color="",
+			constraint="",
+			pos="e,29408,4112.8 29408,4199.6 29408,4199.6 29408,4122.8 29408,4122.8",
+			style=""];
+		ffn_out_1_8 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29419,3969.3 29419,4059.6 29419,4059.6 29419,3979.3 29419,3979.3",
+			style=""];
+		ffn_1_9	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="FFN Dense 9
+[B×L×D/16]
+GPU: 9",
+			pos="29234,4226.3",
+			width=1.5278];
+		ffn_out_1_9	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="FFN Output 9
+[B×L×D/16]
+GPU: 9",
+			pos="29234,4086.3",
+			width=1.6111];
+		ffn_1_9 -> ffn_out_1_9	[color="",
+			constraint="",
+			pos="e,29234,4112.8 29234,4199.6 29234,4199.6 29234,4122.8 29234,4122.8",
+			style=""];
+		ffn_out_1_9 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29399,3963 29244,4059.5 29244,4023.3 29244,3963 29244,3963 29244,3963 29389,3963 29389,3963",
+			style=""];
+		ffn_1_10	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="FFN Dense 10
+[B×L×D/16]
+GPU: 10",
+			pos="29055,4226.3",
+			width=1.6528];
+		ffn_out_1_10	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="FFN Output 10
+[B×L×D/16]
+GPU: 10",
+			pos="29055,4086.3",
+			width=1.7361];
+		ffn_1_10 -> ffn_out_1_10	[color="",
+			constraint="",
+			pos="e,29055,4112.8 29055,4199.6 29055,4199.6 29055,4122.8 29055,4122.8",
+			style=""];
+		ffn_out_1_10 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29383,3954 29060,4059.5 29060,4020.9 29060,3954 29060,3954 29060,3954 29373,3954 29373,3954",
+			style=""];
+		ffn_1_11	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="FFN Dense 11
+[B×L×D/16]
+GPU: 11",
+			pos="28872,4226.3",
+			width=1.6528];
+		ffn_out_1_11	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="FFN Output 11
+[B×L×D/16]
+GPU: 11",
+			pos="28872,4086.3",
+			width=1.7361];
+		ffn_1_11 -> ffn_out_1_11	[color="",
+			constraint="",
+			pos="e,28872,4112.8 28872,4199.6 28872,4199.6 28872,4122.8 28872,4122.8",
+			style=""];
+		ffn_out_1_11 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29374,3944 28873,4059.5 28873,4018.3 28873,3944 28873,3944 28873,3944 29364,3944 29364,3944",
+			style=""];
+		ffn_1_12	[fillcolor="#FFB366",
+			height=0.73611,
+			label="FFN Dense 12
+[B×L×D/16]
+GPU: 12",
+			pos="28689,4226.3",
+			width=1.6528];
+		ffn_out_1_12	[fillcolor="#FFB366",
+			height=0.73611,
+			label="FFN Output 12
+[B×L×D/16]
+GPU: 12",
+			pos="28689,4086.3",
+			width=1.7361];
+		ffn_1_12 -> ffn_out_1_12	[color="",
+			constraint="",
+			pos="e,28689,4112.8 28689,4199.6 28689,4199.6 28689,4122.8 28689,4122.8",
+			style=""];
+		ffn_out_1_12 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29372,3935 28689,4059.6 28689,4016.1 28689,3935 28689,3935 28689,3935 29362,3935 29362,3935",
+			style=""];
+		ffn_1_13	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="FFN Dense 13
+[B×L×D/16]
+GPU: 13",
+			pos="28506,4226.3",
+			width=1.6528];
+		ffn_out_1_13	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="FFN Output 13
+[B×L×D/16]
+GPU: 13",
+			pos="28506,4086.3",
+			width=1.7361];
+		ffn_1_13 -> ffn_out_1_13	[color="",
+			constraint="",
+			pos="e,28506,4112.8 28506,4199.6 28506,4199.6 28506,4122.8 28506,4122.8",
+			style=""];
+		ffn_out_1_13 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29375,3925 28564,4059.6 28564,4013.8 28564,3925 28564,3925 28564,3925 29365,3925 29365,3925",
+			style=""];
+		ffn_1_14	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="FFN Dense 14
+[B×L×D/16]
+GPU: 14",
+			pos="28323,4226.3",
+			width=1.6528];
+		ffn_out_1_14	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="FFN Output 14
+[B×L×D/16]
+GPU: 14",
+			pos="28323,4086.3",
+			width=1.7361];
+		ffn_1_14 -> ffn_out_1_14	[color="",
+			constraint="",
+			pos="e,28323,4112.8 28323,4199.6 28323,4199.6 28323,4122.8 28323,4122.8",
+			style=""];
+		ffn_out_1_14 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29383,3916 28377,4059.7 28377,4011.8 28377,3916 28377,3916 28377,3916 29373,3916 29373,3916",
+			style=""];
+		ffn_1_15	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="FFN Dense 15
+[B×L×D/16]
+GPU: 15",
+			pos="28140,4226.3",
+			width=1.6528];
+		ffn_out_1_15	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="FFN Output 15
+[B×L×D/16]
+GPU: 15",
+			pos="28140,4086.3",
+			width=1.7361];
+		ffn_1_15 -> ffn_out_1_15	[color="",
+			constraint="",
+			pos="e,28140,4112.8 28140,4199.6 28140,4199.6 28140,4122.8 28140,4122.8",
+			style=""];
+		ffn_out_1_15 -> layer_norm_1	[color="",
+			constraint="",
+			pos="e,29400,3907 28184,4059.4 28184,4009.4 28184,3907 28184,3907 28184,3907 29390,3907 29390,3907",
+			style=""];
+	}
+	subgraph cluster_layer_2 {
+		graph [bb="20355,2737.9,29529,3841.8",
+			color=black,
+			label="Layer 2",
+			lheight=0.21,
+			lp="24942,3830.3",
+			lwidth=0.76,
+			style=dashed
+		];
+		q_proj_2_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="Q Projection 0_0
+[B×L×d_s×h_g]
+W_Q^{0,0}
+GPU: 0",
+			pos="29454,3776.8",
+			width=1.8611];
+		attention_2_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="Attention 0_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 0",
+			pos="29166,3621.8",
+			width=2.4028];
+		q_proj_2_0_0 -> attention_2_0_0	[color="",
+			constraint="",
+			pos="e,29253,3621 29454,3742.6 29454,3696.8 29454,3621 29454,3621 29454,3621 29263,3621 29263,3621",
+			style=""];
+		k_proj_2_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="K Projection 0_0
+[B×L×d_s×h_g]
+W_K^{0,0}
+GPU: 0",
+			pos="29262,3776.8",
+			width=1.8611];
+		k_proj_2_0_0 -> attention_2_0_0	[color="",
+			constraint="",
+			pos="e,29224,3656 29224,3742.8 29224,3742.8 29224,3666 29224,3666",
+			style=""];
+		v_proj_2_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="V Projection 0_0
+[B×L×d_s×h_g]
+W_V^{0,0}
+GPU: 0",
+			pos="29070,3776.8",
+			width=1.8472];
+		v_proj_2_0_0 -> attention_2_0_0	[color="",
+			constraint="",
+			pos="e,29108,3656 29108,3742.8 29108,3742.8 29108,3666 29108,3666",
+			style=""];
+		concat_group_2_0	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 0
+[B×L×d×h_g]
+GPU: 0-3",
+			pos="28110,3433.8",
+			shape=diamond,
+			width=3.5556];
+		attention_2_0_0 -> concat_group_2_0	[color="",
+			constraint="",
+			pos="e,28236,3433 29166,3587.6 29166,3533.2 29166,3433 29166,3433 29166,3433 28246,3433 28246,3433",
+			style=""];
+		q_proj_2_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="Q Projection 0_1
+[B×L×d_s×h_g]
+W_Q^{0,1}
+GPU: 1",
+			pos="28878,3776.8",
+			width=1.8611];
+		attention_2_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="Attention 0_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 1",
+			pos="28590,3621.8",
+			width=2.4028];
+		q_proj_2_0_1 -> attention_2_0_1	[color="",
+			constraint="",
+			pos="e,28677,3621 28878,3742.6 28878,3696.8 28878,3621 28878,3621 28878,3621 28687,3621 28687,3621",
+			style=""];
+		k_proj_2_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="K Projection 0_1
+[B×L×d_s×h_g]
+W_K^{0,1}
+GPU: 1",
+			pos="28686,3776.8",
+			width=1.8611];
+		k_proj_2_0_1 -> attention_2_0_1	[color="",
+			constraint="",
+			pos="e,28648,3656 28648,3742.8 28648,3742.8 28648,3666 28648,3666",
+			style=""];
+		v_proj_2_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="V Projection 0_1
+[B×L×d_s×h_g]
+W_V^{0,1}
+GPU: 1",
+			pos="28494,3776.8",
+			width=1.8472];
+		v_proj_2_0_1 -> attention_2_0_1	[color="",
+			constraint="",
+			pos="e,28532,3656 28532,3742.8 28532,3742.8 28532,3666 28532,3666",
+			style=""];
+		attention_2_0_1 -> concat_group_2_0	[color="",
+			constraint="",
+			pos="e,28213,3444.2 28503,3633 28392,3633 28213,3633 28213,3633 28213,3633 28213,3454.2 28213,3454.2",
+			style=""];
+		attention_2_0_1 -> concat_group_2_0	[label="AllGather GPU0→GPU1",
+			lp="28608,3537.3",
+			pos="e,28224,3439.7 28503,3610 28395,3610 28224,3610 28224,3610 28224,3610 28224,3449.7 28224,3449.7"];
+		q_proj_2_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="Q Projection 0_2
+[B×L×d_s×h_g]
+W_Q^{0,2}
+GPU: 2",
+			pos="28302,3776.8",
+			width=1.8611];
+		attention_2_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="Attention 0_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 2",
+			pos="28110,3621.8",
+			width=2.4028];
+		q_proj_2_0_2 -> attention_2_0_2	[color="",
+			constraint="",
+			pos="e,28190,3656 28235,3776 28211,3776 28190,3776 28190,3776 28190,3776 28190,3666 28190,3666",
+			style=""];
+		k_proj_2_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="K Projection 0_2
+[B×L×d_s×h_g]
+W_K^{0,2}
+GPU: 2",
+			pos="28110,3776.8",
+			width=1.8611];
+		k_proj_2_0_2 -> attention_2_0_2	[color="",
+			constraint="",
+			pos="e,28110,3656 28110,3742.8 28110,3742.8 28110,3666 28110,3666",
+			style=""];
+		v_proj_2_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="V Projection 0_2
+[B×L×d_s×h_g]
+W_V^{0,2}
+GPU: 2",
+			pos="27918,3776.8",
+			width=1.8472];
+		v_proj_2_0_2 -> attention_2_0_2	[color="",
+			constraint="",
+			pos="e,28033,3656 27985,3776 28010,3776 28033,3776 28033,3776 28033,3776 28033,3666 28033,3666",
+			style=""];
+		attention_2_0_2 -> concat_group_2_0	[color="",
+			constraint="",
+			pos="e,28081,3475.2 28081,3587.8 28081,3587.8 28081,3485.2 28081,3485.2",
+			style=""];
+		attention_2_0_2 -> concat_group_2_0	[label="AllGather GPU1→GPU2",
+			lp="28322,3537.3",
+			pos="e,28139,3475.2 28139,3587.8 28139,3587.8 28139,3485.2 28139,3485.2"];
+		q_proj_2_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="Q Projection 0_3
+[B×L×d_s×h_g]
+W_Q^{0,3}
+GPU: 3",
+			pos="27726,3776.8",
+			width=1.8611];
+		attention_2_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="Attention 0_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 3",
+			pos="27630,3621.8",
+			width=2.4028];
+		q_proj_2_0_3 -> attention_2_0_3	[color="",
+			constraint="",
+			pos="e,27688,3656 27688,3742.8 27688,3742.8 27688,3666 27688,3666",
+			style=""];
+		k_proj_2_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="K Projection 0_3
+[B×L×d_s×h_g]
+W_K^{0,3}
+GPU: 3",
+			pos="27534,3776.8",
+			width=1.8611];
+		k_proj_2_0_3 -> attention_2_0_3	[color="",
+			constraint="",
+			pos="e,27572,3656 27572,3742.8 27572,3742.8 27572,3666 27572,3666",
+			style=""];
+		v_proj_2_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="V Projection 0_3
+[B×L×d_s×h_g]
+W_V^{0,3}
+GPU: 3",
+			pos="27342,3776.8",
+			width=1.8472];
+		v_proj_2_0_3 -> attention_2_0_3	[color="",
+			constraint="",
+			pos="e,27543,3633 27342,3742.7 27342,3700.2 27342,3633 27342,3633 27342,3633 27533,3633 27533,3633",
+			style=""];
+		attention_2_0_3 -> concat_group_2_0	[color="",
+			constraint="",
+			pos="e,27995,3439.6 27717,3633 27825,3633 27995,3633 27995,3633 27995,3633 27995,3449.6 27995,3449.6",
+			style=""];
+		attention_2_0_3 -> concat_group_2_0	[label="AllGather GPU2→GPU3",
+			lp="27960,3537.3",
+			pos="e,27990,3437.2 27717,3610 27823,3610 27990,3610 27990,3610 27990,3610 27990,3447.2 27990,3447.2"];
+		q_proj_2_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="Q Projection 1_0
+[B×L×d_s×h_g]
+W_Q^{1,0}
+GPU: 4",
+			pos="27150,3776.8",
+			width=1.8611];
+		attention_2_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="Attention 1_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 4",
+			pos="26863,3621.8",
+			width=2.4028];
+		q_proj_2_1_0 -> attention_2_1_0	[color="",
+			constraint="",
+			pos="e,26950,3610 27150,3742.7 27150,3693.9 27150,3610 27150,3610 27150,3610 26960,3610 26960,3610",
+			style=""];
+		k_proj_2_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="K Projection 1_0
+[B×L×d_s×h_g]
+W_K^{1,0}
+GPU: 4",
+			pos="26958,3776.8",
+			width=1.8611];
+		k_proj_2_1_0 -> attention_2_1_0	[color="",
+			constraint="",
+			pos="e,26920,3656 26920,3742.8 26920,3742.8 26920,3666 26920,3666",
+			style=""];
+		v_proj_2_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="V Projection 1_0
+[B×L×d_s×h_g]
+W_V^{1,0}
+GPU: 4",
+			pos="26766,3776.8",
+			width=1.8472];
+		v_proj_2_1_0 -> attention_2_1_0	[color="",
+			constraint="",
+			pos="e,26804,3656 26804,3742.8 26804,3742.8 26804,3666 26804,3666",
+			style=""];
+		concat_group_2_1	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 1
+[B×L×d×h_g]
+GPU: 4-7",
+			pos="25806,3433.8",
+			shape=diamond,
+			width=3.5556];
+		attention_2_1_0 -> concat_group_2_1	[color="",
+			constraint="",
+			pos="e,25932,3433 26863,3587.6 26863,3533.2 26863,3433 26863,3433 26863,3433 25942,3433 25942,3433",
+			style=""];
+		q_proj_2_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="Q Projection 1_1
+[B×L×d_s×h_g]
+W_Q^{1,1}
+GPU: 5",
+			pos="26574,3776.8",
+			width=1.8611];
+		attention_2_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="Attention 1_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 5",
+			pos="26259,3621.8",
+			width=2.4028];
+		q_proj_2_1_1 -> attention_2_1_1	[color="",
+			constraint="",
+			pos="e,26346,3621 26574,3742.6 26574,3696.8 26574,3621 26574,3621 26574,3621 26356,3621 26356,3621",
+			style=""];
+		k_proj_2_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="K Projection 1_1
+[B×L×d_s×h_g]
+W_K^{1,1}
+GPU: 5",
+			pos="26382,3776.8",
+			width=1.8611];
+		k_proj_2_1_1 -> attention_2_1_1	[color="",
+			constraint="",
+			pos="e,26330,3656 26330,3742.8 26330,3742.8 26330,3666 26330,3666",
+			style=""];
+		v_proj_2_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="V Projection 1_1
+[B×L×d_s×h_g]
+W_V^{1,1}
+GPU: 5",
+			pos="26190,3776.8",
+			width=1.8472];
+		v_proj_2_1_1 -> attention_2_1_1	[color="",
+			constraint="",
+			pos="e,26214,3656 26214,3742.8 26214,3742.8 26214,3666 26214,3666",
+			style=""];
+		attention_2_1_1 -> concat_group_2_1	[color="",
+			constraint="",
+			pos="e,25905,3446 26172,3633 26068,3633 25905,3633 25905,3633 25905,3633 25905,3456 25905,3456",
+			style=""];
+		attention_2_1_1 -> concat_group_2_1	[label="AllGather GPU4→GPU5",
+			lp="26451,3537.3",
+			pos="e,25918,3440.5 26172,3610 26071,3610 25918,3610 25918,3610 25918,3610 25918,3450.5 25918,3450.5"];
+		q_proj_2_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="Q Projection 1_2
+[B×L×d_s×h_g]
+W_Q^{1,2}
+GPU: 6",
+			pos="25998,3776.8",
+			width=1.8611];
+		attention_2_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="Attention 1_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 6",
+			pos="25806,3621.8",
+			width=2.4028];
+		q_proj_2_1_2 -> attention_2_1_2	[color="",
+			constraint="",
+			pos="e,25883,3656 25931,3776 25906,3776 25883,3776 25883,3776 25883,3776 25883,3666 25883,3666",
+			style=""];
+		k_proj_2_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="K Projection 1_2
+[B×L×d_s×h_g]
+W_K^{1,2}
+GPU: 6",
+			pos="25806,3776.8",
+			width=1.8611];
+		k_proj_2_1_2 -> attention_2_1_2	[color="",
+			constraint="",
+			pos="e,25806,3656 25806,3742.8 25806,3742.8 25806,3666 25806,3666",
+			style=""];
+		v_proj_2_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="V Projection 1_2
+[B×L×d_s×h_g]
+W_V^{1,2}
+GPU: 6",
+			pos="25614,3776.8",
+			width=1.8472];
+		v_proj_2_1_2 -> attention_2_1_2	[color="",
+			constraint="",
+			pos="e,25729,3656 25681,3776 25706,3776 25729,3776 25729,3776 25729,3776 25729,3666 25729,3666",
+			style=""];
+		attention_2_1_2 -> concat_group_2_1	[color="",
+			constraint="",
+			pos="e,25777,3475.2 25777,3587.8 25777,3587.8 25777,3485.2 25777,3485.2",
+			style=""];
+		attention_2_1_2 -> concat_group_2_1	[label="AllGather GPU5→GPU6",
+			lp="25985,3537.3",
+			pos="e,25835,3475.2 25835,3587.8 25835,3587.8 25835,3485.2 25835,3485.2"];
+		q_proj_2_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="Q Projection 1_3
+[B×L×d_s×h_g]
+W_Q^{1,3}
+GPU: 7",
+			pos="25422,3776.8",
+			width=1.8611];
+		attention_2_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="Attention 1_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 7",
+			pos="25278,3621.8",
+			width=2.4028];
+		q_proj_2_1_3 -> attention_2_1_3	[color="",
+			constraint="",
+			pos="e,25360,3656 25360,3742.8 25360,3742.8 25360,3666 25360,3666",
+			style=""];
+		k_proj_2_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="K Projection 1_3
+[B×L×d_s×h_g]
+W_K^{1,3}
+GPU: 7",
+			pos="25230,3776.8",
+			width=1.8611];
+		k_proj_2_1_3 -> attention_2_1_3	[color="",
+			constraint="",
+			pos="e,25244,3656 25244,3742.8 25244,3742.8 25244,3666 25244,3666",
+			style=""];
+		v_proj_2_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="V Projection 1_3
+[B×L×d_s×h_g]
+W_V^{1,3}
+GPU: 7",
+			pos="25038,3776.8",
+			width=1.8472];
+		v_proj_2_1_3 -> attention_2_1_3	[color="",
+			constraint="",
+			pos="e,25191,3610 25038,3742.7 25038,3693.9 25038,3610 25038,3610 25038,3610 25181,3610 25181,3610",
+			style=""];
+		attention_2_1_3 -> concat_group_2_1	[color="",
+			constraint="",
+			pos="e,25706,3445.7 25365,3633 25490,3633 25706,3633 25706,3633 25706,3633 25706,3455.7 25706,3455.7",
+			style=""];
+		attention_2_1_3 -> concat_group_2_1	[label="AllGather GPU6→GPU7",
+			lp="25644,3537.3",
+			pos="e,25694,3440.5 25365,3610 25486,3610 25694,3610 25694,3610 25694,3610 25694,3450.5 25694,3450.5"];
+		q_proj_2_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="Q Projection 2_0
+[B×L×d_s×h_g]
+W_Q^{2,0}
+GPU: 8",
+			pos="24846,3776.8",
+			width=1.8611];
+		attention_2_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="Attention 2_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 8",
+			pos="24531,3621.8",
+			width=2.4028];
+		q_proj_2_2_0 -> attention_2_2_0	[color="",
+			constraint="",
+			pos="e,24618,3633 24846,3742.7 24846,3700.2 24846,3633 24846,3633 24846,3633 24628,3633 24628,3633",
+			style=""];
+		k_proj_2_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="K Projection 2_0
+[B×L×d_s×h_g]
+W_K^{2,0}
+GPU: 8",
+			pos="24654,3776.8",
+			width=1.8611];
+		k_proj_2_2_0 -> attention_2_2_0	[color="",
+			constraint="",
+			pos="e,24602,3656 24602,3742.8 24602,3742.8 24602,3666 24602,3666",
+			style=""];
+		v_proj_2_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="V Projection 2_0
+[B×L×d_s×h_g]
+W_V^{2,0}
+GPU: 8",
+			pos="24462,3776.8",
+			width=1.8472];
+		v_proj_2_2_0 -> attention_2_2_0	[color="",
+			constraint="",
+			pos="e,24486,3656 24486,3742.8 24486,3742.8 24486,3666 24486,3666",
+			style=""];
+		concat_group_2_2	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 2
+[B×L×d×h_g]
+GPU: 8-11",
+			pos="24078,3433.8",
+			shape=diamond,
+			width=3.5556];
+		attention_2_2_0 -> concat_group_2_2	[color="",
+			constraint="",
+			pos="e,24184,3443.3 24444,3610 24341,3610 24184,3610 24184,3610 24184,3610 24184,3453.3 24184,3453.3",
+			style=""];
+		q_proj_2_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="Q Projection 2_1
+[B×L×d_s×h_g]
+W_Q^{2,1}
+GPU: 9",
+			pos="24270,3776.8",
+			width=1.8611];
+		attention_2_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="Attention 2_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 9",
+			pos="24078,3621.8",
+			width=2.4028];
+		q_proj_2_2_1 -> attention_2_2_1	[color="",
+			constraint="",
+			pos="e,24165,3633 24212,3742.7 24212,3700.2 24212,3633 24212,3633 24212,3633 24175,3633 24175,3633",
+			style=""];
+		k_proj_2_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="K Projection 2_1
+[B×L×d_s×h_g]
+W_K^{2,1}
+GPU: 9",
+			pos="24078,3776.8",
+			width=1.8611];
+		k_proj_2_2_1 -> attention_2_2_1	[color="",
+			constraint="",
+			pos="e,24078,3656 24078,3742.8 24078,3742.8 24078,3666 24078,3666",
+			style=""];
+		v_proj_2_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="V Projection 2_1
+[B×L×d_s×h_g]
+W_V^{2,1}
+GPU: 9",
+			pos="23886,3776.8",
+			width=1.8472];
+		v_proj_2_2_1 -> attention_2_2_1	[color="",
+			constraint="",
+			pos="e,23991,3638 23942,3742.5 23942,3701.4 23942,3638 23942,3638 23942,3638 23981,3638 23981,3638",
+			style=""];
+		attention_2_2_1 -> concat_group_2_2	[color="",
+			constraint="",
+			pos="e,24049,3475.2 24049,3587.8 24049,3587.8 24049,3485.2 24049,3485.2",
+			style=""];
+		attention_2_2_1 -> concat_group_2_2	[label="AllGather GPU8→GPU9",
+			lp="24349,3537.3",
+			pos="e,24107,3475.2 24107,3587.8 24107,3587.8 24107,3485.2 24107,3485.2"];
+		q_proj_2_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="Q Projection 2_2
+[B×L×d_s×h_g]
+W_Q^{2,2}
+GPU: 10",
+			pos="23694,3776.8",
+			width=1.8611];
+		attention_2_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="Attention 2_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 10",
+			pos="23599,3621.8",
+			width=2.4028];
+		q_proj_2_2_2 -> attention_2_2_2	[color="",
+			constraint="",
+			pos="e,23656,3656 23656,3742.8 23656,3742.8 23656,3666 23656,3666",
+			style=""];
+		k_proj_2_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="K Projection 2_2
+[B×L×d_s×h_g]
+W_K^{2,2}
+GPU: 10",
+			pos="23502,3776.8",
+			width=1.8611];
+		k_proj_2_2_2 -> attention_2_2_2	[color="",
+			constraint="",
+			pos="e,23541,3656 23541,3742.8 23541,3742.8 23541,3666 23541,3666",
+			style=""];
+		v_proj_2_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="V Projection 2_2
+[B×L×d_s×h_g]
+W_V^{2,2}
+GPU: 10",
+			pos="23310,3776.8",
+			width=1.8472];
+		v_proj_2_2_2 -> attention_2_2_2	[color="",
+			constraint="",
+			pos="e,23512,3621 23364,3742.6 23364,3696.8 23364,3621 23364,3621 23364,3621 23502,3621 23502,3621",
+			style=""];
+		attention_2_2_2 -> concat_group_2_2	[color="",
+			constraint="",
+			pos="e,23978,3445.8 23686,3621 23798,3621 23978,3621 23978,3621 23978,3621 23978,3455.8 23978,3455.8",
+			style=""];
+		attention_2_2_2 -> concat_group_2_2	[label="AllGather GPU9→GPU10",
+			lp="23916,3537.3",
+			pos="e,23966,3440.3 23686,3604 23794,3604 23966,3604 23966,3604 23966,3604 23966,3450.3 23966,3450.3"];
+		q_proj_2_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="Q Projection 2_3
+[B×L×d_s×h_g]
+W_Q^{2,3}
+GPU: 11",
+			pos="23118,3776.8",
+			width=1.8611];
+		attention_2_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="Attention 2_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 11",
+			pos="23013,3621.8",
+			width=2.4028];
+		q_proj_2_2_3 -> attention_2_2_3	[color="",
+			constraint="",
+			pos="e,23075,3656 23075,3742.8 23075,3742.8 23075,3666 23075,3666",
+			style=""];
+		k_proj_2_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="K Projection 2_3
+[B×L×d_s×h_g]
+W_K^{2,3}
+GPU: 11",
+			pos="22926,3776.8",
+			width=1.8611];
+		k_proj_2_2_3 -> attention_2_2_3	[color="",
+			constraint="",
+			pos="e,22960,3656 22960,3742.8 22960,3742.8 22960,3666 22960,3666",
+			style=""];
+		v_proj_2_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="V Projection 2_3
+[B×L×d_s×h_g]
+W_V^{2,3}
+GPU: 11",
+			pos="22734,3776.8",
+			width=1.8472];
+		v_proj_2_2_3 -> attention_2_2_3	[color="",
+			constraint="",
+			pos="e,22926,3610 22754,3742.7 22754,3693.9 22754,3610 22754,3610 22754,3610 22916,3610 22916,3610",
+			style=""];
+		attention_2_2_3 -> concat_group_2_2	[color="",
+			constraint="",
+			pos="e,23991,3451 23088,3587.7 23088,3537.8 23088,3451 23088,3451 23088,3451 23981,3451 23981,3451",
+			style=""];
+		attention_2_2_3 -> concat_group_2_2	[label="AllGather GPU10→GPU11",
+			lp="23328,3537.3",
+			pos="e,23993,3416 23076,3587.4 23076,3528.8 23076,3416 23076,3416 23076,3416 23983,3416 23983,3416"];
+		q_proj_2_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="Q Projection 3_0
+[B×L×d_s×h_g]
+W_Q^{3,0}
+GPU: 12",
+			pos="22542,3776.8",
+			width=1.8611];
+		attention_2_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="Attention 3_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 12",
+			pos="22230,3621.8",
+			width=2.4028];
+		q_proj_2_3_0 -> attention_2_3_0	[color="",
+			constraint="",
+			pos="e,22317,3633 22498,3742.7 22498,3700.2 22498,3633 22498,3633 22498,3633 22327,3633 22327,3633",
+			style=""];
+		k_proj_2_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="K Projection 3_0
+[B×L×d_s×h_g]
+W_K^{3,0}
+GPU: 12",
+			pos="22350,3776.8",
+			width=1.8611];
+		k_proj_2_3_0 -> attention_2_3_0	[color="",
+			constraint="",
+			pos="e,22300,3656 22300,3742.8 22300,3742.8 22300,3666 22300,3666",
+			style=""];
+		v_proj_2_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="V Projection 3_0
+[B×L×d_s×h_g]
+W_V^{3,0}
+GPU: 12",
+			pos="22158,3776.8",
+			width=1.8472];
+		v_proj_2_3_0 -> attention_2_3_0	[color="",
+			constraint="",
+			pos="e,22184,3656 22184,3742.8 22184,3742.8 22184,3666 22184,3666",
+			style=""];
+		concat_group_2_3	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 3
+[B×L×d×h_g]
+GPU: 12-15",
+			pos="21774,3433.8",
+			shape=diamond,
+			width=3.5556];
+		attention_2_3_0 -> concat_group_2_3	[color="",
+			constraint="",
+			pos="e,21880,3443.3 22143,3610 22040,3610 21880,3610 21880,3610 21880,3610 21880,3453.3 21880,3453.3",
+			style=""];
+		q_proj_2_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="Q Projection 3_1
+[B×L×d_s×h_g]
+W_Q^{3,1}
+GPU: 13",
+			pos="21966,3776.8",
+			width=1.8611];
+		attention_2_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="Attention 3_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 13",
+			pos="21774,3621.8",
+			width=2.4028];
+		q_proj_2_3_1 -> attention_2_3_1	[color="",
+			constraint="",
+			pos="e,21861,3633 21907,3742.7 21907,3700.2 21907,3633 21907,3633 21907,3633 21871,3633 21871,3633",
+			style=""];
+		k_proj_2_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="K Projection 3_1
+[B×L×d_s×h_g]
+W_K^{3,1}
+GPU: 13",
+			pos="21774,3776.8",
+			width=1.8611];
+		k_proj_2_3_1 -> attention_2_3_1	[color="",
+			constraint="",
+			pos="e,21774,3656 21774,3742.8 21774,3742.8 21774,3666 21774,3666",
+			style=""];
+		v_proj_2_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="V Projection 3_1
+[B×L×d_s×h_g]
+W_V^{3,1}
+GPU: 13",
+			pos="21582,3776.8",
+			width=1.8472];
+		v_proj_2_3_1 -> attention_2_3_1	[color="",
+			constraint="",
+			pos="e,21697,3656 21649,3776 21674,3776 21697,3776 21697,3776 21697,3776 21697,3666 21697,3666",
+			style=""];
+		attention_2_3_1 -> concat_group_2_3	[color="",
+			constraint="",
+			pos="e,21745,3475.2 21745,3587.8 21745,3587.8 21745,3485.2 21745,3485.2",
+			style=""];
+		attention_2_3_1 -> concat_group_2_3	[label="AllGather GPU12→GPU13",
+			lp="21960,3537.3",
+			pos="e,21803,3475.2 21803,3587.8 21803,3587.8 21803,3485.2 21803,3485.2"];
+		q_proj_2_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="Q Projection 3_2
+[B×L×d_s×h_g]
+W_Q^{3,2}
+GPU: 14",
+			pos="21390,3776.8",
+			width=1.8611];
+		attention_2_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="Attention 3_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 14",
+			pos="21294,3621.8",
+			width=2.4028];
+		q_proj_2_3_2 -> attention_2_3_2	[color="",
+			constraint="",
+			pos="e,21352,3656 21352,3742.8 21352,3742.8 21352,3666 21352,3666",
+			style=""];
+		k_proj_2_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="K Projection 3_2
+[B×L×d_s×h_g]
+W_K^{3,2}
+GPU: 14",
+			pos="21198,3776.8",
+			width=1.8611];
+		k_proj_2_3_2 -> attention_2_3_2	[color="",
+			constraint="",
+			pos="e,21236,3656 21236,3742.8 21236,3742.8 21236,3666 21236,3666",
+			style=""];
+		v_proj_2_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="V Projection 3_2
+[B×L×d_s×h_g]
+W_V^{3,2}
+GPU: 14",
+			pos="21006,3776.8",
+			width=1.8472];
+		v_proj_2_3_2 -> attention_2_3_2	[color="",
+			constraint="",
+			pos="e,21207,3621 21030,3742.6 21030,3696.8 21030,3621 21030,3621 21030,3621 21197,3621 21197,3621",
+			style=""];
+		attention_2_3_2 -> concat_group_2_3	[color="",
+			constraint="",
+			pos="e,21674,3445.7 21381,3633 21493,3633 21674,3633 21674,3633 21674,3633 21674,3455.7 21674,3455.7",
+			style=""];
+		attention_2_3_2 -> concat_group_2_3	[label="AllGather GPU13→GPU14",
+			lp="21647,3537.3",
+			pos="e,21662,3440.5 21381,3610 21489,3610 21662,3610 21662,3610 21662,3610 21662,3450.5 21662,3450.5"];
+		q_proj_2_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="Q Projection 3_3
+[B×L×d_s×h_g]
+W_Q^{3,3}
+GPU: 15",
+			pos="20814,3776.8",
+			width=1.8611];
+		attention_2_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="Attention 3_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 15",
+			pos="20670,3621.8",
+			width=2.4028];
+		q_proj_2_3_3 -> attention_2_3_3	[color="",
+			constraint="",
+			pos="e,20752,3656 20752,3742.8 20752,3742.8 20752,3666 20752,3666",
+			style=""];
+		k_proj_2_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="K Projection 3_3
+[B×L×d_s×h_g]
+W_K^{3,3}
+GPU: 15",
+			pos="20622,3776.8",
+			width=1.8611];
+		k_proj_2_3_3 -> attention_2_3_3	[color="",
+			constraint="",
+			pos="e,20636,3656 20636,3742.8 20636,3742.8 20636,3666 20636,3666",
+			style=""];
+		v_proj_2_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="V Projection 3_3
+[B×L×d_s×h_g]
+W_V^{3,3}
+GPU: 15",
+			pos="20430,3776.8",
+			width=1.8472];
+		v_proj_2_3_3 -> attention_2_3_3	[color="",
+			constraint="",
+			pos="e,20583,3621 20454,3742.6 20454,3696.8 20454,3621 20454,3621 20454,3621 20573,3621 20573,3621",
+			style=""];
+		attention_2_3_3 -> concat_group_2_3	[color="",
+			constraint="",
+			pos="e,21687,3451 20750,3587.7 20750,3537.8 20750,3451 20750,3451 20750,3451 21677,3451 21677,3451",
+			style=""];
+		attention_2_3_3 -> concat_group_2_3	[label="AllGather GPU14→GPU15",
+			lp="21223,3537.3",
+			pos="e,21689,3416 20744,3587.4 20744,3528.8 20744,3416 20744,3416 20744,3416 21679,3416 21679,3416"];
+		final_concat_2	[fillcolor="#FFA500",
+			height=1.4722,
+			label="Final Concat Layer 2
+[B×L×D]
+GPU: 0-15",
+			pos="24512,3240.8",
+			shape=diamond,
+			width=4.5833];
+		concat_group_2_0 -> final_concat_2	[color="",
+			constraint="",
+			pos="e,24674,3240 28110,3380.6 28110,3323.2 28110,3240 28110,3240 28110,3240 24684,3240 24684,3240",
+			style=""];
+		ffn_2_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="FFN Dense 0
+[B×L×D/16]
+GPU: 0",
+			pos="24512,3074.3",
+			width=1.5278];
+		final_concat_2 -> ffn_2_0	[color="",
+			constraint="",
+			pos="e,24512,3100.9 24512,3187.7 24512,3187.7 24512,3110.9 24512,3110.9",
+			style=""];
+		concat_group_2_1 -> final_concat_2	[color="",
+			constraint="",
+			pos="e,24647,3250.4 25719,3451 25450,3451 24647,3451 24647,3451 24647,3451 24647,3260.4 24647,3260.4",
+			style=""];
+		concat_group_2_2 -> final_concat_2	[color="",
+			constraint="",
+			pos="e,24371,3248.8 24163,3416 24250,3416 24371,3416 24371,3416 24371,3416 24371,3258.8 24371,3258.8",
+			style=""];
+		concat_group_2_3 -> final_concat_2	[color="",
+			constraint="",
+			pos="e,24349,3240 21847,3410.8 21847,3359.5 21847,3240 21847,3240 21847,3240 24339,3240 24339,3240",
+			style=""];
+		ffn_out_2_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="FFN Output 0
+[B×L×D/16]
+GPU: 0",
+			pos="24512,2934.3",
+			width=1.6111];
+		ffn_2_0 -> ffn_out_2_0	[color="",
+			constraint="",
+			pos="e,24512,2960.9 24512,3047.7 24512,3047.7 24512,2970.9 24512,2970.9",
+			style=""];
+		layer_norm_2	[fillcolor="#E6E6E6",
+			height=1.041,
+			label="Layer Norm 2
+[B×L×D]
+GPU: All",
+			pos="23166,2783.3",
+			shape=ellipse,
+			width=2.2785];
+		ffn_out_2_0 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23220,2755 24512,2907.5 24512,2857.4 24512,2755 24512,2755 24512,2755 23230,2755 23230,2755",
+			style=""];
+		ffn_2_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="FFN Dense 1
+[B×L×D/16]
+GPU: 1",
+			pos="24338,3074.3",
+			width=1.5278];
+		ffn_out_2_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="FFN Output 1
+[B×L×D/16]
+GPU: 1",
+			pos="24338,2934.3",
+			width=1.6111];
+		ffn_2_1 -> ffn_out_2_1	[color="",
+			constraint="",
+			pos="e,24338,2960.9 24338,3047.7 24338,3047.7 24338,2970.9 24338,2970.9",
+			style=""];
+		ffn_out_2_1 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23237,2764 24338,2907.7 24338,2859.8 24338,2764 24338,2764 24338,2764 23247,2764 23247,2764",
+			style=""];
+		ffn_2_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="FFN Dense 2
+[B×L×D/16]
+GPU: 2",
+			pos="24164,3074.3",
+			width=1.5278];
+		ffn_out_2_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="FFN Output 2
+[B×L×D/16]
+GPU: 2",
+			pos="24164,2934.3",
+			width=1.6111];
+		ffn_2_2 -> ffn_out_2_2	[color="",
+			constraint="",
+			pos="e,24164,2960.9 24164,3047.7 24164,3047.7 24164,2970.9 24164,2970.9",
+			style=""];
+		ffn_out_2_2 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23245,2773 24164,2907.7 24164,2861.9 24164,2773 24164,2773 24164,2773 23255,2773 23255,2773",
+			style=""];
+		ffn_2_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="FFN Dense 3
+[B×L×D/16]
+GPU: 3",
+			pos="23990,3074.3",
+			width=1.5278];
+		ffn_out_2_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="FFN Output 3
+[B×L×D/16]
+GPU: 3",
+			pos="23990,2934.3",
+			width=1.6111];
+		ffn_2_3 -> ffn_out_2_3	[color="",
+			constraint="",
+			pos="e,23990,2960.9 23990,3047.7 23990,3047.7 23990,2970.9 23990,2970.9",
+			style=""];
+		ffn_out_2_3 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23248,2783 23990,2907.6 23990,2864.2 23990,2783 23990,2783 23990,2783 23258,2783 23258,2783",
+			style=""];
+		ffn_2_4	[fillcolor="#99FF99",
+			height=0.73611,
+			label="FFN Dense 4
+[B×L×D/16]
+GPU: 4",
+			pos="23816,3074.3",
+			width=1.5278];
+		ffn_out_2_4	[fillcolor="#99FF99",
+			height=0.73611,
+			label="FFN Output 4
+[B×L×D/16]
+GPU: 4",
+			pos="23816,2934.3",
+			width=1.6111];
+		ffn_2_4 -> ffn_out_2_4	[color="",
+			constraint="",
+			pos="e,23816,2960.9 23816,3047.7 23816,3047.7 23816,2970.9 23816,2970.9",
+			style=""];
+		ffn_out_2_4 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23246,2792 23816,2907.5 23816,2866.3 23816,2792 23816,2792 23816,2792 23256,2792 23256,2792",
+			style=""];
+		ffn_2_5	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="FFN Dense 5
+[B×L×D/16]
+GPU: 5",
+			pos="23642,3074.3",
+			width=1.5278];
+		ffn_out_2_5	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="FFN Output 5
+[B×L×D/16]
+GPU: 5",
+			pos="23642,2934.3",
+			width=1.6111];
+		ffn_2_5 -> ffn_out_2_5	[color="",
+			constraint="",
+			pos="e,23642,2960.9 23642,3047.7 23642,3047.7 23642,2970.9 23642,2970.9",
+			style=""];
+		ffn_out_2_5 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23237,2802 23642,2907.5 23642,2868.9 23642,2802 23642,2802 23642,2802 23247,2802 23247,2802",
+			style=""];
+		ffn_2_6	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="FFN Dense 6
+[B×L×D/16]
+GPU: 6",
+			pos="23468,3074.3",
+			width=1.5278];
+		ffn_out_2_6	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="FFN Output 6
+[B×L×D/16]
+GPU: 6",
+			pos="23468,2934.3",
+			width=1.6111];
+		ffn_2_6 -> ffn_out_2_6	[color="",
+			constraint="",
+			pos="e,23468,2960.9 23468,3047.7 23468,3047.7 23468,2970.9 23468,2970.9",
+			style=""];
+		ffn_out_2_6 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23221,2811 23468,2907.6 23468,2871.3 23468,2811 23468,2811 23468,2811 23231,2811 23231,2811",
+			style=""];
+		ffn_2_7	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="FFN Dense 7
+[B×L×D/16]
+GPU: 7",
+			pos="23294,3074.3",
+			width=1.5278];
+		ffn_out_2_7	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="FFN Output 7
+[B×L×D/16]
+GPU: 7",
+			pos="23294,2934.3",
+			width=1.6111];
+		ffn_2_7 -> ffn_out_2_7	[color="",
+			constraint="",
+			pos="e,23294,2960.9 23294,3047.7 23294,3047.7 23294,2970.9 23294,2970.9",
+			style=""];
+		ffn_out_2_7 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23242,2797.5 23242,2907.7 23242,2907.7 23242,2807.5 23242,2807.5",
+			style=""];
+		ffn_2_8	[fillcolor="#9999FF",
+			height=0.73611,
+			label="FFN Dense 8
+[B×L×D/16]
+GPU: 8",
+			pos="23120,3074.3",
+			width=1.5278];
+		ffn_out_2_8	[fillcolor="#9999FF",
+			height=0.73611,
+			label="FFN Output 8
+[B×L×D/16]
+GPU: 8",
+			pos="23120,2934.3",
+			width=1.6111];
+		ffn_2_8 -> ffn_out_2_8	[color="",
+			constraint="",
+			pos="e,23120,2960.9 23120,3047.7 23120,3047.7 23120,2970.9 23120,2970.9",
+			style=""];
+		ffn_out_2_8 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23131,2817.4 23131,2907.7 23131,2907.7 23131,2827.4 23131,2827.4",
+			style=""];
+		ffn_2_9	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="FFN Dense 9
+[B×L×D/16]
+GPU: 9",
+			pos="22946,3074.3",
+			width=1.5278];
+		ffn_out_2_9	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="FFN Output 9
+[B×L×D/16]
+GPU: 9",
+			pos="22946,2934.3",
+			width=1.6111];
+		ffn_2_9 -> ffn_out_2_9	[color="",
+			constraint="",
+			pos="e,22946,2960.9 22946,3047.7 22946,3047.7 22946,2970.9 22946,2970.9",
+			style=""];
+		ffn_out_2_9 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23110,2811 22956,2907.6 22956,2871.3 22956,2811 22956,2811 22956,2811 23100,2811 23100,2811",
+			style=""];
+		ffn_2_10	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="FFN Dense 10
+[B×L×D/16]
+GPU: 10",
+			pos="22767,3074.3",
+			width=1.6528];
+		ffn_out_2_10	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="FFN Output 10
+[B×L×D/16]
+GPU: 10",
+			pos="22767,2934.3",
+			width=1.7361];
+		ffn_2_10 -> ffn_out_2_10	[color="",
+			constraint="",
+			pos="e,22767,2960.9 22767,3047.7 22767,3047.7 22767,2970.9 22767,2970.9",
+			style=""];
+		ffn_out_2_10 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23095,2802 22772,2907.5 22772,2868.9 22772,2802 22772,2802 22772,2802 23085,2802 23085,2802",
+			style=""];
+		ffn_2_11	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="FFN Dense 11
+[B×L×D/16]
+GPU: 11",
+			pos="22584,3074.3",
+			width=1.6528];
+		ffn_out_2_11	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="FFN Output 11
+[B×L×D/16]
+GPU: 11",
+			pos="22584,2934.3",
+			width=1.7361];
+		ffn_2_11 -> ffn_out_2_11	[color="",
+			constraint="",
+			pos="e,22584,2960.9 22584,3047.7 22584,3047.7 22584,2970.9 22584,2970.9",
+			style=""];
+		ffn_out_2_11 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23086,2792 22585,2907.5 22585,2866.3 22585,2792 22585,2792 22585,2792 23076,2792 23076,2792",
+			style=""];
+		ffn_2_12	[fillcolor="#FFB366",
+			height=0.73611,
+			label="FFN Dense 12
+[B×L×D/16]
+GPU: 12",
+			pos="22401,3074.3",
+			width=1.6528];
+		ffn_out_2_12	[fillcolor="#FFB366",
+			height=0.73611,
+			label="FFN Output 12
+[B×L×D/16]
+GPU: 12",
+			pos="22401,2934.3",
+			width=1.7361];
+		ffn_2_12 -> ffn_out_2_12	[color="",
+			constraint="",
+			pos="e,22401,2960.9 22401,3047.7 22401,3047.7 22401,2970.9 22401,2970.9",
+			style=""];
+		ffn_out_2_12 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23084,2783 22401,2907.6 22401,2864.2 22401,2783 22401,2783 22401,2783 23074,2783 23074,2783",
+			style=""];
+		ffn_2_13	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="FFN Dense 13
+[B×L×D/16]
+GPU: 13",
+			pos="22218,3074.3",
+			width=1.6528];
+		ffn_out_2_13	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="FFN Output 13
+[B×L×D/16]
+GPU: 13",
+			pos="22218,2934.3",
+			width=1.7361];
+		ffn_2_13 -> ffn_out_2_13	[color="",
+			constraint="",
+			pos="e,22218,2960.9 22218,3047.7 22218,3047.7 22218,2970.9 22218,2970.9",
+			style=""];
+		ffn_out_2_13 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23087,2773 22276,2907.7 22276,2861.9 22276,2773 22276,2773 22276,2773 23077,2773 23077,2773",
+			style=""];
+		ffn_2_14	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="FFN Dense 14
+[B×L×D/16]
+GPU: 14",
+			pos="22035,3074.3",
+			width=1.6528];
+		ffn_out_2_14	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="FFN Output 14
+[B×L×D/16]
+GPU: 14",
+			pos="22035,2934.3",
+			width=1.7361];
+		ffn_2_14 -> ffn_out_2_14	[color="",
+			constraint="",
+			pos="e,22035,2960.9 22035,3047.7 22035,3047.7 22035,2970.9 22035,2970.9",
+			style=""];
+		ffn_out_2_14 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23095,2764 22089,2907.7 22089,2859.8 22089,2764 22089,2764 22089,2764 23085,2764 23085,2764",
+			style=""];
+		ffn_2_15	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="FFN Dense 15
+[B×L×D/16]
+GPU: 15",
+			pos="21852,3074.3",
+			width=1.6528];
+		ffn_out_2_15	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="FFN Output 15
+[B×L×D/16]
+GPU: 15",
+			pos="21852,2934.3",
+			width=1.7361];
+		ffn_2_15 -> ffn_out_2_15	[color="",
+			constraint="",
+			pos="e,21852,2960.9 21852,3047.7 21852,3047.7 21852,2970.9 21852,2970.9",
+			style=""];
+		ffn_out_2_15 -> layer_norm_2	[color="",
+			constraint="",
+			pos="e,23112,2755 21896,2907.5 21896,2857.4 21896,2755 21896,2755 21896,2755 23102,2755 23102,2755",
+			style=""];
+	}
+	subgraph cluster_layer_3 {
+		graph [bb="6723,1445.9,23241,2689.9",
+			color=black,
+			label="Layer 3",
+			lheight=0.21,
+			lp="14982,2678.4",
+			lwidth=0.76,
+			style=dashed
+		];
+		q_proj_3_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="Q Projection 0_0
+[B×L×d_s×h_g]
+W_Q^{0,0}
+GPU: 0",
+			pos="23166,2624.9",
+			width=1.8611];
+		attention_3_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="Attention 0_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 0",
+			pos="22878,2469.9",
+			width=2.4028];
+		q_proj_3_0_0 -> attention_3_0_0	[color="",
+			constraint="",
+			pos="e,22965,2469 23166,2590.7 23166,2544.8 23166,2469 23166,2469 23166,2469 22975,2469 22975,2469",
+			style=""];
+		k_proj_3_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="K Projection 0_0
+[B×L×d_s×h_g]
+W_K^{0,0}
+GPU: 0",
+			pos="22974,2624.9",
+			width=1.8611];
+		k_proj_3_0_0 -> attention_3_0_0	[color="",
+			constraint="",
+			pos="e,22936,2504.1 22936,2590.8 22936,2590.8 22936,2514.1 22936,2514.1",
+			style=""];
+		v_proj_3_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="V Projection 0_0
+[B×L×d_s×h_g]
+W_V^{0,0}
+GPU: 0",
+			pos="22782,2624.9",
+			width=1.8472];
+		v_proj_3_0_0 -> attention_3_0_0	[color="",
+			constraint="",
+			pos="e,22820,2504.1 22820,2590.8 22820,2590.8 22820,2514.1 22820,2514.1",
+			style=""];
+		concat_group_3_0	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 0
+[B×L×d×h_g]
+GPU: 0-3",
+			pos="21822,2281.9",
+			shape=diamond,
+			width=3.5556];
+		attention_3_0_0 -> concat_group_3_0	[color="",
+			constraint="",
+			pos="e,21948,2281 22878,2435.7 22878,2381.2 22878,2281 22878,2281 22878,2281 21958,2281 21958,2281",
+			style=""];
+		q_proj_3_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="Q Projection 0_1
+[B×L×d_s×h_g]
+W_Q^{0,1}
+GPU: 1",
+			pos="22590,2624.9",
+			width=1.8611];
+		attention_3_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="Attention 0_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 1",
+			pos="22254,2469.9",
+			width=2.4028];
+		q_proj_3_0_1 -> attention_3_0_1	[color="",
+			constraint="",
+			pos="e,22341,2469 22590,2590.7 22590,2544.8 22590,2469 22590,2469 22590,2469 22351,2469 22351,2469",
+			style=""];
+		k_proj_3_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="K Projection 0_1
+[B×L×d_s×h_g]
+W_K^{0,1}
+GPU: 1",
+			pos="22398,2624.9",
+			width=1.8611];
+		k_proj_3_0_1 -> attention_3_0_1	[color="",
+			constraint="",
+			pos="e,22336,2504.1 22336,2590.8 22336,2590.8 22336,2514.1 22336,2514.1",
+			style=""];
+		v_proj_3_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="V Projection 0_1
+[B×L×d_s×h_g]
+W_V^{0,1}
+GPU: 1",
+			pos="22206,2624.9",
+			width=1.8472];
+		v_proj_3_0_1 -> attention_3_0_1	[color="",
+			constraint="",
+			pos="e,22220,2504.1 22220,2590.8 22220,2590.8 22220,2514.1 22220,2514.1",
+			style=""];
+		attention_3_0_1 -> concat_group_3_0	[color="",
+			constraint="",
+			pos="e,21925,2292.3 22167,2481 22070,2481 21925,2481 21925,2481 21925,2481 21925,2302.3 21925,2302.3",
+			style=""];
+		attention_3_0_1 -> concat_group_3_0	[label="AllGather GPU0→GPU1",
+			lp="22321,2385.4",
+			pos="e,21936,2287.7 22167,2458 22073,2458 21936,2458 21936,2458 21936,2458 21936,2297.7 21936,2297.7"];
+		q_proj_3_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="Q Projection 0_2
+[B×L×d_s×h_g]
+W_Q^{0,2}
+GPU: 2",
+			pos="22014,2624.9",
+			width=1.8611];
+		attention_3_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="Attention 0_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 2",
+			pos="21822,2469.9",
+			width=2.4028];
+		q_proj_3_0_2 -> attention_3_0_2	[color="",
+			constraint="",
+			pos="e,21902,2504.1 21947,2624 21923,2624 21902,2624 21902,2624 21902,2624 21902,2514.1 21902,2514.1",
+			style=""];
+		k_proj_3_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="K Projection 0_2
+[B×L×d_s×h_g]
+W_K^{0,2}
+GPU: 2",
+			pos="21822,2624.9",
+			width=1.8611];
+		k_proj_3_0_2 -> attention_3_0_2	[color="",
+			constraint="",
+			pos="e,21822,2504.1 21822,2590.8 21822,2590.8 21822,2514.1 21822,2514.1",
+			style=""];
+		v_proj_3_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="V Projection 0_2
+[B×L×d_s×h_g]
+W_V^{0,2}
+GPU: 2",
+			pos="21630,2624.9",
+			width=1.8472];
+		v_proj_3_0_2 -> attention_3_0_2	[color="",
+			constraint="",
+			pos="e,21745,2504.1 21697,2624 21722,2624 21745,2624 21745,2624 21745,2624 21745,2514.1 21745,2514.1",
+			style=""];
+		attention_3_0_2 -> concat_group_3_0	[color="",
+			constraint="",
+			pos="e,21793,2323.2 21793,2435.8 21793,2435.8 21793,2333.2 21793,2333.2",
+			style=""];
+		attention_3_0_2 -> concat_group_3_0	[label="AllGather GPU1→GPU2",
+			lp="22035,2385.4",
+			pos="e,21851,2323.2 21851,2435.8 21851,2435.8 21851,2333.2 21851,2333.2"];
+		q_proj_3_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="Q Projection 0_3
+[B×L×d_s×h_g]
+W_Q^{0,3}
+GPU: 3",
+			pos="21438,2624.9",
+			width=1.8611];
+		attention_3_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="Attention 0_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 3",
+			pos="21343,2469.9",
+			width=2.4028];
+		q_proj_3_0_3 -> attention_3_0_3	[color="",
+			constraint="",
+			pos="e,21400,2504.1 21400,2590.8 21400,2590.8 21400,2514.1 21400,2514.1",
+			style=""];
+		k_proj_3_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="K Projection 0_3
+[B×L×d_s×h_g]
+W_K^{0,3}
+GPU: 3",
+			pos="21246,2624.9",
+			width=1.8611];
+		k_proj_3_0_3 -> attention_3_0_3	[color="",
+			constraint="",
+			pos="e,21285,2504.1 21285,2590.8 21285,2590.8 21285,2514.1 21285,2514.1",
+			style=""];
+		v_proj_3_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="V Projection 0_3
+[B×L×d_s×h_g]
+W_V^{0,3}
+GPU: 3",
+			pos="21054,2624.9",
+			width=1.8472];
+		v_proj_3_0_3 -> attention_3_0_3	[color="",
+			constraint="",
+			pos="e,21256,2481 21054,2590.8 21054,2548.2 21054,2481 21054,2481 21054,2481 21246,2481 21246,2481",
+			style=""];
+		attention_3_0_3 -> concat_group_3_0	[color="",
+			constraint="",
+			pos="e,21722,2293.7 21430,2481 21542,2481 21722,2481 21722,2481 21722,2481 21722,2303.7 21722,2303.7",
+			style=""];
+		attention_3_0_3 -> concat_group_3_0	[label="AllGather GPU2→GPU3",
+			lp="21659,2385.4",
+			pos="e,21710,2288.5 21430,2458 21538,2458 21710,2458 21710,2458 21710,2458 21710,2298.5 21710,2298.5"];
+		q_proj_3_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="Q Projection 1_0
+[B×L×d_s×h_g]
+W_Q^{1,0}
+GPU: 4",
+			pos="20862,2624.9",
+			width=1.8611];
+		attention_3_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="Attention 1_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 4",
+			pos="20575,2469.9",
+			width=2.4028];
+		q_proj_3_1_0 -> attention_3_1_0	[color="",
+			constraint="",
+			pos="e,20662,2458 20862,2590.7 20862,2541.9 20862,2458 20862,2458 20862,2458 20672,2458 20672,2458",
+			style=""];
+		k_proj_3_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="K Projection 1_0
+[B×L×d_s×h_g]
+W_K^{1,0}
+GPU: 4",
+			pos="20670,2624.9",
+			width=1.8611];
+		k_proj_3_1_0 -> attention_3_1_0	[color="",
+			constraint="",
+			pos="e,20632,2504.1 20632,2590.8 20632,2590.8 20632,2514.1 20632,2514.1",
+			style=""];
+		v_proj_3_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="V Projection 1_0
+[B×L×d_s×h_g]
+W_V^{1,0}
+GPU: 4",
+			pos="20478,2624.9",
+			width=1.8472];
+		v_proj_3_1_0 -> attention_3_1_0	[color="",
+			constraint="",
+			pos="e,20516,2504.1 20516,2590.8 20516,2590.8 20516,2514.1 20516,2514.1",
+			style=""];
+		concat_group_3_1	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 1
+[B×L×d×h_g]
+GPU: 4-7",
+			pos="19518,2281.9",
+			shape=diamond,
+			width=3.5556];
+		attention_3_1_0 -> concat_group_3_1	[color="",
+			constraint="",
+			pos="e,19644,2281 20575,2435.7 20575,2381.2 20575,2281 20575,2281 20575,2281 19654,2281 19654,2281",
+			style=""];
+		q_proj_3_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="Q Projection 1_1
+[B×L×d_s×h_g]
+W_Q^{1,1}
+GPU: 5",
+			pos="20286,2624.9",
+			width=1.8611];
+		attention_3_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="Attention 1_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 5",
+			pos="19971,2469.9",
+			width=2.4028];
+		q_proj_3_1_1 -> attention_3_1_1	[color="",
+			constraint="",
+			pos="e,20058,2469 20286,2590.7 20286,2544.8 20286,2469 20286,2469 20286,2469 20068,2469 20068,2469",
+			style=""];
+		k_proj_3_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="K Projection 1_1
+[B×L×d_s×h_g]
+W_K^{1,1}
+GPU: 5",
+			pos="20094,2624.9",
+			width=1.8611];
+		k_proj_3_1_1 -> attention_3_1_1	[color="",
+			constraint="",
+			pos="e,20042,2504.1 20042,2590.8 20042,2590.8 20042,2514.1 20042,2514.1",
+			style=""];
+		v_proj_3_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="V Projection 1_1
+[B×L×d_s×h_g]
+W_V^{1,1}
+GPU: 5",
+			pos="19902,2624.9",
+			width=1.8472];
+		v_proj_3_1_1 -> attention_3_1_1	[color="",
+			constraint="",
+			pos="e,19926,2504.1 19926,2590.8 19926,2590.8 19926,2514.1 19926,2514.1",
+			style=""];
+		attention_3_1_1 -> concat_group_3_1	[color="",
+			constraint="",
+			pos="e,19617,2294 19884,2481 19780,2481 19617,2481 19617,2481 19617,2481 19617,2304 19617,2304",
+			style=""];
+		attention_3_1_1 -> concat_group_3_1	[label="AllGather GPU4→GPU5",
+			lp="20163,2385.4",
+			pos="e,19630,2288.5 19884,2458 19783,2458 19630,2458 19630,2458 19630,2458 19630,2298.5 19630,2298.5"];
+		q_proj_3_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="Q Projection 1_2
+[B×L×d_s×h_g]
+W_Q^{1,2}
+GPU: 6",
+			pos="19710,2624.9",
+			width=1.8611];
+		attention_3_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="Attention 1_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 6",
+			pos="19518,2469.9",
+			width=2.4028];
+		q_proj_3_1_2 -> attention_3_1_2	[color="",
+			constraint="",
+			pos="e,19595,2504.1 19643,2624 19618,2624 19595,2624 19595,2624 19595,2624 19595,2514.1 19595,2514.1",
+			style=""];
+		k_proj_3_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="K Projection 1_2
+[B×L×d_s×h_g]
+W_K^{1,2}
+GPU: 6",
+			pos="19518,2624.9",
+			width=1.8611];
+		k_proj_3_1_2 -> attention_3_1_2	[color="",
+			constraint="",
+			pos="e,19518,2504.1 19518,2590.8 19518,2590.8 19518,2514.1 19518,2514.1",
+			style=""];
+		v_proj_3_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="V Projection 1_2
+[B×L×d_s×h_g]
+W_V^{1,2}
+GPU: 6",
+			pos="19326,2624.9",
+			width=1.8472];
+		v_proj_3_1_2 -> attention_3_1_2	[color="",
+			constraint="",
+			pos="e,19441,2504.1 19393,2624 19418,2624 19441,2624 19441,2624 19441,2624 19441,2514.1 19441,2514.1",
+			style=""];
+		attention_3_1_2 -> concat_group_3_1	[color="",
+			constraint="",
+			pos="e,19489,2323.2 19489,2435.8 19489,2435.8 19489,2333.2 19489,2333.2",
+			style=""];
+		attention_3_1_2 -> concat_group_3_1	[label="AllGather GPU5→GPU6",
+			lp="19697,2385.4",
+			pos="e,19547,2323.2 19547,2435.8 19547,2435.8 19547,2333.2 19547,2333.2"];
+		q_proj_3_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="Q Projection 1_3
+[B×L×d_s×h_g]
+W_Q^{1,3}
+GPU: 7",
+			pos="19134,2624.9",
+			width=1.8611];
+		attention_3_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="Attention 1_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 7",
+			pos="19005,2469.9",
+			width=2.4028];
+		q_proj_3_1_3 -> attention_3_1_3	[color="",
+			constraint="",
+			pos="e,19079,2504.1 19079,2590.8 19079,2590.8 19079,2514.1 19079,2514.1",
+			style=""];
+		k_proj_3_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="K Projection 1_3
+[B×L×d_s×h_g]
+W_K^{1,3}
+GPU: 7",
+			pos="18942,2624.9",
+			width=1.8611];
+		k_proj_3_1_3 -> attention_3_1_3	[color="",
+			constraint="",
+			pos="e,18964,2504.1 18964,2590.8 18964,2590.8 18964,2514.1 18964,2514.1",
+			style=""];
+		v_proj_3_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="V Projection 1_3
+[B×L×d_s×h_g]
+W_V^{1,3}
+GPU: 7",
+			pos="18750,2624.9",
+			width=1.8472];
+		v_proj_3_1_3 -> attention_3_1_3	[color="",
+			constraint="",
+			pos="e,18918,2458 18750,2590.7 18750,2541.9 18750,2458 18750,2458 18750,2458 18908,2458 18908,2458",
+			style=""];
+		attention_3_1_3 -> concat_group_3_1	[color="",
+			constraint="",
+			pos="e,19418,2293.7 19092,2481 19213,2481 19418,2481 19418,2481 19418,2481 19418,2303.7 19418,2303.7",
+			style=""];
+		attention_3_1_3 -> concat_group_3_1	[label="AllGather GPU6→GPU7",
+			lp="19259,2385.4",
+			pos="e,19406,2288.5 19092,2458 19210,2458 19406,2458 19406,2458 19406,2458 19406,2298.5 19406,2298.5"];
+		q_proj_3_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="Q Projection 2_0
+[B×L×d_s×h_g]
+W_Q^{2,0}
+GPU: 8",
+			pos="18558,2624.9",
+			width=1.8611];
+		attention_3_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="Attention 2_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 8",
+			pos="18284,2469.9",
+			width=2.4028];
+		q_proj_3_2_0 -> attention_3_2_0	[color="",
+			constraint="",
+			pos="e,18371,2481 18558,2590.8 18558,2548.2 18558,2481 18558,2481 18558,2481 18381,2481 18381,2481",
+			style=""];
+		k_proj_3_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="K Projection 2_0
+[B×L×d_s×h_g]
+W_K^{2,0}
+GPU: 8",
+			pos="18366,2624.9",
+			width=1.8611];
+		k_proj_3_2_0 -> attention_3_2_0	[color="",
+			constraint="",
+			pos="e,18335,2504.1 18335,2590.8 18335,2590.8 18335,2514.1 18335,2514.1",
+			style=""];
+		v_proj_3_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="V Projection 2_0
+[B×L×d_s×h_g]
+W_V^{2,0}
+GPU: 8",
+			pos="18174,2624.9",
+			width=1.8472];
+		v_proj_3_2_0 -> attention_3_2_0	[color="",
+			constraint="",
+			pos="e,18219,2504.1 18219,2590.8 18219,2590.8 18219,2514.1 18219,2514.1",
+			style=""];
+		concat_group_3_2	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 2
+[B×L×d×h_g]
+GPU: 8-11",
+			pos="17790,2281.9",
+			shape=diamond,
+			width=3.5556];
+		attention_3_2_0 -> concat_group_3_2	[color="",
+			constraint="",
+			pos="e,17896,2291.1 18197,2469 18083,2469 17896,2469 17896,2469 17896,2469 17896,2301.1 17896,2301.1",
+			style=""];
+		q_proj_3_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="Q Projection 2_1
+[B×L×d_s×h_g]
+W_Q^{2,1}
+GPU: 9",
+			pos="17982,2624.9",
+			width=1.8611];
+		attention_3_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="Attention 2_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 9",
+			pos="17790,2469.9",
+			width=2.4028];
+		q_proj_3_2_1 -> attention_3_2_1	[color="",
+			constraint="",
+			pos="e,17867,2504.1 17915,2624 17890,2624 17867,2624 17867,2624 17867,2624 17867,2514.1 17867,2514.1",
+			style=""];
+		k_proj_3_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="K Projection 2_1
+[B×L×d_s×h_g]
+W_K^{2,1}
+GPU: 9",
+			pos="17790,2624.9",
+			width=1.8611];
+		k_proj_3_2_1 -> attention_3_2_1	[color="",
+			constraint="",
+			pos="e,17790,2504.1 17790,2590.8 17790,2590.8 17790,2514.1 17790,2514.1",
+			style=""];
+		v_proj_3_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="V Projection 2_1
+[B×L×d_s×h_g]
+W_V^{2,1}
+GPU: 9",
+			pos="17598,2624.9",
+			width=1.8472];
+		v_proj_3_2_1 -> attention_3_2_1	[color="",
+			constraint="",
+			pos="e,17713,2504.1 17665,2624 17690,2624 17713,2624 17713,2624 17713,2624 17713,2514.1 17713,2514.1",
+			style=""];
+		attention_3_2_1 -> concat_group_3_2	[color="",
+			constraint="",
+			pos="e,17761,2323.2 17761,2435.8 17761,2435.8 17761,2333.2 17761,2333.2",
+			style=""];
+		attention_3_2_1 -> concat_group_3_2	[label="AllGather GPU8→GPU9",
+			lp="17975,2385.4",
+			pos="e,17819,2323.2 17819,2435.8 17819,2435.8 17819,2333.2 17819,2333.2"];
+		q_proj_3_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="Q Projection 2_2
+[B×L×d_s×h_g]
+W_Q^{2,2}
+GPU: 10",
+			pos="17406,2624.9",
+			width=1.8611];
+		attention_3_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="Attention 2_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 10",
+			pos="17276,2469.9",
+			width=2.4028];
+		q_proj_3_2_2 -> attention_3_2_2	[color="",
+			constraint="",
+			pos="e,17351,2504.1 17351,2590.8 17351,2590.8 17351,2514.1 17351,2514.1",
+			style=""];
+		k_proj_3_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="K Projection 2_2
+[B×L×d_s×h_g]
+W_K^{2,2}
+GPU: 10",
+			pos="17214,2624.9",
+			width=1.8611];
+		k_proj_3_2_2 -> attention_3_2_2	[color="",
+			constraint="",
+			pos="e,17235,2504.1 17235,2590.8 17235,2590.8 17235,2514.1 17235,2514.1",
+			style=""];
+		v_proj_3_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="V Projection 2_2
+[B×L×d_s×h_g]
+W_V^{2,2}
+GPU: 10",
+			pos="17022,2624.9",
+			width=1.8472];
+		v_proj_3_2_2 -> attention_3_2_2	[color="",
+			constraint="",
+			pos="e,17189,2469 17054,2590.7 17054,2544.8 17054,2469 17054,2469 17054,2469 17179,2469 17179,2469",
+			style=""];
+		attention_3_2_2 -> concat_group_3_2	[color="",
+			constraint="",
+			pos="e,17690,2293.7 17363,2481 17484,2481 17690,2481 17690,2481 17690,2481 17690,2303.7 17690,2303.7",
+			style=""];
+		attention_3_2_2 -> concat_group_3_2	[label="AllGather GPU9→GPU10",
+			lp="17532,2385.4",
+			pos="e,17678,2288.5 17363,2458 17481,2458 17678,2458 17678,2458 17678,2458 17678,2298.5 17678,2298.5"];
+		q_proj_3_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="Q Projection 2_3
+[B×L×d_s×h_g]
+W_Q^{2,3}
+GPU: 11",
+			pos="16830,2624.9",
+			width=1.8611];
+		attention_3_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="Attention 2_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 11",
+			pos="16733,2469.9",
+			width=2.4028];
+		q_proj_3_2_3 -> attention_3_2_3	[color="",
+			constraint="",
+			pos="e,16791,2504.1 16791,2590.8 16791,2590.8 16791,2514.1 16791,2514.1",
+			style=""];
+		k_proj_3_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="K Projection 2_3
+[B×L×d_s×h_g]
+W_K^{2,3}
+GPU: 11",
+			pos="16638,2624.9",
+			width=1.8611];
+		k_proj_3_2_3 -> attention_3_2_3	[color="",
+			constraint="",
+			pos="e,16676,2504.1 16676,2590.8 16676,2590.8 16676,2514.1 16676,2514.1",
+			style=""];
+		v_proj_3_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="V Projection 2_3
+[B×L×d_s×h_g]
+W_V^{2,3}
+GPU: 11",
+			pos="16446,2624.9",
+			width=1.8472];
+		v_proj_3_2_3 -> attention_3_2_3	[color="",
+			constraint="",
+			pos="e,16646,2481 16495,2590.8 16495,2548.2 16495,2481 16495,2481 16495,2481 16636,2481 16636,2481",
+			style=""];
+		attention_3_2_3 -> concat_group_3_2	[color="",
+			constraint="",
+			pos="e,17703,2299 16810,2435.7 16810,2385.8 16810,2299 16810,2299 16810,2299 17693,2299 17693,2299",
+			style=""];
+		attention_3_2_3 -> concat_group_3_2	[label="AllGather GPU10→GPU11",
+			lp="17099,2385.4",
+			pos="e,17705,2264 16801,2435.4 16801,2376.8 16801,2264 16801,2264 16801,2264 17695,2264 17695,2264"];
+		q_proj_3_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="Q Projection 3_0
+[B×L×d_s×h_g]
+W_Q^{3,0}
+GPU: 12",
+			pos="16254,2624.9",
+			width=1.8611];
+		attention_3_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="Attention 3_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 12",
+			pos="16002,2469.9",
+			width=2.4028];
+		q_proj_3_3_0 -> attention_3_3_0	[color="",
+			constraint="",
+			pos="e,16089,2458 16204,2590.7 16204,2541.9 16204,2458 16204,2458 16204,2458 16099,2458 16099,2458",
+			style=""];
+		k_proj_3_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="K Projection 3_0
+[B×L×d_s×h_g]
+W_K^{3,0}
+GPU: 12",
+			pos="16062,2624.9",
+			width=1.8611];
+		k_proj_3_3_0 -> attention_3_3_0	[color="",
+			constraint="",
+			pos="e,16042,2504.1 16042,2590.8 16042,2590.8 16042,2514.1 16042,2514.1",
+			style=""];
+		v_proj_3_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="V Projection 3_0
+[B×L×d_s×h_g]
+W_V^{3,0}
+GPU: 12",
+			pos="15870,2624.9",
+			width=1.8472];
+		v_proj_3_3_0 -> attention_3_3_0	[color="",
+			constraint="",
+			pos="e,15926,2504.1 15926,2590.8 15926,2590.8 15926,2514.1 15926,2514.1",
+			style=""];
+		concat_group_3_3	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 3
+[B×L×d×h_g]
+GPU: 12-15",
+			pos="15486,2281.9",
+			shape=diamond,
+			width=3.5556];
+		attention_3_3_0 -> concat_group_3_3	[color="",
+			constraint="",
+			pos="e,15592,2291.1 15915,2469 15795,2469 15592,2469 15592,2469 15592,2469 15592,2301.1 15592,2301.1",
+			style=""];
+		q_proj_3_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="Q Projection 3_1
+[B×L×d_s×h_g]
+W_Q^{3,1}
+GPU: 13",
+			pos="15678,2624.9",
+			width=1.8611];
+		attention_3_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="Attention 3_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 13",
+			pos="15486,2469.9",
+			width=2.4028];
+		q_proj_3_3_1 -> attention_3_3_1	[color="",
+			constraint="",
+			pos="e,15563,2504.1 15611,2624 15586,2624 15563,2624 15563,2624 15563,2624 15563,2514.1 15563,2514.1",
+			style=""];
+		k_proj_3_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="K Projection 3_1
+[B×L×d_s×h_g]
+W_K^{3,1}
+GPU: 13",
+			pos="15486,2624.9",
+			width=1.8611];
+		k_proj_3_3_1 -> attention_3_3_1	[color="",
+			constraint="",
+			pos="e,15486,2504.1 15486,2590.8 15486,2590.8 15486,2514.1 15486,2514.1",
+			style=""];
+		v_proj_3_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="V Projection 3_1
+[B×L×d_s×h_g]
+W_V^{3,1}
+GPU: 13",
+			pos="15294,2624.9",
+			width=1.8472];
+		v_proj_3_3_1 -> attention_3_3_1	[color="",
+			constraint="",
+			pos="e,15409,2504.1 15361,2624 15386,2624 15409,2624 15409,2624 15409,2624 15409,2514.1 15409,2514.1",
+			style=""];
+		attention_3_3_1 -> concat_group_3_3	[color="",
+			constraint="",
+			pos="e,15457,2323.2 15457,2435.8 15457,2435.8 15457,2333.2 15457,2333.2",
+			style=""];
+		attention_3_3_1 -> concat_group_3_3	[label="AllGather GPU12→GPU13",
+			lp="15803,2385.4",
+			pos="e,15515,2323.2 15515,2435.8 15515,2435.8 15515,2333.2 15515,2333.2"];
+		q_proj_3_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="Q Projection 3_2
+[B×L×d_s×h_g]
+W_Q^{3,2}
+GPU: 14",
+			pos="15102,2624.9",
+			width=1.8611];
+		attention_3_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="Attention 3_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 14",
+			pos="15007,2469.9",
+			width=2.4028];
+		q_proj_3_3_2 -> attention_3_3_2	[color="",
+			constraint="",
+			pos="e,15064,2504.1 15064,2590.8 15064,2590.8 15064,2514.1 15064,2514.1",
+			style=""];
+		k_proj_3_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="K Projection 3_2
+[B×L×d_s×h_g]
+W_K^{3,2}
+GPU: 14",
+			pos="14910,2624.9",
+			width=1.8611];
+		k_proj_3_3_2 -> attention_3_3_2	[color="",
+			constraint="",
+			pos="e,14949,2504.1 14949,2590.8 14949,2590.8 14949,2514.1 14949,2514.1",
+			style=""];
+		v_proj_3_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="V Projection 3_2
+[B×L×d_s×h_g]
+W_V^{3,2}
+GPU: 14",
+			pos="14718,2624.9",
+			width=1.8472];
+		v_proj_3_3_2 -> attention_3_3_2	[color="",
+			constraint="",
+			pos="e,14920,2469 14730,2590.7 14730,2544.8 14730,2469 14730,2469 14730,2469 14910,2469 14910,2469",
+			style=""];
+		attention_3_3_2 -> concat_group_3_3	[color="",
+			constraint="",
+			pos="e,15386,2293.7 15094,2481 15206,2481 15386,2481 15386,2481 15386,2481 15386,2303.7 15386,2303.7",
+			style=""];
+		attention_3_3_2 -> concat_group_3_3	[label="AllGather GPU13→GPU14",
+			lp="15344,2385.4",
+			pos="e,15374,2288.5 15094,2458 15202,2458 15374,2458 15374,2458 15374,2458 15374,2298.5 15374,2298.5"];
+		q_proj_3_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="Q Projection 3_3
+[B×L×d_s×h_g]
+W_Q^{3,3}
+GPU: 15",
+			pos="14526,2624.9",
+			width=1.8611];
+		attention_3_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="Attention 3_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 15",
+			pos="14382,2469.9",
+			width=2.4028];
+		q_proj_3_3_3 -> attention_3_3_3	[color="",
+			constraint="",
+			pos="e,14464,2504.1 14464,2590.8 14464,2590.8 14464,2514.1 14464,2514.1",
+			style=""];
+		k_proj_3_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="K Projection 3_3
+[B×L×d_s×h_g]
+W_K^{3,3}
+GPU: 15",
+			pos="14334,2624.9",
+			width=1.8611];
+		k_proj_3_3_3 -> attention_3_3_3	[color="",
+			constraint="",
+			pos="e,14348,2504.1 14348,2590.8 14348,2590.8 14348,2514.1 14348,2514.1",
+			style=""];
+		v_proj_3_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="V Projection 3_3
+[B×L×d_s×h_g]
+W_V^{3,3}
+GPU: 15",
+			pos="14142,2624.9",
+			width=1.8472];
+		v_proj_3_3_3 -> attention_3_3_3	[color="",
+			constraint="",
+			pos="e,14295,2469 14144,2590.7 14144,2544.8 14144,2469 14144,2469 14144,2469 14285,2469 14285,2469",
+			style=""];
+		attention_3_3_3 -> concat_group_3_3	[color="",
+			constraint="",
+			pos="e,15399,2299 14444,2435.7 14444,2385.8 14444,2299 14444,2299 14444,2299 15389,2299 15389,2299",
+			style=""];
+		attention_3_3_3 -> concat_group_3_3	[label="AllGather GPU14→GPU15",
+			lp="14810,2385.4",
+			pos="e,15401,2264 14425,2435.4 14425,2376.8 14425,2264 14425,2264 14425,2264 15391,2264 15391,2264"];
+		final_concat_3	[fillcolor="#FFA500",
+			height=1.4722,
+			label="Final Concat Layer 3
+[B×L×D]
+GPU: 0-15",
+			pos="18224,2088.9",
+			shape=diamond,
+			width=4.5833];
+		concat_group_3_0 -> final_concat_3	[color="",
+			constraint="",
+			pos="e,18386,2088 21822,2228.6 21822,2171.2 21822,2088 21822,2088 21822,2088 18396,2088 18396,2088",
+			style=""];
+		expert_gate_3_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert Gate 0
+[B×L×D]
+GPU: 0",
+			pos="18224,1922.4",
+			width=1.625];
+		final_concat_3 -> expert_gate_3_0	[color="",
+			constraint="",
+			pos="e,18224,1949 18224,2035.7 18224,2035.7 18224,1959 18224,1959",
+			style=""];
+		concat_group_3_1 -> final_concat_3	[color="",
+			constraint="",
+			pos="e,18380,2091.9 19392,2281 19095,2281 18380,2281 18380,2281 18380,2281 18380,2101.9 18380,2101.9",
+			style=""];
+		concat_group_3_2 -> final_concat_3	[color="",
+			constraint="",
+			pos="e,18112,2106 17914,2279.9 17914,2260.6 17914,2106 17914,2106 17914,2106 18102,2106 18102,2106",
+			style=""];
+		concat_group_3_3 -> final_concat_3	[color="",
+			constraint="",
+			pos="e,18114,2071 15608,2278.9 15608,2253.3 15608,2071 15608,2071 15608,2071 18104,2071 18104,2071",
+			style=""];
+		expert_3_0_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 0",
+			pos="18224,1782.4",
+			width=1.3194];
+		expert_gate_3_0 -> expert_3_0_0	[color="",
+			constraint="",
+			pos="e,18224,1808.9 18224,1895.7 18224,1895.7 18224,1818.9 18224,1818.9",
+			style=""];
+		expert_agg_3_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert Aggregation 0
+[B×L×D]
+GPU: 0",
+			pos="18224,1642.4",
+			width=2.375];
+		expert_3_0_0 -> expert_agg_3_0	[color="",
+			constraint="",
+			pos="e,18224,1668.9 18224,1755.7 18224,1755.7 18224,1678.9 18224,1678.9",
+			style=""];
+		expert_3_0_1	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 0",
+			pos="13970,2624.9",
+			width=1.3194];
+		expert_3_0_2	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 0",
+			pos="13817,2624.9",
+			width=1.3194];
+		expert_3_0_3	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 0",
+			pos="13664,2624.9",
+			width=1.3194];
+		layer_norm_3	[fillcolor="#E6E6E6",
+			height=1.041,
+			label="Layer Norm 3
+[B×L×D]
+GPU: All",
+			pos="16451,1491.4",
+			shape=ellipse,
+			width=2.2785];
+		expert_agg_3_0 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16505,1463 18224,1615.5 18224,1565.5 18224,1463 18224,1463 18224,1463 16515,1463 16515,1463",
+			style=""];
+		expert_gate_3_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert Gate 1
+[B×L×D]
+GPU: 1",
+			pos="17995,1922.4",
+			width=1.625];
+		expert_3_1_0	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 1",
+			pos="17995,1782.4",
+			width=1.3194];
+		expert_gate_3_1 -> expert_3_1_0	[color="",
+			constraint="",
+			pos="e,17995,1808.9 17995,1895.7 17995,1895.7 17995,1818.9 17995,1818.9",
+			style=""];
+		expert_agg_3_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert Aggregation 1
+[B×L×D]
+GPU: 1",
+			pos="17995,1642.4",
+			width=2.375];
+		expert_3_1_0 -> expert_agg_3_1	[color="",
+			constraint="",
+			pos="e,17995,1668.9 17995,1755.7 17995,1755.7 17995,1678.9 17995,1678.9",
+			style=""];
+		expert_3_1_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 1",
+			pos="13511,2624.9",
+			width=1.3194];
+		expert_3_1_2	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 1",
+			pos="13358,2624.9",
+			width=1.3194];
+		expert_3_1_3	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 1",
+			pos="13205,2624.9",
+			width=1.3194];
+		expert_agg_3_1 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16521,1472 17995,1615.7 17995,1567.8 17995,1472 17995,1472 17995,1472 16531,1472 16531,1472",
+			style=""];
+		expert_gate_3_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert Gate 2
+[B×L×D]
+GPU: 2",
+			pos="17766,1922.4",
+			width=1.625];
+		expert_3_2_0	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 2",
+			pos="17766,1782.4",
+			width=1.3194];
+		expert_gate_3_2 -> expert_3_2_0	[color="",
+			constraint="",
+			pos="e,17766,1808.9 17766,1895.7 17766,1895.7 17766,1818.9 17766,1818.9",
+			style=""];
+		expert_agg_3_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert Aggregation 2
+[B×L×D]
+GPU: 2",
+			pos="17766,1642.4",
+			width=2.375];
+		expert_3_2_0 -> expert_agg_3_2	[color="",
+			constraint="",
+			pos="e,17766,1668.9 17766,1755.7 17766,1755.7 17766,1678.9 17766,1678.9",
+			style=""];
+		expert_3_2_1	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 2",
+			pos="13052,2624.9",
+			width=1.3194];
+		expert_3_2_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 2",
+			pos="12899,2624.9",
+			width=1.3194];
+		expert_3_2_3	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 2",
+			pos="12746,2624.9",
+			width=1.3194];
+		expert_agg_3_2 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16531,1482 17766,1615.5 17766,1569.9 17766,1482 17766,1482 17766,1482 16541,1482 16541,1482",
+			style=""];
+		expert_gate_3_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert Gate 3
+[B×L×D]
+GPU: 3",
+			pos="17537,1922.4",
+			width=1.625];
+		expert_3_3_0	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 3",
+			pos="17537,1782.4",
+			width=1.3194];
+		expert_gate_3_3 -> expert_3_3_0	[color="",
+			constraint="",
+			pos="e,17537,1808.9 17537,1895.7 17537,1895.7 17537,1818.9 17537,1818.9",
+			style=""];
+		expert_agg_3_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert Aggregation 3
+[B×L×D]
+GPU: 3",
+			pos="17537,1642.4",
+			width=2.375];
+		expert_3_3_0 -> expert_agg_3_3	[color="",
+			constraint="",
+			pos="e,17537,1668.9 17537,1755.7 17537,1755.7 17537,1678.9 17537,1678.9",
+			style=""];
+		expert_3_3_1	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 3",
+			pos="12593,2624.9",
+			width=1.3194];
+		expert_3_3_2	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 3",
+			pos="12440,2624.9",
+			width=1.3194];
+		expert_3_3_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 3",
+			pos="12287,2624.9",
+			width=1.3194];
+		expert_agg_3_3 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16533,1491 17537,1615.6 17537,1572.2 17537,1491 17537,1491 17537,1491 16543,1491 16543,1491",
+			style=""];
+		expert_gate_3_4	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert Gate 4
+[B×L×D]
+GPU: 4",
+			pos="17308,1922.4",
+			width=1.625];
+		expert_3_4_0	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 4",
+			pos="17308,1782.4",
+			width=1.3194];
+		expert_gate_3_4 -> expert_3_4_0	[color="",
+			constraint="",
+			pos="e,17308,1808.9 17308,1895.7 17308,1895.7 17308,1818.9 17308,1818.9",
+			style=""];
+		expert_agg_3_4	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert Aggregation 4
+[B×L×D]
+GPU: 4",
+			pos="17308,1642.4",
+			width=2.375];
+		expert_3_4_0 -> expert_agg_3_4	[color="",
+			constraint="",
+			pos="e,17308,1668.9 17308,1755.7 17308,1755.7 17308,1678.9 17308,1678.9",
+			style=""];
+		expert_3_4_1	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 4",
+			pos="12134,2624.9",
+			width=1.3194];
+		expert_3_4_2	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 4",
+			pos="11981,2624.9",
+			width=1.3194];
+		expert_3_4_3	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 4",
+			pos="11828,2624.9",
+			width=1.3194];
+		expert_agg_3_4 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16531,1500 17308,1615.6 17308,1574.3 17308,1500 17308,1500 17308,1500 16541,1500 16541,1500",
+			style=""];
+		expert_gate_3_5	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert Gate 5
+[B×L×D]
+GPU: 5",
+			pos="17079,1922.4",
+			width=1.625];
+		expert_3_5_0	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 5",
+			pos="17079,1782.4",
+			width=1.3194];
+		expert_gate_3_5 -> expert_3_5_0	[color="",
+			constraint="",
+			pos="e,17079,1808.9 17079,1895.7 17079,1895.7 17079,1818.9 17079,1818.9",
+			style=""];
+		expert_agg_3_5	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert Aggregation 5
+[B×L×D]
+GPU: 5",
+			pos="17079,1642.4",
+			width=2.375];
+		expert_3_5_0 -> expert_agg_3_5	[color="",
+			constraint="",
+			pos="e,17079,1668.9 17079,1755.7 17079,1755.7 17079,1678.9 17079,1678.9",
+			style=""];
+		expert_3_5_1	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 5",
+			pos="11675,2624.9",
+			width=1.3194];
+		expert_3_5_2	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 5",
+			pos="11522,2624.9",
+			width=1.3194];
+		expert_3_5_3	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 5",
+			pos="11369,2624.9",
+			width=1.3194];
+		expert_agg_3_5 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16522,1510 17079,1615.6 17079,1576.9 17079,1510 17079,1510 17079,1510 16532,1510 16532,1510",
+			style=""];
+		expert_gate_3_6	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert Gate 6
+[B×L×D]
+GPU: 6",
+			pos="16850,1922.4",
+			width=1.625];
+		expert_3_6_0	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 6",
+			pos="16850,1782.4",
+			width=1.3194];
+		expert_gate_3_6 -> expert_3_6_0	[color="",
+			constraint="",
+			pos="e,16850,1808.9 16850,1895.7 16850,1895.7 16850,1818.9 16850,1818.9",
+			style=""];
+		expert_agg_3_6	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert Aggregation 6
+[B×L×D]
+GPU: 6",
+			pos="16850,1642.4",
+			width=2.375];
+		expert_3_6_0 -> expert_agg_3_6	[color="",
+			constraint="",
+			pos="e,16850,1668.9 16850,1755.7 16850,1755.7 16850,1678.9 16850,1678.9",
+			style=""];
+		expert_3_6_1	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 6",
+			pos="11216,2624.9",
+			width=1.3194];
+		expert_3_6_2	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 6",
+			pos="11063,2624.9",
+			width=1.3194];
+		expert_3_6_3	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 6",
+			pos="10910,2624.9",
+			width=1.3194];
+		expert_agg_3_6 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16506,1519 16850,1615.6 16850,1579.3 16850,1519 16850,1519 16850,1519 16516,1519 16516,1519",
+			style=""];
+		expert_gate_3_7	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert Gate 7
+[B×L×D]
+GPU: 7",
+			pos="16621,1922.4",
+			width=1.625];
+		expert_3_7_0	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 7",
+			pos="16621,1782.4",
+			width=1.3194];
+		expert_gate_3_7 -> expert_3_7_0	[color="",
+			constraint="",
+			pos="e,16621,1808.9 16621,1895.7 16621,1895.7 16621,1818.9 16621,1818.9",
+			style=""];
+		expert_agg_3_7	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert Aggregation 7
+[B×L×D]
+GPU: 7",
+			pos="16621,1642.4",
+			width=2.375];
+		expert_3_7_0 -> expert_agg_3_7	[color="",
+			constraint="",
+			pos="e,16621,1668.9 16621,1755.7 16621,1755.7 16621,1678.9 16621,1678.9",
+			style=""];
+		expert_3_7_1	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 7",
+			pos="10757,2624.9",
+			width=1.3194];
+		expert_3_7_2	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 7",
+			pos="10604,2624.9",
+			width=1.3194];
+		expert_3_7_3	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 7",
+			pos="10451,2624.9",
+			width=1.3194];
+		expert_agg_3_7 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16523,1509.6 16535,1642 16528,1642 16523,1642 16523,1642 16523,1642 16523,1519.6 16523,1519.6",
+			style=""];
+		expert_gate_3_8	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert Gate 8
+[B×L×D]
+GPU: 8",
+			pos="16392,1922.4",
+			width=1.625];
+		expert_3_8_0	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 8",
+			pos="16392,1782.4",
+			width=1.3194];
+		expert_gate_3_8 -> expert_3_8_0	[color="",
+			constraint="",
+			pos="e,16392,1808.9 16392,1895.7 16392,1895.7 16392,1818.9 16392,1818.9",
+			style=""];
+		expert_agg_3_8	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert Aggregation 8
+[B×L×D]
+GPU: 8",
+			pos="16392,1642.4",
+			width=2.375];
+		expert_3_8_0 -> expert_agg_3_8	[color="",
+			constraint="",
+			pos="e,16392,1668.9 16392,1755.7 16392,1755.7 16392,1678.9 16392,1678.9",
+			style=""];
+		expert_3_8_1	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 8",
+			pos="10298,2624.9",
+			width=1.3194];
+		expert_3_8_2	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 8",
+			pos="10145,2624.9",
+			width=1.3194];
+		expert_3_8_3	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 8",
+			pos="9992,2624.9",
+			width=1.3194];
+		expert_agg_3_8 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16423,1526.8 16423,1615.7 16423,1615.7 16423,1536.8 16423,1536.8",
+			style=""];
+		expert_gate_3_9	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert Gate 9
+[B×L×D]
+GPU: 9",
+			pos="16163,1922.4",
+			width=1.625];
+		expert_3_9_0	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 9",
+			pos="16163,1782.4",
+			width=1.3194];
+		expert_gate_3_9 -> expert_3_9_0	[color="",
+			constraint="",
+			pos="e,16163,1808.9 16163,1895.7 16163,1895.7 16163,1818.9 16163,1818.9",
+			style=""];
+		expert_agg_3_9	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert Aggregation 9
+[B×L×D]
+GPU: 9",
+			pos="16163,1642.4",
+			width=2.375];
+		expert_3_9_0 -> expert_agg_3_9	[color="",
+			constraint="",
+			pos="e,16163,1668.9 16163,1755.7 16163,1755.7 16163,1678.9 16163,1678.9",
+			style=""];
+		expert_3_9_1	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 9",
+			pos="9839,2624.9",
+			width=1.3194];
+		expert_3_9_2	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 9",
+			pos="9686,2624.9",
+			width=1.3194];
+		expert_3_9_3	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 9",
+			pos="9533,2624.9",
+			width=1.3194];
+		expert_agg_3_9 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16395,1519 16220,1615.6 16220,1579.3 16220,1519 16220,1519 16220,1519 16385,1519 16385,1519",
+			style=""];
+		expert_gate_3_10	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert Gate 10
+[B×L×D]
+GPU: 10",
+			pos="15929,1922.4",
+			width=1.75];
+		expert_3_10_0	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 10",
+			pos="15929,1782.4",
+			width=1.3194];
+		expert_gate_3_10 -> expert_3_10_0	[color="",
+			constraint="",
+			pos="e,15929,1808.9 15929,1895.7 15929,1895.7 15929,1818.9 15929,1818.9",
+			style=""];
+		expert_agg_3_10	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert Aggregation 10
+[B×L×D]
+GPU: 10",
+			pos="15929,1642.4",
+			width=2.5];
+		expert_3_10_0 -> expert_agg_3_10	[color="",
+			constraint="",
+			pos="e,15929,1668.9 15929,1755.7 15929,1755.7 15929,1678.9 15929,1678.9",
+			style=""];
+		expert_3_10_1	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 10",
+			pos="9380,2624.9",
+			width=1.3194];
+		expert_3_10_2	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 10",
+			pos="9227,2624.9",
+			width=1.3194];
+		expert_3_10_3	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 10",
+			pos="9074,2624.9",
+			width=1.3194];
+		expert_agg_3_10 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16380,1510 16010,1615.6 16010,1576.9 16010,1510 16010,1510 16010,1510 16370,1510 16370,1510",
+			style=""];
+		expert_gate_3_11	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert Gate 11
+[B×L×D]
+GPU: 11",
+			pos="15691,1922.4",
+			width=1.75];
+		expert_3_11_0	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 11",
+			pos="15691,1782.4",
+			width=1.3194];
+		expert_gate_3_11 -> expert_3_11_0	[color="",
+			constraint="",
+			pos="e,15691,1808.9 15691,1895.7 15691,1895.7 15691,1818.9 15691,1818.9",
+			style=""];
+		expert_agg_3_11	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert Aggregation 11
+[B×L×D]
+GPU: 11",
+			pos="15691,1642.4",
+			width=2.5];
+		expert_3_11_0 -> expert_agg_3_11	[color="",
+			constraint="",
+			pos="e,15691,1668.9 15691,1755.7 15691,1755.7 15691,1678.9 15691,1678.9",
+			style=""];
+		expert_3_11_1	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 11",
+			pos="8921,2624.9",
+			width=1.3194];
+		expert_3_11_2	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 11",
+			pos="8768,2624.9",
+			width=1.3194];
+		expert_3_11_3	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 11",
+			pos="8615,2624.9",
+			width=1.3194];
+		expert_agg_3_11 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16371,1500 15766,1615.6 15766,1574.3 15766,1500 15766,1500 15766,1500 16361,1500 16361,1500",
+			style=""];
+		expert_gate_3_12	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert Gate 12
+[B×L×D]
+GPU: 12",
+			pos="15453,1922.4",
+			width=1.75];
+		expert_3_12_0	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 12",
+			pos="15453,1782.4",
+			width=1.3194];
+		expert_gate_3_12 -> expert_3_12_0	[color="",
+			constraint="",
+			pos="e,15453,1808.9 15453,1895.7 15453,1895.7 15453,1818.9 15453,1818.9",
+			style=""];
+		expert_agg_3_12	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert Aggregation 12
+[B×L×D]
+GPU: 12",
+			pos="15453,1642.4",
+			width=2.5];
+		expert_3_12_0 -> expert_agg_3_12	[color="",
+			constraint="",
+			pos="e,15453,1668.9 15453,1755.7 15453,1755.7 15453,1678.9 15453,1678.9",
+			style=""];
+		expert_3_12_1	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 12",
+			pos="8462,2624.9",
+			width=1.3194];
+		expert_3_12_2	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 12",
+			pos="8309,2624.9",
+			width=1.3194];
+		expert_3_12_3	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 12",
+			pos="8156,2624.9",
+			width=1.3194];
+		expert_agg_3_12 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16369,1491 15484,1615.6 15484,1572.2 15484,1491 15484,1491 15484,1491 16359,1491 16359,1491",
+			style=""];
+		expert_gate_3_13	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert Gate 13
+[B×L×D]
+GPU: 13",
+			pos="15215,1922.4",
+			width=1.75];
+		expert_3_13_0	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 13",
+			pos="15215,1782.4",
+			width=1.3194];
+		expert_gate_3_13 -> expert_3_13_0	[color="",
+			constraint="",
+			pos="e,15215,1808.9 15215,1895.7 15215,1895.7 15215,1818.9 15215,1818.9",
+			style=""];
+		expert_agg_3_13	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert Aggregation 13
+[B×L×D]
+GPU: 13",
+			pos="15215,1642.4",
+			width=2.5];
+		expert_3_13_0 -> expert_agg_3_13	[color="",
+			constraint="",
+			pos="e,15215,1668.9 15215,1755.7 15215,1755.7 15215,1678.9 15215,1678.9",
+			style=""];
+		expert_3_13_1	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 13",
+			pos="8003,2624.9",
+			width=1.3194];
+		expert_3_13_2	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 13",
+			pos="7850,2624.9",
+			width=1.3194];
+		expert_3_13_3	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 13",
+			pos="7697,2624.9",
+			width=1.3194];
+		expert_agg_3_13 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16372,1482 15268,1615.5 15268,1569.9 15268,1482 15268,1482 15268,1482 16362,1482 16362,1482",
+			style=""];
+		expert_gate_3_14	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert Gate 14
+[B×L×D]
+GPU: 14",
+			pos="14977,1922.4",
+			width=1.75];
+		expert_3_14_0	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 14",
+			pos="14977,1782.4",
+			width=1.3194];
+		expert_gate_3_14 -> expert_3_14_0	[color="",
+			constraint="",
+			pos="e,14977,1808.9 14977,1895.7 14977,1895.7 14977,1818.9 14977,1818.9",
+			style=""];
+		expert_agg_3_14	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert Aggregation 14
+[B×L×D]
+GPU: 14",
+			pos="14977,1642.4",
+			width=2.5];
+		expert_3_14_0 -> expert_agg_3_14	[color="",
+			constraint="",
+			pos="e,14977,1668.9 14977,1755.7 14977,1755.7 14977,1678.9 14977,1678.9",
+			style=""];
+		expert_3_14_1	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 14",
+			pos="7544,2624.9",
+			width=1.3194];
+		expert_3_14_2	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 14",
+			pos="7391,2624.9",
+			width=1.3194];
+		expert_3_14_3	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 14",
+			pos="7238,2624.9",
+			width=1.3194];
+		expert_agg_3_14 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16381,1472 15054,1615.7 15054,1567.8 15054,1472 15054,1472 15054,1472 16371,1472 16371,1472",
+			style=""];
+		expert_gate_3_15	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert Gate 15
+[B×L×D]
+GPU: 15",
+			pos="14739,1922.4",
+			width=1.75];
+		expert_3_15_0	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 15",
+			pos="14739,1782.4",
+			width=1.3194];
+		expert_gate_3_15 -> expert_3_15_0	[color="",
+			constraint="",
+			pos="e,14739,1808.9 14739,1895.7 14739,1895.7 14739,1818.9 14739,1818.9",
+			style=""];
+		expert_agg_3_15	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert Aggregation 15
+[B×L×D]
+GPU: 15",
+			pos="14739,1642.4",
+			width=2.5];
+		expert_3_15_0 -> expert_agg_3_15	[color="",
+			constraint="",
+			pos="e,14739,1668.9 14739,1755.7 14739,1755.7 14739,1678.9 14739,1678.9",
+			style=""];
+		expert_3_15_1	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 15",
+			pos="7085,2624.9",
+			width=1.3194];
+		expert_3_15_2	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 15",
+			pos="6932,2624.9",
+			width=1.3194];
+		expert_3_15_3	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 15",
+			pos="6779,2624.9",
+			width=1.3194];
+		expert_agg_3_15 -> layer_norm_3	[color="",
+			constraint="",
+			pos="e,16397,1463 14810,1615.5 14810,1565.5 14810,1463 14810,1463 14810,1463 16387,1463 16387,1463",
+			style=""];
+	}
+	subgraph cluster_layer_4 {
+		graph [bb="8,153.95,16526,1397.9",
+			color=black,
+			label="Layer 4",
+			lheight=0.21,
+			lp="8267,1386.4",
+			lwidth=0.76,
+			style=dashed
+		];
+		q_proj_4_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="Q Projection 0_0
+[B×L×d_s×h_g]
+W_Q^{0,0}
+GPU: 0",
+			pos="16451,1332.9",
+			width=1.8611];
+		attention_4_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="Attention 0_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 0",
+			pos="16163,1177.9",
+			width=2.4028];
+		q_proj_4_0_0 -> attention_4_0_0	[color="",
+			constraint="",
+			pos="e,16250,1177 16451,1298.7 16451,1252.8 16451,1177 16451,1177 16451,1177 16260,1177 16260,1177",
+			style=""];
+		k_proj_4_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="K Projection 0_0
+[B×L×d_s×h_g]
+W_K^{0,0}
+GPU: 0",
+			pos="16259,1332.9",
+			width=1.8611];
+		k_proj_4_0_0 -> attention_4_0_0	[color="",
+			constraint="",
+			pos="e,16221,1212.1 16221,1298.9 16221,1298.9 16221,1222.1 16221,1222.1",
+			style=""];
+		v_proj_4_0_0	[fillcolor="#FF9999",
+			height=0.94444,
+			label="V Projection 0_0
+[B×L×d_s×h_g]
+W_V^{0,0}
+GPU: 0",
+			pos="16067,1332.9",
+			width=1.8472];
+		v_proj_4_0_0 -> attention_4_0_0	[color="",
+			constraint="",
+			pos="e,16105,1212.1 16105,1298.9 16105,1298.9 16105,1222.1 16105,1222.1",
+			style=""];
+		concat_group_4_0	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 0
+[B×L×d×h_g]
+GPU: 0-3",
+			pos="15107,989.91",
+			shape=diamond,
+			width=3.5556];
+		attention_4_0_0 -> concat_group_4_0	[color="",
+			constraint="",
+			pos="e,15233,989 16163,1143.7 16163,1089.3 16163,989 16163,989 16163,989 15243,989 15243,989",
+			style=""];
+		q_proj_4_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="Q Projection 0_1
+[B×L×d_s×h_g]
+W_Q^{0,1}
+GPU: 1",
+			pos="15875,1332.9",
+			width=1.8611];
+		attention_4_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="Attention 0_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 1",
+			pos="15587,1177.9",
+			width=2.4028];
+		q_proj_4_0_1 -> attention_4_0_1	[color="",
+			constraint="",
+			pos="e,15674,1177 15875,1298.7 15875,1252.8 15875,1177 15875,1177 15875,1177 15684,1177 15684,1177",
+			style=""];
+		k_proj_4_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="K Projection 0_1
+[B×L×d_s×h_g]
+W_K^{0,1}
+GPU: 1",
+			pos="15683,1332.9",
+			width=1.8611];
+		k_proj_4_0_1 -> attention_4_0_1	[color="",
+			constraint="",
+			pos="e,15645,1212.1 15645,1298.9 15645,1298.9 15645,1222.1 15645,1222.1",
+			style=""];
+		v_proj_4_0_1	[fillcolor="#FFCC99",
+			height=0.94444,
+			label="V Projection 0_1
+[B×L×d_s×h_g]
+W_V^{0,1}
+GPU: 1",
+			pos="15491,1332.9",
+			width=1.8472];
+		v_proj_4_0_1 -> attention_4_0_1	[color="",
+			constraint="",
+			pos="e,15529,1212.1 15529,1298.9 15529,1298.9 15529,1222.1 15529,1222.1",
+			style=""];
+		attention_4_0_1 -> concat_group_4_0	[color="",
+			constraint="",
+			pos="e,15206,1002.1 15500,1189 15388,1189 15206,1189 15206,1189 15206,1189 15206,1012.1 15206,1012.1",
+			style=""];
+		attention_4_0_1 -> concat_group_4_0	[label="AllGather GPU0→GPU1",
+			lp="15605,1093.4",
+			pos="e,15219,996.59 15500,1166 15392,1166 15219,1166 15219,1166 15219,1166 15219,1006.6 15219,1006.6"];
+		q_proj_4_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="Q Projection 0_2
+[B×L×d_s×h_g]
+W_Q^{0,2}
+GPU: 2",
+			pos="15299,1332.9",
+			width=1.8611];
+		attention_4_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="Attention 0_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 2",
+			pos="15107,1177.9",
+			width=2.4028];
+		q_proj_4_0_2 -> attention_4_0_2	[color="",
+			constraint="",
+			pos="e,15184,1212.1 15232,1332 15207,1332 15184,1332 15184,1332 15184,1332 15184,1222.1 15184,1222.1",
+			style=""];
+		k_proj_4_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="K Projection 0_2
+[B×L×d_s×h_g]
+W_K^{0,2}
+GPU: 2",
+			pos="15107,1332.9",
+			width=1.8611];
+		k_proj_4_0_2 -> attention_4_0_2	[color="",
+			constraint="",
+			pos="e,15107,1212.1 15107,1298.9 15107,1298.9 15107,1222.1 15107,1222.1",
+			style=""];
+		v_proj_4_0_2	[fillcolor="#FFFF99",
+			height=0.94444,
+			label="V Projection 0_2
+[B×L×d_s×h_g]
+W_V^{0,2}
+GPU: 2",
+			pos="14915,1332.9",
+			width=1.8472];
+		v_proj_4_0_2 -> attention_4_0_2	[color="",
+			constraint="",
+			pos="e,15030,1212.1 14982,1332 15007,1332 15030,1332 15030,1332 15030,1332 15030,1222.1 15030,1222.1",
+			style=""];
+		attention_4_0_2 -> concat_group_4_0	[color="",
+			constraint="",
+			pos="e,15078,1031.2 15078,1143.9 15078,1143.9 15078,1041.2 15078,1041.2",
+			style=""];
+		attention_4_0_2 -> concat_group_4_0	[label="AllGather GPU1→GPU2",
+			lp="15319,1093.4",
+			pos="e,15136,1031.2 15136,1143.9 15136,1143.9 15136,1041.2 15136,1041.2"];
+		q_proj_4_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="Q Projection 0_3
+[B×L×d_s×h_g]
+W_Q^{0,3}
+GPU: 3",
+			pos="14723,1332.9",
+			width=1.8611];
+		attention_4_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="Attention 0_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 3",
+			pos="14628,1177.9",
+			width=2.4028];
+		q_proj_4_0_3 -> attention_4_0_3	[color="",
+			constraint="",
+			pos="e,14685,1212.1 14685,1298.9 14685,1298.9 14685,1222.1 14685,1222.1",
+			style=""];
+		k_proj_4_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="K Projection 0_3
+[B×L×d_s×h_g]
+W_K^{0,3}
+GPU: 3",
+			pos="14531,1332.9",
+			width=1.8611];
+		k_proj_4_0_3 -> attention_4_0_3	[color="",
+			constraint="",
+			pos="e,14570,1212.1 14570,1298.9 14570,1298.9 14570,1222.1 14570,1222.1",
+			style=""];
+		v_proj_4_0_3	[fillcolor="#CCFF99",
+			height=0.94444,
+			label="V Projection 0_3
+[B×L×d_s×h_g]
+W_V^{0,3}
+GPU: 3",
+			pos="14339,1332.9",
+			width=1.8472];
+		v_proj_4_0_3 -> attention_4_0_3	[color="",
+			constraint="",
+			pos="e,14541,1166 14339,1298.7 14339,1249.9 14339,1166 14339,1166 14339,1166 14531,1166 14531,1166",
+			style=""];
+		attention_4_0_3 -> concat_group_4_0	[color="",
+			constraint="",
+			pos="e,15008,1001.8 14715,1189 14827,1189 15008,1189 15008,1189 15008,1189 15008,1011.8 15008,1011.8",
+			style=""];
+		attention_4_0_3 -> concat_group_4_0	[label="AllGather GPU2→GPU3",
+			lp="14981,1093.4",
+			pos="e,14994,996.59 14715,1166 14823,1166 14994,1166 14994,1166 14994,1166 14994,1006.6 14994,1006.6"];
+		q_proj_4_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="Q Projection 1_0
+[B×L×d_s×h_g]
+W_Q^{1,0}
+GPU: 4",
+			pos="14147,1332.9",
+			width=1.8611];
+		attention_4_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="Attention 1_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 4",
+			pos="13813,1177.9",
+			width=2.4028];
+		q_proj_4_1_0 -> attention_4_1_0	[color="",
+			constraint="",
+			pos="e,13900,1189 14147,1298.8 14147,1256.2 14147,1189 14147,1189 14147,1189 13910,1189 13910,1189",
+			style=""];
+		k_proj_4_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="K Projection 1_0
+[B×L×d_s×h_g]
+W_K^{1,0}
+GPU: 4",
+			pos="13955,1332.9",
+			width=1.8611];
+		k_proj_4_1_0 -> attention_4_1_0	[color="",
+			constraint="",
+			pos="e,13894,1212.1 13894,1298.9 13894,1298.9 13894,1222.1 13894,1222.1",
+			style=""];
+		v_proj_4_1_0	[fillcolor="#99FF99",
+			height=0.94444,
+			label="V Projection 1_0
+[B×L×d_s×h_g]
+W_V^{1,0}
+GPU: 4",
+			pos="13763,1332.9",
+			width=1.8472];
+		v_proj_4_1_0 -> attention_4_1_0	[color="",
+			constraint="",
+			pos="e,13778,1212.1 13778,1298.9 13778,1298.9 13778,1222.1 13778,1222.1",
+			style=""];
+		concat_group_4_1	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 1
+[B×L×d×h_g]
+GPU: 4-7",
+			pos="12803,989.91",
+			shape=diamond,
+			width=3.5556];
+		attention_4_1_0 -> concat_group_4_1	[color="",
+			constraint="",
+			pos="e,12929,989 13813,1143.7 13813,1089.3 13813,989 13813,989 13813,989 12939,989 12939,989",
+			style=""];
+		q_proj_4_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="Q Projection 1_1
+[B×L×d_s×h_g]
+W_Q^{1,1}
+GPU: 5",
+			pos="13571,1332.9",
+			width=1.8611];
+		attention_4_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="Attention 1_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 5",
+			pos="13301,1177.9",
+			width=2.4028];
+		q_proj_4_1_1 -> attention_4_1_1	[color="",
+			constraint="",
+			pos="e,13388,1177 13571,1298.7 13571,1252.8 13571,1177 13571,1177 13571,1177 13398,1177 13398,1177",
+			style=""];
+		k_proj_4_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="K Projection 1_1
+[B×L×d_s×h_g]
+W_K^{1,1}
+GPU: 5",
+			pos="13379,1332.9",
+			width=1.8611];
+		k_proj_4_1_1 -> attention_4_1_1	[color="",
+			constraint="",
+			pos="e,13350,1212.1 13350,1298.9 13350,1298.9 13350,1222.1 13350,1222.1",
+			style=""];
+		v_proj_4_1_1	[fillcolor="#99FFCC",
+			height=0.94444,
+			label="V Projection 1_1
+[B×L×d_s×h_g]
+W_V^{1,1}
+GPU: 5",
+			pos="13187,1332.9",
+			width=1.8472];
+		v_proj_4_1_1 -> attention_4_1_1	[color="",
+			constraint="",
+			pos="e,13234,1212.1 13234,1298.9 13234,1298.9 13234,1222.1 13234,1222.1",
+			style=""];
+		attention_4_1_1 -> concat_group_4_1	[color="",
+			constraint="",
+			pos="e,12902,1002.1 13214,1189 13097,1189 12902,1189 12902,1189 12902,1189 12902,1012.1 12902,1012.1",
+			style=""];
+		attention_4_1_1 -> concat_group_4_1	[label="AllGather GPU4→GPU5",
+			lp="13469,1093.4",
+			pos="e,12915,996.59 13214,1166 13101,1166 12915,1166 12915,1166 12915,1166 12915,1006.6 12915,1006.6"];
+		q_proj_4_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="Q Projection 1_2
+[B×L×d_s×h_g]
+W_Q^{1,2}
+GPU: 6",
+			pos="12995,1332.9",
+			width=1.8611];
+		attention_4_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="Attention 1_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 6",
+			pos="12803,1177.9",
+			width=2.4028];
+		q_proj_4_1_2 -> attention_4_1_2	[color="",
+			constraint="",
+			pos="e,12880,1212.1 12928,1332 12903,1332 12880,1332 12880,1332 12880,1332 12880,1222.1 12880,1222.1",
+			style=""];
+		k_proj_4_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="K Projection 1_2
+[B×L×d_s×h_g]
+W_K^{1,2}
+GPU: 6",
+			pos="12803,1332.9",
+			width=1.8611];
+		k_proj_4_1_2 -> attention_4_1_2	[color="",
+			constraint="",
+			pos="e,12803,1212.1 12803,1298.9 12803,1298.9 12803,1222.1 12803,1222.1",
+			style=""];
+		v_proj_4_1_2	[fillcolor="#99FFFF",
+			height=0.94444,
+			label="V Projection 1_2
+[B×L×d_s×h_g]
+W_V^{1,2}
+GPU: 6",
+			pos="12611,1332.9",
+			width=1.8472];
+		v_proj_4_1_2 -> attention_4_1_2	[color="",
+			constraint="",
+			pos="e,12726,1212.1 12678,1332 12703,1332 12726,1332 12726,1332 12726,1332 12726,1222.1 12726,1222.1",
+			style=""];
+		attention_4_1_2 -> concat_group_4_1	[color="",
+			constraint="",
+			pos="e,12774,1031.2 12774,1143.9 12774,1143.9 12774,1041.2 12774,1041.2",
+			style=""];
+		attention_4_1_2 -> concat_group_4_1	[label="AllGather GPU5→GPU6",
+			lp="13028,1093.4",
+			pos="e,12832,1031.2 12832,1143.9 12832,1143.9 12832,1041.2 12832,1041.2"];
+		q_proj_4_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="Q Projection 1_3
+[B×L×d_s×h_g]
+W_Q^{1,3}
+GPU: 7",
+			pos="12419,1332.9",
+			width=1.8611];
+		attention_4_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="Attention 1_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 7",
+			pos="12275,1177.9",
+			width=2.4028];
+		q_proj_4_1_3 -> attention_4_1_3	[color="",
+			constraint="",
+			pos="e,12357,1212.1 12357,1298.9 12357,1298.9 12357,1222.1 12357,1222.1",
+			style=""];
+		k_proj_4_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="K Projection 1_3
+[B×L×d_s×h_g]
+W_K^{1,3}
+GPU: 7",
+			pos="12227,1332.9",
+			width=1.8611];
+		k_proj_4_1_3 -> attention_4_1_3	[color="",
+			constraint="",
+			pos="e,12241,1212.1 12241,1298.9 12241,1298.9 12241,1222.1 12241,1222.1",
+			style=""];
+		v_proj_4_1_3	[fillcolor="#99CCFF",
+			height=0.94444,
+			label="V Projection 1_3
+[B×L×d_s×h_g]
+W_V^{1,3}
+GPU: 7",
+			pos="12035,1332.9",
+			width=1.8472];
+		v_proj_4_1_3 -> attention_4_1_3	[color="",
+			constraint="",
+			pos="e,12188,1166 12057,1298.7 12057,1249.9 12057,1166 12057,1166 12057,1166 12178,1166 12178,1166",
+			style=""];
+		attention_4_1_3 -> concat_group_4_1	[color="",
+			constraint="",
+			pos="e,12692,996.99 12362,1189 12484,1189 12692,1189 12692,1189 12692,1189 12692,1007 12692,1007",
+			style=""];
+		attention_4_1_3 -> concat_group_4_1	[label="AllGather GPU6→GPU7",
+			lp="12677,1093.4",
+			pos="e,12684,993.92 12362,1166 12482,1166 12684,1166 12684,1166 12684,1166 12684,1003.9 12684,1003.9"];
+		q_proj_4_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="Q Projection 2_0
+[B×L×d_s×h_g]
+W_Q^{2,0}
+GPU: 8",
+			pos="11843,1332.9",
+			width=1.8611];
+		attention_4_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="Attention 2_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 8",
+			pos="11528,1177.9",
+			width=2.4028];
+		q_proj_4_2_0 -> attention_4_2_0	[color="",
+			constraint="",
+			pos="e,11615,1189 11843,1298.8 11843,1256.2 11843,1189 11843,1189 11843,1189 11625,1189 11625,1189",
+			style=""];
+		k_proj_4_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="K Projection 2_0
+[B×L×d_s×h_g]
+W_K^{2,0}
+GPU: 8",
+			pos="11651,1332.9",
+			width=1.8611];
+		k_proj_4_2_0 -> attention_4_2_0	[color="",
+			constraint="",
+			pos="e,11599,1212.1 11599,1298.9 11599,1298.9 11599,1222.1 11599,1222.1",
+			style=""];
+		v_proj_4_2_0	[fillcolor="#9999FF",
+			height=0.94444,
+			label="V Projection 2_0
+[B×L×d_s×h_g]
+W_V^{2,0}
+GPU: 8",
+			pos="11459,1332.9",
+			width=1.8472];
+		v_proj_4_2_0 -> attention_4_2_0	[color="",
+			constraint="",
+			pos="e,11484,1212.1 11484,1298.9 11484,1298.9 11484,1222.1 11484,1222.1",
+			style=""];
+		concat_group_4_2	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 2
+[B×L×d×h_g]
+GPU: 8-11",
+			pos="11075,989.91",
+			shape=diamond,
+			width=3.5556];
+		attention_4_2_0 -> concat_group_4_2	[color="",
+			constraint="",
+			pos="e,11184,997.95 11441,1177 11339,1177 11184,1177 11184,1177 11184,1177 11184,1007.9 11184,1007.9",
+			style=""];
+		q_proj_4_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="Q Projection 2_1
+[B×L×d_s×h_g]
+W_Q^{2,1}
+GPU: 9",
+			pos="11267,1332.9",
+			width=1.8611];
+		attention_4_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="Attention 2_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 9",
+			pos="11075,1177.9",
+			width=2.4028];
+		q_proj_4_2_1 -> attention_4_2_1	[color="",
+			constraint="",
+			pos="e,11152,1212.1 11200,1332 11175,1332 11152,1332 11152,1332 11152,1332 11152,1222.1 11152,1222.1",
+			style=""];
+		k_proj_4_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="K Projection 2_1
+[B×L×d_s×h_g]
+W_K^{2,1}
+GPU: 9",
+			pos="11075,1332.9",
+			width=1.8611];
+		k_proj_4_2_1 -> attention_4_2_1	[color="",
+			constraint="",
+			pos="e,11075,1212.1 11075,1298.9 11075,1298.9 11075,1222.1 11075,1222.1",
+			style=""];
+		v_proj_4_2_1	[fillcolor="#CC99FF",
+			height=0.94444,
+			label="V Projection 2_1
+[B×L×d_s×h_g]
+W_V^{2,1}
+GPU: 9",
+			pos="10883,1332.9",
+			width=1.8472];
+		v_proj_4_2_1 -> attention_4_2_1	[color="",
+			constraint="",
+			pos="e,10988,1194 10942,1298.6 10942,1257.4 10942,1194 10942,1194 10942,1194 10978,1194 10978,1194",
+			style=""];
+		attention_4_2_1 -> concat_group_4_2	[color="",
+			constraint="",
+			pos="e,11046,1031.2 11046,1143.9 11046,1143.9 11046,1041.2 11046,1041.2",
+			style=""];
+		attention_4_2_1 -> concat_group_4_2	[label="AllGather GPU8→GPU9",
+			lp="11346,1093.4",
+			pos="e,11104,1031.2 11104,1143.9 11104,1143.9 11104,1041.2 11104,1041.2"];
+		q_proj_4_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="Q Projection 2_2
+[B×L×d_s×h_g]
+W_Q^{2,2}
+GPU: 10",
+			pos="10691,1332.9",
+			width=1.8611];
+		attention_4_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="Attention 2_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 10",
+			pos="10549,1177.9",
+			width=2.4028];
+		q_proj_4_2_2 -> attention_4_2_2	[color="",
+			constraint="",
+			pos="e,10630,1212.1 10630,1298.9 10630,1298.9 10630,1222.1 10630,1222.1",
+			style=""];
+		k_proj_4_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="K Projection 2_2
+[B×L×d_s×h_g]
+W_K^{2,2}
+GPU: 10",
+			pos="10499,1332.9",
+			width=1.8611];
+		k_proj_4_2_2 -> attention_4_2_2	[color="",
+			constraint="",
+			pos="e,10514,1212.1 10514,1298.9 10514,1298.9 10514,1222.1 10514,1222.1",
+			style=""];
+		v_proj_4_2_2	[fillcolor="#FF99FF",
+			height=0.94444,
+			label="V Projection 2_2
+[B×L×d_s×h_g]
+W_V^{2,2}
+GPU: 10",
+			pos="10307,1332.9",
+			width=1.8472];
+		v_proj_4_2_2 -> attention_4_2_2	[color="",
+			constraint="",
+			pos="e,10462,1177 10325,1298.7 10325,1252.8 10325,1177 10325,1177 10325,1177 10452,1177 10452,1177",
+			style=""];
+		attention_4_2_2 -> concat_group_4_2	[color="",
+			constraint="",
+			pos="e,10955,993.15 10636,1177 10755,1177 10955,1177 10955,1177 10955,1177 10955,1003.2 10955,1003.2",
+			style=""];
+		attention_4_2_2 -> concat_group_4_2	[label="AllGather GPU9→GPU10",
+			lp="10866,1093.4",
+			pos="e,10952,992.06 10636,1160 10755,1160 10952,1160 10952,1160 10952,1160 10952,1002.1 10952,1002.1"];
+		q_proj_4_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="Q Projection 2_3
+[B×L×d_s×h_g]
+W_Q^{2,3}
+GPU: 11",
+			pos="10115,1332.9",
+			width=1.8611];
+		attention_4_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="Attention 2_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 11",
+			pos="9973,1177.9",
+			width=2.4028];
+		q_proj_4_2_3 -> attention_4_2_3	[color="",
+			constraint="",
+			pos="e,10054,1212.1 10054,1298.9 10054,1298.9 10054,1222.1 10054,1222.1",
+			style=""];
+		k_proj_4_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="K Projection 2_3
+[B×L×d_s×h_g]
+W_K^{2,3}
+GPU: 11",
+			pos="9923,1332.9",
+			width=1.8611];
+		k_proj_4_2_3 -> attention_4_2_3	[color="",
+			constraint="",
+			pos="e,9938.2,1212.1 9938.2,1298.9 9938.2,1298.9 9938.2,1222.1 9938.2,1222.1",
+			style=""];
+		v_proj_4_2_3	[fillcolor="#FF99CC",
+			height=0.94444,
+			label="V Projection 2_3
+[B×L×d_s×h_g]
+W_V^{2,3}
+GPU: 11",
+			pos="9731,1332.9",
+			width=1.8472];
+		v_proj_4_2_3 -> attention_4_2_3	[color="",
+			constraint="",
+			pos="e,9886.4,1166 9762.2,1298.7 9762.2,1249.9 9762.2,1166 9762.2,1166 9762.2,1166 9876.4,1166 9876.4,1166",
+			style=""];
+		attention_4_2_3 -> concat_group_4_2	[color="",
+			constraint="",
+			pos="e,10988,1007 10056,1143.7 10056,1093.9 10056,1007 10056,1007 10056,1007 10978,1007 10978,1007",
+			style=""];
+		attention_4_2_3 -> concat_group_4_2	[label="AllGather GPU10→GPU11",
+			lp="10347,1093.4",
+			pos="e,10990,972 10052,1143.9 10052,1085.4 10052,972 10052,972 10052,972 10980,972 10980,972"];
+		q_proj_4_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="Q Projection 3_0
+[B×L×d_s×h_g]
+W_Q^{3,0}
+GPU: 12",
+			pos="9539,1332.9",
+			width=1.8611];
+		attention_4_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="Attention 3_0
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 12",
+			pos="9272,1177.9",
+			width=2.4028];
+		q_proj_4_3_0 -> attention_4_3_0	[color="",
+			constraint="",
+			pos="e,9358.6,1189 9483.5,1298.8 9483.5,1256.2 9483.5,1189 9483.5,1189 9483.5,1189 9368.6,1189 9368.6,1189",
+			style=""];
+		k_proj_4_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="K Projection 3_0
+[B×L×d_s×h_g]
+W_K^{3,0}
+GPU: 12",
+			pos="9347,1332.9",
+			width=1.8611];
+		k_proj_4_3_0 -> attention_4_3_0	[color="",
+			constraint="",
+			pos="e,9319.2,1212.1 9319.2,1298.9 9319.2,1298.9 9319.2,1222.1 9319.2,1222.1",
+			style=""];
+		v_proj_4_3_0	[fillcolor="#FFB366",
+			height=0.94444,
+			label="V Projection 3_0
+[B×L×d_s×h_g]
+W_V^{3,0}
+GPU: 12",
+			pos="9155,1332.9",
+			width=1.8472];
+		v_proj_4_3_0 -> attention_4_3_0	[color="",
+			constraint="",
+			pos="e,9203.5,1212.1 9203.5,1298.9 9203.5,1298.9 9203.5,1222.1 9203.5,1222.1",
+			style=""];
+		concat_group_4_3	[fillcolor="#FFD700",
+			height=1.4722,
+			label="Concat Group 3
+[B×L×d×h_g]
+GPU: 12-15",
+			pos="8771,989.91",
+			shape=diamond,
+			width=3.5556];
+		attention_4_3_0 -> concat_group_4_3	[color="",
+			constraint="",
+			pos="e,8884.8,996.13 9185.1,1177 9070.9,1177 8884.8,1177 8884.8,1177 8884.8,1177 8884.8,1006.1 8884.8,1006.1",
+			style=""];
+		q_proj_4_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="Q Projection 3_1
+[B×L×d_s×h_g]
+W_Q^{3,1}
+GPU: 13",
+			pos="8963,1332.9",
+			width=1.8611];
+		attention_4_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="Attention 3_1
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 13",
+			pos="8771,1177.9",
+			width=2.4028];
+		q_proj_4_3_1 -> attention_4_3_1	[color="",
+			constraint="",
+			pos="e,8847.8,1212.1 8896,1332 8870.6,1332 8847.8,1332 8847.8,1332 8847.8,1332 8847.8,1222.1 8847.8,1222.1",
+			style=""];
+		k_proj_4_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="K Projection 3_1
+[B×L×d_s×h_g]
+W_K^{3,1}
+GPU: 13",
+			pos="8771,1332.9",
+			width=1.8611];
+		k_proj_4_3_1 -> attention_4_3_1	[color="",
+			constraint="",
+			pos="e,8771,1212.1 8771,1298.9 8771,1298.9 8771,1222.1 8771,1222.1",
+			style=""];
+		v_proj_4_3_1	[fillcolor="#B3FF66",
+			height=0.94444,
+			label="V Projection 3_1
+[B×L×d_s×h_g]
+W_V^{3,1}
+GPU: 13",
+			pos="8579,1332.9",
+			width=1.8472];
+		v_proj_4_3_1 -> attention_4_3_1	[color="",
+			constraint="",
+			pos="e,8684.4,1194 8635.5,1298.6 8635.5,1257.4 8635.5,1194 8635.5,1194 8635.5,1194 8674.4,1194 8674.4,1194",
+			style=""];
+		attention_4_3_1 -> concat_group_4_3	[color="",
+			constraint="",
+			pos="e,8742.2,1031.2 8742.2,1143.9 8742.2,1143.9 8742.2,1041.2 8742.2,1041.2",
+			style=""];
+		attention_4_3_1 -> concat_group_4_3	[label="AllGather GPU12→GPU13",
+			lp="9041,1093.4",
+			pos="e,8799.8,1031.2 8799.8,1143.9 8799.8,1143.9 8799.8,1041.2 8799.8,1041.2"];
+		q_proj_4_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="Q Projection 3_2
+[B×L×d_s×h_g]
+W_Q^{3,2}
+GPU: 14",
+			pos="8387,1332.9",
+			width=1.8611];
+		attention_4_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="Attention 3_2
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 14",
+			pos="8295,1177.9",
+			width=2.4028];
+		q_proj_4_3_2 -> attention_4_3_2	[color="",
+			constraint="",
+			pos="e,8350.8,1212.1 8350.8,1298.9 8350.8,1298.9 8350.8,1222.1 8350.8,1222.1",
+			style=""];
+		k_proj_4_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="K Projection 3_2
+[B×L×d_s×h_g]
+W_K^{3,2}
+GPU: 14",
+			pos="8195,1332.9",
+			width=1.8611];
+		k_proj_4_3_2 -> attention_4_3_2	[color="",
+			constraint="",
+			pos="e,8235.2,1212.1 8235.2,1298.9 8235.2,1298.9 8235.2,1222.1 8235.2,1222.1",
+			style=""];
+		v_proj_4_3_2	[fillcolor="#66FFB3",
+			height=0.94444,
+			label="V Projection 3_2
+[B×L×d_s×h_g]
+W_V^{3,2}
+GPU: 14",
+			pos="8003,1332.9",
+			width=1.8472];
+		v_proj_4_3_2 -> attention_4_3_2	[color="",
+			constraint="",
+			pos="e,8208.2,1177 8003,1298.7 8003,1252.8 8003,1177 8003,1177 8003,1177 8198.2,1177 8198.2,1177",
+			style=""];
+		attention_4_3_2 -> concat_group_4_3	[color="",
+			constraint="",
+			pos="e,8656.8,995.71 8381.7,1177 8488.7,1177 8656.8,1177 8656.8,1177 8656.8,1177 8656.8,1005.7 8656.8,1005.7",
+			style=""];
+		attention_4_3_2 -> concat_group_4_3	[label="AllGather GPU13→GPU14",
+			lp="8632,1093.4",
+			pos="e,8651.2,993.46 8381.7,1160 8487.1,1160 8651.2,1160 8651.2,1160 8651.2,1160 8651.2,1003.5 8651.2,1003.5"];
+		q_proj_4_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="Q Projection 3_3
+[B×L×d_s×h_g]
+W_Q^{3,3}
+GPU: 15",
+			pos="7811,1332.9",
+			width=1.8611];
+		attention_4_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="Attention 3_3
+[B×L×d_s×h_g]
+softmax(QK^T/√d_s)V
+GPU: 15",
+			pos="7667,1177.9",
+			width=2.4028];
+		q_proj_4_3_3 -> attention_4_3_3	[color="",
+			constraint="",
+			pos="e,7748.8,1212.1 7748.8,1298.9 7748.8,1298.9 7748.8,1222.1 7748.8,1222.1",
+			style=""];
+		k_proj_4_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="K Projection 3_3
+[B×L×d_s×h_g]
+W_K^{3,3}
+GPU: 15",
+			pos="7619,1332.9",
+			width=1.8611];
+		k_proj_4_3_3 -> attention_4_3_3	[color="",
+			constraint="",
+			pos="e,7633.2,1212.1 7633.2,1298.9 7633.2,1298.9 7633.2,1222.1 7633.2,1222.1",
+			style=""];
+		v_proj_4_3_3	[fillcolor="#66B3FF",
+			height=0.94444,
+			label="V Projection 3_3
+[B×L×d_s×h_g]
+W_V^{3,3}
+GPU: 15",
+			pos="7427,1332.9",
+			width=1.8472];
+		v_proj_4_3_3 -> attention_4_3_3	[color="",
+			constraint="",
+			pos="e,7580.4,1177 7427,1298.7 7427,1252.8 7427,1177 7427,1177 7427,1177 7570.4,1177 7570.4,1177",
+			style=""];
+		attention_4_3_3 -> concat_group_4_3	[color="",
+			constraint="",
+			pos="e,8683.9,1007 7695.8,1143.7 7695.8,1093.9 7695.8,1007 7695.8,1007 7695.8,1007 8673.9,1007 8673.9,1007",
+			style=""];
+		attention_4_3_3 -> concat_group_4_3	[label="AllGather GPU14→GPU15",
+			lp="8212,1093.4",
+			pos="e,8685.9,972 7638.2,1143.9 7638.2,1085.4 7638.2,972 7638.2,972 7638.2,972 8675.9,972 8675.9,972"];
+		final_concat_4	[fillcolor="#FFA500",
+			height=1.4722,
+			label="Final Concat Layer 4
+[B×L×D]
+GPU: 0-15",
+			pos="11938,796.91",
+			shape=diamond,
+			width=4.5833];
+		concat_group_4_0 -> final_concat_4	[color="",
+			constraint="",
+			pos="e,12100,796 15107,936.66 15107,879.26 15107,796 15107,796 15107,796 12110,796 12110,796",
+			style=""];
+		expert_gate_4_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert Gate 0
+[B×L×D]
+GPU: 0",
+			pos="11938,630.41",
+			width=1.625];
+		final_concat_4 -> expert_gate_4_0	[color="",
+			constraint="",
+			pos="e,11938,657.01 11938,743.77 11938,743.77 11938,667.01 11938,667.01",
+			style=""];
+		concat_group_4_1 -> final_concat_4	[color="",
+			constraint="",
+			pos="e,12013,826.08 12677,989 12454,989 12013,989 12013,989 12013,989 12013,836.08 12013,836.08",
+			style=""];
+		concat_group_4_2 -> final_concat_4	[color="",
+			constraint="",
+			pos="e,11826,814 11198,987.68 11198,967.32 11198,814 11198,814 11198,814 11816,814 11816,814",
+			style=""];
+		concat_group_4_3 -> final_concat_4	[color="",
+			constraint="",
+			pos="e,11828,779 8882.5,982.89 8882.5,946.29 8882.5,779 8882.5,779 8882.5,779 11818,779 11818,779",
+			style=""];
+		expert_4_0_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 0",
+			pos="11938,490.41",
+			width=1.3194];
+		expert_gate_4_0 -> expert_4_0_0	[color="",
+			constraint="",
+			pos="e,11938,516.97 11938,603.74 11938,603.74 11938,526.97 11938,526.97",
+			style=""];
+		expert_agg_4_0	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert Aggregation 0
+[B×L×D]
+GPU: 0",
+			pos="11938,350.41",
+			width=2.375];
+		expert_4_0_0 -> expert_agg_4_0	[color="",
+			constraint="",
+			pos="e,11938,376.97 11938,463.74 11938,463.74 11938,386.97 11938,386.97",
+			style=""];
+		expert_4_0_1	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 0",
+			pos="7255,1332.9",
+			width=1.3194];
+		expert_4_0_2	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 0",
+			pos="7102,1332.9",
+			width=1.3194];
+		expert_4_0_3	[fillcolor="#FF9999",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 0",
+			pos="6949,1332.9",
+			width=1.3194];
+		layer_norm_4	[fillcolor="#E6E6E6",
+			height=1.041,
+			label="Layer Norm 4
+[B×L×D]
+GPU: All",
+			pos="10220,199.43",
+			shape=ellipse,
+			width=2.2785];
+		expert_agg_4_0 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10274,171 11938,323.55 11938,273.5 11938,171 11938,171 11938,171 10284,171 10284,171",
+			style=""];
+		expert_gate_4_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert Gate 1
+[B×L×D]
+GPU: 1",
+			pos="11709,630.41",
+			width=1.625];
+		expert_4_1_0	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 1",
+			pos="11709,490.41",
+			width=1.3194];
+		expert_gate_4_1 -> expert_4_1_0	[color="",
+			constraint="",
+			pos="e,11709,516.97 11709,603.74 11709,603.74 11709,526.97 11709,526.97",
+			style=""];
+		expert_agg_4_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert Aggregation 1
+[B×L×D]
+GPU: 1",
+			pos="11709,350.41",
+			width=2.375];
+		expert_4_1_0 -> expert_agg_4_1	[color="",
+			constraint="",
+			pos="e,11709,376.97 11709,463.74 11709,463.74 11709,386.97 11709,386.97",
+			style=""];
+		expert_4_1_1	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 1",
+			pos="6796,1332.9",
+			width=1.3194];
+		expert_4_1_2	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 1",
+			pos="6643,1332.9",
+			width=1.3194];
+		expert_4_1_3	[fillcolor="#FFCC99",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 1",
+			pos="6490,1332.9",
+			width=1.3194];
+		expert_agg_4_1 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10290,180 11709,323.78 11709,275.85 11709,180 11709,180 11709,180 10300,180 10300,180",
+			style=""];
+		expert_gate_4_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert Gate 2
+[B×L×D]
+GPU: 2",
+			pos="11480,630.41",
+			width=1.625];
+		expert_4_2_0	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 2",
+			pos="11480,490.41",
+			width=1.3194];
+		expert_gate_4_2 -> expert_4_2_0	[color="",
+			constraint="",
+			pos="e,11480,516.97 11480,603.74 11480,603.74 11480,526.97 11480,526.97",
+			style=""];
+		expert_agg_4_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert Aggregation 2
+[B×L×D]
+GPU: 2",
+			pos="11480,350.41",
+			width=2.375];
+		expert_4_2_0 -> expert_agg_4_2	[color="",
+			constraint="",
+			pos="e,11480,376.97 11480,463.74 11480,463.74 11480,386.97 11480,386.97",
+			style=""];
+		expert_4_2_1	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 2",
+			pos="6337,1332.9",
+			width=1.3194];
+		expert_4_2_2	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 2",
+			pos="6184,1332.9",
+			width=1.3194];
+		expert_4_2_3	[fillcolor="#FFFF99",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 2",
+			pos="6031,1332.9",
+			width=1.3194];
+		expert_agg_4_2 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10300,190 11480,323.56 11480,277.89 11480,190 11480,190 11480,190 10310,190 10310,190",
+			style=""];
+		expert_gate_4_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert Gate 3
+[B×L×D]
+GPU: 3",
+			pos="11251,630.41",
+			width=1.625];
+		expert_4_3_0	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 3",
+			pos="11251,490.41",
+			width=1.3194];
+		expert_gate_4_3 -> expert_4_3_0	[color="",
+			constraint="",
+			pos="e,11251,516.97 11251,603.74 11251,603.74 11251,526.97 11251,526.97",
+			style=""];
+		expert_agg_4_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert Aggregation 3
+[B×L×D]
+GPU: 3",
+			pos="11251,350.41",
+			width=2.375];
+		expert_4_3_0 -> expert_agg_4_3	[color="",
+			constraint="",
+			pos="e,11251,376.97 11251,463.74 11251,463.74 11251,386.97 11251,386.97",
+			style=""];
+		expert_4_3_1	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 3",
+			pos="5878,1332.9",
+			width=1.3194];
+		expert_4_3_2	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 3",
+			pos="5725,1332.9",
+			width=1.3194];
+		expert_4_3_3	[fillcolor="#CCFF99",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 3",
+			pos="5572,1332.9",
+			width=1.3194];
+		expert_agg_4_3 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10302,199 11251,323.69 11251,280.22 11251,199 11251,199 11251,199 10312,199 10312,199",
+			style=""];
+		expert_gate_4_4	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert Gate 4
+[B×L×D]
+GPU: 4",
+			pos="11022,630.41",
+			width=1.625];
+		expert_4_4_0	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 4",
+			pos="11022,490.41",
+			width=1.3194];
+		expert_gate_4_4 -> expert_4_4_0	[color="",
+			constraint="",
+			pos="e,11022,516.97 11022,603.74 11022,603.74 11022,526.97 11022,526.97",
+			style=""];
+		expert_agg_4_4	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert Aggregation 4
+[B×L×D]
+GPU: 4",
+			pos="11022,350.41",
+			width=2.375];
+		expert_4_4_0 -> expert_agg_4_4	[color="",
+			constraint="",
+			pos="e,11022,376.97 11022,463.74 11022,463.74 11022,386.97 11022,386.97",
+			style=""];
+		expert_4_4_1	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 4",
+			pos="5419,1332.9",
+			width=1.3194];
+		expert_4_4_2	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 4",
+			pos="5266,1332.9",
+			width=1.3194];
+		expert_4_4_3	[fillcolor="#99FF99",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 4",
+			pos="5113,1332.9",
+			width=1.3194];
+		expert_agg_4_4 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10300,208 11022,323.62 11022,282.37 11022,208 11022,208 11022,208 10310,208 10310,208",
+			style=""];
+		expert_gate_4_5	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert Gate 5
+[B×L×D]
+GPU: 5",
+			pos="10793,630.41",
+			width=1.625];
+		expert_4_5_0	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 5",
+			pos="10793,490.41",
+			width=1.3194];
+		expert_gate_4_5 -> expert_4_5_0	[color="",
+			constraint="",
+			pos="e,10793,516.97 10793,603.74 10793,603.74 10793,526.97 10793,526.97",
+			style=""];
+		expert_agg_4_5	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert Aggregation 5
+[B×L×D]
+GPU: 5",
+			pos="10793,350.41",
+			width=2.375];
+		expert_4_5_0 -> expert_agg_4_5	[color="",
+			constraint="",
+			pos="e,10793,376.97 10793,463.74 10793,463.74 10793,386.97 10793,386.97",
+			style=""];
+		expert_4_5_1	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 5",
+			pos="4960,1332.9",
+			width=1.3194];
+		expert_4_5_2	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 5",
+			pos="4807,1332.9",
+			width=1.3194];
+		expert_4_5_3	[fillcolor="#99FFCC",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 5",
+			pos="4654,1332.9",
+			width=1.3194];
+		expert_agg_4_5 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10291,218 10793,323.61 10793,284.92 10793,218 10793,218 10793,218 10301,218 10301,218",
+			style=""];
+		expert_gate_4_6	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert Gate 6
+[B×L×D]
+GPU: 6",
+			pos="10564,630.41",
+			width=1.625];
+		expert_4_6_0	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 6",
+			pos="10564,490.41",
+			width=1.3194];
+		expert_gate_4_6 -> expert_4_6_0	[color="",
+			constraint="",
+			pos="e,10564,516.97 10564,603.74 10564,603.74 10564,526.97 10564,526.97",
+			style=""];
+		expert_agg_4_6	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert Aggregation 6
+[B×L×D]
+GPU: 6",
+			pos="10564,350.41",
+			width=2.375];
+		expert_4_6_0 -> expert_agg_4_6	[color="",
+			constraint="",
+			pos="e,10564,376.97 10564,463.74 10564,463.74 10564,386.97 10564,386.97",
+			style=""];
+		expert_4_6_1	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 6",
+			pos="4501,1332.9",
+			width=1.3194];
+		expert_4_6_2	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 6",
+			pos="4348,1332.9",
+			width=1.3194];
+		expert_4_6_3	[fillcolor="#99FFFF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 6",
+			pos="4195,1332.9",
+			width=1.3194];
+		expert_agg_4_6 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10276,227 10564,323.63 10564,287.33 10564,227 10564,227 10564,227 10286,227 10286,227",
+			style=""];
+		expert_gate_4_7	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert Gate 7
+[B×L×D]
+GPU: 7",
+			pos="10335,630.41",
+			width=1.625];
+		expert_4_7_0	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 7",
+			pos="10335,490.41",
+			width=1.3194];
+		expert_gate_4_7 -> expert_4_7_0	[color="",
+			constraint="",
+			pos="e,10335,516.97 10335,603.74 10335,603.74 10335,526.97 10335,526.97",
+			style=""];
+		expert_agg_4_7	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert Aggregation 7
+[B×L×D]
+GPU: 7",
+			pos="10335,350.41",
+			width=2.375];
+		expert_4_7_0 -> expert_agg_4_7	[color="",
+			constraint="",
+			pos="e,10335,376.97 10335,463.74 10335,463.74 10335,386.97 10335,386.97",
+			style=""];
+		expert_4_7_1	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 7",
+			pos="4042,1332.9",
+			width=1.3194];
+		expert_4_7_2	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 7",
+			pos="3889,1332.9",
+			width=1.3194];
+		expert_4_7_3	[fillcolor="#99CCFF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 7",
+			pos="3736,1332.9",
+			width=1.3194];
+		expert_agg_4_7 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10276,227.08 10276,323.76 10276,323.76 10276,237.08 10276,237.08",
+			style=""];
+		expert_gate_4_8	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert Gate 8
+[B×L×D]
+GPU: 8",
+			pos="10106,630.41",
+			width=1.625];
+		expert_4_8_0	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 8",
+			pos="10106,490.41",
+			width=1.3194];
+		expert_gate_4_8 -> expert_4_8_0	[color="",
+			constraint="",
+			pos="e,10106,516.97 10106,603.74 10106,603.74 10106,526.97 10106,526.97",
+			style=""];
+		expert_agg_4_8	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert Aggregation 8
+[B×L×D]
+GPU: 8",
+			pos="10106,350.41",
+			width=2.375];
+		expert_4_8_0 -> expert_agg_4_8	[color="",
+			constraint="",
+			pos="e,10106,376.97 10106,463.74 10106,463.74 10106,386.97 10106,386.97",
+			style=""];
+		expert_4_8_1	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 8",
+			pos="3583,1332.9",
+			width=1.3194];
+		expert_4_8_2	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 8",
+			pos="3430,1332.9",
+			width=1.3194];
+		expert_4_8_3	[fillcolor="#9999FF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 8",
+			pos="3277,1332.9",
+			width=1.3194];
+		expert_agg_4_8 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10165,227.34 10165,323.76 10165,323.76 10165,237.34 10165,237.34",
+			style=""];
+		expert_gate_4_9	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert Gate 9
+[B×L×D]
+GPU: 9",
+			pos="9877,630.41",
+			width=1.625];
+		expert_4_9_0	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 9",
+			pos="9877,490.41",
+			width=1.3194];
+		expert_gate_4_9 -> expert_4_9_0	[color="",
+			constraint="",
+			pos="e,9877,516.97 9877,603.74 9877,603.74 9877,526.97 9877,526.97",
+			style=""];
+		expert_agg_4_9	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert Aggregation 9
+[B×L×D]
+GPU: 9",
+			pos="9877,350.41",
+			width=2.375];
+		expert_4_9_0 -> expert_agg_4_9	[color="",
+			constraint="",
+			pos="e,9877,376.97 9877,463.74 9877,463.74 9877,386.97 9877,386.97",
+			style=""];
+		expert_4_9_1	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 9",
+			pos="3124,1332.9",
+			width=1.3194];
+		expert_4_9_2	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 9",
+			pos="2971,1332.9",
+			width=1.3194];
+		expert_4_9_3	[fillcolor="#CC99FF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 9",
+			pos="2818,1332.9",
+			width=1.3194];
+		expert_agg_4_9 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10164,227 9877,323.63 9877,287.33 9877,227 9877,227 9877,227 10154,227 10154,227",
+			style=""];
+		expert_gate_4_10	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert Gate 10
+[B×L×D]
+GPU: 10",
+			pos="9643,630.41",
+			width=1.75];
+		expert_4_10_0	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 10",
+			pos="9643,490.41",
+			width=1.3194];
+		expert_gate_4_10 -> expert_4_10_0	[color="",
+			constraint="",
+			pos="e,9643,516.97 9643,603.74 9643,603.74 9643,526.97 9643,526.97",
+			style=""];
+		expert_agg_4_10	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert Aggregation 10
+[B×L×D]
+GPU: 10",
+			pos="9643,350.41",
+			width=2.5];
+		expert_4_10_0 -> expert_agg_4_10	[color="",
+			constraint="",
+			pos="e,9643,376.97 9643,463.74 9643,463.74 9643,386.97 9643,386.97",
+			style=""];
+		expert_4_10_1	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 10",
+			pos="2665,1332.9",
+			width=1.3194];
+		expert_4_10_2	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 10",
+			pos="2512,1332.9",
+			width=1.3194];
+		expert_4_10_3	[fillcolor="#FF99FF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 10",
+			pos="2359,1332.9",
+			width=1.3194];
+		expert_agg_4_10 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10149,218 9643,323.61 9643,284.92 9643,218 9643,218 9643,218 10139,218 10139,218",
+			style=""];
+		expert_gate_4_11	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert Gate 11
+[B×L×D]
+GPU: 11",
+			pos="9405,630.41",
+			width=1.75];
+		expert_4_11_0	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 11",
+			pos="9405,490.41",
+			width=1.3194];
+		expert_gate_4_11 -> expert_4_11_0	[color="",
+			constraint="",
+			pos="e,9405,516.97 9405,603.74 9405,603.74 9405,526.97 9405,526.97",
+			style=""];
+		expert_agg_4_11	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert Aggregation 11
+[B×L×D]
+GPU: 11",
+			pos="9405,350.41",
+			width=2.5];
+		expert_4_11_0 -> expert_agg_4_11	[color="",
+			constraint="",
+			pos="e,9405,376.97 9405,463.74 9405,463.74 9405,386.97 9405,386.97",
+			style=""];
+		expert_4_11_1	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 11",
+			pos="2206,1332.9",
+			width=1.3194];
+		expert_4_11_2	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 11",
+			pos="2053,1332.9",
+			width=1.3194];
+		expert_4_11_3	[fillcolor="#FF99CC",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 11",
+			pos="1900,1332.9",
+			width=1.3194];
+		expert_agg_4_11 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10140,208 9405,323.62 9405,282.37 9405,208 9405,208 9405,208 10130,208 10130,208",
+			style=""];
+		expert_gate_4_12	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert Gate 12
+[B×L×D]
+GPU: 12",
+			pos="9167,630.41",
+			width=1.75];
+		expert_4_12_0	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 12",
+			pos="9167,490.41",
+			width=1.3194];
+		expert_gate_4_12 -> expert_4_12_0	[color="",
+			constraint="",
+			pos="e,9167,516.97 9167,603.74 9167,603.74 9167,526.97 9167,526.97",
+			style=""];
+		expert_agg_4_12	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert Aggregation 12
+[B×L×D]
+GPU: 12",
+			pos="9167,350.41",
+			width=2.5];
+		expert_4_12_0 -> expert_agg_4_12	[color="",
+			constraint="",
+			pos="e,9167,376.97 9167,463.74 9167,463.74 9167,386.97 9167,386.97",
+			style=""];
+		expert_4_12_1	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 12",
+			pos="1747,1332.9",
+			width=1.3194];
+		expert_4_12_2	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 12",
+			pos="1594,1332.9",
+			width=1.3194];
+		expert_4_12_3	[fillcolor="#FFB366",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 12",
+			pos="1441,1332.9",
+			width=1.3194];
+		expert_agg_4_12 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10138,199 9167,323.69 9167,280.22 9167,199 9167,199 9167,199 10128,199 10128,199",
+			style=""];
+		expert_gate_4_13	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert Gate 13
+[B×L×D]
+GPU: 13",
+			pos="8929,630.41",
+			width=1.75];
+		expert_4_13_0	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 13",
+			pos="8929,490.41",
+			width=1.3194];
+		expert_gate_4_13 -> expert_4_13_0	[color="",
+			constraint="",
+			pos="e,8929,516.97 8929,603.74 8929,603.74 8929,526.97 8929,526.97",
+			style=""];
+		expert_agg_4_13	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert Aggregation 13
+[B×L×D]
+GPU: 13",
+			pos="8929,350.41",
+			width=2.5];
+		expert_4_13_0 -> expert_agg_4_13	[color="",
+			constraint="",
+			pos="e,8929,376.97 8929,463.74 8929,463.74 8929,386.97 8929,386.97",
+			style=""];
+		expert_4_13_1	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 13",
+			pos="1288,1332.9",
+			width=1.3194];
+		expert_4_13_2	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 13",
+			pos="1135,1332.9",
+			width=1.3194];
+		expert_4_13_3	[fillcolor="#B3FF66",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 13",
+			pos="982,1332.9",
+			width=1.3194];
+		expert_agg_4_13 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10140,190 8929,323.56 8929,277.89 8929,190 8929,190 8929,190 10130,190 10130,190",
+			style=""];
+		expert_gate_4_14	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert Gate 14
+[B×L×D]
+GPU: 14",
+			pos="8691,630.41",
+			width=1.75];
+		expert_4_14_0	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 14",
+			pos="8691,490.41",
+			width=1.3194];
+		expert_gate_4_14 -> expert_4_14_0	[color="",
+			constraint="",
+			pos="e,8691,516.97 8691,603.74 8691,603.74 8691,526.97 8691,526.97",
+			style=""];
+		expert_agg_4_14	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert Aggregation 14
+[B×L×D]
+GPU: 14",
+			pos="8691,350.41",
+			width=2.5];
+		expert_4_14_0 -> expert_agg_4_14	[color="",
+			constraint="",
+			pos="e,8691,376.97 8691,463.74 8691,463.74 8691,386.97 8691,386.97",
+			style=""];
+		expert_4_14_1	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 14",
+			pos="829,1332.9",
+			width=1.3194];
+		expert_4_14_2	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 14",
+			pos="676,1332.9",
+			width=1.3194];
+		expert_4_14_3	[fillcolor="#66FFB3",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 14",
+			pos="523,1332.9",
+			width=1.3194];
+		expert_agg_4_14 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10150,180 8691,323.78 8691,275.85 8691,180 8691,180 8691,180 10140,180 10140,180",
+			style=""];
+		expert_gate_4_15	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert Gate 15
+[B×L×D]
+GPU: 15",
+			pos="8453,630.41",
+			width=1.75];
+		expert_4_15_0	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert 0
+[B×L×D/4]
+GPU: 15",
+			pos="8453,490.41",
+			width=1.3194];
+		expert_gate_4_15 -> expert_4_15_0	[color="",
+			constraint="",
+			pos="e,8453,516.97 8453,603.74 8453,603.74 8453,526.97 8453,526.97",
+			style=""];
+		expert_agg_4_15	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert Aggregation 15
+[B×L×D]
+GPU: 15",
+			pos="8453,350.41",
+			width=2.5];
+		expert_4_15_0 -> expert_agg_4_15	[color="",
+			constraint="",
+			pos="e,8453,376.97 8453,463.74 8453,463.74 8453,386.97 8453,386.97",
+			style=""];
+		expert_4_15_1	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert 1
+[B×L×D/4]
+GPU: 15",
+			pos="370,1332.9",
+			width=1.3194];
+		expert_4_15_2	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert 2
+[B×L×D/4]
+GPU: 15",
+			pos="217,1332.9",
+			width=1.3194];
+		expert_4_15_3	[fillcolor="#66B3FF",
+			height=0.73611,
+			label="Expert 3
+[B×L×D/4]
+GPU: 15",
+			pos="64,1332.9",
+			width=1.3194];
+		expert_agg_4_15 -> layer_norm_4	[color="",
+			constraint="",
+			pos="e,10166,171 8453,323.55 8453,273.5 8453,171 8453,171 8453,171 10156,171 10156,171",
+			style=""];
+	}
+	input_embed	[fillcolor="#E6E6E6",
+		height=1.041,
+		label="Input Embedding
+[B×L×D]
+GPU: All",
+		pos="33935,5087.2",
+		shape=ellipse,
+		width=2.7695];
+	input_embed -> q_proj_1_0_0	[color="",
+		constraint="",
+		pos="e,34927,4962.8 34030,5099 34278,5099 34927,5099 34927,5099 34927,5099 34927,4972.8 34927,4972.8",
+		style=""];
+	input_embed -> q_proj_1_0_1	[color="",
+		constraint="",
+		pos="e,34351,4962.8 34028,5074 34151,5074 34351,5074 34351,5074 34351,5074 34351,4972.8 34351,4972.8",
+		style=""];
+	input_embed -> q_proj_1_0_2	[color="",
+		constraint="",
+		pos="e,33842,4940 33871,5058.5 33871,5015.7 33871,4940 33871,4940 33871,4940 33852,4940 33852,4940",
+		style=""];
+	input_embed -> q_proj_1_0_3	[color="",
+		constraint="",
+		pos="e,33583,4963.1 33835,5087 33731,5087 33583,5087 33583,5087 33583,5087 33583,4973.1 33583,4973.1",
+		style=""];
+	layer_norm_1 -> q_proj_2_0_0	[color="",
+		constraint="",
+		pos="e,29454,3810.9 29454,3897.7 29454,3897.7 29454,3820.9 29454,3820.9",
+		style=""];
+	layer_norm_2 -> q_proj_3_0_0	[color="",
+		constraint="",
+		pos="e,23166,2658.9 23166,2745.8 23166,2745.8 23166,2668.9 23166,2668.9",
+		style=""];
+	layer_norm_3 -> q_proj_4_0_0	[color="",
+		constraint="",
+		pos="e,16451,1367 16451,1453.8 16451,1453.8 16451,1377 16451,1377",
+		style=""];
+	output_proj	[fillcolor="#E6E6E6",
+		height=1.041,
+		label="Output Projection
+[B×L×Vocab]
+GPU: All",
+		pos="10220,37.477",
+		shape=ellipse,
+		width=2.8284];
+	layer_norm_4 -> output_proj	[color="",
+		constraint="",
+		pos="e,10220,75.116 10220,161.87 10220,161.87 10220,85.116 10220,85.116",
+		style=""];
+}
