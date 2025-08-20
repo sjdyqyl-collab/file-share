@@ -1,0 +1,2670 @@
+digraph Proposed_Cross_Node_Expert_Parallelism {
+	rankdir=TB size="50,50"
+	subgraph cluster_legend {
+		label=Legend style=dashed
+		comp [label=Computation shape=rectangle]
+		comm [label=Communication shape=ellipse]
+		route [label="Routing/Aggregation" shape=parallelogram]
+	}
+	global_input [label="Global Input
+[1024 tokens, hidden_size]" fillcolor=lightblue shape=ellipse style=filled]
+	subgraph cluster_layer1 {
+		label="Layer 1" style=rounded
+		l1_mha_all [label="Multi-Head Attention
+[1024×8192]
+All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
+		l1_mha_res [label="Residual Add
+[1024×8192]
+All GPUs" fillcolor=yellow shape=parallelogram style=filled]
+		l1_gate [label="Gating Network
+[1024×64 experts]
+All GPUs" fillcolor=orange shape=parallelogram style=filled]
+		l1_expert_0 [label="Expert 0
+MLP [1024×32768]
+GPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_0 [label="Expert 0 Output
+[1024×8192]
+GPU 0" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_1 [label="Expert 1
+MLP [1024×32768]
+GPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_1 [label="Expert 1 Output
+[1024×8192]
+GPU 1" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_2 [label="Expert 2
+MLP [1024×32768]
+GPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_2 [label="Expert 2 Output
+[1024×8192]
+GPU 2" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_3 [label="Expert 3
+MLP [1024×32768]
+GPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_3 [label="Expert 3 Output
+[1024×8192]
+GPU 3" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_4 [label="Expert 4
+MLP [1024×32768]
+GPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_4 [label="Expert 4 Output
+[1024×8192]
+GPU 4" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_5 [label="Expert 5
+MLP [1024×32768]
+GPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_5 [label="Expert 5 Output
+[1024×8192]
+GPU 5" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_6 [label="Expert 6
+MLP [1024×32768]
+GPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_6 [label="Expert 6 Output
+[1024×8192]
+GPU 6" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_7 [label="Expert 7
+MLP [1024×32768]
+GPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_7 [label="Expert 7 Output
+[1024×8192]
+GPU 7" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_8 [label="Expert 8
+MLP [1024×32768]
+GPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_8 [label="Expert 8 Output
+[1024×8192]
+GPU 8" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_9 [label="Expert 9
+MLP [1024×32768]
+GPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_9 [label="Expert 9 Output
+[1024×8192]
+GPU 9" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_10 [label="Expert 10
+MLP [1024×32768]
+GPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_10 [label="Expert 10 Output
+[1024×8192]
+GPU 10" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_11 [label="Expert 11
+MLP [1024×32768]
+GPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_11 [label="Expert 11 Output
+[1024×8192]
+GPU 11" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_12 [label="Expert 12
+MLP [1024×32768]
+GPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_12 [label="Expert 12 Output
+[1024×8192]
+GPU 12" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_13 [label="Expert 13
+MLP [1024×32768]
+GPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_13 [label="Expert 13 Output
+[1024×8192]
+GPU 13" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_14 [label="Expert 14
+MLP [1024×32768]
+GPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_14 [label="Expert 14 Output
+[1024×8192]
+GPU 14" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_15 [label="Expert 15
+MLP [1024×32768]
+GPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_15 [label="Expert 15 Output
+[1024×8192]
+GPU 15" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_16 [label="Expert 16
+MLP [1024×32768]
+GPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_16 [label="Expert 16 Output
+[1024×8192]
+GPU 16" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_17 [label="Expert 17
+MLP [1024×32768]
+GPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_17 [label="Expert 17 Output
+[1024×8192]
+GPU 17" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_18 [label="Expert 18
+MLP [1024×32768]
+GPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_18 [label="Expert 18 Output
+[1024×8192]
+GPU 18" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_19 [label="Expert 19
+MLP [1024×32768]
+GPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_19 [label="Expert 19 Output
+[1024×8192]
+GPU 19" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_20 [label="Expert 20
+MLP [1024×32768]
+GPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_20 [label="Expert 20 Output
+[1024×8192]
+GPU 20" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_21 [label="Expert 21
+MLP [1024×32768]
+GPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_21 [label="Expert 21 Output
+[1024×8192]
+GPU 21" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_22 [label="Expert 22
+MLP [1024×32768]
+GPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_22 [label="Expert 22 Output
+[1024×8192]
+GPU 22" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_23 [label="Expert 23
+MLP [1024×32768]
+GPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_23 [label="Expert 23 Output
+[1024×8192]
+GPU 23" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_24 [label="Expert 24
+MLP [1024×32768]
+GPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_24 [label="Expert 24 Output
+[1024×8192]
+GPU 24" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_25 [label="Expert 25
+MLP [1024×32768]
+GPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_25 [label="Expert 25 Output
+[1024×8192]
+GPU 25" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_26 [label="Expert 26
+MLP [1024×32768]
+GPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_26 [label="Expert 26 Output
+[1024×8192]
+GPU 26" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_27 [label="Expert 27
+MLP [1024×32768]
+GPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_27 [label="Expert 27 Output
+[1024×8192]
+GPU 27" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_28 [label="Expert 28
+MLP [1024×32768]
+GPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_28 [label="Expert 28 Output
+[1024×8192]
+GPU 28" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_29 [label="Expert 29
+MLP [1024×32768]
+GPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_29 [label="Expert 29 Output
+[1024×8192]
+GPU 29" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_30 [label="Expert 30
+MLP [1024×32768]
+GPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_30 [label="Expert 30 Output
+[1024×8192]
+GPU 30" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_31 [label="Expert 31
+MLP [1024×32768]
+GPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_31 [label="Expert 31 Output
+[1024×8192]
+GPU 31" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_32 [label="Expert 32
+MLP [1024×32768]
+GPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_32 [label="Expert 32 Output
+[1024×8192]
+GPU 32" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_33 [label="Expert 33
+MLP [1024×32768]
+GPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_33 [label="Expert 33 Output
+[1024×8192]
+GPU 33" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_34 [label="Expert 34
+MLP [1024×32768]
+GPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_34 [label="Expert 34 Output
+[1024×8192]
+GPU 34" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_35 [label="Expert 35
+MLP [1024×32768]
+GPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_35 [label="Expert 35 Output
+[1024×8192]
+GPU 35" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_36 [label="Expert 36
+MLP [1024×32768]
+GPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_36 [label="Expert 36 Output
+[1024×8192]
+GPU 36" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_37 [label="Expert 37
+MLP [1024×32768]
+GPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_37 [label="Expert 37 Output
+[1024×8192]
+GPU 37" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_38 [label="Expert 38
+MLP [1024×32768]
+GPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_38 [label="Expert 38 Output
+[1024×8192]
+GPU 38" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_39 [label="Expert 39
+MLP [1024×32768]
+GPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_39 [label="Expert 39 Output
+[1024×8192]
+GPU 39" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_40 [label="Expert 40
+MLP [1024×32768]
+GPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_40 [label="Expert 40 Output
+[1024×8192]
+GPU 40" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_41 [label="Expert 41
+MLP [1024×32768]
+GPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_41 [label="Expert 41 Output
+[1024×8192]
+GPU 41" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_42 [label="Expert 42
+MLP [1024×32768]
+GPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_42 [label="Expert 42 Output
+[1024×8192]
+GPU 42" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_43 [label="Expert 43
+MLP [1024×32768]
+GPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_43 [label="Expert 43 Output
+[1024×8192]
+GPU 43" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_44 [label="Expert 44
+MLP [1024×32768]
+GPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_44 [label="Expert 44 Output
+[1024×8192]
+GPU 44" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_45 [label="Expert 45
+MLP [1024×32768]
+GPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_45 [label="Expert 45 Output
+[1024×8192]
+GPU 45" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_46 [label="Expert 46
+MLP [1024×32768]
+GPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_46 [label="Expert 46 Output
+[1024×8192]
+GPU 46" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_47 [label="Expert 47
+MLP [1024×32768]
+GPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_47 [label="Expert 47 Output
+[1024×8192]
+GPU 47" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_48 [label="Expert 48
+MLP [1024×32768]
+GPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_48 [label="Expert 48 Output
+[1024×8192]
+GPU 48" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_49 [label="Expert 49
+MLP [1024×32768]
+GPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_49 [label="Expert 49 Output
+[1024×8192]
+GPU 49" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_50 [label="Expert 50
+MLP [1024×32768]
+GPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_50 [label="Expert 50 Output
+[1024×8192]
+GPU 50" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_51 [label="Expert 51
+MLP [1024×32768]
+GPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_51 [label="Expert 51 Output
+[1024×8192]
+GPU 51" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_52 [label="Expert 52
+MLP [1024×32768]
+GPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_52 [label="Expert 52 Output
+[1024×8192]
+GPU 52" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_53 [label="Expert 53
+MLP [1024×32768]
+GPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_53 [label="Expert 53 Output
+[1024×8192]
+GPU 53" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_54 [label="Expert 54
+MLP [1024×32768]
+GPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_54 [label="Expert 54 Output
+[1024×8192]
+GPU 54" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_55 [label="Expert 55
+MLP [1024×32768]
+GPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_55 [label="Expert 55 Output
+[1024×8192]
+GPU 55" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_56 [label="Expert 56
+MLP [1024×32768]
+GPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_56 [label="Expert 56 Output
+[1024×8192]
+GPU 56" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_57 [label="Expert 57
+MLP [1024×32768]
+GPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_57 [label="Expert 57 Output
+[1024×8192]
+GPU 57" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_58 [label="Expert 58
+MLP [1024×32768]
+GPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_58 [label="Expert 58 Output
+[1024×8192]
+GPU 58" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_59 [label="Expert 59
+MLP [1024×32768]
+GPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_59 [label="Expert 59 Output
+[1024×8192]
+GPU 59" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_60 [label="Expert 60
+MLP [1024×32768]
+GPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_60 [label="Expert 60 Output
+[1024×8192]
+GPU 60" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_61 [label="Expert 61
+MLP [1024×32768]
+GPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_61 [label="Expert 61 Output
+[1024×8192]
+GPU 61" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_62 [label="Expert 62
+MLP [1024×32768]
+GPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_62 [label="Expert 62 Output
+[1024×8192]
+GPU 62" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_expert_63 [label="Expert 63
+MLP [1024×32768]
+GPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+		l1_expert_out_63 [label="Expert 63 Output
+[1024×8192]
+GPU 63" fillcolor=lightyellow shape=ellipse style=filled]
+		l1_aggregate [label="Aggregate Expert Outputs
+[1024×8192]
+All GPUs" fillcolor=lightpink shape=parallelogram style=filled]
+		l1_ffn_res [label="Residual Add
+[1024×8192]
+All GPUs" fillcolor=yellow shape=parallelogram style=filled]
+	}
+	subgraph cluster_layer2 {
+		label="Layer 2" style=rounded
+		l2_mha_all [label="Multi-Head Attention
+[1024×8192]
+All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
+		l2_mha_res [label="Residual Add
+[1024×8192]
+All GPUs" fillcolor=yellow shape=parallelogram style=filled]
+		l2_gate [label="Gating Network
+[1024×64 experts]
+All GPUs" fillcolor=orange shape=parallelogram style=filled]
+		l2_expert_0 [label="Expert 0
+MLP [1024×32768]
+GPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_0 [label="Expert 0 Output
+[1024×8192]
+GPU 0" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_1 [label="Expert 1
+MLP [1024×32768]
+GPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_1 [label="Expert 1 Output
+[1024×8192]
+GPU 1" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_2 [label="Expert 2
+MLP [1024×32768]
+GPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_2 [label="Expert 2 Output
+[1024×8192]
+GPU 2" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_3 [label="Expert 3
+MLP [1024×32768]
+GPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_3 [label="Expert 3 Output
+[1024×8192]
+GPU 3" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_4 [label="Expert 4
+MLP [1024×32768]
+GPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_4 [label="Expert 4 Output
+[1024×8192]
+GPU 4" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_5 [label="Expert 5
+MLP [1024×32768]
+GPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_5 [label="Expert 5 Output
+[1024×8192]
+GPU 5" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_6 [label="Expert 6
+MLP [1024×32768]
+GPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_6 [label="Expert 6 Output
+[1024×8192]
+GPU 6" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_7 [label="Expert 7
+MLP [1024×32768]
+GPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_7 [label="Expert 7 Output
+[1024×8192]
+GPU 7" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_8 [label="Expert 8
+MLP [1024×32768]
+GPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_8 [label="Expert 8 Output
+[1024×8192]
+GPU 8" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_9 [label="Expert 9
+MLP [1024×32768]
+GPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_9 [label="Expert 9 Output
+[1024×8192]
+GPU 9" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_10 [label="Expert 10
+MLP [1024×32768]
+GPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_10 [label="Expert 10 Output
+[1024×8192]
+GPU 10" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_11 [label="Expert 11
+MLP [1024×32768]
+GPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_11 [label="Expert 11 Output
+[1024×8192]
+GPU 11" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_12 [label="Expert 12
+MLP [1024×32768]
+GPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_12 [label="Expert 12 Output
+[1024×8192]
+GPU 12" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_13 [label="Expert 13
+MLP [1024×32768]
+GPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_13 [label="Expert 13 Output
+[1024×8192]
+GPU 13" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_14 [label="Expert 14
+MLP [1024×32768]
+GPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_14 [label="Expert 14 Output
+[1024×8192]
+GPU 14" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_15 [label="Expert 15
+MLP [1024×32768]
+GPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_15 [label="Expert 15 Output
+[1024×8192]
+GPU 15" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_16 [label="Expert 16
+MLP [1024×32768]
+GPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_16 [label="Expert 16 Output
+[1024×8192]
+GPU 16" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_17 [label="Expert 17
+MLP [1024×32768]
+GPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_17 [label="Expert 17 Output
+[1024×8192]
+GPU 17" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_18 [label="Expert 18
+MLP [1024×32768]
+GPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_18 [label="Expert 18 Output
+[1024×8192]
+GPU 18" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_19 [label="Expert 19
+MLP [1024×32768]
+GPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_19 [label="Expert 19 Output
+[1024×8192]
+GPU 19" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_20 [label="Expert 20
+MLP [1024×32768]
+GPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_20 [label="Expert 20 Output
+[1024×8192]
+GPU 20" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_21 [label="Expert 21
+MLP [1024×32768]
+GPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_21 [label="Expert 21 Output
+[1024×8192]
+GPU 21" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_22 [label="Expert 22
+MLP [1024×32768]
+GPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_22 [label="Expert 22 Output
+[1024×8192]
+GPU 22" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_23 [label="Expert 23
+MLP [1024×32768]
+GPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_23 [label="Expert 23 Output
+[1024×8192]
+GPU 23" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_24 [label="Expert 24
+MLP [1024×32768]
+GPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_24 [label="Expert 24 Output
+[1024×8192]
+GPU 24" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_25 [label="Expert 25
+MLP [1024×32768]
+GPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_25 [label="Expert 25 Output
+[1024×8192]
+GPU 25" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_26 [label="Expert 26
+MLP [1024×32768]
+GPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_26 [label="Expert 26 Output
+[1024×8192]
+GPU 26" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_27 [label="Expert 27
+MLP [1024×32768]
+GPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_27 [label="Expert 27 Output
+[1024×8192]
+GPU 27" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_28 [label="Expert 28
+MLP [1024×32768]
+GPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_28 [label="Expert 28 Output
+[1024×8192]
+GPU 28" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_29 [label="Expert 29
+MLP [1024×32768]
+GPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_29 [label="Expert 29 Output
+[1024×8192]
+GPU 29" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_30 [label="Expert 30
+MLP [1024×32768]
+GPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_30 [label="Expert 30 Output
+[1024×8192]
+GPU 30" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_31 [label="Expert 31
+MLP [1024×32768]
+GPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_31 [label="Expert 31 Output
+[1024×8192]
+GPU 31" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_32 [label="Expert 32
+MLP [1024×32768]
+GPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_32 [label="Expert 32 Output
+[1024×8192]
+GPU 32" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_33 [label="Expert 33
+MLP [1024×32768]
+GPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_33 [label="Expert 33 Output
+[1024×8192]
+GPU 33" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_34 [label="Expert 34
+MLP [1024×32768]
+GPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_34 [label="Expert 34 Output
+[1024×8192]
+GPU 34" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_35 [label="Expert 35
+MLP [1024×32768]
+GPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_35 [label="Expert 35 Output
+[1024×8192]
+GPU 35" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_36 [label="Expert 36
+MLP [1024×32768]
+GPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_36 [label="Expert 36 Output
+[1024×8192]
+GPU 36" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_37 [label="Expert 37
+MLP [1024×32768]
+GPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_37 [label="Expert 37 Output
+[1024×8192]
+GPU 37" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_38 [label="Expert 38
+MLP [1024×32768]
+GPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_38 [label="Expert 38 Output
+[1024×8192]
+GPU 38" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_39 [label="Expert 39
+MLP [1024×32768]
+GPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_39 [label="Expert 39 Output
+[1024×8192]
+GPU 39" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_40 [label="Expert 40
+MLP [1024×32768]
+GPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_40 [label="Expert 40 Output
+[1024×8192]
+GPU 40" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_41 [label="Expert 41
+MLP [1024×32768]
+GPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_41 [label="Expert 41 Output
+[1024×8192]
+GPU 41" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_42 [label="Expert 42
+MLP [1024×32768]
+GPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_42 [label="Expert 42 Output
+[1024×8192]
+GPU 42" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_43 [label="Expert 43
+MLP [1024×32768]
+GPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_43 [label="Expert 43 Output
+[1024×8192]
+GPU 43" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_44 [label="Expert 44
+MLP [1024×32768]
+GPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_44 [label="Expert 44 Output
+[1024×8192]
+GPU 44" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_45 [label="Expert 45
+MLP [1024×32768]
+GPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_45 [label="Expert 45 Output
+[1024×8192]
+GPU 45" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_46 [label="Expert 46
+MLP [1024×32768]
+GPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_46 [label="Expert 46 Output
+[1024×8192]
+GPU 46" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_47 [label="Expert 47
+MLP [1024×32768]
+GPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_47 [label="Expert 47 Output
+[1024×8192]
+GPU 47" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_48 [label="Expert 48
+MLP [1024×32768]
+GPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_48 [label="Expert 48 Output
+[1024×8192]
+GPU 48" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_49 [label="Expert 49
+MLP [1024×32768]
+GPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_49 [label="Expert 49 Output
+[1024×8192]
+GPU 49" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_50 [label="Expert 50
+MLP [1024×32768]
+GPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_50 [label="Expert 50 Output
+[1024×8192]
+GPU 50" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_51 [label="Expert 51
+MLP [1024×32768]
+GPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_51 [label="Expert 51 Output
+[1024×8192]
+GPU 51" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_52 [label="Expert 52
+MLP [1024×32768]
+GPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_52 [label="Expert 52 Output
+[1024×8192]
+GPU 52" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_53 [label="Expert 53
+MLP [1024×32768]
+GPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_53 [label="Expert 53 Output
+[1024×8192]
+GPU 53" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_54 [label="Expert 54
+MLP [1024×32768]
+GPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_54 [label="Expert 54 Output
+[1024×8192]
+GPU 54" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_55 [label="Expert 55
+MLP [1024×32768]
+GPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_55 [label="Expert 55 Output
+[1024×8192]
+GPU 55" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_56 [label="Expert 56
+MLP [1024×32768]
+GPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_56 [label="Expert 56 Output
+[1024×8192]
+GPU 56" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_57 [label="Expert 57
+MLP [1024×32768]
+GPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_57 [label="Expert 57 Output
+[1024×8192]
+GPU 57" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_58 [label="Expert 58
+MLP [1024×32768]
+GPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_58 [label="Expert 58 Output
+[1024×8192]
+GPU 58" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_59 [label="Expert 59
+MLP [1024×32768]
+GPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_59 [label="Expert 59 Output
+[1024×8192]
+GPU 59" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_60 [label="Expert 60
+MLP [1024×32768]
+GPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_60 [label="Expert 60 Output
+[1024×8192]
+GPU 60" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_61 [label="Expert 61
+MLP [1024×32768]
+GPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_61 [label="Expert 61 Output
+[1024×8192]
+GPU 61" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_62 [label="Expert 62
+MLP [1024×32768]
+GPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_62 [label="Expert 62 Output
+[1024×8192]
+GPU 62" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_expert_63 [label="Expert 63
+MLP [1024×32768]
+GPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+		l2_expert_out_63 [label="Expert 63 Output
+[1024×8192]
+GPU 63" fillcolor=lightyellow shape=ellipse style=filled]
+		l2_aggregate [label="Aggregate Expert Outputs
+[1024×8192]
+All GPUs" fillcolor=lightpink shape=parallelogram style=filled]
+		l2_ffn_res [label="Residual Add
+[1024×8192]
+All GPUs" fillcolor=yellow shape=parallelogram style=filled]
+	}
+	subgraph cluster_layer3 {
+		label="Layer 3" style=rounded
+		l3_mha_all [label="Multi-Head Attention
+[1024×8192]
+All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
+		l3_mha_res [label="Residual Add
+[1024×8192]
+All GPUs" fillcolor=yellow shape=parallelogram style=filled]
+		l3_gate [label="Gating Network
+[1024×64 experts]
+All GPUs" fillcolor=orange shape=parallelogram style=filled]
+		l3_expert_0 [label="Expert 0
+MLP [1024×32768]
+GPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_0 [label="Expert 0 Output
+[1024×8192]
+GPU 0" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_1 [label="Expert 1
+MLP [1024×32768]
+GPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_1 [label="Expert 1 Output
+[1024×8192]
+GPU 1" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_2 [label="Expert 2
+MLP [1024×32768]
+GPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_2 [label="Expert 2 Output
+[1024×8192]
+GPU 2" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_3 [label="Expert 3
+MLP [1024×32768]
+GPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_3 [label="Expert 3 Output
+[1024×8192]
+GPU 3" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_4 [label="Expert 4
+MLP [1024×32768]
+GPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_4 [label="Expert 4 Output
+[1024×8192]
+GPU 4" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_5 [label="Expert 5
+MLP [1024×32768]
+GPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_5 [label="Expert 5 Output
+[1024×8192]
+GPU 5" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_6 [label="Expert 6
+MLP [1024×32768]
+GPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_6 [label="Expert 6 Output
+[1024×8192]
+GPU 6" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_7 [label="Expert 7
+MLP [1024×32768]
+GPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_7 [label="Expert 7 Output
+[1024×8192]
+GPU 7" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_8 [label="Expert 8
+MLP [1024×32768]
+GPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_8 [label="Expert 8 Output
+[1024×8192]
+GPU 8" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_9 [label="Expert 9
+MLP [1024×32768]
+GPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_9 [label="Expert 9 Output
+[1024×8192]
+GPU 9" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_10 [label="Expert 10
+MLP [1024×32768]
+GPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_10 [label="Expert 10 Output
+[1024×8192]
+GPU 10" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_11 [label="Expert 11
+MLP [1024×32768]
+GPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_11 [label="Expert 11 Output
+[1024×8192]
+GPU 11" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_12 [label="Expert 12
+MLP [1024×32768]
+GPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_12 [label="Expert 12 Output
+[1024×8192]
+GPU 12" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_13 [label="Expert 13
+MLP [1024×32768]
+GPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_13 [label="Expert 13 Output
+[1024×8192]
+GPU 13" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_14 [label="Expert 14
+MLP [1024×32768]
+GPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_14 [label="Expert 14 Output
+[1024×8192]
+GPU 14" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_15 [label="Expert 15
+MLP [1024×32768]
+GPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_15 [label="Expert 15 Output
+[1024×8192]
+GPU 15" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_16 [label="Expert 16
+MLP [1024×32768]
+GPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_16 [label="Expert 16 Output
+[1024×8192]
+GPU 16" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_17 [label="Expert 17
+MLP [1024×32768]
+GPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_17 [label="Expert 17 Output
+[1024×8192]
+GPU 17" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_18 [label="Expert 18
+MLP [1024×32768]
+GPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_18 [label="Expert 18 Output
+[1024×8192]
+GPU 18" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_19 [label="Expert 19
+MLP [1024×32768]
+GPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_19 [label="Expert 19 Output
+[1024×8192]
+GPU 19" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_20 [label="Expert 20
+MLP [1024×32768]
+GPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_20 [label="Expert 20 Output
+[1024×8192]
+GPU 20" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_21 [label="Expert 21
+MLP [1024×32768]
+GPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_21 [label="Expert 21 Output
+[1024×8192]
+GPU 21" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_22 [label="Expert 22
+MLP [1024×32768]
+GPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_22 [label="Expert 22 Output
+[1024×8192]
+GPU 22" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_23 [label="Expert 23
+MLP [1024×32768]
+GPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_23 [label="Expert 23 Output
+[1024×8192]
+GPU 23" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_24 [label="Expert 24
+MLP [1024×32768]
+GPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_24 [label="Expert 24 Output
+[1024×8192]
+GPU 24" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_25 [label="Expert 25
+MLP [1024×32768]
+GPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_25 [label="Expert 25 Output
+[1024×8192]
+GPU 25" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_26 [label="Expert 26
+MLP [1024×32768]
+GPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_26 [label="Expert 26 Output
+[1024×8192]
+GPU 26" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_27 [label="Expert 27
+MLP [1024×32768]
+GPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_27 [label="Expert 27 Output
+[1024×8192]
+GPU 27" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_28 [label="Expert 28
+MLP [1024×32768]
+GPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_28 [label="Expert 28 Output
+[1024×8192]
+GPU 28" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_29 [label="Expert 29
+MLP [1024×32768]
+GPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_29 [label="Expert 29 Output
+[1024×8192]
+GPU 29" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_30 [label="Expert 30
+MLP [1024×32768]
+GPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_30 [label="Expert 30 Output
+[1024×8192]
+GPU 30" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_31 [label="Expert 31
+MLP [1024×32768]
+GPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_31 [label="Expert 31 Output
+[1024×8192]
+GPU 31" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_32 [label="Expert 32
+MLP [1024×32768]
+GPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_32 [label="Expert 32 Output
+[1024×8192]
+GPU 32" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_33 [label="Expert 33
+MLP [1024×32768]
+GPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_33 [label="Expert 33 Output
+[1024×8192]
+GPU 33" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_34 [label="Expert 34
+MLP [1024×32768]
+GPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_34 [label="Expert 34 Output
+[1024×8192]
+GPU 34" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_35 [label="Expert 35
+MLP [1024×32768]
+GPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_35 [label="Expert 35 Output
+[1024×8192]
+GPU 35" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_36 [label="Expert 36
+MLP [1024×32768]
+GPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_36 [label="Expert 36 Output
+[1024×8192]
+GPU 36" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_37 [label="Expert 37
+MLP [1024×32768]
+GPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_37 [label="Expert 37 Output
+[1024×8192]
+GPU 37" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_38 [label="Expert 38
+MLP [1024×32768]
+GPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_38 [label="Expert 38 Output
+[1024×8192]
+GPU 38" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_39 [label="Expert 39
+MLP [1024×32768]
+GPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_39 [label="Expert 39 Output
+[1024×8192]
+GPU 39" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_40 [label="Expert 40
+MLP [1024×32768]
+GPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_40 [label="Expert 40 Output
+[1024×8192]
+GPU 40" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_41 [label="Expert 41
+MLP [1024×32768]
+GPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_41 [label="Expert 41 Output
+[1024×8192]
+GPU 41" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_42 [label="Expert 42
+MLP [1024×32768]
+GPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_42 [label="Expert 42 Output
+[1024×8192]
+GPU 42" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_43 [label="Expert 43
+MLP [1024×32768]
+GPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_43 [label="Expert 43 Output
+[1024×8192]
+GPU 43" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_44 [label="Expert 44
+MLP [1024×32768]
+GPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_44 [label="Expert 44 Output
+[1024×8192]
+GPU 44" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_45 [label="Expert 45
+MLP [1024×32768]
+GPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_45 [label="Expert 45 Output
+[1024×8192]
+GPU 45" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_46 [label="Expert 46
+MLP [1024×32768]
+GPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_46 [label="Expert 46 Output
+[1024×8192]
+GPU 46" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_47 [label="Expert 47
+MLP [1024×32768]
+GPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_47 [label="Expert 47 Output
+[1024×8192]
+GPU 47" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_48 [label="Expert 48
+MLP [1024×32768]
+GPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_48 [label="Expert 48 Output
+[1024×8192]
+GPU 48" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_49 [label="Expert 49
+MLP [1024×32768]
+GPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_49 [label="Expert 49 Output
+[1024×8192]
+GPU 49" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_50 [label="Expert 50
+MLP [1024×32768]
+GPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_50 [label="Expert 50 Output
+[1024×8192]
+GPU 50" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_51 [label="Expert 51
+MLP [1024×32768]
+GPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_51 [label="Expert 51 Output
+[1024×8192]
+GPU 51" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_52 [label="Expert 52
+MLP [1024×32768]
+GPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_52 [label="Expert 52 Output
+[1024×8192]
+GPU 52" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_53 [label="Expert 53
+MLP [1024×32768]
+GPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_53 [label="Expert 53 Output
+[1024×8192]
+GPU 53" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_54 [label="Expert 54
+MLP [1024×32768]
+GPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_54 [label="Expert 54 Output
+[1024×8192]
+GPU 54" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_55 [label="Expert 55
+MLP [1024×32768]
+GPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_55 [label="Expert 55 Output
+[1024×8192]
+GPU 55" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_56 [label="Expert 56
+MLP [1024×32768]
+GPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_56 [label="Expert 56 Output
+[1024×8192]
+GPU 56" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_57 [label="Expert 57
+MLP [1024×32768]
+GPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_57 [label="Expert 57 Output
+[1024×8192]
+GPU 57" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_58 [label="Expert 58
+MLP [1024×32768]
+GPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_58 [label="Expert 58 Output
+[1024×8192]
+GPU 58" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_59 [label="Expert 59
+MLP [1024×32768]
+GPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_59 [label="Expert 59 Output
+[1024×8192]
+GPU 59" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_60 [label="Expert 60
+MLP [1024×32768]
+GPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_60 [label="Expert 60 Output
+[1024×8192]
+GPU 60" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_61 [label="Expert 61
+MLP [1024×32768]
+GPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_61 [label="Expert 61 Output
+[1024×8192]
+GPU 61" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_62 [label="Expert 62
+MLP [1024×32768]
+GPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_62 [label="Expert 62 Output
+[1024×8192]
+GPU 62" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_expert_63 [label="Expert 63
+MLP [1024×32768]
+GPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+		l3_expert_out_63 [label="Expert 63 Output
+[1024×8192]
+GPU 63" fillcolor=lightyellow shape=ellipse style=filled]
+		l3_aggregate [label="Aggregate Expert Outputs
+[1024×8192]
+All GPUs" fillcolor=lightpink shape=parallelogram style=filled]
+		l3_ffn_res [label="Residual Add
+[1024×8192]
+All GPUs" fillcolor=yellow shape=parallelogram style=filled]
+	}
+	subgraph cluster_layer4 {
+		label="Layer 4" style=rounded
+		l4_mha_all [label="Multi-Head Attention
+[1024×8192]
+All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
+		l4_mha_res [label="Residual Add
+[1024×8192]
+All GPUs" fillcolor=yellow shape=parallelogram style=filled]
+		l4_gate [label="Gating Network
+[1024×64 experts]
+All GPUs" fillcolor=orange shape=parallelogram style=filled]
+		l4_expert_0 [label="Expert 0
+MLP [1024×32768]
+GPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_0 [label="Expert 0 Output
+[1024×8192]
+GPU 0" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_1 [label="Expert 1
+MLP [1024×32768]
+GPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_1 [label="Expert 1 Output
+[1024×8192]
+GPU 1" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_2 [label="Expert 2
+MLP [1024×32768]
+GPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_2 [label="Expert 2 Output
+[1024×8192]
+GPU 2" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_3 [label="Expert 3
+MLP [1024×32768]
+GPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_3 [label="Expert 3 Output
+[1024×8192]
+GPU 3" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_4 [label="Expert 4
+MLP [1024×32768]
+GPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_4 [label="Expert 4 Output
+[1024×8192]
+GPU 4" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_5 [label="Expert 5
+MLP [1024×32768]
+GPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_5 [label="Expert 5 Output
+[1024×8192]
+GPU 5" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_6 [label="Expert 6
+MLP [1024×32768]
+GPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_6 [label="Expert 6 Output
+[1024×8192]
+GPU 6" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_7 [label="Expert 7
+MLP [1024×32768]
+GPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_7 [label="Expert 7 Output
+[1024×8192]
+GPU 7" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_8 [label="Expert 8
+MLP [1024×32768]
+GPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_8 [label="Expert 8 Output
+[1024×8192]
+GPU 8" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_9 [label="Expert 9
+MLP [1024×32768]
+GPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_9 [label="Expert 9 Output
+[1024×8192]
+GPU 9" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_10 [label="Expert 10
+MLP [1024×32768]
+GPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_10 [label="Expert 10 Output
+[1024×8192]
+GPU 10" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_11 [label="Expert 11
+MLP [1024×32768]
+GPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_11 [label="Expert 11 Output
+[1024×8192]
+GPU 11" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_12 [label="Expert 12
+MLP [1024×32768]
+GPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_12 [label="Expert 12 Output
+[1024×8192]
+GPU 12" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_13 [label="Expert 13
+MLP [1024×32768]
+GPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_13 [label="Expert 13 Output
+[1024×8192]
+GPU 13" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_14 [label="Expert 14
+MLP [1024×32768]
+GPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_14 [label="Expert 14 Output
+[1024×8192]
+GPU 14" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_15 [label="Expert 15
+MLP [1024×32768]
+GPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_15 [label="Expert 15 Output
+[1024×8192]
+GPU 15" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_16 [label="Expert 16
+MLP [1024×32768]
+GPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_16 [label="Expert 16 Output
+[1024×8192]
+GPU 16" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_17 [label="Expert 17
+MLP [1024×32768]
+GPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_17 [label="Expert 17 Output
+[1024×8192]
+GPU 17" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_18 [label="Expert 18
+MLP [1024×32768]
+GPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_18 [label="Expert 18 Output
+[1024×8192]
+GPU 18" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_19 [label="Expert 19
+MLP [1024×32768]
+GPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_19 [label="Expert 19 Output
+[1024×8192]
+GPU 19" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_20 [label="Expert 20
+MLP [1024×32768]
+GPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_20 [label="Expert 20 Output
+[1024×8192]
+GPU 20" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_21 [label="Expert 21
+MLP [1024×32768]
+GPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_21 [label="Expert 21 Output
+[1024×8192]
+GPU 21" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_22 [label="Expert 22
+MLP [1024×32768]
+GPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_22 [label="Expert 22 Output
+[1024×8192]
+GPU 22" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_23 [label="Expert 23
+MLP [1024×32768]
+GPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_23 [label="Expert 23 Output
+[1024×8192]
+GPU 23" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_24 [label="Expert 24
+MLP [1024×32768]
+GPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_24 [label="Expert 24 Output
+[1024×8192]
+GPU 24" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_25 [label="Expert 25
+MLP [1024×32768]
+GPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_25 [label="Expert 25 Output
+[1024×8192]
+GPU 25" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_26 [label="Expert 26
+MLP [1024×32768]
+GPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_26 [label="Expert 26 Output
+[1024×8192]
+GPU 26" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_27 [label="Expert 27
+MLP [1024×32768]
+GPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_27 [label="Expert 27 Output
+[1024×8192]
+GPU 27" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_28 [label="Expert 28
+MLP [1024×32768]
+GPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_28 [label="Expert 28 Output
+[1024×8192]
+GPU 28" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_29 [label="Expert 29
+MLP [1024×32768]
+GPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_29 [label="Expert 29 Output
+[1024×8192]
+GPU 29" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_30 [label="Expert 30
+MLP [1024×32768]
+GPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_30 [label="Expert 30 Output
+[1024×8192]
+GPU 30" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_31 [label="Expert 31
+MLP [1024×32768]
+GPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_31 [label="Expert 31 Output
+[1024×8192]
+GPU 31" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_32 [label="Expert 32
+MLP [1024×32768]
+GPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_32 [label="Expert 32 Output
+[1024×8192]
+GPU 32" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_33 [label="Expert 33
+MLP [1024×32768]
+GPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_33 [label="Expert 33 Output
+[1024×8192]
+GPU 33" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_34 [label="Expert 34
+MLP [1024×32768]
+GPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_34 [label="Expert 34 Output
+[1024×8192]
+GPU 34" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_35 [label="Expert 35
+MLP [1024×32768]
+GPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_35 [label="Expert 35 Output
+[1024×8192]
+GPU 35" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_36 [label="Expert 36
+MLP [1024×32768]
+GPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_36 [label="Expert 36 Output
+[1024×8192]
+GPU 36" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_37 [label="Expert 37
+MLP [1024×32768]
+GPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_37 [label="Expert 37 Output
+[1024×8192]
+GPU 37" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_38 [label="Expert 38
+MLP [1024×32768]
+GPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_38 [label="Expert 38 Output
+[1024×8192]
+GPU 38" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_39 [label="Expert 39
+MLP [1024×32768]
+GPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_39 [label="Expert 39 Output
+[1024×8192]
+GPU 39" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_40 [label="Expert 40
+MLP [1024×32768]
+GPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_40 [label="Expert 40 Output
+[1024×8192]
+GPU 40" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_41 [label="Expert 41
+MLP [1024×32768]
+GPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_41 [label="Expert 41 Output
+[1024×8192]
+GPU 41" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_42 [label="Expert 42
+MLP [1024×32768]
+GPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_42 [label="Expert 42 Output
+[1024×8192]
+GPU 42" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_43 [label="Expert 43
+MLP [1024×32768]
+GPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_43 [label="Expert 43 Output
+[1024×8192]
+GPU 43" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_44 [label="Expert 44
+MLP [1024×32768]
+GPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_44 [label="Expert 44 Output
+[1024×8192]
+GPU 44" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_45 [label="Expert 45
+MLP [1024×32768]
+GPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_45 [label="Expert 45 Output
+[1024×8192]
+GPU 45" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_46 [label="Expert 46
+MLP [1024×32768]
+GPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_46 [label="Expert 46 Output
+[1024×8192]
+GPU 46" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_47 [label="Expert 47
+MLP [1024×32768]
+GPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_47 [label="Expert 47 Output
+[1024×8192]
+GPU 47" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_48 [label="Expert 48
+MLP [1024×32768]
+GPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_48 [label="Expert 48 Output
+[1024×8192]
+GPU 48" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_49 [label="Expert 49
+MLP [1024×32768]
+GPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_49 [label="Expert 49 Output
+[1024×8192]
+GPU 49" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_50 [label="Expert 50
+MLP [1024×32768]
+GPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_50 [label="Expert 50 Output
+[1024×8192]
+GPU 50" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_51 [label="Expert 51
+MLP [1024×32768]
+GPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_51 [label="Expert 51 Output
+[1024×8192]
+GPU 51" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_52 [label="Expert 52
+MLP [1024×32768]
+GPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_52 [label="Expert 52 Output
+[1024×8192]
+GPU 52" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_53 [label="Expert 53
+MLP [1024×32768]
+GPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_53 [label="Expert 53 Output
+[1024×8192]
+GPU 53" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_54 [label="Expert 54
+MLP [1024×32768]
+GPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_54 [label="Expert 54 Output
+[1024×8192]
+GPU 54" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_55 [label="Expert 55
+MLP [1024×32768]
+GPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_55 [label="Expert 55 Output
+[1024×8192]
+GPU 55" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_56 [label="Expert 56
+MLP [1024×32768]
+GPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_56 [label="Expert 56 Output
+[1024×8192]
+GPU 56" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_57 [label="Expert 57
+MLP [1024×32768]
+GPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_57 [label="Expert 57 Output
+[1024×8192]
+GPU 57" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_58 [label="Expert 58
+MLP [1024×32768]
+GPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_58 [label="Expert 58 Output
+[1024×8192]
+GPU 58" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_59 [label="Expert 59
+MLP [1024×32768]
+GPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_59 [label="Expert 59 Output
+[1024×8192]
+GPU 59" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_60 [label="Expert 60
+MLP [1024×32768]
+GPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_60 [label="Expert 60 Output
+[1024×8192]
+GPU 60" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_61 [label="Expert 61
+MLP [1024×32768]
+GPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_61 [label="Expert 61 Output
+[1024×8192]
+GPU 61" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_62 [label="Expert 62
+MLP [1024×32768]
+GPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_62 [label="Expert 62 Output
+[1024×8192]
+GPU 62" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_expert_63 [label="Expert 63
+MLP [1024×32768]
+GPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+		l4_expert_out_63 [label="Expert 63 Output
+[1024×8192]
+GPU 63" fillcolor=lightyellow shape=ellipse style=filled]
+		l4_aggregate [label="Aggregate Expert Outputs
+[1024×8192]
+All GPUs" fillcolor=lightpink shape=parallelogram style=filled]
+		l4_ffn_res [label="Residual Add
+[1024×8192]
+All GPUs" fillcolor=yellow shape=parallelogram style=filled]
+	}
+	global_output [label="Global Output
+[1024 tokens, hidden_size]" fillcolor=lightblue shape=ellipse style=filled]
+	global_input -> l1_mha_all
+	l1_mha_all -> l1_mha_res
+	global_input -> l1_mha_res [style=dashed]
+	l1_mha_res -> l1_gate
+	l1_gate -> l1_expert_0 [label="Route tokens
+to GPU 0" style=dashed]
+	l1_expert_0 -> l1_expert_out_0
+	l1_expert_out_0 -> l1_aggregate
+	l1_gate -> l1_expert_1 [label="Route tokens
+to GPU 1" style=dashed]
+	l1_expert_1 -> l1_expert_out_1
+	l1_expert_out_1 -> l1_aggregate
+	l1_gate -> l1_expert_2 [label="Route tokens
+to GPU 2" style=dashed]
+	l1_expert_2 -> l1_expert_out_2
+	l1_expert_out_2 -> l1_aggregate
+	l1_gate -> l1_expert_3 [label="Route tokens
+to GPU 3" style=dashed]
+	l1_expert_3 -> l1_expert_out_3
+	l1_expert_out_3 -> l1_aggregate
+	l1_gate -> l1_expert_4 [label="Route tokens
+to GPU 4" style=dashed]
+	l1_expert_4 -> l1_expert_out_4
+	l1_expert_out_4 -> l1_aggregate
+	l1_gate -> l1_expert_5 [label="Route tokens
+to GPU 5" style=dashed]
+	l1_expert_5 -> l1_expert_out_5
+	l1_expert_out_5 -> l1_aggregate
+	l1_gate -> l1_expert_6 [label="Route tokens
+to GPU 6" style=dashed]
+	l1_expert_6 -> l1_expert_out_6
+	l1_expert_out_6 -> l1_aggregate
+	l1_gate -> l1_expert_7 [label="Route tokens
+to GPU 7" style=dashed]
+	l1_expert_7 -> l1_expert_out_7
+	l1_expert_out_7 -> l1_aggregate
+	l1_gate -> l1_expert_8 [label="Route tokens
+to GPU 8" style=dashed]
+	l1_expert_8 -> l1_expert_out_8
+	l1_expert_out_8 -> l1_aggregate
+	l1_gate -> l1_expert_9 [label="Route tokens
+to GPU 9" style=dashed]
+	l1_expert_9 -> l1_expert_out_9
+	l1_expert_out_9 -> l1_aggregate
+	l1_gate -> l1_expert_10 [label="Route tokens
+to GPU 10" style=dashed]
+	l1_expert_10 -> l1_expert_out_10
+	l1_expert_out_10 -> l1_aggregate
+	l1_gate -> l1_expert_11 [label="Route tokens
+to GPU 11" style=dashed]
+	l1_expert_11 -> l1_expert_out_11
+	l1_expert_out_11 -> l1_aggregate
+	l1_gate -> l1_expert_12 [label="Route tokens
+to GPU 12" style=dashed]
+	l1_expert_12 -> l1_expert_out_12
+	l1_expert_out_12 -> l1_aggregate
+	l1_gate -> l1_expert_13 [label="Route tokens
+to GPU 13" style=dashed]
+	l1_expert_13 -> l1_expert_out_13
+	l1_expert_out_13 -> l1_aggregate
+	l1_gate -> l1_expert_14 [label="Route tokens
+to GPU 14" style=dashed]
+	l1_expert_14 -> l1_expert_out_14
+	l1_expert_out_14 -> l1_aggregate
+	l1_gate -> l1_expert_15 [label="Route tokens
+to GPU 15" style=dashed]
+	l1_expert_15 -> l1_expert_out_15
+	l1_expert_out_15 -> l1_aggregate
+	l1_gate -> l1_expert_16 [label="Route tokens
+to GPU 16" style=dashed]
+	l1_expert_16 -> l1_expert_out_16
+	l1_expert_out_16 -> l1_aggregate
+	l1_gate -> l1_expert_17 [label="Route tokens
+to GPU 17" style=dashed]
+	l1_expert_17 -> l1_expert_out_17
+	l1_expert_out_17 -> l1_aggregate
+	l1_gate -> l1_expert_18 [label="Route tokens
+to GPU 18" style=dashed]
+	l1_expert_18 -> l1_expert_out_18
+	l1_expert_out_18 -> l1_aggregate
+	l1_gate -> l1_expert_19 [label="Route tokens
+to GPU 19" style=dashed]
+	l1_expert_19 -> l1_expert_out_19
+	l1_expert_out_19 -> l1_aggregate
+	l1_gate -> l1_expert_20 [label="Route tokens
+to GPU 20" style=dashed]
+	l1_expert_20 -> l1_expert_out_20
+	l1_expert_out_20 -> l1_aggregate
+	l1_gate -> l1_expert_21 [label="Route tokens
+to GPU 21" style=dashed]
+	l1_expert_21 -> l1_expert_out_21
+	l1_expert_out_21 -> l1_aggregate
+	l1_gate -> l1_expert_22 [label="Route tokens
+to GPU 22" style=dashed]
+	l1_expert_22 -> l1_expert_out_22
+	l1_expert_out_22 -> l1_aggregate
+	l1_gate -> l1_expert_23 [label="Route tokens
+to GPU 23" style=dashed]
+	l1_expert_23 -> l1_expert_out_23
+	l1_expert_out_23 -> l1_aggregate
+	l1_gate -> l1_expert_24 [label="Route tokens
+to GPU 24" style=dashed]
+	l1_expert_24 -> l1_expert_out_24
+	l1_expert_out_24 -> l1_aggregate
+	l1_gate -> l1_expert_25 [label="Route tokens
+to GPU 25" style=dashed]
+	l1_expert_25 -> l1_expert_out_25
+	l1_expert_out_25 -> l1_aggregate
+	l1_gate -> l1_expert_26 [label="Route tokens
+to GPU 26" style=dashed]
+	l1_expert_26 -> l1_expert_out_26
+	l1_expert_out_26 -> l1_aggregate
+	l1_gate -> l1_expert_27 [label="Route tokens
+to GPU 27" style=dashed]
+	l1_expert_27 -> l1_expert_out_27
+	l1_expert_out_27 -> l1_aggregate
+	l1_gate -> l1_expert_28 [label="Route tokens
+to GPU 28" style=dashed]
+	l1_expert_28 -> l1_expert_out_28
+	l1_expert_out_28 -> l1_aggregate
+	l1_gate -> l1_expert_29 [label="Route tokens
+to GPU 29" style=dashed]
+	l1_expert_29 -> l1_expert_out_29
+	l1_expert_out_29 -> l1_aggregate
+	l1_gate -> l1_expert_30 [label="Route tokens
+to GPU 30" style=dashed]
+	l1_expert_30 -> l1_expert_out_30
+	l1_expert_out_30 -> l1_aggregate
+	l1_gate -> l1_expert_31 [label="Route tokens
+to GPU 31" style=dashed]
+	l1_expert_31 -> l1_expert_out_31
+	l1_expert_out_31 -> l1_aggregate
+	l1_gate -> l1_expert_32 [label="Route tokens
+to GPU 32" style=dashed]
+	l1_expert_32 -> l1_expert_out_32
+	l1_expert_out_32 -> l1_aggregate
+	l1_gate -> l1_expert_33 [label="Route tokens
+to GPU 33" style=dashed]
+	l1_expert_33 -> l1_expert_out_33
+	l1_expert_out_33 -> l1_aggregate
+	l1_gate -> l1_expert_34 [label="Route tokens
+to GPU 34" style=dashed]
+	l1_expert_34 -> l1_expert_out_34
+	l1_expert_out_34 -> l1_aggregate
+	l1_gate -> l1_expert_35 [label="Route tokens
+to GPU 35" style=dashed]
+	l1_expert_35 -> l1_expert_out_35
+	l1_expert_out_35 -> l1_aggregate
+	l1_gate -> l1_expert_36 [label="Route tokens
+to GPU 36" style=dashed]
+	l1_expert_36 -> l1_expert_out_36
+	l1_expert_out_36 -> l1_aggregate
+	l1_gate -> l1_expert_37 [label="Route tokens
+to GPU 37" style=dashed]
+	l1_expert_37 -> l1_expert_out_37
+	l1_expert_out_37 -> l1_aggregate
+	l1_gate -> l1_expert_38 [label="Route tokens
+to GPU 38" style=dashed]
+	l1_expert_38 -> l1_expert_out_38
+	l1_expert_out_38 -> l1_aggregate
+	l1_gate -> l1_expert_39 [label="Route tokens
+to GPU 39" style=dashed]
+	l1_expert_39 -> l1_expert_out_39
+	l1_expert_out_39 -> l1_aggregate
+	l1_gate -> l1_expert_40 [label="Route tokens
+to GPU 40" style=dashed]
+	l1_expert_40 -> l1_expert_out_40
+	l1_expert_out_40 -> l1_aggregate
+	l1_gate -> l1_expert_41 [label="Route tokens
+to GPU 41" style=dashed]
+	l1_expert_41 -> l1_expert_out_41
+	l1_expert_out_41 -> l1_aggregate
+	l1_gate -> l1_expert_42 [label="Route tokens
+to GPU 42" style=dashed]
+	l1_expert_42 -> l1_expert_out_42
+	l1_expert_out_42 -> l1_aggregate
+	l1_gate -> l1_expert_43 [label="Route tokens
+to GPU 43" style=dashed]
+	l1_expert_43 -> l1_expert_out_43
+	l1_expert_out_43 -> l1_aggregate
+	l1_gate -> l1_expert_44 [label="Route tokens
+to GPU 44" style=dashed]
+	l1_expert_44 -> l1_expert_out_44
+	l1_expert_out_44 -> l1_aggregate
+	l1_gate -> l1_expert_45 [label="Route tokens
+to GPU 45" style=dashed]
+	l1_expert_45 -> l1_expert_out_45
+	l1_expert_out_45 -> l1_aggregate
+	l1_gate -> l1_expert_46 [label="Route tokens
+to GPU 46" style=dashed]
+	l1_expert_46 -> l1_expert_out_46
+	l1_expert_out_46 -> l1_aggregate
+	l1_gate -> l1_expert_47 [label="Route tokens
+to GPU 47" style=dashed]
+	l1_expert_47 -> l1_expert_out_47
+	l1_expert_out_47 -> l1_aggregate
+	l1_gate -> l1_expert_48 [label="Route tokens
+to GPU 48" style=dashed]
+	l1_expert_48 -> l1_expert_out_48
+	l1_expert_out_48 -> l1_aggregate
+	l1_gate -> l1_expert_49 [label="Route tokens
+to GPU 49" style=dashed]
+	l1_expert_49 -> l1_expert_out_49
+	l1_expert_out_49 -> l1_aggregate
+	l1_gate -> l1_expert_50 [label="Route tokens
+to GPU 50" style=dashed]
+	l1_expert_50 -> l1_expert_out_50
+	l1_expert_out_50 -> l1_aggregate
+	l1_gate -> l1_expert_51 [label="Route tokens
+to GPU 51" style=dashed]
+	l1_expert_51 -> l1_expert_out_51
+	l1_expert_out_51 -> l1_aggregate
+	l1_gate -> l1_expert_52 [label="Route tokens
+to GPU 52" style=dashed]
+	l1_expert_52 -> l1_expert_out_52
+	l1_expert_out_52 -> l1_aggregate
+	l1_gate -> l1_expert_53 [label="Route tokens
+to GPU 53" style=dashed]
+	l1_expert_53 -> l1_expert_out_53
+	l1_expert_out_53 -> l1_aggregate
+	l1_gate -> l1_expert_54 [label="Route tokens
+to GPU 54" style=dashed]
+	l1_expert_54 -> l1_expert_out_54
+	l1_expert_out_54 -> l1_aggregate
+	l1_gate -> l1_expert_55 [label="Route tokens
+to GPU 55" style=dashed]
+	l1_expert_55 -> l1_expert_out_55
+	l1_expert_out_55 -> l1_aggregate
+	l1_gate -> l1_expert_56 [label="Route tokens
+to GPU 56" style=dashed]
+	l1_expert_56 -> l1_expert_out_56
+	l1_expert_out_56 -> l1_aggregate
+	l1_gate -> l1_expert_57 [label="Route tokens
+to GPU 57" style=dashed]
+	l1_expert_57 -> l1_expert_out_57
+	l1_expert_out_57 -> l1_aggregate
+	l1_gate -> l1_expert_58 [label="Route tokens
+to GPU 58" style=dashed]
+	l1_expert_58 -> l1_expert_out_58
+	l1_expert_out_58 -> l1_aggregate
+	l1_gate -> l1_expert_59 [label="Route tokens
+to GPU 59" style=dashed]
+	l1_expert_59 -> l1_expert_out_59
+	l1_expert_out_59 -> l1_aggregate
+	l1_gate -> l1_expert_60 [label="Route tokens
+to GPU 60" style=dashed]
+	l1_expert_60 -> l1_expert_out_60
+	l1_expert_out_60 -> l1_aggregate
+	l1_gate -> l1_expert_61 [label="Route tokens
+to GPU 61" style=dashed]
+	l1_expert_61 -> l1_expert_out_61
+	l1_expert_out_61 -> l1_aggregate
+	l1_gate -> l1_expert_62 [label="Route tokens
+to GPU 62" style=dashed]
+	l1_expert_62 -> l1_expert_out_62
+	l1_expert_out_62 -> l1_aggregate
+	l1_gate -> l1_expert_63 [label="Route tokens
+to GPU 63" style=dashed]
+	l1_expert_63 -> l1_expert_out_63
+	l1_expert_out_63 -> l1_aggregate
+	l1_aggregate -> l1_ffn_res
+	l1_mha_res -> l1_ffn_res [style=dashed]
+	l1_ffn_res -> l2_mha_all
+	l2_mha_all -> l2_mha_res
+	l1_ffn_res -> l2_mha_res [style=dashed]
+	l2_mha_res -> l2_gate
+	l2_gate -> l2_expert_0 [label="Route tokens
+to GPU 0" style=dashed]
+	l2_expert_0 -> l2_expert_out_0
+	l2_expert_out_0 -> l2_aggregate
+	l2_gate -> l2_expert_1 [label="Route tokens
+to GPU 1" style=dashed]
+	l2_expert_1 -> l2_expert_out_1
+	l2_expert_out_1 -> l2_aggregate
+	l2_gate -> l2_expert_2 [label="Route tokens
+to GPU 2" style=dashed]
+	l2_expert_2 -> l2_expert_out_2
+	l2_expert_out_2 -> l2_aggregate
+	l2_gate -> l2_expert_3 [label="Route tokens
+to GPU 3" style=dashed]
+	l2_expert_3 -> l2_expert_out_3
+	l2_expert_out_3 -> l2_aggregate
+	l2_gate -> l2_expert_4 [label="Route tokens
+to GPU 4" style=dashed]
+	l2_expert_4 -> l2_expert_out_4
+	l2_expert_out_4 -> l2_aggregate
+	l2_gate -> l2_expert_5 [label="Route tokens
+to GPU 5" style=dashed]
+	l2_expert_5 -> l2_expert_out_5
+	l2_expert_out_5 -> l2_aggregate
+	l2_gate -> l2_expert_6 [label="Route tokens
+to GPU 6" style=dashed]
+	l2_expert_6 -> l2_expert_out_6
+	l2_expert_out_6 -> l2_aggregate
+	l2_gate -> l2_expert_7 [label="Route tokens
+to GPU 7" style=dashed]
+	l2_expert_7 -> l2_expert_out_7
+	l2_expert_out_7 -> l2_aggregate
+	l2_gate -> l2_expert_8 [label="Route tokens
+to GPU 8" style=dashed]
+	l2_expert_8 -> l2_expert_out_8
+	l2_expert_out_8 -> l2_aggregate
+	l2_gate -> l2_expert_9 [label="Route tokens
+to GPU 9" style=dashed]
+	l2_expert_9 -> l2_expert_out_9
+	l2_expert_out_9 -> l2_aggregate
+	l2_gate -> l2_expert_10 [label="Route tokens
+to GPU 10" style=dashed]
+	l2_expert_10 -> l2_expert_out_10
+	l2_expert_out_10 -> l2_aggregate
+	l2_gate -> l2_expert_11 [label="Route tokens
+to GPU 11" style=dashed]
+	l2_expert_11 -> l2_expert_out_11
+	l2_expert_out_11 -> l2_aggregate
+	l2_gate -> l2_expert_12 [label="Route tokens
+to GPU 12" style=dashed]
+	l2_expert_12 -> l2_expert_out_12
+	l2_expert_out_12 -> l2_aggregate
+	l2_gate -> l2_expert_13 [label="Route tokens
+to GPU 13" style=dashed]
+	l2_expert_13 -> l2_expert_out_13
+	l2_expert_out_13 -> l2_aggregate
+	l2_gate -> l2_expert_14 [label="Route tokens
+to GPU 14" style=dashed]
+	l2_expert_14 -> l2_expert_out_14
+	l2_expert_out_14 -> l2_aggregate
+	l2_gate -> l2_expert_15 [label="Route tokens
+to GPU 15" style=dashed]
+	l2_expert_15 -> l2_expert_out_15
+	l2_expert_out_15 -> l2_aggregate
+	l2_gate -> l2_expert_16 [label="Route tokens
+to GPU 16" style=dashed]
+	l2_expert_16 -> l2_expert_out_16
+	l2_expert_out_16 -> l2_aggregate
+	l2_gate -> l2_expert_17 [label="Route tokens
+to GPU 17" style=dashed]
+	l2_expert_17 -> l2_expert_out_17
+	l2_expert_out_17 -> l2_aggregate
+	l2_gate -> l2_expert_18 [label="Route tokens
+to GPU 18" style=dashed]
+	l2_expert_18 -> l2_expert_out_18
+	l2_expert_out_18 -> l2_aggregate
+	l2_gate -> l2_expert_19 [label="Route tokens
+to GPU 19" style=dashed]
+	l2_expert_19 -> l2_expert_out_19
+	l2_expert_out_19 -> l2_aggregate
+	l2_gate -> l2_expert_20 [label="Route tokens
+to GPU 20" style=dashed]
+	l2_expert_20 -> l2_expert_out_20
+	l2_expert_out_20 -> l2_aggregate
+	l2_gate -> l2_expert_21 [label="Route tokens
+to GPU 21" style=dashed]
+	l2_expert_21 -> l2_expert_out_21
+	l2_expert_out_21 -> l2_aggregate
+	l2_gate -> l2_expert_22 [label="Route tokens
+to GPU 22" style=dashed]
+	l2_expert_22 -> l2_expert_out_22
+	l2_expert_out_22 -> l2_aggregate
+	l2_gate -> l2_expert_23 [label="Route tokens
+to GPU 23" style=dashed]
+	l2_expert_23 -> l2_expert_out_23
+	l2_expert_out_23 -> l2_aggregate
+	l2_gate -> l2_expert_24 [label="Route tokens
+to GPU 24" style=dashed]
+	l2_expert_24 -> l2_expert_out_24
+	l2_expert_out_24 -> l2_aggregate
+	l2_gate -> l2_expert_25 [label="Route tokens
+to GPU 25" style=dashed]
+	l2_expert_25 -> l2_expert_out_25
+	l2_expert_out_25 -> l2_aggregate
+	l2_gate -> l2_expert_26 [label="Route tokens
+to GPU 26" style=dashed]
+	l2_expert_26 -> l2_expert_out_26
+	l2_expert_out_26 -> l2_aggregate
+	l2_gate -> l2_expert_27 [label="Route tokens
+to GPU 27" style=dashed]
+	l2_expert_27 -> l2_expert_out_27
+	l2_expert_out_27 -> l2_aggregate
+	l2_gate -> l2_expert_28 [label="Route tokens
+to GPU 28" style=dashed]
+	l2_expert_28 -> l2_expert_out_28
+	l2_expert_out_28 -> l2_aggregate
+	l2_gate -> l2_expert_29 [label="Route tokens
+to GPU 29" style=dashed]
+	l2_expert_29 -> l2_expert_out_29
+	l2_expert_out_29 -> l2_aggregate
+	l2_gate -> l2_expert_30 [label="Route tokens
+to GPU 30" style=dashed]
+	l2_expert_30 -> l2_expert_out_30
+	l2_expert_out_30 -> l2_aggregate
+	l2_gate -> l2_expert_31 [label="Route tokens
+to GPU 31" style=dashed]
+	l2_expert_31 -> l2_expert_out_31
+	l2_expert_out_31 -> l2_aggregate
+	l2_gate -> l2_expert_32 [label="Route tokens
+to GPU 32" style=dashed]
+	l2_expert_32 -> l2_expert_out_32
+	l2_expert_out_32 -> l2_aggregate
+	l2_gate -> l2_expert_33 [label="Route tokens
+to GPU 33" style=dashed]
+	l2_expert_33 -> l2_expert_out_33
+	l2_expert_out_33 -> l2_aggregate
+	l2_gate -> l2_expert_34 [label="Route tokens
+to GPU 34" style=dashed]
+	l2_expert_34 -> l2_expert_out_34
+	l2_expert_out_34 -> l2_aggregate
+	l2_gate -> l2_expert_35 [label="Route tokens
+to GPU 35" style=dashed]
+	l2_expert_35 -> l2_expert_out_35
+	l2_expert_out_35 -> l2_aggregate
+	l2_gate -> l2_expert_36 [label="Route tokens
+to GPU 36" style=dashed]
+	l2_expert_36 -> l2_expert_out_36
+	l2_expert_out_36 -> l2_aggregate
+	l2_gate -> l2_expert_37 [label="Route tokens
+to GPU 37" style=dashed]
+	l2_expert_37 -> l2_expert_out_37
+	l2_expert_out_37 -> l2_aggregate
+	l2_gate -> l2_expert_38 [label="Route tokens
+to GPU 38" style=dashed]
+	l2_expert_38 -> l2_expert_out_38
+	l2_expert_out_38 -> l2_aggregate
+	l2_gate -> l2_expert_39 [label="Route tokens
+to GPU 39" style=dashed]
+	l2_expert_39 -> l2_expert_out_39
+	l2_expert_out_39 -> l2_aggregate
+	l2_gate -> l2_expert_40 [label="Route tokens
+to GPU 40" style=dashed]
+	l2_expert_40 -> l2_expert_out_40
+	l2_expert_out_40 -> l2_aggregate
+	l2_gate -> l2_expert_41 [label="Route tokens
+to GPU 41" style=dashed]
+	l2_expert_41 -> l2_expert_out_41
+	l2_expert_out_41 -> l2_aggregate
+	l2_gate -> l2_expert_42 [label="Route tokens
+to GPU 42" style=dashed]
+	l2_expert_42 -> l2_expert_out_42
+	l2_expert_out_42 -> l2_aggregate
+	l2_gate -> l2_expert_43 [label="Route tokens
+to GPU 43" style=dashed]
+	l2_expert_43 -> l2_expert_out_43
+	l2_expert_out_43 -> l2_aggregate
+	l2_gate -> l2_expert_44 [label="Route tokens
+to GPU 44" style=dashed]
+	l2_expert_44 -> l2_expert_out_44
+	l2_expert_out_44 -> l2_aggregate
+	l2_gate -> l2_expert_45 [label="Route tokens
+to GPU 45" style=dashed]
+	l2_expert_45 -> l2_expert_out_45
+	l2_expert_out_45 -> l2_aggregate
+	l2_gate -> l2_expert_46 [label="Route tokens
+to GPU 46" style=dashed]
+	l2_expert_46 -> l2_expert_out_46
+	l2_expert_out_46 -> l2_aggregate
+	l2_gate -> l2_expert_47 [label="Route tokens
+to GPU 47" style=dashed]
+	l2_expert_47 -> l2_expert_out_47
+	l2_expert_out_47 -> l2_aggregate
+	l2_gate -> l2_expert_48 [label="Route tokens
+to GPU 48" style=dashed]
+	l2_expert_48 -> l2_expert_out_48
+	l2_expert_out_48 -> l2_aggregate
+	l2_gate -> l2_expert_49 [label="Route tokens
+to GPU 49" style=dashed]
+	l2_expert_49 -> l2_expert_out_49
+	l2_expert_out_49 -> l2_aggregate
+	l2_gate -> l2_expert_50 [label="Route tokens
+to GPU 50" style=dashed]
+	l2_expert_50 -> l2_expert_out_50
+	l2_expert_out_50 -> l2_aggregate
+	l2_gate -> l2_expert_51 [label="Route tokens
+to GPU 51" style=dashed]
+	l2_expert_51 -> l2_expert_out_51
+	l2_expert_out_51 -> l2_aggregate
+	l2_gate -> l2_expert_52 [label="Route tokens
+to GPU 52" style=dashed]
+	l2_expert_52 -> l2_expert_out_52
+	l2_expert_out_52 -> l2_aggregate
+	l2_gate -> l2_expert_53 [label="Route tokens
+to GPU 53" style=dashed]
+	l2_expert_53 -> l2_expert_out_53
+	l2_expert_out_53 -> l2_aggregate
+	l2_gate -> l2_expert_54 [label="Route tokens
+to GPU 54" style=dashed]
+	l2_expert_54 -> l2_expert_out_54
+	l2_expert_out_54 -> l2_aggregate
+	l2_gate -> l2_expert_55 [label="Route tokens
+to GPU 55" style=dashed]
+	l2_expert_55 -> l2_expert_out_55
+	l2_expert_out_55 -> l2_aggregate
+	l2_gate -> l2_expert_56 [label="Route tokens
+to GPU 56" style=dashed]
+	l2_expert_56 -> l2_expert_out_56
+	l2_expert_out_56 -> l2_aggregate
+	l2_gate -> l2_expert_57 [label="Route tokens
+to GPU 57" style=dashed]
+	l2_expert_57 -> l2_expert_out_57
+	l2_expert_out_57 -> l2_aggregate
+	l2_gate -> l2_expert_58 [label="Route tokens
+to GPU 58" style=dashed]
+	l2_expert_58 -> l2_expert_out_58
+	l2_expert_out_58 -> l2_aggregate
+	l2_gate -> l2_expert_59 [label="Route tokens
+to GPU 59" style=dashed]
+	l2_expert_59 -> l2_expert_out_59
+	l2_expert_out_59 -> l2_aggregate
+	l2_gate -> l2_expert_60 [label="Route tokens
+to GPU 60" style=dashed]
+	l2_expert_60 -> l2_expert_out_60
+	l2_expert_out_60 -> l2_aggregate
+	l2_gate -> l2_expert_61 [label="Route tokens
+to GPU 61" style=dashed]
+	l2_expert_61 -> l2_expert_out_61
+	l2_expert_out_61 -> l2_aggregate
+	l2_gate -> l2_expert_62 [label="Route tokens
+to GPU 62" style=dashed]
+	l2_expert_62 -> l2_expert_out_62
+	l2_expert_out_62 -> l2_aggregate
+	l2_gate -> l2_expert_63 [label="Route tokens
+to GPU 63" style=dashed]
+	l2_expert_63 -> l2_expert_out_63
+	l2_expert_out_63 -> l2_aggregate
+	l2_aggregate -> l2_ffn_res
+	l2_mha_res -> l2_ffn_res [style=dashed]
+	l2_ffn_res -> l3_mha_all
+	l3_mha_all -> l3_mha_res
+	l2_ffn_res -> l3_mha_res [style=dashed]
+	l3_mha_res -> l3_gate
+	l3_gate -> l3_expert_0 [label="Route tokens
+to GPU 0" style=dashed]
+	l3_expert_0 -> l3_expert_out_0
+	l3_expert_out_0 -> l3_aggregate
+	l3_gate -> l3_expert_1 [label="Route tokens
+to GPU 1" style=dashed]
+	l3_expert_1 -> l3_expert_out_1
+	l3_expert_out_1 -> l3_aggregate
+	l3_gate -> l3_expert_2 [label="Route tokens
+to GPU 2" style=dashed]
+	l3_expert_2 -> l3_expert_out_2
+	l3_expert_out_2 -> l3_aggregate
+	l3_gate -> l3_expert_3 [label="Route tokens
+to GPU 3" style=dashed]
+	l3_expert_3 -> l3_expert_out_3
+	l3_expert_out_3 -> l3_aggregate
+	l3_gate -> l3_expert_4 [label="Route tokens
+to GPU 4" style=dashed]
+	l3_expert_4 -> l3_expert_out_4
+	l3_expert_out_4 -> l3_aggregate
+	l3_gate -> l3_expert_5 [label="Route tokens
+to GPU 5" style=dashed]
+	l3_expert_5 -> l3_expert_out_5
+	l3_expert_out_5 -> l3_aggregate
+	l3_gate -> l3_expert_6 [label="Route tokens
+to GPU 6" style=dashed]
+	l3_expert_6 -> l3_expert_out_6
+	l3_expert_out_6 -> l3_aggregate
+	l3_gate -> l3_expert_7 [label="Route tokens
+to GPU 7" style=dashed]
+	l3_expert_7 -> l3_expert_out_7
+	l3_expert_out_7 -> l3_aggregate
+	l3_gate -> l3_expert_8 [label="Route tokens
+to GPU 8" style=dashed]
+	l3_expert_8 -> l3_expert_out_8
+	l3_expert_out_8 -> l3_aggregate
+	l3_gate -> l3_expert_9 [label="Route tokens
+to GPU 9" style=dashed]
+	l3_expert_9 -> l3_expert_out_9
+	l3_expert_out_9 -> l3_aggregate
+	l3_gate -> l3_expert_10 [label="Route tokens
+to GPU 10" style=dashed]
+	l3_expert_10 -> l3_expert_out_10
+	l3_expert_out_10 -> l3_aggregate
+	l3_gate -> l3_expert_11 [label="Route tokens
+to GPU 11" style=dashed]
+	l3_expert_11 -> l3_expert_out_11
+	l3_expert_out_11 -> l3_aggregate
+	l3_gate -> l3_expert_12 [label="Route tokens
+to GPU 12" style=dashed]
+	l3_expert_12 -> l3_expert_out_12
+	l3_expert_out_12 -> l3_aggregate
+	l3_gate -> l3_expert_13 [label="Route tokens
+to GPU 13" style=dashed]
+	l3_expert_13 -> l3_expert_out_13
+	l3_expert_out_13 -> l3_aggregate
+	l3_gate -> l3_expert_14 [label="Route tokens
+to GPU 14" style=dashed]
+	l3_expert_14 -> l3_expert_out_14
+	l3_expert_out_14 -> l3_aggregate
+	l3_gate -> l3_expert_15 [label="Route tokens
+to GPU 15" style=dashed]
+	l3_expert_15 -> l3_expert_out_15
+	l3_expert_out_15 -> l3_aggregate
+	l3_gate -> l3_expert_16 [label="Route tokens
+to GPU 16" style=dashed]
+	l3_expert_16 -> l3_expert_out_16
+	l3_expert_out_16 -> l3_aggregate
+	l3_gate -> l3_expert_17 [label="Route tokens
+to GPU 17" style=dashed]
+	l3_expert_17 -> l3_expert_out_17
+	l3_expert_out_17 -> l3_aggregate
+	l3_gate -> l3_expert_18 [label="Route tokens
+to GPU 18" style=dashed]
+	l3_expert_18 -> l3_expert_out_18
+	l3_expert_out_18 -> l3_aggregate
+	l3_gate -> l3_expert_19 [label="Route tokens
+to GPU 19" style=dashed]
+	l3_expert_19 -> l3_expert_out_19
+	l3_expert_out_19 -> l3_aggregate
+	l3_gate -> l3_expert_20 [label="Route tokens
+to GPU 20" style=dashed]
+	l3_expert_20 -> l3_expert_out_20
+	l3_expert_out_20 -> l3_aggregate
+	l3_gate -> l3_expert_21 [label="Route tokens
+to GPU 21" style=dashed]
+	l3_expert_21 -> l3_expert_out_21
+	l3_expert_out_21 -> l3_aggregate
+	l3_gate -> l3_expert_22 [label="Route tokens
+to GPU 22" style=dashed]
+	l3_expert_22 -> l3_expert_out_22
+	l3_expert_out_22 -> l3_aggregate
+	l3_gate -> l3_expert_23 [label="Route tokens
+to GPU 23" style=dashed]
+	l3_expert_23 -> l3_expert_out_23
+	l3_expert_out_23 -> l3_aggregate
+	l3_gate -> l3_expert_24 [label="Route tokens
+to GPU 24" style=dashed]
+	l3_expert_24 -> l3_expert_out_24
+	l3_expert_out_24 -> l3_aggregate
+	l3_gate -> l3_expert_25 [label="Route tokens
+to GPU 25" style=dashed]
+	l3_expert_25 -> l3_expert_out_25
+	l3_expert_out_25 -> l3_aggregate
+	l3_gate -> l3_expert_26 [label="Route tokens
+to GPU 26" style=dashed]
+	l3_expert_26 -> l3_expert_out_26
+	l3_expert_out_26 -> l3_aggregate
+	l3_gate -> l3_expert_27 [label="Route tokens
+to GPU 27" style=dashed]
+	l3_expert_27 -> l3_expert_out_27
+	l3_expert_out_27 -> l3_aggregate
+	l3_gate -> l3_expert_28 [label="Route tokens
+to GPU 28" style=dashed]
+	l3_expert_28 -> l3_expert_out_28
+	l3_expert_out_28 -> l3_aggregate
+	l3_gate -> l3_expert_29 [label="Route tokens
+to GPU 29" style=dashed]
+	l3_expert_29 -> l3_expert_out_29
+	l3_expert_out_29 -> l3_aggregate
+	l3_gate -> l3_expert_30 [label="Route tokens
+to GPU 30" style=dashed]
+	l3_expert_30 -> l3_expert_out_30
+	l3_expert_out_30 -> l3_aggregate
+	l3_gate -> l3_expert_31 [label="Route tokens
+to GPU 31" style=dashed]
+	l3_expert_31 -> l3_expert_out_31
+	l3_expert_out_31 -> l3_aggregate
+	l3_gate -> l3_expert_32 [label="Route tokens
+to GPU 32" style=dashed]
+	l3_expert_32 -> l3_expert_out_32
+	l3_expert_out_32 -> l3_aggregate
+	l3_gate -> l3_expert_33 [label="Route tokens
+to GPU 33" style=dashed]
+	l3_expert_33 -> l3_expert_out_33
+	l3_expert_out_33 -> l3_aggregate
+	l3_gate -> l3_expert_34 [label="Route tokens
+to GPU 34" style=dashed]
+	l3_expert_34 -> l3_expert_out_34
+	l3_expert_out_34 -> l3_aggregate
+	l3_gate -> l3_expert_35 [label="Route tokens
+to GPU 35" style=dashed]
+	l3_expert_35 -> l3_expert_out_35
+	l3_expert_out_35 -> l3_aggregate
+	l3_gate -> l3_expert_36 [label="Route tokens
+to GPU 36" style=dashed]
+	l3_expert_36 -> l3_expert_out_36
+	l3_expert_out_36 -> l3_aggregate
+	l3_gate -> l3_expert_37 [label="Route tokens
+to GPU 37" style=dashed]
+	l3_expert_37 -> l3_expert_out_37
+	l3_expert_out_37 -> l3_aggregate
+	l3_gate -> l3_expert_38 [label="Route tokens
+to GPU 38" style=dashed]
+	l3_expert_38 -> l3_expert_out_38
+	l3_expert_out_38 -> l3_aggregate
+	l3_gate -> l3_expert_39 [label="Route tokens
+to GPU 39" style=dashed]
+	l3_expert_39 -> l3_expert_out_39
+	l3_expert_out_39 -> l3_aggregate
+	l3_gate -> l3_expert_40 [label="Route tokens
+to GPU 40" style=dashed]
+	l3_expert_40 -> l3_expert_out_40
+	l3_expert_out_40 -> l3_aggregate
+	l3_gate -> l3_expert_41 [label="Route tokens
+to GPU 41" style=dashed]
+	l3_expert_41 -> l3_expert_out_41
+	l3_expert_out_41 -> l3_aggregate
+	l3_gate -> l3_expert_42 [label="Route tokens
+to GPU 42" style=dashed]
+	l3_expert_42 -> l3_expert_out_42
+	l3_expert_out_42 -> l3_aggregate
+	l3_gate -> l3_expert_43 [label="Route tokens
+to GPU 43" style=dashed]
+	l3_expert_43 -> l3_expert_out_43
+	l3_expert_out_43 -> l3_aggregate
+	l3_gate -> l3_expert_44 [label="Route tokens
+to GPU 44" style=dashed]
+	l3_expert_44 -> l3_expert_out_44
+	l3_expert_out_44 -> l3_aggregate
+	l3_gate -> l3_expert_45 [label="Route tokens
+to GPU 45" style=dashed]
+	l3_expert_45 -> l3_expert_out_45
+	l3_expert_out_45 -> l3_aggregate
+	l3_gate -> l3_expert_46 [label="Route tokens
+to GPU 46" style=dashed]
+	l3_expert_46 -> l3_expert_out_46
+	l3_expert_out_46 -> l3_aggregate
+	l3_gate -> l3_expert_47 [label="Route tokens
+to GPU 47" style=dashed]
+	l3_expert_47 -> l3_expert_out_47
+	l3_expert_out_47 -> l3_aggregate
+	l3_gate -> l3_expert_48 [label="Route tokens
+to GPU 48" style=dashed]
+	l3_expert_48 -> l3_expert_out_48
+	l3_expert_out_48 -> l3_aggregate
+	l3_gate -> l3_expert_49 [label="Route tokens
+to GPU 49" style=dashed]
+	l3_expert_49 -> l3_expert_out_49
+	l3_expert_out_49 -> l3_aggregate
+	l3_gate -> l3_expert_50 [label="Route tokens
+to GPU 50" style=dashed]
+	l3_expert_50 -> l3_expert_out_50
+	l3_expert_out_50 -> l3_aggregate
+	l3_gate -> l3_expert_51 [label="Route tokens
+to GPU 51" style=dashed]
+	l3_expert_51 -> l3_expert_out_51
+	l3_expert_out_51 -> l3_aggregate
+	l3_gate -> l3_expert_52 [label="Route tokens
+to GPU 52" style=dashed]
+	l3_expert_52 -> l3_expert_out_52
+	l3_expert_out_52 -> l3_aggregate
+	l3_gate -> l3_expert_53 [label="Route tokens
+to GPU 53" style=dashed]
+	l3_expert_53 -> l3_expert_out_53
+	l3_expert_out_53 -> l3_aggregate
+	l3_gate -> l3_expert_54 [label="Route tokens
+to GPU 54" style=dashed]
+	l3_expert_54 -> l3_expert_out_54
+	l3_expert_out_54 -> l3_aggregate
+	l3_gate -> l3_expert_55 [label="Route tokens
+to GPU 55" style=dashed]
+	l3_expert_55 -> l3_expert_out_55
+	l3_expert_out_55 -> l3_aggregate
+	l3_gate -> l3_expert_56 [label="Route tokens
+to GPU 56" style=dashed]
+	l3_expert_56 -> l3_expert_out_56
+	l3_expert_out_56 -> l3_aggregate
+	l3_gate -> l3_expert_57 [label="Route tokens
+to GPU 57" style=dashed]
+	l3_expert_57 -> l3_expert_out_57
+	l3_expert_out_57 -> l3_aggregate
+	l3_gate -> l3_expert_58 [label="Route tokens
+to GPU 58" style=dashed]
+	l3_expert_58 -> l3_expert_out_58
+	l3_expert_out_58 -> l3_aggregate
+	l3_gate -> l3_expert_59 [label="Route tokens
+to GPU 59" style=dashed]
+	l3_expert_59 -> l3_expert_out_59
+	l3_expert_out_59 -> l3_aggregate
+	l3_gate -> l3_expert_60 [label="Route tokens
+to GPU 60" style=dashed]
+	l3_expert_60 -> l3_expert_out_60
+	l3_expert_out_60 -> l3_aggregate
+	l3_gate -> l3_expert_61 [label="Route tokens
+to GPU 61" style=dashed]
+	l3_expert_61 -> l3_expert_out_61
+	l3_expert_out_61 -> l3_aggregate
+	l3_gate -> l3_expert_62 [label="Route tokens
+to GPU 62" style=dashed]
+	l3_expert_62 -> l3_expert_out_62
+	l3_expert_out_62 -> l3_aggregate
+	l3_gate -> l3_expert_63 [label="Route tokens
+to GPU 63" style=dashed]
+	l3_expert_63 -> l3_expert_out_63
+	l3_expert_out_63 -> l3_aggregate
+	l3_aggregate -> l3_ffn_res
+	l3_mha_res -> l3_ffn_res [style=dashed]
+	l3_ffn_res -> l4_mha_all
+	l4_mha_all -> l4_mha_res
+	l3_ffn_res -> l4_mha_res [style=dashed]
+	l4_mha_res -> l4_gate
+	l4_gate -> l4_expert_0 [label="Route tokens
+to GPU 0" style=dashed]
+	l4_expert_0 -> l4_expert_out_0
+	l4_expert_out_0 -> l4_aggregate
+	l4_gate -> l4_expert_1 [label="Route tokens
+to GPU 1" style=dashed]
+	l4_expert_1 -> l4_expert_out_1
+	l4_expert_out_1 -> l4_aggregate
+	l4_gate -> l4_expert_2 [label="Route tokens
+to GPU 2" style=dashed]
+	l4_expert_2 -> l4_expert_out_2
+	l4_expert_out_2 -> l4_aggregate
+	l4_gate -> l4_expert_3 [label="Route tokens
+to GPU 3" style=dashed]
+	l4_expert_3 -> l4_expert_out_3
+	l4_expert_out_3 -> l4_aggregate
+	l4_gate -> l4_expert_4 [label="Route tokens
+to GPU 4" style=dashed]
+	l4_expert_4 -> l4_expert_out_4
+	l4_expert_out_4 -> l4_aggregate
+	l4_gate -> l4_expert_5 [label="Route tokens
+to GPU 5" style=dashed]
+	l4_expert_5 -> l4_expert_out_5
+	l4_expert_out_5 -> l4_aggregate
+	l4_gate -> l4_expert_6 [label="Route tokens
+to GPU 6" style=dashed]
+	l4_expert_6 -> l4_expert_out_6
+	l4_expert_out_6 -> l4_aggregate
+	l4_gate -> l4_expert_7 [label="Route tokens
+to GPU 7" style=dashed]
+	l4_expert_7 -> l4_expert_out_7
+	l4_expert_out_7 -> l4_aggregate
+	l4_gate -> l4_expert_8 [label="Route tokens
+to GPU 8" style=dashed]
+	l4_expert_8 -> l4_expert_out_8
+	l4_expert_out_8 -> l4_aggregate
+	l4_gate -> l4_expert_9 [label="Route tokens
+to GPU 9" style=dashed]
+	l4_expert_9 -> l4_expert_out_9
+	l4_expert_out_9 -> l4_aggregate
+	l4_gate -> l4_expert_10 [label="Route tokens
+to GPU 10" style=dashed]
+	l4_expert_10 -> l4_expert_out_10
+	l4_expert_out_10 -> l4_aggregate
+	l4_gate -> l4_expert_11 [label="Route tokens
+to GPU 11" style=dashed]
+	l4_expert_11 -> l4_expert_out_11
+	l4_expert_out_11 -> l4_aggregate
+	l4_gate -> l4_expert_12 [label="Route tokens
+to GPU 12" style=dashed]
+	l4_expert_12 -> l4_expert_out_12
+	l4_expert_out_12 -> l4_aggregate
+	l4_gate -> l4_expert_13 [label="Route tokens
+to GPU 13" style=dashed]
+	l4_expert_13 -> l4_expert_out_13
+	l4_expert_out_13 -> l4_aggregate
+	l4_gate -> l4_expert_14 [label="Route tokens
+to GPU 14" style=dashed]
+	l4_expert_14 -> l4_expert_out_14
+	l4_expert_out_14 -> l4_aggregate
+	l4_gate -> l4_expert_15 [label="Route tokens
+to GPU 15" style=dashed]
+	l4_expert_15 -> l4_expert_out_15
+	l4_expert_out_15 -> l4_aggregate
+	l4_gate -> l4_expert_16 [label="Route tokens
+to GPU 16" style=dashed]
+	l4_expert_16 -> l4_expert_out_16
+	l4_expert_out_16 -> l4_aggregate
+	l4_gate -> l4_expert_17 [label="Route tokens
+to GPU 17" style=dashed]
+	l4_expert_17 -> l4_expert_out_17
+	l4_expert_out_17 -> l4_aggregate
+	l4_gate -> l4_expert_18 [label="Route tokens
+to GPU 18" style=dashed]
+	l4_expert_18 -> l4_expert_out_18
+	l4_expert_out_18 -> l4_aggregate
+	l4_gate -> l4_expert_19 [label="Route tokens
+to GPU 19" style=dashed]
+	l4_expert_19 -> l4_expert_out_19
+	l4_expert_out_19 -> l4_aggregate
+	l4_gate -> l4_expert_20 [label="Route tokens
+to GPU 20" style=dashed]
+	l4_expert_20 -> l4_expert_out_20
+	l4_expert_out_20 -> l4_aggregate
+	l4_gate -> l4_expert_21 [label="Route tokens
+to GPU 21" style=dashed]
+	l4_expert_21 -> l4_expert_out_21
+	l4_expert_out_21 -> l4_aggregate
+	l4_gate -> l4_expert_22 [label="Route tokens
+to GPU 22" style=dashed]
+	l4_expert_22 -> l4_expert_out_22
+	l4_expert_out_22 -> l4_aggregate
+	l4_gate -> l4_expert_23 [label="Route tokens
+to GPU 23" style=dashed]
+	l4_expert_23 -> l4_expert_out_23
+	l4_expert_out_23 -> l4_aggregate
+	l4_gate -> l4_expert_24 [label="Route tokens
+to GPU 24" style=dashed]
+	l4_expert_24 -> l4_expert_out_24
+	l4_expert_out_24 -> l4_aggregate
+	l4_gate -> l4_expert_25 [label="Route tokens
+to GPU 25" style=dashed]
+	l4_expert_25 -> l4_expert_out_25
+	l4_expert_out_25 -> l4_aggregate
+	l4_gate -> l4_expert_26 [label="Route tokens
+to GPU 26" style=dashed]
+	l4_expert_26 -> l4_expert_out_26
+	l4_expert_out_26 -> l4_aggregate
+	l4_gate -> l4_expert_27 [label="Route tokens
+to GPU 27" style=dashed]
+	l4_expert_27 -> l4_expert_out_27
+	l4_expert_out_27 -> l4_aggregate
+	l4_gate -> l4_expert_28 [label="Route tokens
+to GPU 28" style=dashed]
+	l4_expert_28 -> l4_expert_out_28
+	l4_expert_out_28 -> l4_aggregate
+	l4_gate -> l4_expert_29 [label="Route tokens
+to GPU 29" style=dashed]
+	l4_expert_29 -> l4_expert_out_29
+	l4_expert_out_29 -> l4_aggregate
+	l4_gate -> l4_expert_30 [label="Route tokens
+to GPU 30" style=dashed]
+	l4_expert_30 -> l4_expert_out_30
+	l4_expert_out_30 -> l4_aggregate
+	l4_gate -> l4_expert_31 [label="Route tokens
+to GPU 31" style=dashed]
+	l4_expert_31 -> l4_expert_out_31
+	l4_expert_out_31 -> l4_aggregate
+	l4_gate -> l4_expert_32 [label="Route tokens
+to GPU 32" style=dashed]
+	l4_expert_32 -> l4_expert_out_32
+	l4_expert_out_32 -> l4_aggregate
+	l4_gate -> l4_expert_33 [label="Route tokens
+to GPU 33" style=dashed]
+	l4_expert_33 -> l4_expert_out_33
+	l4_expert_out_33 -> l4_aggregate
+	l4_gate -> l4_expert_34 [label="Route tokens
+to GPU 34" style=dashed]
+	l4_expert_34 -> l4_expert_out_34
+	l4_expert_out_34 -> l4_aggregate
+	l4_gate -> l4_expert_35 [label="Route tokens
+to GPU 35" style=dashed]
+	l4_expert_35 -> l4_expert_out_35
+	l4_expert_out_35 -> l4_aggregate
+	l4_gate -> l4_expert_36 [label="Route tokens
+to GPU 36" style=dashed]
+	l4_expert_36 -> l4_expert_out_36
+	l4_expert_out_36 -> l4_aggregate
+	l4_gate -> l4_expert_37 [label="Route tokens
+to GPU 37" style=dashed]
+	l4_expert_37 -> l4_expert_out_37
+	l4_expert_out_37 -> l4_aggregate
+	l4_gate -> l4_expert_38 [label="Route tokens
+to GPU 38" style=dashed]
+	l4_expert_38 -> l4_expert_out_38
+	l4_expert_out_38 -> l4_aggregate
+	l4_gate -> l4_expert_39 [label="Route tokens
+to GPU 39" style=dashed]
+	l4_expert_39 -> l4_expert_out_39
+	l4_expert_out_39 -> l4_aggregate
+	l4_gate -> l4_expert_40 [label="Route tokens
+to GPU 40" style=dashed]
+	l4_expert_40 -> l4_expert_out_40
+	l4_expert_out_40 -> l4_aggregate
+	l4_gate -> l4_expert_41 [label="Route tokens
+to GPU 41" style=dashed]
+	l4_expert_41 -> l4_expert_out_41
+	l4_expert_out_41 -> l4_aggregate
+	l4_gate -> l4_expert_42 [label="Route tokens
+to GPU 42" style=dashed]
+	l4_expert_42 -> l4_expert_out_42
+	l4_expert_out_42 -> l4_aggregate
+	l4_gate -> l4_expert_43 [label="Route tokens
+to GPU 43" style=dashed]
+	l4_expert_43 -> l4_expert_out_43
+	l4_expert_out_43 -> l4_aggregate
+	l4_gate -> l4_expert_44 [label="Route tokens
+to GPU 44" style=dashed]
+	l4_expert_44 -> l4_expert_out_44
+	l4_expert_out_44 -> l4_aggregate
+	l4_gate -> l4_expert_45 [label="Route tokens
+to GPU 45" style=dashed]
+	l4_expert_45 -> l4_expert_out_45
+	l4_expert_out_45 -> l4_aggregate
+	l4_gate -> l4_expert_46 [label="Route tokens
+to GPU 46" style=dashed]
+	l4_expert_46 -> l4_expert_out_46
+	l4_expert_out_46 -> l4_aggregate
+	l4_gate -> l4_expert_47 [label="Route tokens
+to GPU 47" style=dashed]
+	l4_expert_47 -> l4_expert_out_47
+	l4_expert_out_47 -> l4_aggregate
+	l4_gate -> l4_expert_48 [label="Route tokens
+to GPU 48" style=dashed]
+	l4_expert_48 -> l4_expert_out_48
+	l4_expert_out_48 -> l4_aggregate
+	l4_gate -> l4_expert_49 [label="Route tokens
+to GPU 49" style=dashed]
+	l4_expert_49 -> l4_expert_out_49
+	l4_expert_out_49 -> l4_aggregate
+	l4_gate -> l4_expert_50 [label="Route tokens
+to GPU 50" style=dashed]
+	l4_expert_50 -> l4_expert_out_50
+	l4_expert_out_50 -> l4_aggregate
+	l4_gate -> l4_expert_51 [label="Route tokens
+to GPU 51" style=dashed]
+	l4_expert_51 -> l4_expert_out_51
+	l4_expert_out_51 -> l4_aggregate
+	l4_gate -> l4_expert_52 [label="Route tokens
+to GPU 52" style=dashed]
+	l4_expert_52 -> l4_expert_out_52
+	l4_expert_out_52 -> l4_aggregate
+	l4_gate -> l4_expert_53 [label="Route tokens
+to GPU 53" style=dashed]
+	l4_expert_53 -> l4_expert_out_53
+	l4_expert_out_53 -> l4_aggregate
+	l4_gate -> l4_expert_54 [label="Route tokens
+to GPU 54" style=dashed]
+	l4_expert_54 -> l4_expert_out_54
+	l4_expert_out_54 -> l4_aggregate
+	l4_gate -> l4_expert_55 [label="Route tokens
+to GPU 55" style=dashed]
+	l4_expert_55 -> l4_expert_out_55
+	l4_expert_out_55 -> l4_aggregate
+	l4_gate -> l4_expert_56 [label="Route tokens
+to GPU 56" style=dashed]
+	l4_expert_56 -> l4_expert_out_56
+	l4_expert_out_56 -> l4_aggregate
+	l4_gate -> l4_expert_57 [label="Route tokens
+to GPU 57" style=dashed]
+	l4_expert_57 -> l4_expert_out_57
+	l4_expert_out_57 -> l4_aggregate
+	l4_gate -> l4_expert_58 [label="Route tokens
+to GPU 58" style=dashed]
+	l4_expert_58 -> l4_expert_out_58
+	l4_expert_out_58 -> l4_aggregate
+	l4_gate -> l4_expert_59 [label="Route tokens
+to GPU 59" style=dashed]
+	l4_expert_59 -> l4_expert_out_59
+	l4_expert_out_59 -> l4_aggregate
+	l4_gate -> l4_expert_60 [label="Route tokens
+to GPU 60" style=dashed]
+	l4_expert_60 -> l4_expert_out_60
+	l4_expert_out_60 -> l4_aggregate
+	l4_gate -> l4_expert_61 [label="Route tokens
+to GPU 61" style=dashed]
+	l4_expert_61 -> l4_expert_out_61
+	l4_expert_out_61 -> l4_aggregate
+	l4_gate -> l4_expert_62 [label="Route tokens
+to GPU 62" style=dashed]
+	l4_expert_62 -> l4_expert_out_62
+	l4_expert_out_62 -> l4_aggregate
+	l4_gate -> l4_expert_63 [label="Route tokens
+to GPU 63" style=dashed]
+	l4_expert_63 -> l4_expert_out_63
+	l4_expert_out_63 -> l4_aggregate
+	l4_aggregate -> l4_ffn_res
+	l4_mha_res -> l4_ffn_res [style=dashed]
+	l4_ffn_res -> global_output
+}
