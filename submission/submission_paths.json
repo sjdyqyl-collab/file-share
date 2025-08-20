@@ -1,0 +1,8 @@
+{
+  "baseline_deployment": "/home/wzc/data/file-share/submission/baseline_moe_deployment.svg",
+  "proposed_deployment": "/home/wzc/data/file-share/submission/proposed_moe_deployment.svg",
+  "python_files": [
+    "/home/wzc/data/file-share/submission/baseline_dag.py",
+    "/home/wzc/data/file-share/submission/proposed_dag.py"
+  ]
+}
