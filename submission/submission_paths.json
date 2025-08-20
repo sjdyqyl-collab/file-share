@@ -1,8 +1,10 @@
 {
-  "baseline_deployment": "/home/wzc/data/papers/submission/baseline_moe_deployment.svg",
-  "proposed_deployment": "/home/wzc/data/papers/submission/proposed_moe_deployment.svg",
-  "generation_scripts": [
-    "/home/wzc/data/papers/submission/baseline_dag.py",
-    "/home/wzc/data/papers/submission/proposed_dag.py"
+  "dense_model_dag": "/home/wzc/data/file-share/submission/dense_model_dag.svg",
+  "moe_model_dag": "/home/wzc/data/file-share/submission/moe_model_dag.svg",
+  "generated_files": [
+    "/home/wzc/data/file-share/submission/dense_model_dag.py",
+    "/home/wzc/data/file-share/submission/dense_model_dag.svg",
+    "/home/wzc/data/file-share/submission/moe_model_dag.py",
+    "/home/wzc/data/file-share/submission/moe_model_dag.svg"
   ]
 }
