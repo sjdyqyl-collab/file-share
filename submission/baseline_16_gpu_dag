@@ -1,0 +1,1272 @@
+// Baseline Deployment - 16 GPUs (TP=8, PP=2)
+digraph {
+	rankdir=TB size="30,20"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	input_tokens -> embed
+	embed -> pos_embed
+	subgraph cluster_input {
+		label="Input Processing" style=dashed
+		input_tokens [label="Input Tokens\nShape: (1024, 1)\nGPU: CPU" fillcolor=lightblue shape=ellipse]
+		embed [label="Embedding Layer\nShape: (1024, 1, 8192)\nGPU: Stage 0" fillcolor=lightgreen shape=rectangle]
+		pos_embed [label="Positional Encoding\nShape: (1024, 1, 8192)\nGPU: Stage 0" fillcolor=lightgreen shape=rectangle]
+	}
+	pos_embed -> mha_qkv_0
+	mha_qkv_0 -> mha_attn_0
+	mha_attn_0 -> mha_out_0
+	mha_out_0 -> mha_residual_0
+	pos_embed -> mha_residual_0
+	mha_residual_0 -> ln1_0
+	ln1_0 -> gate_0
+	gate_0 -> route_to_expert_0_0_0 [style=dashed]
+	route_to_expert_0_0_0 -> expert_linear1_0_0_0
+	expert_linear1_0_0_0 -> expert_activation_0_0_0
+	expert_activation_0_0_0 -> expert_linear2_0_0_0
+	gate_0 -> route_to_expert_0_0_1 [style=dashed]
+	route_to_expert_0_0_1 -> expert_linear1_0_0_1
+	expert_linear1_0_0_1 -> expert_activation_0_0_1
+	expert_activation_0_0_1 -> expert_linear2_0_0_1
+	gate_0 -> route_to_expert_0_0_2 [style=dashed]
+	route_to_expert_0_0_2 -> expert_linear1_0_0_2
+	expert_linear1_0_0_2 -> expert_activation_0_0_2
+	expert_activation_0_0_2 -> expert_linear2_0_0_2
+	gate_0 -> route_to_expert_0_0_3 [style=dashed]
+	route_to_expert_0_0_3 -> expert_linear1_0_0_3
+	expert_linear1_0_0_3 -> expert_activation_0_0_3
+	expert_activation_0_0_3 -> expert_linear2_0_0_3
+	gate_0 -> route_to_expert_0_1_0 [style=dashed]
+	route_to_expert_0_1_0 -> expert_linear1_0_1_0
+	expert_linear1_0_1_0 -> expert_activation_0_1_0
+	expert_activation_0_1_0 -> expert_linear2_0_1_0
+	gate_0 -> route_to_expert_0_1_1 [style=dashed]
+	route_to_expert_0_1_1 -> expert_linear1_0_1_1
+	expert_linear1_0_1_1 -> expert_activation_0_1_1
+	expert_activation_0_1_1 -> expert_linear2_0_1_1
+	gate_0 -> route_to_expert_0_1_2 [style=dashed]
+	route_to_expert_0_1_2 -> expert_linear1_0_1_2
+	expert_linear1_0_1_2 -> expert_activation_0_1_2
+	expert_activation_0_1_2 -> expert_linear2_0_1_2
+	gate_0 -> route_to_expert_0_1_3 [style=dashed]
+	route_to_expert_0_1_3 -> expert_linear1_0_1_3
+	expert_linear1_0_1_3 -> expert_activation_0_1_3
+	expert_activation_0_1_3 -> expert_linear2_0_1_3
+	gate_0 -> route_to_expert_0_2_0 [style=dashed]
+	route_to_expert_0_2_0 -> expert_linear1_0_2_0
+	expert_linear1_0_2_0 -> expert_activation_0_2_0
+	expert_activation_0_2_0 -> expert_linear2_0_2_0
+	gate_0 -> route_to_expert_0_2_1 [style=dashed]
+	route_to_expert_0_2_1 -> expert_linear1_0_2_1
+	expert_linear1_0_2_1 -> expert_activation_0_2_1
+	expert_activation_0_2_1 -> expert_linear2_0_2_1
+	gate_0 -> route_to_expert_0_2_2 [style=dashed]
+	route_to_expert_0_2_2 -> expert_linear1_0_2_2
+	expert_linear1_0_2_2 -> expert_activation_0_2_2
+	expert_activation_0_2_2 -> expert_linear2_0_2_2
+	gate_0 -> route_to_expert_0_2_3 [style=dashed]
+	route_to_expert_0_2_3 -> expert_linear1_0_2_3
+	expert_linear1_0_2_3 -> expert_activation_0_2_3
+	expert_activation_0_2_3 -> expert_linear2_0_2_3
+	gate_0 -> route_to_expert_0_3_0 [style=dashed]
+	route_to_expert_0_3_0 -> expert_linear1_0_3_0
+	expert_linear1_0_3_0 -> expert_activation_0_3_0
+	expert_activation_0_3_0 -> expert_linear2_0_3_0
+	gate_0 -> route_to_expert_0_3_1 [style=dashed]
+	route_to_expert_0_3_1 -> expert_linear1_0_3_1
+	expert_linear1_0_3_1 -> expert_activation_0_3_1
+	expert_activation_0_3_1 -> expert_linear2_0_3_1
+	gate_0 -> route_to_expert_0_3_2 [style=dashed]
+	route_to_expert_0_3_2 -> expert_linear1_0_3_2
+	expert_linear1_0_3_2 -> expert_activation_0_3_2
+	expert_activation_0_3_2 -> expert_linear2_0_3_2
+	gate_0 -> route_to_expert_0_3_3 [style=dashed]
+	route_to_expert_0_3_3 -> expert_linear1_0_3_3
+	expert_linear1_0_3_3 -> expert_activation_0_3_3
+	expert_activation_0_3_3 -> expert_linear2_0_3_3
+	gate_0 -> route_to_expert_0_4_0 [style=dashed]
+	route_to_expert_0_4_0 -> expert_linear1_0_4_0
+	expert_linear1_0_4_0 -> expert_activation_0_4_0
+	expert_activation_0_4_0 -> expert_linear2_0_4_0
+	gate_0 -> route_to_expert_0_4_1 [style=dashed]
+	route_to_expert_0_4_1 -> expert_linear1_0_4_1
+	expert_linear1_0_4_1 -> expert_activation_0_4_1
+	expert_activation_0_4_1 -> expert_linear2_0_4_1
+	gate_0 -> route_to_expert_0_4_2 [style=dashed]
+	route_to_expert_0_4_2 -> expert_linear1_0_4_2
+	expert_linear1_0_4_2 -> expert_activation_0_4_2
+	expert_activation_0_4_2 -> expert_linear2_0_4_2
+	gate_0 -> route_to_expert_0_4_3 [style=dashed]
+	route_to_expert_0_4_3 -> expert_linear1_0_4_3
+	expert_linear1_0_4_3 -> expert_activation_0_4_3
+	expert_activation_0_4_3 -> expert_linear2_0_4_3
+	gate_0 -> route_to_expert_0_5_0 [style=dashed]
+	route_to_expert_0_5_0 -> expert_linear1_0_5_0
+	expert_linear1_0_5_0 -> expert_activation_0_5_0
+	expert_activation_0_5_0 -> expert_linear2_0_5_0
+	gate_0 -> route_to_expert_0_5_1 [style=dashed]
+	route_to_expert_0_5_1 -> expert_linear1_0_5_1
+	expert_linear1_0_5_1 -> expert_activation_0_5_1
+	expert_activation_0_5_1 -> expert_linear2_0_5_1
+	gate_0 -> route_to_expert_0_5_2 [style=dashed]
+	route_to_expert_0_5_2 -> expert_linear1_0_5_2
+	expert_linear1_0_5_2 -> expert_activation_0_5_2
+	expert_activation_0_5_2 -> expert_linear2_0_5_2
+	gate_0 -> route_to_expert_0_5_3 [style=dashed]
+	route_to_expert_0_5_3 -> expert_linear1_0_5_3
+	expert_linear1_0_5_3 -> expert_activation_0_5_3
+	expert_activation_0_5_3 -> expert_linear2_0_5_3
+	gate_0 -> route_to_expert_0_6_0 [style=dashed]
+	route_to_expert_0_6_0 -> expert_linear1_0_6_0
+	expert_linear1_0_6_0 -> expert_activation_0_6_0
+	expert_activation_0_6_0 -> expert_linear2_0_6_0
+	gate_0 -> route_to_expert_0_6_1 [style=dashed]
+	route_to_expert_0_6_1 -> expert_linear1_0_6_1
+	expert_linear1_0_6_1 -> expert_activation_0_6_1
+	expert_activation_0_6_1 -> expert_linear2_0_6_1
+	gate_0 -> route_to_expert_0_6_2 [style=dashed]
+	route_to_expert_0_6_2 -> expert_linear1_0_6_2
+	expert_linear1_0_6_2 -> expert_activation_0_6_2
+	expert_activation_0_6_2 -> expert_linear2_0_6_2
+	gate_0 -> route_to_expert_0_6_3 [style=dashed]
+	route_to_expert_0_6_3 -> expert_linear1_0_6_3
+	expert_linear1_0_6_3 -> expert_activation_0_6_3
+	expert_activation_0_6_3 -> expert_linear2_0_6_3
+	gate_0 -> route_to_expert_0_7_0 [style=dashed]
+	route_to_expert_0_7_0 -> expert_linear1_0_7_0
+	expert_linear1_0_7_0 -> expert_activation_0_7_0
+	expert_activation_0_7_0 -> expert_linear2_0_7_0
+	gate_0 -> route_to_expert_0_7_1 [style=dashed]
+	route_to_expert_0_7_1 -> expert_linear1_0_7_1
+	expert_linear1_0_7_1 -> expert_activation_0_7_1
+	expert_activation_0_7_1 -> expert_linear2_0_7_1
+	gate_0 -> route_to_expert_0_7_2 [style=dashed]
+	route_to_expert_0_7_2 -> expert_linear1_0_7_2
+	expert_linear1_0_7_2 -> expert_activation_0_7_2
+	expert_activation_0_7_2 -> expert_linear2_0_7_2
+	gate_0 -> route_to_expert_0_7_3 [style=dashed]
+	route_to_expert_0_7_3 -> expert_linear1_0_7_3
+	expert_linear1_0_7_3 -> expert_activation_0_7_3
+	expert_activation_0_7_3 -> expert_linear2_0_7_3
+	expert_linear2_0_0_0 -> aggregate_0
+	expert_linear2_0_0_1 -> aggregate_0
+	expert_linear2_0_0_2 -> aggregate_0
+	expert_linear2_0_0_3 -> aggregate_0
+	expert_linear2_0_1_0 -> aggregate_0
+	expert_linear2_0_1_1 -> aggregate_0
+	expert_linear2_0_1_2 -> aggregate_0
+	expert_linear2_0_1_3 -> aggregate_0
+	expert_linear2_0_2_0 -> aggregate_0
+	expert_linear2_0_2_1 -> aggregate_0
+	expert_linear2_0_2_2 -> aggregate_0
+	expert_linear2_0_2_3 -> aggregate_0
+	expert_linear2_0_3_0 -> aggregate_0
+	expert_linear2_0_3_1 -> aggregate_0
+	expert_linear2_0_3_2 -> aggregate_0
+	expert_linear2_0_3_3 -> aggregate_0
+	expert_linear2_0_4_0 -> aggregate_0
+	expert_linear2_0_4_1 -> aggregate_0
+	expert_linear2_0_4_2 -> aggregate_0
+	expert_linear2_0_4_3 -> aggregate_0
+	expert_linear2_0_5_0 -> aggregate_0
+	expert_linear2_0_5_1 -> aggregate_0
+	expert_linear2_0_5_2 -> aggregate_0
+	expert_linear2_0_5_3 -> aggregate_0
+	expert_linear2_0_6_0 -> aggregate_0
+	expert_linear2_0_6_1 -> aggregate_0
+	expert_linear2_0_6_2 -> aggregate_0
+	expert_linear2_0_6_3 -> aggregate_0
+	expert_linear2_0_7_0 -> aggregate_0
+	expert_linear2_0_7_1 -> aggregate_0
+	expert_linear2_0_7_2 -> aggregate_0
+	expert_linear2_0_7_3 -> aggregate_0
+	ln1_0 -> moe_residual_0
+	aggregate_0 -> moe_residual_0
+	moe_residual_0 -> ln2_0
+	subgraph cluster_stage_0_layer_0 {
+		label="Layer 1" style=dotted
+		mha_qkv_0 [label="MHA QKV Linear (TP=8)\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+		mha_attn_0 [label="MHA Attention (TP=8)\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+		mha_out_0 [label="MHA Output Linear (TP=8)\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+		mha_residual_0 [label="MHA Residual Add\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+		ln1_0 [label="Layer Norm 1\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+		gate_0 [label="Expert Gate\nShape: (1024, 1, 16)\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+		route_to_expert_0_0_0 [label="Route to Expert 0\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_0_0 [label="Expert 0 Linear 1\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_0_0 [label="Expert 0 GELU\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_0_0 [label="Expert 0 Linear 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_0_1 [label="Route to Expert 1\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_0_1 [label="Expert 1 Linear 1\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_0_1 [label="Expert 1 GELU\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_0_1 [label="Expert 1 Linear 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_0_2 [label="Route to Expert 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_0_2 [label="Expert 2 Linear 1\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_0_2 [label="Expert 2 GELU\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_0_2 [label="Expert 2 Linear 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_0_3 [label="Route to Expert 3\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_0_3 [label="Expert 3 Linear 1\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_0_3 [label="Expert 3 GELU\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_0_3 [label="Expert 3 Linear 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_1_0 [label="Route to Expert 4\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_1_0 [label="Expert 4 Linear 1\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_1_0 [label="Expert 4 GELU\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_1_0 [label="Expert 4 Linear 2\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_1_1 [label="Route to Expert 5\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_1_1 [label="Expert 5 Linear 1\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_1_1 [label="Expert 5 GELU\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_1_1 [label="Expert 5 Linear 2\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_1_2 [label="Route to Expert 6\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_1_2 [label="Expert 6 Linear 1\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_1_2 [label="Expert 6 GELU\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_1_2 [label="Expert 6 Linear 2\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_1_3 [label="Route to Expert 7\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_1_3 [label="Expert 7 Linear 1\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_1_3 [label="Expert 7 GELU\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_1_3 [label="Expert 7 Linear 2\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_2_0 [label="Route to Expert 8\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_2_0 [label="Expert 8 Linear 1\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_2_0 [label="Expert 8 GELU\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_2_0 [label="Expert 8 Linear 2\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_2_1 [label="Route to Expert 9\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_2_1 [label="Expert 9 Linear 1\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_2_1 [label="Expert 9 GELU\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_2_1 [label="Expert 9 Linear 2\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_2_2 [label="Route to Expert 10\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_2_2 [label="Expert 10 Linear 1\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_2_2 [label="Expert 10 GELU\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_2_2 [label="Expert 10 Linear 2\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_2_3 [label="Route to Expert 11\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_2_3 [label="Expert 11 Linear 1\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_2_3 [label="Expert 11 GELU\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_2_3 [label="Expert 11 Linear 2\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_3_0 [label="Route to Expert 12\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_3_0 [label="Expert 12 Linear 1\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_3_0 [label="Expert 12 GELU\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_3_0 [label="Expert 12 Linear 2\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_3_1 [label="Route to Expert 13\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_3_1 [label="Expert 13 Linear 1\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_3_1 [label="Expert 13 GELU\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_3_1 [label="Expert 13 Linear 2\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_3_2 [label="Route to Expert 14\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_3_2 [label="Expert 14 Linear 1\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_3_2 [label="Expert 14 GELU\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_3_2 [label="Expert 14 Linear 2\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_3_3 [label="Route to Expert 15\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_3_3 [label="Expert 15 Linear 1\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_3_3 [label="Expert 15 GELU\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_3_3 [label="Expert 15 Linear 2\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_4_0 [label="Route to Expert 16\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_4_0 [label="Expert 16 Linear 1\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_4_0 [label="Expert 16 GELU\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_4_0 [label="Expert 16 Linear 2\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_4_1 [label="Route to Expert 17\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_4_1 [label="Expert 17 Linear 1\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_4_1 [label="Expert 17 GELU\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_4_1 [label="Expert 17 Linear 2\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_4_2 [label="Route to Expert 18\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_4_2 [label="Expert 18 Linear 1\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_4_2 [label="Expert 18 GELU\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_4_2 [label="Expert 18 Linear 2\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_4_3 [label="Route to Expert 19\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_4_3 [label="Expert 19 Linear 1\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_4_3 [label="Expert 19 GELU\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_4_3 [label="Expert 19 Linear 2\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_5_0 [label="Route to Expert 20\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_5_0 [label="Expert 20 Linear 1\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_5_0 [label="Expert 20 GELU\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_5_0 [label="Expert 20 Linear 2\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_5_1 [label="Route to Expert 21\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_5_1 [label="Expert 21 Linear 1\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_5_1 [label="Expert 21 GELU\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_5_1 [label="Expert 21 Linear 2\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_5_2 [label="Route to Expert 22\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_5_2 [label="Expert 22 Linear 1\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_5_2 [label="Expert 22 GELU\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_5_2 [label="Expert 22 Linear 2\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_5_3 [label="Route to Expert 23\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_5_3 [label="Expert 23 Linear 1\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_5_3 [label="Expert 23 GELU\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_5_3 [label="Expert 23 Linear 2\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_6_0 [label="Route to Expert 24\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_6_0 [label="Expert 24 Linear 1\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_6_0 [label="Expert 24 GELU\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_6_0 [label="Expert 24 Linear 2\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_6_1 [label="Route to Expert 25\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_6_1 [label="Expert 25 Linear 1\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_6_1 [label="Expert 25 GELU\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_6_1 [label="Expert 25 Linear 2\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_6_2 [label="Route to Expert 26\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_6_2 [label="Expert 26 Linear 1\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_6_2 [label="Expert 26 GELU\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_6_2 [label="Expert 26 Linear 2\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_6_3 [label="Route to Expert 27\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_6_3 [label="Expert 27 Linear 1\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_6_3 [label="Expert 27 GELU\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_6_3 [label="Expert 27 Linear 2\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_7_0 [label="Route to Expert 28\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_7_0 [label="Expert 28 Linear 1\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_7_0 [label="Expert 28 GELU\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_7_0 [label="Expert 28 Linear 2\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_7_1 [label="Route to Expert 29\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_7_1 [label="Expert 29 Linear 1\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_7_1 [label="Expert 29 GELU\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_7_1 [label="Expert 29 Linear 2\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_7_2 [label="Route to Expert 30\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_7_2 [label="Expert 30 Linear 1\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_7_2 [label="Expert 30 GELU\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_7_2 [label="Expert 30 Linear 2\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_0_7_3 [label="Route to Expert 31\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightblue shape=ellipse]
+		expert_linear1_0_7_3 [label="Expert 31 Linear 1\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_activation_0_7_3 [label="Expert 31 GELU\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_0_7_3 [label="Expert 31 Linear 2\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		aggregate_0 [label="Aggregate Expert Outputs\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+		moe_residual_0 [label="MoE Residual Add\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+		ln2_0 [label="Layer Norm 2\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	}
+	ln2_0 -> mha_qkv_1
+	mha_qkv_1 -> mha_attn_1
+	mha_attn_1 -> mha_out_1
+	mha_out_1 -> mha_residual_1
+	ln2_0 -> mha_residual_1
+	mha_residual_1 -> ln1_1
+	ln1_1 -> gate_1
+	gate_1 -> route_to_expert_1_0_0 [style=dashed]
+	route_to_expert_1_0_0 -> expert_linear1_1_0_0
+	expert_linear1_1_0_0 -> expert_activation_1_0_0
+	expert_activation_1_0_0 -> expert_linear2_1_0_0
+	gate_1 -> route_to_expert_1_0_1 [style=dashed]
+	route_to_expert_1_0_1 -> expert_linear1_1_0_1
+	expert_linear1_1_0_1 -> expert_activation_1_0_1
+	expert_activation_1_0_1 -> expert_linear2_1_0_1
+	gate_1 -> route_to_expert_1_0_2 [style=dashed]
+	route_to_expert_1_0_2 -> expert_linear1_1_0_2
+	expert_linear1_1_0_2 -> expert_activation_1_0_2
+	expert_activation_1_0_2 -> expert_linear2_1_0_2
+	gate_1 -> route_to_expert_1_0_3 [style=dashed]
+	route_to_expert_1_0_3 -> expert_linear1_1_0_3
+	expert_linear1_1_0_3 -> expert_activation_1_0_3
+	expert_activation_1_0_3 -> expert_linear2_1_0_3
+	gate_1 -> route_to_expert_1_1_0 [style=dashed]
+	route_to_expert_1_1_0 -> expert_linear1_1_1_0
+	expert_linear1_1_1_0 -> expert_activation_1_1_0
+	expert_activation_1_1_0 -> expert_linear2_1_1_0
+	gate_1 -> route_to_expert_1_1_1 [style=dashed]
+	route_to_expert_1_1_1 -> expert_linear1_1_1_1
+	expert_linear1_1_1_1 -> expert_activation_1_1_1
+	expert_activation_1_1_1 -> expert_linear2_1_1_1
+	gate_1 -> route_to_expert_1_1_2 [style=dashed]
+	route_to_expert_1_1_2 -> expert_linear1_1_1_2
+	expert_linear1_1_1_2 -> expert_activation_1_1_2
+	expert_activation_1_1_2 -> expert_linear2_1_1_2
+	gate_1 -> route_to_expert_1_1_3 [style=dashed]
+	route_to_expert_1_1_3 -> expert_linear1_1_1_3
+	expert_linear1_1_1_3 -> expert_activation_1_1_3
+	expert_activation_1_1_3 -> expert_linear2_1_1_3
+	gate_1 -> route_to_expert_1_2_0 [style=dashed]
+	route_to_expert_1_2_0 -> expert_linear1_1_2_0
+	expert_linear1_1_2_0 -> expert_activation_1_2_0
+	expert_activation_1_2_0 -> expert_linear2_1_2_0
+	gate_1 -> route_to_expert_1_2_1 [style=dashed]
+	route_to_expert_1_2_1 -> expert_linear1_1_2_1
+	expert_linear1_1_2_1 -> expert_activation_1_2_1
+	expert_activation_1_2_1 -> expert_linear2_1_2_1
+	gate_1 -> route_to_expert_1_2_2 [style=dashed]
+	route_to_expert_1_2_2 -> expert_linear1_1_2_2
+	expert_linear1_1_2_2 -> expert_activation_1_2_2
+	expert_activation_1_2_2 -> expert_linear2_1_2_2
+	gate_1 -> route_to_expert_1_2_3 [style=dashed]
+	route_to_expert_1_2_3 -> expert_linear1_1_2_3
+	expert_linear1_1_2_3 -> expert_activation_1_2_3
+	expert_activation_1_2_3 -> expert_linear2_1_2_3
+	gate_1 -> route_to_expert_1_3_0 [style=dashed]
+	route_to_expert_1_3_0 -> expert_linear1_1_3_0
+	expert_linear1_1_3_0 -> expert_activation_1_3_0
+	expert_activation_1_3_0 -> expert_linear2_1_3_0
+	gate_1 -> route_to_expert_1_3_1 [style=dashed]
+	route_to_expert_1_3_1 -> expert_linear1_1_3_1
+	expert_linear1_1_3_1 -> expert_activation_1_3_1
+	expert_activation_1_3_1 -> expert_linear2_1_3_1
+	gate_1 -> route_to_expert_1_3_2 [style=dashed]
+	route_to_expert_1_3_2 -> expert_linear1_1_3_2
+	expert_linear1_1_3_2 -> expert_activation_1_3_2
+	expert_activation_1_3_2 -> expert_linear2_1_3_2
+	gate_1 -> route_to_expert_1_3_3 [style=dashed]
+	route_to_expert_1_3_3 -> expert_linear1_1_3_3
+	expert_linear1_1_3_3 -> expert_activation_1_3_3
+	expert_activation_1_3_3 -> expert_linear2_1_3_3
+	gate_1 -> route_to_expert_1_4_0 [style=dashed]
+	route_to_expert_1_4_0 -> expert_linear1_1_4_0
+	expert_linear1_1_4_0 -> expert_activation_1_4_0
+	expert_activation_1_4_0 -> expert_linear2_1_4_0
+	gate_1 -> route_to_expert_1_4_1 [style=dashed]
+	route_to_expert_1_4_1 -> expert_linear1_1_4_1
+	expert_linear1_1_4_1 -> expert_activation_1_4_1
+	expert_activation_1_4_1 -> expert_linear2_1_4_1
+	gate_1 -> route_to_expert_1_4_2 [style=dashed]
+	route_to_expert_1_4_2 -> expert_linear1_1_4_2
+	expert_linear1_1_4_2 -> expert_activation_1_4_2
+	expert_activation_1_4_2 -> expert_linear2_1_4_2
+	gate_1 -> route_to_expert_1_4_3 [style=dashed]
+	route_to_expert_1_4_3 -> expert_linear1_1_4_3
+	expert_linear1_1_4_3 -> expert_activation_1_4_3
+	expert_activation_1_4_3 -> expert_linear2_1_4_3
+	gate_1 -> route_to_expert_1_5_0 [style=dashed]
+	route_to_expert_1_5_0 -> expert_linear1_1_5_0
+	expert_linear1_1_5_0 -> expert_activation_1_5_0
+	expert_activation_1_5_0 -> expert_linear2_1_5_0
+	gate_1 -> route_to_expert_1_5_1 [style=dashed]
+	route_to_expert_1_5_1 -> expert_linear1_1_5_1
+	expert_linear1_1_5_1 -> expert_activation_1_5_1
+	expert_activation_1_5_1 -> expert_linear2_1_5_1
+	gate_1 -> route_to_expert_1_5_2 [style=dashed]
+	route_to_expert_1_5_2 -> expert_linear1_1_5_2
+	expert_linear1_1_5_2 -> expert_activation_1_5_2
+	expert_activation_1_5_2 -> expert_linear2_1_5_2
+	gate_1 -> route_to_expert_1_5_3 [style=dashed]
+	route_to_expert_1_5_3 -> expert_linear1_1_5_3
+	expert_linear1_1_5_3 -> expert_activation_1_5_3
+	expert_activation_1_5_3 -> expert_linear2_1_5_3
+	gate_1 -> route_to_expert_1_6_0 [style=dashed]
+	route_to_expert_1_6_0 -> expert_linear1_1_6_0
+	expert_linear1_1_6_0 -> expert_activation_1_6_0
+	expert_activation_1_6_0 -> expert_linear2_1_6_0
+	gate_1 -> route_to_expert_1_6_1 [style=dashed]
+	route_to_expert_1_6_1 -> expert_linear1_1_6_1
+	expert_linear1_1_6_1 -> expert_activation_1_6_1
+	expert_activation_1_6_1 -> expert_linear2_1_6_1
+	gate_1 -> route_to_expert_1_6_2 [style=dashed]
+	route_to_expert_1_6_2 -> expert_linear1_1_6_2
+	expert_linear1_1_6_2 -> expert_activation_1_6_2
+	expert_activation_1_6_2 -> expert_linear2_1_6_2
+	gate_1 -> route_to_expert_1_6_3 [style=dashed]
+	route_to_expert_1_6_3 -> expert_linear1_1_6_3
+	expert_linear1_1_6_3 -> expert_activation_1_6_3
+	expert_activation_1_6_3 -> expert_linear2_1_6_3
+	gate_1 -> route_to_expert_1_7_0 [style=dashed]
+	route_to_expert_1_7_0 -> expert_linear1_1_7_0
+	expert_linear1_1_7_0 -> expert_activation_1_7_0
+	expert_activation_1_7_0 -> expert_linear2_1_7_0
+	gate_1 -> route_to_expert_1_7_1 [style=dashed]
+	route_to_expert_1_7_1 -> expert_linear1_1_7_1
+	expert_linear1_1_7_1 -> expert_activation_1_7_1
+	expert_activation_1_7_1 -> expert_linear2_1_7_1
+	gate_1 -> route_to_expert_1_7_2 [style=dashed]
+	route_to_expert_1_7_2 -> expert_linear1_1_7_2
+	expert_linear1_1_7_2 -> expert_activation_1_7_2
+	expert_activation_1_7_2 -> expert_linear2_1_7_2
+	gate_1 -> route_to_expert_1_7_3 [style=dashed]
+	route_to_expert_1_7_3 -> expert_linear1_1_7_3
+	expert_linear1_1_7_3 -> expert_activation_1_7_3
+	expert_activation_1_7_3 -> expert_linear2_1_7_3
+	expert_linear2_1_0_0 -> aggregate_1
+	expert_linear2_1_0_1 -> aggregate_1
+	expert_linear2_1_0_2 -> aggregate_1
+	expert_linear2_1_0_3 -> aggregate_1
+	expert_linear2_1_1_0 -> aggregate_1
+	expert_linear2_1_1_1 -> aggregate_1
+	expert_linear2_1_1_2 -> aggregate_1
+	expert_linear2_1_1_3 -> aggregate_1
+	expert_linear2_1_2_0 -> aggregate_1
+	expert_linear2_1_2_1 -> aggregate_1
+	expert_linear2_1_2_2 -> aggregate_1
+	expert_linear2_1_2_3 -> aggregate_1
+	expert_linear2_1_3_0 -> aggregate_1
+	expert_linear2_1_3_1 -> aggregate_1
+	expert_linear2_1_3_2 -> aggregate_1
+	expert_linear2_1_3_3 -> aggregate_1
+	expert_linear2_1_4_0 -> aggregate_1
+	expert_linear2_1_4_1 -> aggregate_1
+	expert_linear2_1_4_2 -> aggregate_1
+	expert_linear2_1_4_3 -> aggregate_1
+	expert_linear2_1_5_0 -> aggregate_1
+	expert_linear2_1_5_1 -> aggregate_1
+	expert_linear2_1_5_2 -> aggregate_1
+	expert_linear2_1_5_3 -> aggregate_1
+	expert_linear2_1_6_0 -> aggregate_1
+	expert_linear2_1_6_1 -> aggregate_1
+	expert_linear2_1_6_2 -> aggregate_1
+	expert_linear2_1_6_3 -> aggregate_1
+	expert_linear2_1_7_0 -> aggregate_1
+	expert_linear2_1_7_1 -> aggregate_1
+	expert_linear2_1_7_2 -> aggregate_1
+	expert_linear2_1_7_3 -> aggregate_1
+	ln1_1 -> moe_residual_1
+	aggregate_1 -> moe_residual_1
+	moe_residual_1 -> ln2_1
+	subgraph cluster_stage_0_layer_1 {
+		label="Layer 2" style=dotted
+		mha_qkv_1 [label="MHA QKV Linear (TP=8)\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+		mha_attn_1 [label="MHA Attention (TP=8)\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+		mha_out_1 [label="MHA Output Linear (TP=8)\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+		mha_residual_1 [label="MHA Residual Add\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+		ln1_1 [label="Layer Norm 1\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+		gate_1 [label="Expert Gate\nShape: (1024, 1, 16)\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+		route_to_expert_1_0_0 [label="Route to Expert 0\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_0_0 [label="Expert 0 Linear 1\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_0_0 [label="Expert 0 GELU\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_0_0 [label="Expert 0 Linear 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_0_1 [label="Route to Expert 1\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_0_1 [label="Expert 1 Linear 1\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_0_1 [label="Expert 1 GELU\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_0_1 [label="Expert 1 Linear 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_0_2 [label="Route to Expert 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_0_2 [label="Expert 2 Linear 1\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_0_2 [label="Expert 2 GELU\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_0_2 [label="Expert 2 Linear 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_0_3 [label="Route to Expert 3\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_0_3 [label="Expert 3 Linear 1\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_0_3 [label="Expert 3 GELU\nShape: (tokens, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_0_3 [label="Expert 3 Linear 2\nShape: (tokens, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_1_0 [label="Route to Expert 4\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_1_0 [label="Expert 4 Linear 1\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_1_0 [label="Expert 4 GELU\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_1_0 [label="Expert 4 Linear 2\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_1_1 [label="Route to Expert 5\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_1_1 [label="Expert 5 Linear 1\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_1_1 [label="Expert 5 GELU\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_1_1 [label="Expert 5 Linear 2\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_1_2 [label="Route to Expert 6\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_1_2 [label="Expert 6 Linear 1\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_1_2 [label="Expert 6 GELU\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_1_2 [label="Expert 6 Linear 2\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_1_3 [label="Route to Expert 7\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_1_3 [label="Expert 7 Linear 1\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_1_3 [label="Expert 7 GELU\nShape: (tokens, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_1_3 [label="Expert 7 Linear 2\nShape: (tokens, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_2_0 [label="Route to Expert 8\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_2_0 [label="Expert 8 Linear 1\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_2_0 [label="Expert 8 GELU\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_2_0 [label="Expert 8 Linear 2\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_2_1 [label="Route to Expert 9\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_2_1 [label="Expert 9 Linear 1\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_2_1 [label="Expert 9 GELU\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_2_1 [label="Expert 9 Linear 2\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_2_2 [label="Route to Expert 10\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_2_2 [label="Expert 10 Linear 1\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_2_2 [label="Expert 10 GELU\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_2_2 [label="Expert 10 Linear 2\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_2_3 [label="Route to Expert 11\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_2_3 [label="Expert 11 Linear 1\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_2_3 [label="Expert 11 GELU\nShape: (tokens, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_2_3 [label="Expert 11 Linear 2\nShape: (tokens, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_3_0 [label="Route to Expert 12\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_3_0 [label="Expert 12 Linear 1\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_3_0 [label="Expert 12 GELU\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_3_0 [label="Expert 12 Linear 2\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_3_1 [label="Route to Expert 13\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_3_1 [label="Expert 13 Linear 1\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_3_1 [label="Expert 13 GELU\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_3_1 [label="Expert 13 Linear 2\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_3_2 [label="Route to Expert 14\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_3_2 [label="Expert 14 Linear 1\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_3_2 [label="Expert 14 GELU\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_3_2 [label="Expert 14 Linear 2\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_3_3 [label="Route to Expert 15\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_3_3 [label="Expert 15 Linear 1\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_3_3 [label="Expert 15 GELU\nShape: (tokens, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_3_3 [label="Expert 15 Linear 2\nShape: (tokens, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_4_0 [label="Route to Expert 16\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_4_0 [label="Expert 16 Linear 1\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_4_0 [label="Expert 16 GELU\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_4_0 [label="Expert 16 Linear 2\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_4_1 [label="Route to Expert 17\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_4_1 [label="Expert 17 Linear 1\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_4_1 [label="Expert 17 GELU\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_4_1 [label="Expert 17 Linear 2\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_4_2 [label="Route to Expert 18\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_4_2 [label="Expert 18 Linear 1\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_4_2 [label="Expert 18 GELU\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_4_2 [label="Expert 18 Linear 2\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_4_3 [label="Route to Expert 19\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_4_3 [label="Expert 19 Linear 1\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_4_3 [label="Expert 19 GELU\nShape: (tokens, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_4_3 [label="Expert 19 Linear 2\nShape: (tokens, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_5_0 [label="Route to Expert 20\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_5_0 [label="Expert 20 Linear 1\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_5_0 [label="Expert 20 GELU\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_5_0 [label="Expert 20 Linear 2\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_5_1 [label="Route to Expert 21\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_5_1 [label="Expert 21 Linear 1\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_5_1 [label="Expert 21 GELU\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_5_1 [label="Expert 21 Linear 2\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_5_2 [label="Route to Expert 22\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_5_2 [label="Expert 22 Linear 1\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_5_2 [label="Expert 22 GELU\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_5_2 [label="Expert 22 Linear 2\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_5_3 [label="Route to Expert 23\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_5_3 [label="Expert 23 Linear 1\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_5_3 [label="Expert 23 GELU\nShape: (tokens, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_5_3 [label="Expert 23 Linear 2\nShape: (tokens, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_6_0 [label="Route to Expert 24\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_6_0 [label="Expert 24 Linear 1\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_6_0 [label="Expert 24 GELU\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_6_0 [label="Expert 24 Linear 2\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_6_1 [label="Route to Expert 25\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_6_1 [label="Expert 25 Linear 1\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_6_1 [label="Expert 25 GELU\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_6_1 [label="Expert 25 Linear 2\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_6_2 [label="Route to Expert 26\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_6_2 [label="Expert 26 Linear 1\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_6_2 [label="Expert 26 GELU\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_6_2 [label="Expert 26 Linear 2\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_6_3 [label="Route to Expert 27\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_6_3 [label="Expert 27 Linear 1\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_6_3 [label="Expert 27 GELU\nShape: (tokens, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_6_3 [label="Expert 27 Linear 2\nShape: (tokens, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_7_0 [label="Route to Expert 28\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_7_0 [label="Expert 28 Linear 1\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_7_0 [label="Expert 28 GELU\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_7_0 [label="Expert 28 Linear 2\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_7_1 [label="Route to Expert 29\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_7_1 [label="Expert 29 Linear 1\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_7_1 [label="Expert 29 GELU\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_7_1 [label="Expert 29 Linear 2\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_7_2 [label="Route to Expert 30\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_7_2 [label="Expert 30 Linear 1\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_7_2 [label="Expert 30 GELU\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_7_2 [label="Expert 30 Linear 2\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_1_7_3 [label="Route to Expert 31\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightblue shape=ellipse]
+		expert_linear1_1_7_3 [label="Expert 31 Linear 1\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_activation_1_7_3 [label="Expert 31 GELU\nShape: (tokens, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_1_7_3 [label="Expert 31 Linear 2\nShape: (tokens, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+		aggregate_1 [label="Aggregate Expert Outputs\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+		moe_residual_1 [label="MoE Residual Add\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+		ln2_1 [label="Layer Norm 2\nShape: (1024, 1, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	}
+	ln2_1 -> pipeline_comm_0
+	subgraph cluster_stage_0 {
+		label="Pipeline Stage 0\n(GPUs 0-7)" style=dashed
+		pipeline_comm_0 [label="Pipeline Communication\nShape: (1024, 1, 8192)\nGPU: Stage 0 -> Stage 1" fillcolor=lightblue shape=ellipse]
+	}
+	pipeline_comm_0 -> mha_qkv_2
+	mha_qkv_2 -> mha_attn_2
+	mha_attn_2 -> mha_out_2
+	mha_out_2 -> mha_residual_2
+	pipeline_comm_0 -> mha_residual_2
+	mha_residual_2 -> ln1_2
+	ln1_2 -> gate_2
+	gate_2 -> route_to_expert_2_8_0 [style=dashed]
+	route_to_expert_2_8_0 -> expert_linear1_2_8_0
+	expert_linear1_2_8_0 -> expert_activation_2_8_0
+	expert_activation_2_8_0 -> expert_linear2_2_8_0
+	gate_2 -> route_to_expert_2_8_1 [style=dashed]
+	route_to_expert_2_8_1 -> expert_linear1_2_8_1
+	expert_linear1_2_8_1 -> expert_activation_2_8_1
+	expert_activation_2_8_1 -> expert_linear2_2_8_1
+	gate_2 -> route_to_expert_2_8_2 [style=dashed]
+	route_to_expert_2_8_2 -> expert_linear1_2_8_2
+	expert_linear1_2_8_2 -> expert_activation_2_8_2
+	expert_activation_2_8_2 -> expert_linear2_2_8_2
+	gate_2 -> route_to_expert_2_8_3 [style=dashed]
+	route_to_expert_2_8_3 -> expert_linear1_2_8_3
+	expert_linear1_2_8_3 -> expert_activation_2_8_3
+	expert_activation_2_8_3 -> expert_linear2_2_8_3
+	gate_2 -> route_to_expert_2_9_0 [style=dashed]
+	route_to_expert_2_9_0 -> expert_linear1_2_9_0
+	expert_linear1_2_9_0 -> expert_activation_2_9_0
+	expert_activation_2_9_0 -> expert_linear2_2_9_0
+	gate_2 -> route_to_expert_2_9_1 [style=dashed]
+	route_to_expert_2_9_1 -> expert_linear1_2_9_1
+	expert_linear1_2_9_1 -> expert_activation_2_9_1
+	expert_activation_2_9_1 -> expert_linear2_2_9_1
+	gate_2 -> route_to_expert_2_9_2 [style=dashed]
+	route_to_expert_2_9_2 -> expert_linear1_2_9_2
+	expert_linear1_2_9_2 -> expert_activation_2_9_2
+	expert_activation_2_9_2 -> expert_linear2_2_9_2
+	gate_2 -> route_to_expert_2_9_3 [style=dashed]
+	route_to_expert_2_9_3 -> expert_linear1_2_9_3
+	expert_linear1_2_9_3 -> expert_activation_2_9_3
+	expert_activation_2_9_3 -> expert_linear2_2_9_3
+	gate_2 -> route_to_expert_2_10_0 [style=dashed]
+	route_to_expert_2_10_0 -> expert_linear1_2_10_0
+	expert_linear1_2_10_0 -> expert_activation_2_10_0
+	expert_activation_2_10_0 -> expert_linear2_2_10_0
+	gate_2 -> route_to_expert_2_10_1 [style=dashed]
+	route_to_expert_2_10_1 -> expert_linear1_2_10_1
+	expert_linear1_2_10_1 -> expert_activation_2_10_1
+	expert_activation_2_10_1 -> expert_linear2_2_10_1
+	gate_2 -> route_to_expert_2_10_2 [style=dashed]
+	route_to_expert_2_10_2 -> expert_linear1_2_10_2
+	expert_linear1_2_10_2 -> expert_activation_2_10_2
+	expert_activation_2_10_2 -> expert_linear2_2_10_2
+	gate_2 -> route_to_expert_2_10_3 [style=dashed]
+	route_to_expert_2_10_3 -> expert_linear1_2_10_3
+	expert_linear1_2_10_3 -> expert_activation_2_10_3
+	expert_activation_2_10_3 -> expert_linear2_2_10_3
+	gate_2 -> route_to_expert_2_11_0 [style=dashed]
+	route_to_expert_2_11_0 -> expert_linear1_2_11_0
+	expert_linear1_2_11_0 -> expert_activation_2_11_0
+	expert_activation_2_11_0 -> expert_linear2_2_11_0
+	gate_2 -> route_to_expert_2_11_1 [style=dashed]
+	route_to_expert_2_11_1 -> expert_linear1_2_11_1
+	expert_linear1_2_11_1 -> expert_activation_2_11_1
+	expert_activation_2_11_1 -> expert_linear2_2_11_1
+	gate_2 -> route_to_expert_2_11_2 [style=dashed]
+	route_to_expert_2_11_2 -> expert_linear1_2_11_2
+	expert_linear1_2_11_2 -> expert_activation_2_11_2
+	expert_activation_2_11_2 -> expert_linear2_2_11_2
+	gate_2 -> route_to_expert_2_11_3 [style=dashed]
+	route_to_expert_2_11_3 -> expert_linear1_2_11_3
+	expert_linear1_2_11_3 -> expert_activation_2_11_3
+	expert_activation_2_11_3 -> expert_linear2_2_11_3
+	gate_2 -> route_to_expert_2_12_0 [style=dashed]
+	route_to_expert_2_12_0 -> expert_linear1_2_12_0
+	expert_linear1_2_12_0 -> expert_activation_2_12_0
+	expert_activation_2_12_0 -> expert_linear2_2_12_0
+	gate_2 -> route_to_expert_2_12_1 [style=dashed]
+	route_to_expert_2_12_1 -> expert_linear1_2_12_1
+	expert_linear1_2_12_1 -> expert_activation_2_12_1
+	expert_activation_2_12_1 -> expert_linear2_2_12_1
+	gate_2 -> route_to_expert_2_12_2 [style=dashed]
+	route_to_expert_2_12_2 -> expert_linear1_2_12_2
+	expert_linear1_2_12_2 -> expert_activation_2_12_2
+	expert_activation_2_12_2 -> expert_linear2_2_12_2
+	gate_2 -> route_to_expert_2_12_3 [style=dashed]
+	route_to_expert_2_12_3 -> expert_linear1_2_12_3
+	expert_linear1_2_12_3 -> expert_activation_2_12_3
+	expert_activation_2_12_3 -> expert_linear2_2_12_3
+	gate_2 -> route_to_expert_2_13_0 [style=dashed]
+	route_to_expert_2_13_0 -> expert_linear1_2_13_0
+	expert_linear1_2_13_0 -> expert_activation_2_13_0
+	expert_activation_2_13_0 -> expert_linear2_2_13_0
+	gate_2 -> route_to_expert_2_13_1 [style=dashed]
+	route_to_expert_2_13_1 -> expert_linear1_2_13_1
+	expert_linear1_2_13_1 -> expert_activation_2_13_1
+	expert_activation_2_13_1 -> expert_linear2_2_13_1
+	gate_2 -> route_to_expert_2_13_2 [style=dashed]
+	route_to_expert_2_13_2 -> expert_linear1_2_13_2
+	expert_linear1_2_13_2 -> expert_activation_2_13_2
+	expert_activation_2_13_2 -> expert_linear2_2_13_2
+	gate_2 -> route_to_expert_2_13_3 [style=dashed]
+	route_to_expert_2_13_3 -> expert_linear1_2_13_3
+	expert_linear1_2_13_3 -> expert_activation_2_13_3
+	expert_activation_2_13_3 -> expert_linear2_2_13_3
+	gate_2 -> route_to_expert_2_14_0 [style=dashed]
+	route_to_expert_2_14_0 -> expert_linear1_2_14_0
+	expert_linear1_2_14_0 -> expert_activation_2_14_0
+	expert_activation_2_14_0 -> expert_linear2_2_14_0
+	gate_2 -> route_to_expert_2_14_1 [style=dashed]
+	route_to_expert_2_14_1 -> expert_linear1_2_14_1
+	expert_linear1_2_14_1 -> expert_activation_2_14_1
+	expert_activation_2_14_1 -> expert_linear2_2_14_1
+	gate_2 -> route_to_expert_2_14_2 [style=dashed]
+	route_to_expert_2_14_2 -> expert_linear1_2_14_2
+	expert_linear1_2_14_2 -> expert_activation_2_14_2
+	expert_activation_2_14_2 -> expert_linear2_2_14_2
+	gate_2 -> route_to_expert_2_14_3 [style=dashed]
+	route_to_expert_2_14_3 -> expert_linear1_2_14_3
+	expert_linear1_2_14_3 -> expert_activation_2_14_3
+	expert_activation_2_14_3 -> expert_linear2_2_14_3
+	gate_2 -> route_to_expert_2_15_0 [style=dashed]
+	route_to_expert_2_15_0 -> expert_linear1_2_15_0
+	expert_linear1_2_15_0 -> expert_activation_2_15_0
+	expert_activation_2_15_0 -> expert_linear2_2_15_0
+	gate_2 -> route_to_expert_2_15_1 [style=dashed]
+	route_to_expert_2_15_1 -> expert_linear1_2_15_1
+	expert_linear1_2_15_1 -> expert_activation_2_15_1
+	expert_activation_2_15_1 -> expert_linear2_2_15_1
+	gate_2 -> route_to_expert_2_15_2 [style=dashed]
+	route_to_expert_2_15_2 -> expert_linear1_2_15_2
+	expert_linear1_2_15_2 -> expert_activation_2_15_2
+	expert_activation_2_15_2 -> expert_linear2_2_15_2
+	gate_2 -> route_to_expert_2_15_3 [style=dashed]
+	route_to_expert_2_15_3 -> expert_linear1_2_15_3
+	expert_linear1_2_15_3 -> expert_activation_2_15_3
+	expert_activation_2_15_3 -> expert_linear2_2_15_3
+	expert_linear2_2_8_0 -> aggregate_2
+	expert_linear2_2_8_1 -> aggregate_2
+	expert_linear2_2_8_2 -> aggregate_2
+	expert_linear2_2_8_3 -> aggregate_2
+	expert_linear2_2_9_0 -> aggregate_2
+	expert_linear2_2_9_1 -> aggregate_2
+	expert_linear2_2_9_2 -> aggregate_2
+	expert_linear2_2_9_3 -> aggregate_2
+	expert_linear2_2_10_0 -> aggregate_2
+	expert_linear2_2_10_1 -> aggregate_2
+	expert_linear2_2_10_2 -> aggregate_2
+	expert_linear2_2_10_3 -> aggregate_2
+	expert_linear2_2_11_0 -> aggregate_2
+	expert_linear2_2_11_1 -> aggregate_2
+	expert_linear2_2_11_2 -> aggregate_2
+	expert_linear2_2_11_3 -> aggregate_2
+	expert_linear2_2_12_0 -> aggregate_2
+	expert_linear2_2_12_1 -> aggregate_2
+	expert_linear2_2_12_2 -> aggregate_2
+	expert_linear2_2_12_3 -> aggregate_2
+	expert_linear2_2_13_0 -> aggregate_2
+	expert_linear2_2_13_1 -> aggregate_2
+	expert_linear2_2_13_2 -> aggregate_2
+	expert_linear2_2_13_3 -> aggregate_2
+	expert_linear2_2_14_0 -> aggregate_2
+	expert_linear2_2_14_1 -> aggregate_2
+	expert_linear2_2_14_2 -> aggregate_2
+	expert_linear2_2_14_3 -> aggregate_2
+	expert_linear2_2_15_0 -> aggregate_2
+	expert_linear2_2_15_1 -> aggregate_2
+	expert_linear2_2_15_2 -> aggregate_2
+	expert_linear2_2_15_3 -> aggregate_2
+	ln1_2 -> moe_residual_2
+	aggregate_2 -> moe_residual_2
+	moe_residual_2 -> ln2_2
+	subgraph cluster_stage_1_layer_2 {
+		label="Layer 3" style=dotted
+		mha_qkv_2 [label="MHA QKV Linear (TP=8)\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+		mha_attn_2 [label="MHA Attention (TP=8)\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+		mha_out_2 [label="MHA Output Linear (TP=8)\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+		mha_residual_2 [label="MHA Residual Add\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+		ln1_2 [label="Layer Norm 1\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+		gate_2 [label="Expert Gate\nShape: (1024, 1, 16)\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+		route_to_expert_2_8_0 [label="Route to Expert 0\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_8_0 [label="Expert 0 Linear 1\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_8_0 [label="Expert 0 GELU\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_8_0 [label="Expert 0 Linear 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_8_1 [label="Route to Expert 1\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_8_1 [label="Expert 1 Linear 1\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_8_1 [label="Expert 1 GELU\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_8_1 [label="Expert 1 Linear 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_8_2 [label="Route to Expert 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_8_2 [label="Expert 2 Linear 1\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_8_2 [label="Expert 2 GELU\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_8_2 [label="Expert 2 Linear 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_8_3 [label="Route to Expert 3\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_8_3 [label="Expert 3 Linear 1\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_8_3 [label="Expert 3 GELU\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_8_3 [label="Expert 3 Linear 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_9_0 [label="Route to Expert 4\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_9_0 [label="Expert 4 Linear 1\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_9_0 [label="Expert 4 GELU\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_9_0 [label="Expert 4 Linear 2\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_9_1 [label="Route to Expert 5\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_9_1 [label="Expert 5 Linear 1\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_9_1 [label="Expert 5 GELU\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_9_1 [label="Expert 5 Linear 2\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_9_2 [label="Route to Expert 6\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_9_2 [label="Expert 6 Linear 1\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_9_2 [label="Expert 6 GELU\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_9_2 [label="Expert 6 Linear 2\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_9_3 [label="Route to Expert 7\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_9_3 [label="Expert 7 Linear 1\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_9_3 [label="Expert 7 GELU\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_9_3 [label="Expert 7 Linear 2\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_10_0 [label="Route to Expert 8\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_10_0 [label="Expert 8 Linear 1\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_10_0 [label="Expert 8 GELU\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_10_0 [label="Expert 8 Linear 2\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_10_1 [label="Route to Expert 9\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_10_1 [label="Expert 9 Linear 1\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_10_1 [label="Expert 9 GELU\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_10_1 [label="Expert 9 Linear 2\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_10_2 [label="Route to Expert 10\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_10_2 [label="Expert 10 Linear 1\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_10_2 [label="Expert 10 GELU\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_10_2 [label="Expert 10 Linear 2\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_10_3 [label="Route to Expert 11\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_10_3 [label="Expert 11 Linear 1\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_10_3 [label="Expert 11 GELU\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_10_3 [label="Expert 11 Linear 2\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_11_0 [label="Route to Expert 12\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_11_0 [label="Expert 12 Linear 1\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_11_0 [label="Expert 12 GELU\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_11_0 [label="Expert 12 Linear 2\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_11_1 [label="Route to Expert 13\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_11_1 [label="Expert 13 Linear 1\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_11_1 [label="Expert 13 GELU\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_11_1 [label="Expert 13 Linear 2\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_11_2 [label="Route to Expert 14\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_11_2 [label="Expert 14 Linear 1\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_11_2 [label="Expert 14 GELU\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_11_2 [label="Expert 14 Linear 2\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_11_3 [label="Route to Expert 15\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_11_3 [label="Expert 15 Linear 1\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_11_3 [label="Expert 15 GELU\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_11_3 [label="Expert 15 Linear 2\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_12_0 [label="Route to Expert 16\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_12_0 [label="Expert 16 Linear 1\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_12_0 [label="Expert 16 GELU\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_12_0 [label="Expert 16 Linear 2\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_12_1 [label="Route to Expert 17\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_12_1 [label="Expert 17 Linear 1\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_12_1 [label="Expert 17 GELU\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_12_1 [label="Expert 17 Linear 2\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_12_2 [label="Route to Expert 18\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_12_2 [label="Expert 18 Linear 1\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_12_2 [label="Expert 18 GELU\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_12_2 [label="Expert 18 Linear 2\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_12_3 [label="Route to Expert 19\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_12_3 [label="Expert 19 Linear 1\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_12_3 [label="Expert 19 GELU\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_12_3 [label="Expert 19 Linear 2\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_13_0 [label="Route to Expert 20\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_13_0 [label="Expert 20 Linear 1\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_13_0 [label="Expert 20 GELU\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_13_0 [label="Expert 20 Linear 2\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_13_1 [label="Route to Expert 21\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_13_1 [label="Expert 21 Linear 1\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_13_1 [label="Expert 21 GELU\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_13_1 [label="Expert 21 Linear 2\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_13_2 [label="Route to Expert 22\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_13_2 [label="Expert 22 Linear 1\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_13_2 [label="Expert 22 GELU\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_13_2 [label="Expert 22 Linear 2\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_13_3 [label="Route to Expert 23\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_13_3 [label="Expert 23 Linear 1\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_13_3 [label="Expert 23 GELU\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_13_3 [label="Expert 23 Linear 2\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_14_0 [label="Route to Expert 24\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_14_0 [label="Expert 24 Linear 1\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_14_0 [label="Expert 24 GELU\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_14_0 [label="Expert 24 Linear 2\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_14_1 [label="Route to Expert 25\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_14_1 [label="Expert 25 Linear 1\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_14_1 [label="Expert 25 GELU\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_14_1 [label="Expert 25 Linear 2\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_14_2 [label="Route to Expert 26\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_14_2 [label="Expert 26 Linear 1\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_14_2 [label="Expert 26 GELU\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_14_2 [label="Expert 26 Linear 2\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_14_3 [label="Route to Expert 27\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_14_3 [label="Expert 27 Linear 1\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_14_3 [label="Expert 27 GELU\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_14_3 [label="Expert 27 Linear 2\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_15_0 [label="Route to Expert 28\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_15_0 [label="Expert 28 Linear 1\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_15_0 [label="Expert 28 GELU\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_15_0 [label="Expert 28 Linear 2\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_15_1 [label="Route to Expert 29\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_15_1 [label="Expert 29 Linear 1\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_15_1 [label="Expert 29 GELU\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_15_1 [label="Expert 29 Linear 2\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_15_2 [label="Route to Expert 30\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_15_2 [label="Expert 30 Linear 1\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_15_2 [label="Expert 30 GELU\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_15_2 [label="Expert 30 Linear 2\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_2_15_3 [label="Route to Expert 31\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse]
+		expert_linear1_2_15_3 [label="Expert 31 Linear 1\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_activation_2_15_3 [label="Expert 31 GELU\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_2_15_3 [label="Expert 31 Linear 2\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		aggregate_2 [label="Aggregate Expert Outputs\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+		moe_residual_2 [label="MoE Residual Add\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+		ln2_2 [label="Layer Norm 2\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	}
+	ln2_2 -> mha_qkv_3
+	mha_qkv_3 -> mha_attn_3
+	mha_attn_3 -> mha_out_3
+	mha_out_3 -> mha_residual_3
+	ln2_2 -> mha_residual_3
+	mha_residual_3 -> ln1_3
+	ln1_3 -> gate_3
+	gate_3 -> route_to_expert_3_8_0 [style=dashed]
+	route_to_expert_3_8_0 -> expert_linear1_3_8_0
+	expert_linear1_3_8_0 -> expert_activation_3_8_0
+	expert_activation_3_8_0 -> expert_linear2_3_8_0
+	gate_3 -> route_to_expert_3_8_1 [style=dashed]
+	route_to_expert_3_8_1 -> expert_linear1_3_8_1
+	expert_linear1_3_8_1 -> expert_activation_3_8_1
+	expert_activation_3_8_1 -> expert_linear2_3_8_1
+	gate_3 -> route_to_expert_3_8_2 [style=dashed]
+	route_to_expert_3_8_2 -> expert_linear1_3_8_2
+	expert_linear1_3_8_2 -> expert_activation_3_8_2
+	expert_activation_3_8_2 -> expert_linear2_3_8_2
+	gate_3 -> route_to_expert_3_8_3 [style=dashed]
+	route_to_expert_3_8_3 -> expert_linear1_3_8_3
+	expert_linear1_3_8_3 -> expert_activation_3_8_3
+	expert_activation_3_8_3 -> expert_linear2_3_8_3
+	gate_3 -> route_to_expert_3_9_0 [style=dashed]
+	route_to_expert_3_9_0 -> expert_linear1_3_9_0
+	expert_linear1_3_9_0 -> expert_activation_3_9_0
+	expert_activation_3_9_0 -> expert_linear2_3_9_0
+	gate_3 -> route_to_expert_3_9_1 [style=dashed]
+	route_to_expert_3_9_1 -> expert_linear1_3_9_1
+	expert_linear1_3_9_1 -> expert_activation_3_9_1
+	expert_activation_3_9_1 -> expert_linear2_3_9_1
+	gate_3 -> route_to_expert_3_9_2 [style=dashed]
+	route_to_expert_3_9_2 -> expert_linear1_3_9_2
+	expert_linear1_3_9_2 -> expert_activation_3_9_2
+	expert_activation_3_9_2 -> expert_linear2_3_9_2
+	gate_3 -> route_to_expert_3_9_3 [style=dashed]
+	route_to_expert_3_9_3 -> expert_linear1_3_9_3
+	expert_linear1_3_9_3 -> expert_activation_3_9_3
+	expert_activation_3_9_3 -> expert_linear2_3_9_3
+	gate_3 -> route_to_expert_3_10_0 [style=dashed]
+	route_to_expert_3_10_0 -> expert_linear1_3_10_0
+	expert_linear1_3_10_0 -> expert_activation_3_10_0
+	expert_activation_3_10_0 -> expert_linear2_3_10_0
+	gate_3 -> route_to_expert_3_10_1 [style=dashed]
+	route_to_expert_3_10_1 -> expert_linear1_3_10_1
+	expert_linear1_3_10_1 -> expert_activation_3_10_1
+	expert_activation_3_10_1 -> expert_linear2_3_10_1
+	gate_3 -> route_to_expert_3_10_2 [style=dashed]
+	route_to_expert_3_10_2 -> expert_linear1_3_10_2
+	expert_linear1_3_10_2 -> expert_activation_3_10_2
+	expert_activation_3_10_2 -> expert_linear2_3_10_2
+	gate_3 -> route_to_expert_3_10_3 [style=dashed]
+	route_to_expert_3_10_3 -> expert_linear1_3_10_3
+	expert_linear1_3_10_3 -> expert_activation_3_10_3
+	expert_activation_3_10_3 -> expert_linear2_3_10_3
+	gate_3 -> route_to_expert_3_11_0 [style=dashed]
+	route_to_expert_3_11_0 -> expert_linear1_3_11_0
+	expert_linear1_3_11_0 -> expert_activation_3_11_0
+	expert_activation_3_11_0 -> expert_linear2_3_11_0
+	gate_3 -> route_to_expert_3_11_1 [style=dashed]
+	route_to_expert_3_11_1 -> expert_linear1_3_11_1
+	expert_linear1_3_11_1 -> expert_activation_3_11_1
+	expert_activation_3_11_1 -> expert_linear2_3_11_1
+	gate_3 -> route_to_expert_3_11_2 [style=dashed]
+	route_to_expert_3_11_2 -> expert_linear1_3_11_2
+	expert_linear1_3_11_2 -> expert_activation_3_11_2
+	expert_activation_3_11_2 -> expert_linear2_3_11_2
+	gate_3 -> route_to_expert_3_11_3 [style=dashed]
+	route_to_expert_3_11_3 -> expert_linear1_3_11_3
+	expert_linear1_3_11_3 -> expert_activation_3_11_3
+	expert_activation_3_11_3 -> expert_linear2_3_11_3
+	gate_3 -> route_to_expert_3_12_0 [style=dashed]
+	route_to_expert_3_12_0 -> expert_linear1_3_12_0
+	expert_linear1_3_12_0 -> expert_activation_3_12_0
+	expert_activation_3_12_0 -> expert_linear2_3_12_0
+	gate_3 -> route_to_expert_3_12_1 [style=dashed]
+	route_to_expert_3_12_1 -> expert_linear1_3_12_1
+	expert_linear1_3_12_1 -> expert_activation_3_12_1
+	expert_activation_3_12_1 -> expert_linear2_3_12_1
+	gate_3 -> route_to_expert_3_12_2 [style=dashed]
+	route_to_expert_3_12_2 -> expert_linear1_3_12_2
+	expert_linear1_3_12_2 -> expert_activation_3_12_2
+	expert_activation_3_12_2 -> expert_linear2_3_12_2
+	gate_3 -> route_to_expert_3_12_3 [style=dashed]
+	route_to_expert_3_12_3 -> expert_linear1_3_12_3
+	expert_linear1_3_12_3 -> expert_activation_3_12_3
+	expert_activation_3_12_3 -> expert_linear2_3_12_3
+	gate_3 -> route_to_expert_3_13_0 [style=dashed]
+	route_to_expert_3_13_0 -> expert_linear1_3_13_0
+	expert_linear1_3_13_0 -> expert_activation_3_13_0
+	expert_activation_3_13_0 -> expert_linear2_3_13_0
+	gate_3 -> route_to_expert_3_13_1 [style=dashed]
+	route_to_expert_3_13_1 -> expert_linear1_3_13_1
+	expert_linear1_3_13_1 -> expert_activation_3_13_1
+	expert_activation_3_13_1 -> expert_linear2_3_13_1
+	gate_3 -> route_to_expert_3_13_2 [style=dashed]
+	route_to_expert_3_13_2 -> expert_linear1_3_13_2
+	expert_linear1_3_13_2 -> expert_activation_3_13_2
+	expert_activation_3_13_2 -> expert_linear2_3_13_2
+	gate_3 -> route_to_expert_3_13_3 [style=dashed]
+	route_to_expert_3_13_3 -> expert_linear1_3_13_3
+	expert_linear1_3_13_3 -> expert_activation_3_13_3
+	expert_activation_3_13_3 -> expert_linear2_3_13_3
+	gate_3 -> route_to_expert_3_14_0 [style=dashed]
+	route_to_expert_3_14_0 -> expert_linear1_3_14_0
+	expert_linear1_3_14_0 -> expert_activation_3_14_0
+	expert_activation_3_14_0 -> expert_linear2_3_14_0
+	gate_3 -> route_to_expert_3_14_1 [style=dashed]
+	route_to_expert_3_14_1 -> expert_linear1_3_14_1
+	expert_linear1_3_14_1 -> expert_activation_3_14_1
+	expert_activation_3_14_1 -> expert_linear2_3_14_1
+	gate_3 -> route_to_expert_3_14_2 [style=dashed]
+	route_to_expert_3_14_2 -> expert_linear1_3_14_2
+	expert_linear1_3_14_2 -> expert_activation_3_14_2
+	expert_activation_3_14_2 -> expert_linear2_3_14_2
+	gate_3 -> route_to_expert_3_14_3 [style=dashed]
+	route_to_expert_3_14_3 -> expert_linear1_3_14_3
+	expert_linear1_3_14_3 -> expert_activation_3_14_3
+	expert_activation_3_14_3 -> expert_linear2_3_14_3
+	gate_3 -> route_to_expert_3_15_0 [style=dashed]
+	route_to_expert_3_15_0 -> expert_linear1_3_15_0
+	expert_linear1_3_15_0 -> expert_activation_3_15_0
+	expert_activation_3_15_0 -> expert_linear2_3_15_0
+	gate_3 -> route_to_expert_3_15_1 [style=dashed]
+	route_to_expert_3_15_1 -> expert_linear1_3_15_1
+	expert_linear1_3_15_1 -> expert_activation_3_15_1
+	expert_activation_3_15_1 -> expert_linear2_3_15_1
+	gate_3 -> route_to_expert_3_15_2 [style=dashed]
+	route_to_expert_3_15_2 -> expert_linear1_3_15_2
+	expert_linear1_3_15_2 -> expert_activation_3_15_2
+	expert_activation_3_15_2 -> expert_linear2_3_15_2
+	gate_3 -> route_to_expert_3_15_3 [style=dashed]
+	route_to_expert_3_15_3 -> expert_linear1_3_15_3
+	expert_linear1_3_15_3 -> expert_activation_3_15_3
+	expert_activation_3_15_3 -> expert_linear2_3_15_3
+	expert_linear2_3_8_0 -> aggregate_3
+	expert_linear2_3_8_1 -> aggregate_3
+	expert_linear2_3_8_2 -> aggregate_3
+	expert_linear2_3_8_3 -> aggregate_3
+	expert_linear2_3_9_0 -> aggregate_3
+	expert_linear2_3_9_1 -> aggregate_3
+	expert_linear2_3_9_2 -> aggregate_3
+	expert_linear2_3_9_3 -> aggregate_3
+	expert_linear2_3_10_0 -> aggregate_3
+	expert_linear2_3_10_1 -> aggregate_3
+	expert_linear2_3_10_2 -> aggregate_3
+	expert_linear2_3_10_3 -> aggregate_3
+	expert_linear2_3_11_0 -> aggregate_3
+	expert_linear2_3_11_1 -> aggregate_3
+	expert_linear2_3_11_2 -> aggregate_3
+	expert_linear2_3_11_3 -> aggregate_3
+	expert_linear2_3_12_0 -> aggregate_3
+	expert_linear2_3_12_1 -> aggregate_3
+	expert_linear2_3_12_2 -> aggregate_3
+	expert_linear2_3_12_3 -> aggregate_3
+	expert_linear2_3_13_0 -> aggregate_3
+	expert_linear2_3_13_1 -> aggregate_3
+	expert_linear2_3_13_2 -> aggregate_3
+	expert_linear2_3_13_3 -> aggregate_3
+	expert_linear2_3_14_0 -> aggregate_3
+	expert_linear2_3_14_1 -> aggregate_3
+	expert_linear2_3_14_2 -> aggregate_3
+	expert_linear2_3_14_3 -> aggregate_3
+	expert_linear2_3_15_0 -> aggregate_3
+	expert_linear2_3_15_1 -> aggregate_3
+	expert_linear2_3_15_2 -> aggregate_3
+	expert_linear2_3_15_3 -> aggregate_3
+	ln1_3 -> moe_residual_3
+	aggregate_3 -> moe_residual_3
+	moe_residual_3 -> ln2_3
+	subgraph cluster_stage_1_layer_3 {
+		label="Layer 4" style=dotted
+		mha_qkv_3 [label="MHA QKV Linear (TP=8)\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+		mha_attn_3 [label="MHA Attention (TP=8)\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+		mha_out_3 [label="MHA Output Linear (TP=8)\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+		mha_residual_3 [label="MHA Residual Add\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+		ln1_3 [label="Layer Norm 1\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+		gate_3 [label="Expert Gate\nShape: (1024, 1, 16)\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+		route_to_expert_3_8_0 [label="Route to Expert 0\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_8_0 [label="Expert 0 Linear 1\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_8_0 [label="Expert 0 GELU\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_8_0 [label="Expert 0 Linear 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_8_1 [label="Route to Expert 1\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_8_1 [label="Expert 1 Linear 1\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_8_1 [label="Expert 1 GELU\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_8_1 [label="Expert 1 Linear 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_8_2 [label="Route to Expert 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_8_2 [label="Expert 2 Linear 1\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_8_2 [label="Expert 2 GELU\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_8_2 [label="Expert 2 Linear 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_8_3 [label="Route to Expert 3\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_8_3 [label="Expert 3 Linear 1\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_8_3 [label="Expert 3 GELU\nShape: (tokens, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_8_3 [label="Expert 3 Linear 2\nShape: (tokens, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_9_0 [label="Route to Expert 4\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_9_0 [label="Expert 4 Linear 1\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_9_0 [label="Expert 4 GELU\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_9_0 [label="Expert 4 Linear 2\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_9_1 [label="Route to Expert 5\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_9_1 [label="Expert 5 Linear 1\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_9_1 [label="Expert 5 GELU\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_9_1 [label="Expert 5 Linear 2\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_9_2 [label="Route to Expert 6\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_9_2 [label="Expert 6 Linear 1\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_9_2 [label="Expert 6 GELU\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_9_2 [label="Expert 6 Linear 2\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_9_3 [label="Route to Expert 7\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_9_3 [label="Expert 7 Linear 1\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_9_3 [label="Expert 7 GELU\nShape: (tokens, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_9_3 [label="Expert 7 Linear 2\nShape: (tokens, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_10_0 [label="Route to Expert 8\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_10_0 [label="Expert 8 Linear 1\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_10_0 [label="Expert 8 GELU\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_10_0 [label="Expert 8 Linear 2\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_10_1 [label="Route to Expert 9\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_10_1 [label="Expert 9 Linear 1\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_10_1 [label="Expert 9 GELU\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_10_1 [label="Expert 9 Linear 2\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_10_2 [label="Route to Expert 10\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_10_2 [label="Expert 10 Linear 1\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_10_2 [label="Expert 10 GELU\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_10_2 [label="Expert 10 Linear 2\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_10_3 [label="Route to Expert 11\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_10_3 [label="Expert 11 Linear 1\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_10_3 [label="Expert 11 GELU\nShape: (tokens, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_10_3 [label="Expert 11 Linear 2\nShape: (tokens, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_11_0 [label="Route to Expert 12\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_11_0 [label="Expert 12 Linear 1\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_11_0 [label="Expert 12 GELU\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_11_0 [label="Expert 12 Linear 2\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_11_1 [label="Route to Expert 13\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_11_1 [label="Expert 13 Linear 1\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_11_1 [label="Expert 13 GELU\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_11_1 [label="Expert 13 Linear 2\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_11_2 [label="Route to Expert 14\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_11_2 [label="Expert 14 Linear 1\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_11_2 [label="Expert 14 GELU\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_11_2 [label="Expert 14 Linear 2\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_11_3 [label="Route to Expert 15\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_11_3 [label="Expert 15 Linear 1\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_11_3 [label="Expert 15 GELU\nShape: (tokens, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_11_3 [label="Expert 15 Linear 2\nShape: (tokens, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_12_0 [label="Route to Expert 16\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_12_0 [label="Expert 16 Linear 1\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_12_0 [label="Expert 16 GELU\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_12_0 [label="Expert 16 Linear 2\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_12_1 [label="Route to Expert 17\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_12_1 [label="Expert 17 Linear 1\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_12_1 [label="Expert 17 GELU\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_12_1 [label="Expert 17 Linear 2\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_12_2 [label="Route to Expert 18\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_12_2 [label="Expert 18 Linear 1\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_12_2 [label="Expert 18 GELU\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_12_2 [label="Expert 18 Linear 2\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_12_3 [label="Route to Expert 19\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_12_3 [label="Expert 19 Linear 1\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_12_3 [label="Expert 19 GELU\nShape: (tokens, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_12_3 [label="Expert 19 Linear 2\nShape: (tokens, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_13_0 [label="Route to Expert 20\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_13_0 [label="Expert 20 Linear 1\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_13_0 [label="Expert 20 GELU\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_13_0 [label="Expert 20 Linear 2\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_13_1 [label="Route to Expert 21\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_13_1 [label="Expert 21 Linear 1\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_13_1 [label="Expert 21 GELU\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_13_1 [label="Expert 21 Linear 2\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_13_2 [label="Route to Expert 22\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_13_2 [label="Expert 22 Linear 1\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_13_2 [label="Expert 22 GELU\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_13_2 [label="Expert 22 Linear 2\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_13_3 [label="Route to Expert 23\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_13_3 [label="Expert 23 Linear 1\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_13_3 [label="Expert 23 GELU\nShape: (tokens, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_13_3 [label="Expert 23 Linear 2\nShape: (tokens, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_14_0 [label="Route to Expert 24\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_14_0 [label="Expert 24 Linear 1\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_14_0 [label="Expert 24 GELU\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_14_0 [label="Expert 24 Linear 2\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_14_1 [label="Route to Expert 25\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_14_1 [label="Expert 25 Linear 1\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_14_1 [label="Expert 25 GELU\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_14_1 [label="Expert 25 Linear 2\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_14_2 [label="Route to Expert 26\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_14_2 [label="Expert 26 Linear 1\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_14_2 [label="Expert 26 GELU\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_14_2 [label="Expert 26 Linear 2\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_14_3 [label="Route to Expert 27\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_14_3 [label="Expert 27 Linear 1\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_14_3 [label="Expert 27 GELU\nShape: (tokens, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_14_3 [label="Expert 27 Linear 2\nShape: (tokens, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_15_0 [label="Route to Expert 28\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_15_0 [label="Expert 28 Linear 1\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_15_0 [label="Expert 28 GELU\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_15_0 [label="Expert 28 Linear 2\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_15_1 [label="Route to Expert 29\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_15_1 [label="Expert 29 Linear 1\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_15_1 [label="Expert 29 GELU\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_15_1 [label="Expert 29 Linear 2\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_15_2 [label="Route to Expert 30\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_15_2 [label="Expert 30 Linear 1\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_15_2 [label="Expert 30 GELU\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_15_2 [label="Expert 30 Linear 2\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		route_to_expert_3_15_3 [label="Route to Expert 31\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse]
+		expert_linear1_3_15_3 [label="Expert 31 Linear 1\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_activation_3_15_3 [label="Expert 31 GELU\nShape: (tokens, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		expert_linear2_3_15_3 [label="Expert 31 Linear 2\nShape: (tokens, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+		aggregate_3 [label="Aggregate Expert Outputs\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+		moe_residual_3 [label="MoE Residual Add\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+		ln2_3 [label="Layer Norm 2\nShape: (1024, 1, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	}
+	subgraph cluster_stage_1 {
+		label="Pipeline Stage 1\n(GPUs 8-15)" style=dashed
+	}
+	ln2_3 -> final_norm
+	final_norm -> output_linear
+	output_linear -> softmax
+	subgraph cluster_output {
+		label="Output Processing" style=dashed
+		final_norm [label="Final Layer Norm\nShape: (1024, 1, 8192)\nGPU: Stage 1" fillcolor=lightgreen shape=rectangle]
+		output_linear [label="Output Linear\nShape: (1024, 1, vocab_size)\nGPU: Stage 1" fillcolor=lightgreen shape=rectangle]
+		softmax [label="Softmax\nShape: (1024, 1, vocab_size)\nGPU: Stage 1" fillcolor=lightgreen shape=rectangle]
+	}
+}
