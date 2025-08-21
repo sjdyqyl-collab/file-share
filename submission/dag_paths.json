@@ -1,5 +1,8 @@
 {
   "dense_model_dag": "/home/wzc/data/file-share/submission/dense_model_dag.svg",
   "moe_model_dag": "/home/wzc/data/file-share/submission/moe_model_dag.svg",
-  "description": "Complete DAGs for both dense and MoE models deployed using layer-wise strategy across 16 GPUs as described in the paper"
+  "generation_scripts": [
+    "/home/wzc/data/file-share/submission/generate_dense_dag.py",
+    "/home/wzc/data/file-share/submission/generate_moe_dag.py"
+  ]
 }
