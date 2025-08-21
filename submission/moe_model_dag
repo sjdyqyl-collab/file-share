@@ -1,0 +1,3323 @@
+// MoE Model Layer-wise Deployment on 16 GPUs
+digraph MoE_Model_Layerwise_Deployment {
+	rankdir=TB size="25,35"
+	node [shape=rectangle style=filled]
+	input [label="Input
+[Batch=1024, Seq=2048, Hidden=4096]
+GPU-0" fillcolor=lightgreen shape=ellipse]
+	subgraph cluster_layer_1 {
+		color=blue fillcolor=lightblue label="Layer 1 (GPU-0 to GPU-7)" style=rounded
+		ln1_1 [label="LayerNorm1
+[1024×2048×4096]
+GPU-0" fillcolor=lightyellow shape=rectangle]
+		mha_q_1 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-0" fillcolor=lightcoral shape=rectangle]
+		mha_k_1 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-0" fillcolor=lightcoral shape=rectangle]
+		mha_v_1 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-0" fillcolor=lightcoral shape=rectangle]
+		mha_attn_1 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-0" fillcolor=lightcoral shape=rectangle]
+		mha_out_1 [label="MHA-Out
+[1024×2048×4096]
+GPU-0" fillcolor=lightcoral shape=rectangle]
+		residual1_1 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-0" fillcolor=lightpink shape=parallelogram]
+		ln2_1 [label="LayerNorm2
+[1024×2048×4096]
+GPU-0" fillcolor=lightyellow shape=rectangle]
+		gate_1 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-0" fillcolor=orange shape=diamond]
+		expert0_up_1 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-0" fillcolor=lightgreen shape=rectangle]
+		expert0_act_1 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-0" fillcolor=lightgreen shape=rectangle]
+		expert0_down_1 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-0" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_1 [label="Expert0 Output
+[1024×2048×4096]
+GPU-0" fillcolor=lightgray shape=ellipse]
+		expert1_up_1 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-1" fillcolor=lightgreen shape=rectangle]
+		expert1_act_1 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-1" fillcolor=lightgreen shape=rectangle]
+		expert1_down_1 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-1" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_1 [label="Expert1 Output
+[1024×2048×4096]
+GPU-1" fillcolor=lightgray shape=ellipse]
+		expert2_up_1 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert2_act_1 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert2_down_1 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_1 [label="Expert2 Output
+[1024×2048×4096]
+GPU-2" fillcolor=lightgray shape=ellipse]
+		expert3_up_1 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert3_act_1 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert3_down_1 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_1 [label="Expert3 Output
+[1024×2048×4096]
+GPU-3" fillcolor=lightgray shape=ellipse]
+		expert4_up_1 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert4_act_1 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert4_down_1 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_1 [label="Expert4 Output
+[1024×2048×4096]
+GPU-4" fillcolor=lightgray shape=ellipse]
+		expert5_up_1 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert5_act_1 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert5_down_1 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_1 [label="Expert5 Output
+[1024×2048×4096]
+GPU-5" fillcolor=lightgray shape=ellipse]
+		expert6_up_1 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert6_act_1 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert6_down_1 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_1 [label="Expert6 Output
+[1024×2048×4096]
+GPU-6" fillcolor=lightgray shape=ellipse]
+		expert7_up_1 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert7_act_1 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert7_down_1 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_1 [label="Expert7 Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+		expert_agg_1 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-7" fillcolor=gold shape=parallelogram]
+		residual2_1 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-7" fillcolor=lightpink shape=parallelogram]
+		layer_out_1 [label="Layer1_Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_2 {
+		color=blue fillcolor=lightblue label="Layer 2 (GPU-1 to GPU-8)" style=rounded
+		ln1_2 [label="LayerNorm1
+[1024×2048×4096]
+GPU-1" fillcolor=lightyellow shape=rectangle]
+		mha_q_2 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-1" fillcolor=lightcoral shape=rectangle]
+		mha_k_2 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-1" fillcolor=lightcoral shape=rectangle]
+		mha_v_2 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-1" fillcolor=lightcoral shape=rectangle]
+		mha_attn_2 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-1" fillcolor=lightcoral shape=rectangle]
+		mha_out_2 [label="MHA-Out
+[1024×2048×4096]
+GPU-1" fillcolor=lightcoral shape=rectangle]
+		residual1_2 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-1" fillcolor=lightpink shape=parallelogram]
+		ln2_2 [label="LayerNorm2
+[1024×2048×4096]
+GPU-1" fillcolor=lightyellow shape=rectangle]
+		gate_2 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-1" fillcolor=orange shape=diamond]
+		expert0_up_2 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-1" fillcolor=lightgreen shape=rectangle]
+		expert0_act_2 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-1" fillcolor=lightgreen shape=rectangle]
+		expert0_down_2 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-1" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_2 [label="Expert0 Output
+[1024×2048×4096]
+GPU-1" fillcolor=lightgray shape=ellipse]
+		expert1_up_2 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert1_act_2 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert1_down_2 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_2 [label="Expert1 Output
+[1024×2048×4096]
+GPU-2" fillcolor=lightgray shape=ellipse]
+		expert2_up_2 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert2_act_2 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert2_down_2 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_2 [label="Expert2 Output
+[1024×2048×4096]
+GPU-3" fillcolor=lightgray shape=ellipse]
+		expert3_up_2 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert3_act_2 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert3_down_2 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_2 [label="Expert3 Output
+[1024×2048×4096]
+GPU-4" fillcolor=lightgray shape=ellipse]
+		expert4_up_2 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert4_act_2 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert4_down_2 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_2 [label="Expert4 Output
+[1024×2048×4096]
+GPU-5" fillcolor=lightgray shape=ellipse]
+		expert5_up_2 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert5_act_2 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert5_down_2 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_2 [label="Expert5 Output
+[1024×2048×4096]
+GPU-6" fillcolor=lightgray shape=ellipse]
+		expert6_up_2 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert6_act_2 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert6_down_2 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_2 [label="Expert6 Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+		expert7_up_2 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert7_act_2 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert7_down_2 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_2 [label="Expert7 Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+		expert_agg_2 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-8" fillcolor=gold shape=parallelogram]
+		residual2_2 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-8" fillcolor=lightpink shape=parallelogram]
+		layer_out_2 [label="Layer2_Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_3 {
+		color=blue fillcolor=lightblue label="Layer 3 (GPU-2 to GPU-9)" style=rounded
+		ln1_3 [label="LayerNorm1
+[1024×2048×4096]
+GPU-2" fillcolor=lightyellow shape=rectangle]
+		mha_q_3 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-2" fillcolor=lightcoral shape=rectangle]
+		mha_k_3 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-2" fillcolor=lightcoral shape=rectangle]
+		mha_v_3 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-2" fillcolor=lightcoral shape=rectangle]
+		mha_attn_3 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-2" fillcolor=lightcoral shape=rectangle]
+		mha_out_3 [label="MHA-Out
+[1024×2048×4096]
+GPU-2" fillcolor=lightcoral shape=rectangle]
+		residual1_3 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-2" fillcolor=lightpink shape=parallelogram]
+		ln2_3 [label="LayerNorm2
+[1024×2048×4096]
+GPU-2" fillcolor=lightyellow shape=rectangle]
+		gate_3 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-2" fillcolor=orange shape=diamond]
+		expert0_up_3 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert0_act_3 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert0_down_3 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-2" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_3 [label="Expert0 Output
+[1024×2048×4096]
+GPU-2" fillcolor=lightgray shape=ellipse]
+		expert1_up_3 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert1_act_3 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert1_down_3 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_3 [label="Expert1 Output
+[1024×2048×4096]
+GPU-3" fillcolor=lightgray shape=ellipse]
+		expert2_up_3 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert2_act_3 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert2_down_3 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_3 [label="Expert2 Output
+[1024×2048×4096]
+GPU-4" fillcolor=lightgray shape=ellipse]
+		expert3_up_3 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert3_act_3 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert3_down_3 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_3 [label="Expert3 Output
+[1024×2048×4096]
+GPU-5" fillcolor=lightgray shape=ellipse]
+		expert4_up_3 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert4_act_3 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert4_down_3 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_3 [label="Expert4 Output
+[1024×2048×4096]
+GPU-6" fillcolor=lightgray shape=ellipse]
+		expert5_up_3 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert5_act_3 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert5_down_3 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_3 [label="Expert5 Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+		expert6_up_3 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert6_act_3 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert6_down_3 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_3 [label="Expert6 Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+		expert7_up_3 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert7_act_3 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert7_down_3 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_3 [label="Expert7 Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+		expert_agg_3 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-9" fillcolor=gold shape=parallelogram]
+		residual2_3 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-9" fillcolor=lightpink shape=parallelogram]
+		layer_out_3 [label="Layer3_Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_4 {
+		color=blue fillcolor=lightblue label="Layer 4 (GPU-3 to GPU-10)" style=rounded
+		ln1_4 [label="LayerNorm1
+[1024×2048×4096]
+GPU-3" fillcolor=lightyellow shape=rectangle]
+		mha_q_4 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-3" fillcolor=lightcoral shape=rectangle]
+		mha_k_4 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-3" fillcolor=lightcoral shape=rectangle]
+		mha_v_4 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-3" fillcolor=lightcoral shape=rectangle]
+		mha_attn_4 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-3" fillcolor=lightcoral shape=rectangle]
+		mha_out_4 [label="MHA-Out
+[1024×2048×4096]
+GPU-3" fillcolor=lightcoral shape=rectangle]
+		residual1_4 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-3" fillcolor=lightpink shape=parallelogram]
+		ln2_4 [label="LayerNorm2
+[1024×2048×4096]
+GPU-3" fillcolor=lightyellow shape=rectangle]
+		gate_4 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-3" fillcolor=orange shape=diamond]
+		expert0_up_4 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert0_act_4 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert0_down_4 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-3" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_4 [label="Expert0 Output
+[1024×2048×4096]
+GPU-3" fillcolor=lightgray shape=ellipse]
+		expert1_up_4 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert1_act_4 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert1_down_4 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_4 [label="Expert1 Output
+[1024×2048×4096]
+GPU-4" fillcolor=lightgray shape=ellipse]
+		expert2_up_4 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert2_act_4 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert2_down_4 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_4 [label="Expert2 Output
+[1024×2048×4096]
+GPU-5" fillcolor=lightgray shape=ellipse]
+		expert3_up_4 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert3_act_4 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert3_down_4 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_4 [label="Expert3 Output
+[1024×2048×4096]
+GPU-6" fillcolor=lightgray shape=ellipse]
+		expert4_up_4 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert4_act_4 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert4_down_4 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_4 [label="Expert4 Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+		expert5_up_4 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert5_act_4 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert5_down_4 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_4 [label="Expert5 Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+		expert6_up_4 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert6_act_4 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert6_down_4 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_4 [label="Expert6 Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+		expert7_up_4 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert7_act_4 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert7_down_4 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_4 [label="Expert7 Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+		expert_agg_4 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-10" fillcolor=gold shape=parallelogram]
+		residual2_4 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-10" fillcolor=lightpink shape=parallelogram]
+		layer_out_4 [label="Layer4_Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_5 {
+		color=blue fillcolor=lightblue label="Layer 5 (GPU-4 to GPU-11)" style=rounded
+		ln1_5 [label="LayerNorm1
+[1024×2048×4096]
+GPU-4" fillcolor=lightyellow shape=rectangle]
+		mha_q_5 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-4" fillcolor=lightcoral shape=rectangle]
+		mha_k_5 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-4" fillcolor=lightcoral shape=rectangle]
+		mha_v_5 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-4" fillcolor=lightcoral shape=rectangle]
+		mha_attn_5 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-4" fillcolor=lightcoral shape=rectangle]
+		mha_out_5 [label="MHA-Out
+[1024×2048×4096]
+GPU-4" fillcolor=lightcoral shape=rectangle]
+		residual1_5 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-4" fillcolor=lightpink shape=parallelogram]
+		ln2_5 [label="LayerNorm2
+[1024×2048×4096]
+GPU-4" fillcolor=lightyellow shape=rectangle]
+		gate_5 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-4" fillcolor=orange shape=diamond]
+		expert0_up_5 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert0_act_5 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert0_down_5 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-4" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_5 [label="Expert0 Output
+[1024×2048×4096]
+GPU-4" fillcolor=lightgray shape=ellipse]
+		expert1_up_5 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert1_act_5 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert1_down_5 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_5 [label="Expert1 Output
+[1024×2048×4096]
+GPU-5" fillcolor=lightgray shape=ellipse]
+		expert2_up_5 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert2_act_5 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert2_down_5 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_5 [label="Expert2 Output
+[1024×2048×4096]
+GPU-6" fillcolor=lightgray shape=ellipse]
+		expert3_up_5 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert3_act_5 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert3_down_5 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_5 [label="Expert3 Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+		expert4_up_5 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert4_act_5 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert4_down_5 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_5 [label="Expert4 Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+		expert5_up_5 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert5_act_5 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert5_down_5 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_5 [label="Expert5 Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+		expert6_up_5 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert6_act_5 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert6_down_5 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_5 [label="Expert6 Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+		expert7_up_5 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert7_act_5 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert7_down_5 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_5 [label="Expert7 Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+		expert_agg_5 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-11" fillcolor=gold shape=parallelogram]
+		residual2_5 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-11" fillcolor=lightpink shape=parallelogram]
+		layer_out_5 [label="Layer5_Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_6 {
+		color=blue fillcolor=lightblue label="Layer 6 (GPU-5 to GPU-12)" style=rounded
+		ln1_6 [label="LayerNorm1
+[1024×2048×4096]
+GPU-5" fillcolor=lightyellow shape=rectangle]
+		mha_q_6 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-5" fillcolor=lightcoral shape=rectangle]
+		mha_k_6 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-5" fillcolor=lightcoral shape=rectangle]
+		mha_v_6 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-5" fillcolor=lightcoral shape=rectangle]
+		mha_attn_6 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-5" fillcolor=lightcoral shape=rectangle]
+		mha_out_6 [label="MHA-Out
+[1024×2048×4096]
+GPU-5" fillcolor=lightcoral shape=rectangle]
+		residual1_6 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-5" fillcolor=lightpink shape=parallelogram]
+		ln2_6 [label="LayerNorm2
+[1024×2048×4096]
+GPU-5" fillcolor=lightyellow shape=rectangle]
+		gate_6 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-5" fillcolor=orange shape=diamond]
+		expert0_up_6 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert0_act_6 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert0_down_6 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-5" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_6 [label="Expert0 Output
+[1024×2048×4096]
+GPU-5" fillcolor=lightgray shape=ellipse]
+		expert1_up_6 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert1_act_6 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert1_down_6 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_6 [label="Expert1 Output
+[1024×2048×4096]
+GPU-6" fillcolor=lightgray shape=ellipse]
+		expert2_up_6 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert2_act_6 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert2_down_6 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_6 [label="Expert2 Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+		expert3_up_6 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert3_act_6 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert3_down_6 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_6 [label="Expert3 Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+		expert4_up_6 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert4_act_6 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert4_down_6 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_6 [label="Expert4 Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+		expert5_up_6 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert5_act_6 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert5_down_6 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_6 [label="Expert5 Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+		expert6_up_6 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert6_act_6 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert6_down_6 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_6 [label="Expert6 Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+		expert7_up_6 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert7_act_6 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert7_down_6 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_6 [label="Expert7 Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+		expert_agg_6 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-12" fillcolor=gold shape=parallelogram]
+		residual2_6 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-12" fillcolor=lightpink shape=parallelogram]
+		layer_out_6 [label="Layer6_Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_7 {
+		color=blue fillcolor=lightblue label="Layer 7 (GPU-6 to GPU-13)" style=rounded
+		ln1_7 [label="LayerNorm1
+[1024×2048×4096]
+GPU-6" fillcolor=lightyellow shape=rectangle]
+		mha_q_7 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-6" fillcolor=lightcoral shape=rectangle]
+		mha_k_7 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-6" fillcolor=lightcoral shape=rectangle]
+		mha_v_7 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-6" fillcolor=lightcoral shape=rectangle]
+		mha_attn_7 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-6" fillcolor=lightcoral shape=rectangle]
+		mha_out_7 [label="MHA-Out
+[1024×2048×4096]
+GPU-6" fillcolor=lightcoral shape=rectangle]
+		residual1_7 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-6" fillcolor=lightpink shape=parallelogram]
+		ln2_7 [label="LayerNorm2
+[1024×2048×4096]
+GPU-6" fillcolor=lightyellow shape=rectangle]
+		gate_7 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-6" fillcolor=orange shape=diamond]
+		expert0_up_7 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert0_act_7 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert0_down_7 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-6" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_7 [label="Expert0 Output
+[1024×2048×4096]
+GPU-6" fillcolor=lightgray shape=ellipse]
+		expert1_up_7 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert1_act_7 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert1_down_7 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_7 [label="Expert1 Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+		expert2_up_7 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert2_act_7 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert2_down_7 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_7 [label="Expert2 Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+		expert3_up_7 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert3_act_7 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert3_down_7 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_7 [label="Expert3 Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+		expert4_up_7 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert4_act_7 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert4_down_7 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_7 [label="Expert4 Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+		expert5_up_7 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert5_act_7 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert5_down_7 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_7 [label="Expert5 Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+		expert6_up_7 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert6_act_7 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert6_down_7 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_7 [label="Expert6 Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+		expert7_up_7 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert7_act_7 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert7_down_7 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_7 [label="Expert7 Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+		expert_agg_7 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-13" fillcolor=gold shape=parallelogram]
+		residual2_7 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-13" fillcolor=lightpink shape=parallelogram]
+		layer_out_7 [label="Layer7_Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_8 {
+		color=blue fillcolor=lightblue label="Layer 8 (GPU-7 to GPU-14)" style=rounded
+		ln1_8 [label="LayerNorm1
+[1024×2048×4096]
+GPU-7" fillcolor=lightyellow shape=rectangle]
+		mha_q_8 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-7" fillcolor=lightcoral shape=rectangle]
+		mha_k_8 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-7" fillcolor=lightcoral shape=rectangle]
+		mha_v_8 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-7" fillcolor=lightcoral shape=rectangle]
+		mha_attn_8 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-7" fillcolor=lightcoral shape=rectangle]
+		mha_out_8 [label="MHA-Out
+[1024×2048×4096]
+GPU-7" fillcolor=lightcoral shape=rectangle]
+		residual1_8 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-7" fillcolor=lightpink shape=parallelogram]
+		ln2_8 [label="LayerNorm2
+[1024×2048×4096]
+GPU-7" fillcolor=lightyellow shape=rectangle]
+		gate_8 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-7" fillcolor=orange shape=diamond]
+		expert0_up_8 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert0_act_8 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert0_down_8 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-7" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_8 [label="Expert0 Output
+[1024×2048×4096]
+GPU-7" fillcolor=lightgray shape=ellipse]
+		expert1_up_8 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert1_act_8 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert1_down_8 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_8 [label="Expert1 Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+		expert2_up_8 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert2_act_8 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert2_down_8 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_8 [label="Expert2 Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+		expert3_up_8 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert3_act_8 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert3_down_8 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_8 [label="Expert3 Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+		expert4_up_8 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert4_act_8 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert4_down_8 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_8 [label="Expert4 Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+		expert5_up_8 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert5_act_8 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert5_down_8 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_8 [label="Expert5 Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+		expert6_up_8 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert6_act_8 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert6_down_8 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_8 [label="Expert6 Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+		expert7_up_8 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert7_act_8 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert7_down_8 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_8 [label="Expert7 Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+		expert_agg_8 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-14" fillcolor=gold shape=parallelogram]
+		residual2_8 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-14" fillcolor=lightpink shape=parallelogram]
+		layer_out_8 [label="Layer8_Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_9 {
+		color=blue fillcolor=lightblue label="Layer 9 (GPU-8 to GPU-15)" style=rounded
+		ln1_9 [label="LayerNorm1
+[1024×2048×4096]
+GPU-8" fillcolor=lightyellow shape=rectangle]
+		mha_q_9 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-8" fillcolor=lightcoral shape=rectangle]
+		mha_k_9 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-8" fillcolor=lightcoral shape=rectangle]
+		mha_v_9 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-8" fillcolor=lightcoral shape=rectangle]
+		mha_attn_9 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-8" fillcolor=lightcoral shape=rectangle]
+		mha_out_9 [label="MHA-Out
+[1024×2048×4096]
+GPU-8" fillcolor=lightcoral shape=rectangle]
+		residual1_9 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-8" fillcolor=lightpink shape=parallelogram]
+		ln2_9 [label="LayerNorm2
+[1024×2048×4096]
+GPU-8" fillcolor=lightyellow shape=rectangle]
+		gate_9 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-8" fillcolor=orange shape=diamond]
+		expert0_up_9 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert0_act_9 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert0_down_9 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-8" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_9 [label="Expert0 Output
+[1024×2048×4096]
+GPU-8" fillcolor=lightgray shape=ellipse]
+		expert1_up_9 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert1_act_9 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert1_down_9 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_9 [label="Expert1 Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+		expert2_up_9 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert2_act_9 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert2_down_9 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_9 [label="Expert2 Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+		expert3_up_9 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert3_act_9 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert3_down_9 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_9 [label="Expert3 Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+		expert4_up_9 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert4_act_9 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert4_down_9 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_9 [label="Expert4 Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+		expert5_up_9 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert5_act_9 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert5_down_9 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_9 [label="Expert5 Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+		expert6_up_9 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert6_act_9 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert6_down_9 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_9 [label="Expert6 Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+		expert7_up_9 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert7_act_9 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert7_down_9 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_9 [label="Expert7 Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+		expert_agg_9 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-15" fillcolor=gold shape=parallelogram]
+		residual2_9 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-15" fillcolor=lightpink shape=parallelogram]
+		layer_out_9 [label="Layer9_Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_10 {
+		color=blue fillcolor=lightblue label="Layer 10 (GPU-9 to GPU-16)" style=rounded
+		ln1_10 [label="LayerNorm1
+[1024×2048×4096]
+GPU-9" fillcolor=lightyellow shape=rectangle]
+		mha_q_10 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-9" fillcolor=lightcoral shape=rectangle]
+		mha_k_10 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-9" fillcolor=lightcoral shape=rectangle]
+		mha_v_10 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-9" fillcolor=lightcoral shape=rectangle]
+		mha_attn_10 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-9" fillcolor=lightcoral shape=rectangle]
+		mha_out_10 [label="MHA-Out
+[1024×2048×4096]
+GPU-9" fillcolor=lightcoral shape=rectangle]
+		residual1_10 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-9" fillcolor=lightpink shape=parallelogram]
+		ln2_10 [label="LayerNorm2
+[1024×2048×4096]
+GPU-9" fillcolor=lightyellow shape=rectangle]
+		gate_10 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-9" fillcolor=orange shape=diamond]
+		expert0_up_10 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert0_act_10 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert0_down_10 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-9" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_10 [label="Expert0 Output
+[1024×2048×4096]
+GPU-9" fillcolor=lightgray shape=ellipse]
+		expert1_up_10 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert1_act_10 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert1_down_10 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_10 [label="Expert1 Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+		expert2_up_10 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert2_act_10 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert2_down_10 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_10 [label="Expert2 Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+		expert3_up_10 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert3_act_10 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert3_down_10 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_10 [label="Expert3 Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+		expert4_up_10 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert4_act_10 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert4_down_10 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_10 [label="Expert4 Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+		expert5_up_10 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert5_act_10 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert5_down_10 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_10 [label="Expert5 Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+		expert6_up_10 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert6_act_10 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert6_down_10 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_10 [label="Expert6 Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+		expert7_up_10 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert7_act_10 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert7_down_10 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_10 [label="Expert7 Output
+[1024×2048×4096]
+GPU-16" fillcolor=lightgray shape=ellipse]
+		expert_agg_10 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-16" fillcolor=gold shape=parallelogram]
+		residual2_10 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-16" fillcolor=lightpink shape=parallelogram]
+		layer_out_10 [label="Layer10_Output
+[1024×2048×4096]
+GPU-16" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_11 {
+		color=blue fillcolor=lightblue label="Layer 11 (GPU-10 to GPU-17)" style=rounded
+		ln1_11 [label="LayerNorm1
+[1024×2048×4096]
+GPU-10" fillcolor=lightyellow shape=rectangle]
+		mha_q_11 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-10" fillcolor=lightcoral shape=rectangle]
+		mha_k_11 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-10" fillcolor=lightcoral shape=rectangle]
+		mha_v_11 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-10" fillcolor=lightcoral shape=rectangle]
+		mha_attn_11 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-10" fillcolor=lightcoral shape=rectangle]
+		mha_out_11 [label="MHA-Out
+[1024×2048×4096]
+GPU-10" fillcolor=lightcoral shape=rectangle]
+		residual1_11 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-10" fillcolor=lightpink shape=parallelogram]
+		ln2_11 [label="LayerNorm2
+[1024×2048×4096]
+GPU-10" fillcolor=lightyellow shape=rectangle]
+		gate_11 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-10" fillcolor=orange shape=diamond]
+		expert0_up_11 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert0_act_11 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert0_down_11 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-10" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_11 [label="Expert0 Output
+[1024×2048×4096]
+GPU-10" fillcolor=lightgray shape=ellipse]
+		expert1_up_11 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert1_act_11 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert1_down_11 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_11 [label="Expert1 Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+		expert2_up_11 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert2_act_11 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert2_down_11 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_11 [label="Expert2 Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+		expert3_up_11 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert3_act_11 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert3_down_11 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_11 [label="Expert3 Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+		expert4_up_11 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert4_act_11 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert4_down_11 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_11 [label="Expert4 Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+		expert5_up_11 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert5_act_11 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert5_down_11 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_11 [label="Expert5 Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+		expert6_up_11 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert6_act_11 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert6_down_11 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_11 [label="Expert6 Output
+[1024×2048×4096]
+GPU-16" fillcolor=lightgray shape=ellipse]
+		expert7_up_11 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert7_act_11 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert7_down_11 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_11 [label="Expert7 Output
+[1024×2048×4096]
+GPU-17" fillcolor=lightgray shape=ellipse]
+		expert_agg_11 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-17" fillcolor=gold shape=parallelogram]
+		residual2_11 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-17" fillcolor=lightpink shape=parallelogram]
+		layer_out_11 [label="Layer11_Output
+[1024×2048×4096]
+GPU-17" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_12 {
+		color=blue fillcolor=lightblue label="Layer 12 (GPU-11 to GPU-18)" style=rounded
+		ln1_12 [label="LayerNorm1
+[1024×2048×4096]
+GPU-11" fillcolor=lightyellow shape=rectangle]
+		mha_q_12 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-11" fillcolor=lightcoral shape=rectangle]
+		mha_k_12 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-11" fillcolor=lightcoral shape=rectangle]
+		mha_v_12 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-11" fillcolor=lightcoral shape=rectangle]
+		mha_attn_12 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-11" fillcolor=lightcoral shape=rectangle]
+		mha_out_12 [label="MHA-Out
+[1024×2048×4096]
+GPU-11" fillcolor=lightcoral shape=rectangle]
+		residual1_12 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-11" fillcolor=lightpink shape=parallelogram]
+		ln2_12 [label="LayerNorm2
+[1024×2048×4096]
+GPU-11" fillcolor=lightyellow shape=rectangle]
+		gate_12 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-11" fillcolor=orange shape=diamond]
+		expert0_up_12 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert0_act_12 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert0_down_12 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-11" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_12 [label="Expert0 Output
+[1024×2048×4096]
+GPU-11" fillcolor=lightgray shape=ellipse]
+		expert1_up_12 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert1_act_12 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert1_down_12 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_12 [label="Expert1 Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+		expert2_up_12 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert2_act_12 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert2_down_12 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_12 [label="Expert2 Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+		expert3_up_12 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert3_act_12 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert3_down_12 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_12 [label="Expert3 Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+		expert4_up_12 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert4_act_12 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert4_down_12 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_12 [label="Expert4 Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+		expert5_up_12 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert5_act_12 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert5_down_12 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_12 [label="Expert5 Output
+[1024×2048×4096]
+GPU-16" fillcolor=lightgray shape=ellipse]
+		expert6_up_12 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert6_act_12 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert6_down_12 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_12 [label="Expert6 Output
+[1024×2048×4096]
+GPU-17" fillcolor=lightgray shape=ellipse]
+		expert7_up_12 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert7_act_12 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert7_down_12 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_12 [label="Expert7 Output
+[1024×2048×4096]
+GPU-18" fillcolor=lightgray shape=ellipse]
+		expert_agg_12 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-18" fillcolor=gold shape=parallelogram]
+		residual2_12 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-18" fillcolor=lightpink shape=parallelogram]
+		layer_out_12 [label="Layer12_Output
+[1024×2048×4096]
+GPU-18" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_13 {
+		color=blue fillcolor=lightblue label="Layer 13 (GPU-12 to GPU-19)" style=rounded
+		ln1_13 [label="LayerNorm1
+[1024×2048×4096]
+GPU-12" fillcolor=lightyellow shape=rectangle]
+		mha_q_13 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-12" fillcolor=lightcoral shape=rectangle]
+		mha_k_13 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-12" fillcolor=lightcoral shape=rectangle]
+		mha_v_13 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-12" fillcolor=lightcoral shape=rectangle]
+		mha_attn_13 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-12" fillcolor=lightcoral shape=rectangle]
+		mha_out_13 [label="MHA-Out
+[1024×2048×4096]
+GPU-12" fillcolor=lightcoral shape=rectangle]
+		residual1_13 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-12" fillcolor=lightpink shape=parallelogram]
+		ln2_13 [label="LayerNorm2
+[1024×2048×4096]
+GPU-12" fillcolor=lightyellow shape=rectangle]
+		gate_13 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-12" fillcolor=orange shape=diamond]
+		expert0_up_13 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert0_act_13 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert0_down_13 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-12" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_13 [label="Expert0 Output
+[1024×2048×4096]
+GPU-12" fillcolor=lightgray shape=ellipse]
+		expert1_up_13 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert1_act_13 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert1_down_13 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_13 [label="Expert1 Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+		expert2_up_13 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert2_act_13 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert2_down_13 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_13 [label="Expert2 Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+		expert3_up_13 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert3_act_13 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert3_down_13 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_13 [label="Expert3 Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+		expert4_up_13 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert4_act_13 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert4_down_13 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_13 [label="Expert4 Output
+[1024×2048×4096]
+GPU-16" fillcolor=lightgray shape=ellipse]
+		expert5_up_13 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert5_act_13 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert5_down_13 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_13 [label="Expert5 Output
+[1024×2048×4096]
+GPU-17" fillcolor=lightgray shape=ellipse]
+		expert6_up_13 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert6_act_13 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert6_down_13 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_13 [label="Expert6 Output
+[1024×2048×4096]
+GPU-18" fillcolor=lightgray shape=ellipse]
+		expert7_up_13 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert7_act_13 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert7_down_13 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_13 [label="Expert7 Output
+[1024×2048×4096]
+GPU-19" fillcolor=lightgray shape=ellipse]
+		expert_agg_13 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-19" fillcolor=gold shape=parallelogram]
+		residual2_13 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-19" fillcolor=lightpink shape=parallelogram]
+		layer_out_13 [label="Layer13_Output
+[1024×2048×4096]
+GPU-19" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_14 {
+		color=blue fillcolor=lightblue label="Layer 14 (GPU-13 to GPU-20)" style=rounded
+		ln1_14 [label="LayerNorm1
+[1024×2048×4096]
+GPU-13" fillcolor=lightyellow shape=rectangle]
+		mha_q_14 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-13" fillcolor=lightcoral shape=rectangle]
+		mha_k_14 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-13" fillcolor=lightcoral shape=rectangle]
+		mha_v_14 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-13" fillcolor=lightcoral shape=rectangle]
+		mha_attn_14 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-13" fillcolor=lightcoral shape=rectangle]
+		mha_out_14 [label="MHA-Out
+[1024×2048×4096]
+GPU-13" fillcolor=lightcoral shape=rectangle]
+		residual1_14 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-13" fillcolor=lightpink shape=parallelogram]
+		ln2_14 [label="LayerNorm2
+[1024×2048×4096]
+GPU-13" fillcolor=lightyellow shape=rectangle]
+		gate_14 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-13" fillcolor=orange shape=diamond]
+		expert0_up_14 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert0_act_14 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert0_down_14 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-13" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_14 [label="Expert0 Output
+[1024×2048×4096]
+GPU-13" fillcolor=lightgray shape=ellipse]
+		expert1_up_14 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert1_act_14 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert1_down_14 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_14 [label="Expert1 Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+		expert2_up_14 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert2_act_14 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert2_down_14 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_14 [label="Expert2 Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+		expert3_up_14 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert3_act_14 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert3_down_14 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_14 [label="Expert3 Output
+[1024×2048×4096]
+GPU-16" fillcolor=lightgray shape=ellipse]
+		expert4_up_14 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert4_act_14 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert4_down_14 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_14 [label="Expert4 Output
+[1024×2048×4096]
+GPU-17" fillcolor=lightgray shape=ellipse]
+		expert5_up_14 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert5_act_14 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert5_down_14 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_14 [label="Expert5 Output
+[1024×2048×4096]
+GPU-18" fillcolor=lightgray shape=ellipse]
+		expert6_up_14 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert6_act_14 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert6_down_14 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_14 [label="Expert6 Output
+[1024×2048×4096]
+GPU-19" fillcolor=lightgray shape=ellipse]
+		expert7_up_14 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert7_act_14 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert7_down_14 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_14 [label="Expert7 Output
+[1024×2048×4096]
+GPU-20" fillcolor=lightgray shape=ellipse]
+		expert_agg_14 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-20" fillcolor=gold shape=parallelogram]
+		residual2_14 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-20" fillcolor=lightpink shape=parallelogram]
+		layer_out_14 [label="Layer14_Output
+[1024×2048×4096]
+GPU-20" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_15 {
+		color=blue fillcolor=lightblue label="Layer 15 (GPU-14 to GPU-21)" style=rounded
+		ln1_15 [label="LayerNorm1
+[1024×2048×4096]
+GPU-14" fillcolor=lightyellow shape=rectangle]
+		mha_q_15 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-14" fillcolor=lightcoral shape=rectangle]
+		mha_k_15 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-14" fillcolor=lightcoral shape=rectangle]
+		mha_v_15 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-14" fillcolor=lightcoral shape=rectangle]
+		mha_attn_15 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-14" fillcolor=lightcoral shape=rectangle]
+		mha_out_15 [label="MHA-Out
+[1024×2048×4096]
+GPU-14" fillcolor=lightcoral shape=rectangle]
+		residual1_15 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-14" fillcolor=lightpink shape=parallelogram]
+		ln2_15 [label="LayerNorm2
+[1024×2048×4096]
+GPU-14" fillcolor=lightyellow shape=rectangle]
+		gate_15 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-14" fillcolor=orange shape=diamond]
+		expert0_up_15 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert0_act_15 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert0_down_15 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-14" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_15 [label="Expert0 Output
+[1024×2048×4096]
+GPU-14" fillcolor=lightgray shape=ellipse]
+		expert1_up_15 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert1_act_15 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert1_down_15 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_15 [label="Expert1 Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+		expert2_up_15 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert2_act_15 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert2_down_15 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_15 [label="Expert2 Output
+[1024×2048×4096]
+GPU-16" fillcolor=lightgray shape=ellipse]
+		expert3_up_15 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert3_act_15 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert3_down_15 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_15 [label="Expert3 Output
+[1024×2048×4096]
+GPU-17" fillcolor=lightgray shape=ellipse]
+		expert4_up_15 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert4_act_15 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert4_down_15 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_15 [label="Expert4 Output
+[1024×2048×4096]
+GPU-18" fillcolor=lightgray shape=ellipse]
+		expert5_up_15 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert5_act_15 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert5_down_15 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_15 [label="Expert5 Output
+[1024×2048×4096]
+GPU-19" fillcolor=lightgray shape=ellipse]
+		expert6_up_15 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert6_act_15 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert6_down_15 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_15 [label="Expert6 Output
+[1024×2048×4096]
+GPU-20" fillcolor=lightgray shape=ellipse]
+		expert7_up_15 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-21" fillcolor=lightgreen shape=rectangle]
+		expert7_act_15 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-21" fillcolor=lightgreen shape=rectangle]
+		expert7_down_15 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-21" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_15 [label="Expert7 Output
+[1024×2048×4096]
+GPU-21" fillcolor=lightgray shape=ellipse]
+		expert_agg_15 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-21" fillcolor=gold shape=parallelogram]
+		residual2_15 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-21" fillcolor=lightpink shape=parallelogram]
+		layer_out_15 [label="Layer15_Output
+[1024×2048×4096]
+GPU-21" fillcolor=lightgray shape=ellipse]
+	}
+	subgraph cluster_layer_16 {
+		color=blue fillcolor=lightblue label="Layer 16 (GPU-15 to GPU-22)" style=rounded
+		ln1_16 [label="LayerNorm1
+[1024×2048×4096]
+GPU-15" fillcolor=lightyellow shape=rectangle]
+		mha_q_16 [label="MHA-Q
+[1024×2048×4096×64×64]
+GPU-15" fillcolor=lightcoral shape=rectangle]
+		mha_k_16 [label="MHA-K
+[1024×2048×4096×64×64]
+GPU-15" fillcolor=lightcoral shape=rectangle]
+		mha_v_16 [label="MHA-V
+[1024×2048×4096×64×64]
+GPU-15" fillcolor=lightcoral shape=rectangle]
+		mha_attn_16 [label="MHA-Attn
+[1024×2048×64×64]
+GPU-15" fillcolor=lightcoral shape=rectangle]
+		mha_out_16 [label="MHA-Out
+[1024×2048×4096]
+GPU-15" fillcolor=lightcoral shape=rectangle]
+		residual1_16 [label="ResidualAdd1
+[1024×2048×4096]
+GPU-15" fillcolor=lightpink shape=parallelogram]
+		ln2_16 [label="LayerNorm2
+[1024×2048×4096]
+GPU-15" fillcolor=lightyellow shape=rectangle]
+		gate_16 [label="Expert Gate
+[1024×2048×4096→8]
+GPU-15" fillcolor=orange shape=diamond]
+		expert0_up_16 [label="Expert0 Up
+[1024×2048×4096→11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert0_act_16 [label="Expert0 GELU
+[1024×2048×11008]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert0_down_16 [label="Expert0 Down
+[1024×2048×11008→4096]
+GPU-15" fillcolor=lightgreen shape=rectangle]
+		expert0_agg_16 [label="Expert0 Output
+[1024×2048×4096]
+GPU-15" fillcolor=lightgray shape=ellipse]
+		expert1_up_16 [label="Expert1 Up
+[1024×2048×4096→11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert1_act_16 [label="Expert1 GELU
+[1024×2048×11008]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert1_down_16 [label="Expert1 Down
+[1024×2048×11008→4096]
+GPU-16" fillcolor=lightgreen shape=rectangle]
+		expert1_agg_16 [label="Expert1 Output
+[1024×2048×4096]
+GPU-16" fillcolor=lightgray shape=ellipse]
+		expert2_up_16 [label="Expert2 Up
+[1024×2048×4096→11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert2_act_16 [label="Expert2 GELU
+[1024×2048×11008]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert2_down_16 [label="Expert2 Down
+[1024×2048×11008→4096]
+GPU-17" fillcolor=lightgreen shape=rectangle]
+		expert2_agg_16 [label="Expert2 Output
+[1024×2048×4096]
+GPU-17" fillcolor=lightgray shape=ellipse]
+		expert3_up_16 [label="Expert3 Up
+[1024×2048×4096→11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert3_act_16 [label="Expert3 GELU
+[1024×2048×11008]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert3_down_16 [label="Expert3 Down
+[1024×2048×11008→4096]
+GPU-18" fillcolor=lightgreen shape=rectangle]
+		expert3_agg_16 [label="Expert3 Output
+[1024×2048×4096]
+GPU-18" fillcolor=lightgray shape=ellipse]
+		expert4_up_16 [label="Expert4 Up
+[1024×2048×4096→11008]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert4_act_16 [label="Expert4 GELU
+[1024×2048×11008]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert4_down_16 [label="Expert4 Down
+[1024×2048×11008→4096]
+GPU-19" fillcolor=lightgreen shape=rectangle]
+		expert4_agg_16 [label="Expert4 Output
+[1024×2048×4096]
+GPU-19" fillcolor=lightgray shape=ellipse]
+		expert5_up_16 [label="Expert5 Up
+[1024×2048×4096→11008]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert5_act_16 [label="Expert5 GELU
+[1024×2048×11008]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert5_down_16 [label="Expert5 Down
+[1024×2048×11008→4096]
+GPU-20" fillcolor=lightgreen shape=rectangle]
+		expert5_agg_16 [label="Expert5 Output
+[1024×2048×4096]
+GPU-20" fillcolor=lightgray shape=ellipse]
+		expert6_up_16 [label="Expert6 Up
+[1024×2048×4096→11008]
+GPU-21" fillcolor=lightgreen shape=rectangle]
+		expert6_act_16 [label="Expert6 GELU
+[1024×2048×11008]
+GPU-21" fillcolor=lightgreen shape=rectangle]
+		expert6_down_16 [label="Expert6 Down
+[1024×2048×11008→4096]
+GPU-21" fillcolor=lightgreen shape=rectangle]
+		expert6_agg_16 [label="Expert6 Output
+[1024×2048×4096]
+GPU-21" fillcolor=lightgray shape=ellipse]
+		expert7_up_16 [label="Expert7 Up
+[1024×2048×4096→11008]
+GPU-22" fillcolor=lightgreen shape=rectangle]
+		expert7_act_16 [label="Expert7 GELU
+[1024×2048×11008]
+GPU-22" fillcolor=lightgreen shape=rectangle]
+		expert7_down_16 [label="Expert7 Down
+[1024×2048×11008→4096]
+GPU-22" fillcolor=lightgreen shape=rectangle]
+		expert7_agg_16 [label="Expert7 Output
+[1024×2048×4096]
+GPU-22" fillcolor=lightgray shape=ellipse]
+		expert_agg_16 [label="Expert Aggregation
+[1024×2048×4096]
+GPU-22" fillcolor=gold shape=parallelogram]
+		residual2_16 [label="ResidualAdd2
+[1024×2048×4096]
+GPU-22" fillcolor=lightpink shape=parallelogram]
+		layer_out_16 [label="Layer16_Output
+[1024×2048×4096]
+GPU-22" fillcolor=lightgray shape=ellipse]
+	}
+	input -> ln1_1
+	ln1_1 -> mha_q_1
+	ln1_1 -> mha_k_1
+	ln1_1 -> mha_v_1
+	mha_q_1 -> mha_attn_1
+	mha_k_1 -> mha_attn_1
+	mha_v_1 -> mha_attn_1
+	mha_attn_1 -> mha_out_1
+	input -> residual1_1
+	mha_out_1 -> residual1_1
+	residual1_1 -> ln2_1
+	ln2_1 -> gate_1
+	gate_1 -> expert0_up_1 [label="Route tokens
+GPU-0→GPU-0" color=blue style=dashed]
+	expert0_up_1 -> expert0_act_1
+	expert0_act_1 -> expert0_down_1
+	expert0_down_1 -> expert0_agg_1
+	expert0_agg_1 -> expert_agg_1 [label="GPU-0→GPU-7
+[1024×2048×4096]" color=purple style=dashed]
+	gate_1 -> expert1_up_1 [label="Route tokens
+GPU-0→GPU-1" color=blue style=dashed]
+	expert1_up_1 -> expert1_act_1
+	expert1_act_1 -> expert1_down_1
+	expert1_down_1 -> expert1_agg_1
+	expert1_agg_1 -> expert_agg_1 [label="GPU-1→GPU-7
+[1024×2048×4096]" color=purple style=dashed]
+	gate_1 -> expert2_up_1 [label="Route tokens
+GPU-0→GPU-2" color=blue style=dashed]
+	expert2_up_1 -> expert2_act_1
+	expert2_act_1 -> expert2_down_1
+	expert2_down_1 -> expert2_agg_1
+	expert2_agg_1 -> expert_agg_1 [label="GPU-2→GPU-7
+[1024×2048×4096]" color=purple style=dashed]
+	gate_1 -> expert3_up_1 [label="Route tokens
+GPU-0→GPU-3" color=blue style=dashed]
+	expert3_up_1 -> expert3_act_1
+	expert3_act_1 -> expert3_down_1
+	expert3_down_1 -> expert3_agg_1
+	expert3_agg_1 -> expert_agg_1 [label="GPU-3→GPU-7
+[1024×2048×4096]" color=purple style=dashed]
+	gate_1 -> expert4_up_1 [label="Route tokens
+GPU-0→GPU-4" color=blue style=dashed]
+	expert4_up_1 -> expert4_act_1
+	expert4_act_1 -> expert4_down_1
+	expert4_down_1 -> expert4_agg_1
+	expert4_agg_1 -> expert_agg_1 [label="GPU-4→GPU-7
+[1024×2048×4096]" color=purple style=dashed]
+	gate_1 -> expert5_up_1 [label="Route tokens
+GPU-0→GPU-5" color=blue style=dashed]
+	expert5_up_1 -> expert5_act_1
+	expert5_act_1 -> expert5_down_1
+	expert5_down_1 -> expert5_agg_1
+	expert5_agg_1 -> expert_agg_1 [label="GPU-5→GPU-7
+[1024×2048×4096]" color=purple style=dashed]
+	gate_1 -> expert6_up_1 [label="Route tokens
+GPU-0→GPU-6" color=blue style=dashed]
+	expert6_up_1 -> expert6_act_1
+	expert6_act_1 -> expert6_down_1
+	expert6_down_1 -> expert6_agg_1
+	expert6_agg_1 -> expert_agg_1 [label="GPU-6→GPU-7
+[1024×2048×4096]" color=purple style=dashed]
+	gate_1 -> expert7_up_1 [label="Route tokens
+GPU-0→GPU-7" color=blue style=dashed]
+	expert7_up_1 -> expert7_act_1
+	expert7_act_1 -> expert7_down_1
+	expert7_down_1 -> expert7_agg_1
+	expert7_agg_1 -> expert_agg_1 [label="GPU-7→GPU-7
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_1 -> residual2_1
+	residual1_1 -> residual2_1
+	residual2_1 -> layer_out_1
+	layer_out_1 -> ln1_2 [label="GPU-7→GPU-1
+[1024×2048×4096]" color=red style=dashed]
+	ln1_2 -> mha_q_2
+	ln1_2 -> mha_k_2
+	ln1_2 -> mha_v_2
+	mha_q_2 -> mha_attn_2
+	mha_k_2 -> mha_attn_2
+	mha_v_2 -> mha_attn_2
+	mha_attn_2 -> mha_out_2
+	layer_out_1 -> residual1_2
+	mha_out_2 -> residual1_2
+	residual1_2 -> ln2_2
+	ln2_2 -> gate_2
+	gate_2 -> expert0_up_2 [label="Route tokens
+GPU-1→GPU-1" color=blue style=dashed]
+	expert0_up_2 -> expert0_act_2
+	expert0_act_2 -> expert0_down_2
+	expert0_down_2 -> expert0_agg_2
+	expert0_agg_2 -> expert_agg_2 [label="GPU-1→GPU-8
+[1024×2048×4096]" color=purple style=dashed]
+	gate_2 -> expert1_up_2 [label="Route tokens
+GPU-1→GPU-2" color=blue style=dashed]
+	expert1_up_2 -> expert1_act_2
+	expert1_act_2 -> expert1_down_2
+	expert1_down_2 -> expert1_agg_2
+	expert1_agg_2 -> expert_agg_2 [label="GPU-2→GPU-8
+[1024×2048×4096]" color=purple style=dashed]
+	gate_2 -> expert2_up_2 [label="Route tokens
+GPU-1→GPU-3" color=blue style=dashed]
+	expert2_up_2 -> expert2_act_2
+	expert2_act_2 -> expert2_down_2
+	expert2_down_2 -> expert2_agg_2
+	expert2_agg_2 -> expert_agg_2 [label="GPU-3→GPU-8
+[1024×2048×4096]" color=purple style=dashed]
+	gate_2 -> expert3_up_2 [label="Route tokens
+GPU-1→GPU-4" color=blue style=dashed]
+	expert3_up_2 -> expert3_act_2
+	expert3_act_2 -> expert3_down_2
+	expert3_down_2 -> expert3_agg_2
+	expert3_agg_2 -> expert_agg_2 [label="GPU-4→GPU-8
+[1024×2048×4096]" color=purple style=dashed]
+	gate_2 -> expert4_up_2 [label="Route tokens
+GPU-1→GPU-5" color=blue style=dashed]
+	expert4_up_2 -> expert4_act_2
+	expert4_act_2 -> expert4_down_2
+	expert4_down_2 -> expert4_agg_2
+	expert4_agg_2 -> expert_agg_2 [label="GPU-5→GPU-8
+[1024×2048×4096]" color=purple style=dashed]
+	gate_2 -> expert5_up_2 [label="Route tokens
+GPU-1→GPU-6" color=blue style=dashed]
+	expert5_up_2 -> expert5_act_2
+	expert5_act_2 -> expert5_down_2
+	expert5_down_2 -> expert5_agg_2
+	expert5_agg_2 -> expert_agg_2 [label="GPU-6→GPU-8
+[1024×2048×4096]" color=purple style=dashed]
+	gate_2 -> expert6_up_2 [label="Route tokens
+GPU-1→GPU-7" color=blue style=dashed]
+	expert6_up_2 -> expert6_act_2
+	expert6_act_2 -> expert6_down_2
+	expert6_down_2 -> expert6_agg_2
+	expert6_agg_2 -> expert_agg_2 [label="GPU-7→GPU-8
+[1024×2048×4096]" color=purple style=dashed]
+	gate_2 -> expert7_up_2 [label="Route tokens
+GPU-1→GPU-8" color=blue style=dashed]
+	expert7_up_2 -> expert7_act_2
+	expert7_act_2 -> expert7_down_2
+	expert7_down_2 -> expert7_agg_2
+	expert7_agg_2 -> expert_agg_2 [label="GPU-8→GPU-8
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_2 -> residual2_2
+	residual1_2 -> residual2_2
+	residual2_2 -> layer_out_2
+	layer_out_2 -> ln1_3 [label="GPU-15→GPU-2
+[1024×2048×4096]" color=red style=dashed]
+	ln1_3 -> mha_q_3
+	ln1_3 -> mha_k_3
+	ln1_3 -> mha_v_3
+	mha_q_3 -> mha_attn_3
+	mha_k_3 -> mha_attn_3
+	mha_v_3 -> mha_attn_3
+	mha_attn_3 -> mha_out_3
+	layer_out_2 -> residual1_3
+	mha_out_3 -> residual1_3
+	residual1_3 -> ln2_3
+	ln2_3 -> gate_3
+	gate_3 -> expert0_up_3 [label="Route tokens
+GPU-2→GPU-2" color=blue style=dashed]
+	expert0_up_3 -> expert0_act_3
+	expert0_act_3 -> expert0_down_3
+	expert0_down_3 -> expert0_agg_3
+	expert0_agg_3 -> expert_agg_3 [label="GPU-2→GPU-9
+[1024×2048×4096]" color=purple style=dashed]
+	gate_3 -> expert1_up_3 [label="Route tokens
+GPU-2→GPU-3" color=blue style=dashed]
+	expert1_up_3 -> expert1_act_3
+	expert1_act_3 -> expert1_down_3
+	expert1_down_3 -> expert1_agg_3
+	expert1_agg_3 -> expert_agg_3 [label="GPU-3→GPU-9
+[1024×2048×4096]" color=purple style=dashed]
+	gate_3 -> expert2_up_3 [label="Route tokens
+GPU-2→GPU-4" color=blue style=dashed]
+	expert2_up_3 -> expert2_act_3
+	expert2_act_3 -> expert2_down_3
+	expert2_down_3 -> expert2_agg_3
+	expert2_agg_3 -> expert_agg_3 [label="GPU-4→GPU-9
+[1024×2048×4096]" color=purple style=dashed]
+	gate_3 -> expert3_up_3 [label="Route tokens
+GPU-2→GPU-5" color=blue style=dashed]
+	expert3_up_3 -> expert3_act_3
+	expert3_act_3 -> expert3_down_3
+	expert3_down_3 -> expert3_agg_3
+	expert3_agg_3 -> expert_agg_3 [label="GPU-5→GPU-9
+[1024×2048×4096]" color=purple style=dashed]
+	gate_3 -> expert4_up_3 [label="Route tokens
+GPU-2→GPU-6" color=blue style=dashed]
+	expert4_up_3 -> expert4_act_3
+	expert4_act_3 -> expert4_down_3
+	expert4_down_3 -> expert4_agg_3
+	expert4_agg_3 -> expert_agg_3 [label="GPU-6→GPU-9
+[1024×2048×4096]" color=purple style=dashed]
+	gate_3 -> expert5_up_3 [label="Route tokens
+GPU-2→GPU-7" color=blue style=dashed]
+	expert5_up_3 -> expert5_act_3
+	expert5_act_3 -> expert5_down_3
+	expert5_down_3 -> expert5_agg_3
+	expert5_agg_3 -> expert_agg_3 [label="GPU-7→GPU-9
+[1024×2048×4096]" color=purple style=dashed]
+	gate_3 -> expert6_up_3 [label="Route tokens
+GPU-2→GPU-8" color=blue style=dashed]
+	expert6_up_3 -> expert6_act_3
+	expert6_act_3 -> expert6_down_3
+	expert6_down_3 -> expert6_agg_3
+	expert6_agg_3 -> expert_agg_3 [label="GPU-8→GPU-9
+[1024×2048×4096]" color=purple style=dashed]
+	gate_3 -> expert7_up_3 [label="Route tokens
+GPU-2→GPU-9" color=blue style=dashed]
+	expert7_up_3 -> expert7_act_3
+	expert7_act_3 -> expert7_down_3
+	expert7_down_3 -> expert7_agg_3
+	expert7_agg_3 -> expert_agg_3 [label="GPU-9→GPU-9
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_3 -> residual2_3
+	residual1_3 -> residual2_3
+	residual2_3 -> layer_out_3
+	layer_out_3 -> ln1_4 [label="GPU-23→GPU-3
+[1024×2048×4096]" color=red style=dashed]
+	ln1_4 -> mha_q_4
+	ln1_4 -> mha_k_4
+	ln1_4 -> mha_v_4
+	mha_q_4 -> mha_attn_4
+	mha_k_4 -> mha_attn_4
+	mha_v_4 -> mha_attn_4
+	mha_attn_4 -> mha_out_4
+	layer_out_3 -> residual1_4
+	mha_out_4 -> residual1_4
+	residual1_4 -> ln2_4
+	ln2_4 -> gate_4
+	gate_4 -> expert0_up_4 [label="Route tokens
+GPU-3→GPU-3" color=blue style=dashed]
+	expert0_up_4 -> expert0_act_4
+	expert0_act_4 -> expert0_down_4
+	expert0_down_4 -> expert0_agg_4
+	expert0_agg_4 -> expert_agg_4 [label="GPU-3→GPU-10
+[1024×2048×4096]" color=purple style=dashed]
+	gate_4 -> expert1_up_4 [label="Route tokens
+GPU-3→GPU-4" color=blue style=dashed]
+	expert1_up_4 -> expert1_act_4
+	expert1_act_4 -> expert1_down_4
+	expert1_down_4 -> expert1_agg_4
+	expert1_agg_4 -> expert_agg_4 [label="GPU-4→GPU-10
+[1024×2048×4096]" color=purple style=dashed]
+	gate_4 -> expert2_up_4 [label="Route tokens
+GPU-3→GPU-5" color=blue style=dashed]
+	expert2_up_4 -> expert2_act_4
+	expert2_act_4 -> expert2_down_4
+	expert2_down_4 -> expert2_agg_4
+	expert2_agg_4 -> expert_agg_4 [label="GPU-5→GPU-10
+[1024×2048×4096]" color=purple style=dashed]
+	gate_4 -> expert3_up_4 [label="Route tokens
+GPU-3→GPU-6" color=blue style=dashed]
+	expert3_up_4 -> expert3_act_4
+	expert3_act_4 -> expert3_down_4
+	expert3_down_4 -> expert3_agg_4
+	expert3_agg_4 -> expert_agg_4 [label="GPU-6→GPU-10
+[1024×2048×4096]" color=purple style=dashed]
+	gate_4 -> expert4_up_4 [label="Route tokens
+GPU-3→GPU-7" color=blue style=dashed]
+	expert4_up_4 -> expert4_act_4
+	expert4_act_4 -> expert4_down_4
+	expert4_down_4 -> expert4_agg_4
+	expert4_agg_4 -> expert_agg_4 [label="GPU-7→GPU-10
+[1024×2048×4096]" color=purple style=dashed]
+	gate_4 -> expert5_up_4 [label="Route tokens
+GPU-3→GPU-8" color=blue style=dashed]
+	expert5_up_4 -> expert5_act_4
+	expert5_act_4 -> expert5_down_4
+	expert5_down_4 -> expert5_agg_4
+	expert5_agg_4 -> expert_agg_4 [label="GPU-8→GPU-10
+[1024×2048×4096]" color=purple style=dashed]
+	gate_4 -> expert6_up_4 [label="Route tokens
+GPU-3→GPU-9" color=blue style=dashed]
+	expert6_up_4 -> expert6_act_4
+	expert6_act_4 -> expert6_down_4
+	expert6_down_4 -> expert6_agg_4
+	expert6_agg_4 -> expert_agg_4 [label="GPU-9→GPU-10
+[1024×2048×4096]" color=purple style=dashed]
+	gate_4 -> expert7_up_4 [label="Route tokens
+GPU-3→GPU-10" color=blue style=dashed]
+	expert7_up_4 -> expert7_act_4
+	expert7_act_4 -> expert7_down_4
+	expert7_down_4 -> expert7_agg_4
+	expert7_agg_4 -> expert_agg_4 [label="GPU-10→GPU-10
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_4 -> residual2_4
+	residual1_4 -> residual2_4
+	residual2_4 -> layer_out_4
+	layer_out_4 -> ln1_5 [label="GPU-31→GPU-4
+[1024×2048×4096]" color=red style=dashed]
+	ln1_5 -> mha_q_5
+	ln1_5 -> mha_k_5
+	ln1_5 -> mha_v_5
+	mha_q_5 -> mha_attn_5
+	mha_k_5 -> mha_attn_5
+	mha_v_5 -> mha_attn_5
+	mha_attn_5 -> mha_out_5
+	layer_out_4 -> residual1_5
+	mha_out_5 -> residual1_5
+	residual1_5 -> ln2_5
+	ln2_5 -> gate_5
+	gate_5 -> expert0_up_5 [label="Route tokens
+GPU-4→GPU-4" color=blue style=dashed]
+	expert0_up_5 -> expert0_act_5
+	expert0_act_5 -> expert0_down_5
+	expert0_down_5 -> expert0_agg_5
+	expert0_agg_5 -> expert_agg_5 [label="GPU-4→GPU-11
+[1024×2048×4096]" color=purple style=dashed]
+	gate_5 -> expert1_up_5 [label="Route tokens
+GPU-4→GPU-5" color=blue style=dashed]
+	expert1_up_5 -> expert1_act_5
+	expert1_act_5 -> expert1_down_5
+	expert1_down_5 -> expert1_agg_5
+	expert1_agg_5 -> expert_agg_5 [label="GPU-5→GPU-11
+[1024×2048×4096]" color=purple style=dashed]
+	gate_5 -> expert2_up_5 [label="Route tokens
+GPU-4→GPU-6" color=blue style=dashed]
+	expert2_up_5 -> expert2_act_5
+	expert2_act_5 -> expert2_down_5
+	expert2_down_5 -> expert2_agg_5
+	expert2_agg_5 -> expert_agg_5 [label="GPU-6→GPU-11
+[1024×2048×4096]" color=purple style=dashed]
+	gate_5 -> expert3_up_5 [label="Route tokens
+GPU-4→GPU-7" color=blue style=dashed]
+	expert3_up_5 -> expert3_act_5
+	expert3_act_5 -> expert3_down_5
+	expert3_down_5 -> expert3_agg_5
+	expert3_agg_5 -> expert_agg_5 [label="GPU-7→GPU-11
+[1024×2048×4096]" color=purple style=dashed]
+	gate_5 -> expert4_up_5 [label="Route tokens
+GPU-4→GPU-8" color=blue style=dashed]
+	expert4_up_5 -> expert4_act_5
+	expert4_act_5 -> expert4_down_5
+	expert4_down_5 -> expert4_agg_5
+	expert4_agg_5 -> expert_agg_5 [label="GPU-8→GPU-11
+[1024×2048×4096]" color=purple style=dashed]
+	gate_5 -> expert5_up_5 [label="Route tokens
+GPU-4→GPU-9" color=blue style=dashed]
+	expert5_up_5 -> expert5_act_5
+	expert5_act_5 -> expert5_down_5
+	expert5_down_5 -> expert5_agg_5
+	expert5_agg_5 -> expert_agg_5 [label="GPU-9→GPU-11
+[1024×2048×4096]" color=purple style=dashed]
+	gate_5 -> expert6_up_5 [label="Route tokens
+GPU-4→GPU-10" color=blue style=dashed]
+	expert6_up_5 -> expert6_act_5
+	expert6_act_5 -> expert6_down_5
+	expert6_down_5 -> expert6_agg_5
+	expert6_agg_5 -> expert_agg_5 [label="GPU-10→GPU-11
+[1024×2048×4096]" color=purple style=dashed]
+	gate_5 -> expert7_up_5 [label="Route tokens
+GPU-4→GPU-11" color=blue style=dashed]
+	expert7_up_5 -> expert7_act_5
+	expert7_act_5 -> expert7_down_5
+	expert7_down_5 -> expert7_agg_5
+	expert7_agg_5 -> expert_agg_5 [label="GPU-11→GPU-11
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_5 -> residual2_5
+	residual1_5 -> residual2_5
+	residual2_5 -> layer_out_5
+	layer_out_5 -> ln1_6 [label="GPU-39→GPU-5
+[1024×2048×4096]" color=red style=dashed]
+	ln1_6 -> mha_q_6
+	ln1_6 -> mha_k_6
+	ln1_6 -> mha_v_6
+	mha_q_6 -> mha_attn_6
+	mha_k_6 -> mha_attn_6
+	mha_v_6 -> mha_attn_6
+	mha_attn_6 -> mha_out_6
+	layer_out_5 -> residual1_6
+	mha_out_6 -> residual1_6
+	residual1_6 -> ln2_6
+	ln2_6 -> gate_6
+	gate_6 -> expert0_up_6 [label="Route tokens
+GPU-5→GPU-5" color=blue style=dashed]
+	expert0_up_6 -> expert0_act_6
+	expert0_act_6 -> expert0_down_6
+	expert0_down_6 -> expert0_agg_6
+	expert0_agg_6 -> expert_agg_6 [label="GPU-5→GPU-12
+[1024×2048×4096]" color=purple style=dashed]
+	gate_6 -> expert1_up_6 [label="Route tokens
+GPU-5→GPU-6" color=blue style=dashed]
+	expert1_up_6 -> expert1_act_6
+	expert1_act_6 -> expert1_down_6
+	expert1_down_6 -> expert1_agg_6
+	expert1_agg_6 -> expert_agg_6 [label="GPU-6→GPU-12
+[1024×2048×4096]" color=purple style=dashed]
+	gate_6 -> expert2_up_6 [label="Route tokens
+GPU-5→GPU-7" color=blue style=dashed]
+	expert2_up_6 -> expert2_act_6
+	expert2_act_6 -> expert2_down_6
+	expert2_down_6 -> expert2_agg_6
+	expert2_agg_6 -> expert_agg_6 [label="GPU-7→GPU-12
+[1024×2048×4096]" color=purple style=dashed]
+	gate_6 -> expert3_up_6 [label="Route tokens
+GPU-5→GPU-8" color=blue style=dashed]
+	expert3_up_6 -> expert3_act_6
+	expert3_act_6 -> expert3_down_6
+	expert3_down_6 -> expert3_agg_6
+	expert3_agg_6 -> expert_agg_6 [label="GPU-8→GPU-12
+[1024×2048×4096]" color=purple style=dashed]
+	gate_6 -> expert4_up_6 [label="Route tokens
+GPU-5→GPU-9" color=blue style=dashed]
+	expert4_up_6 -> expert4_act_6
+	expert4_act_6 -> expert4_down_6
+	expert4_down_6 -> expert4_agg_6
+	expert4_agg_6 -> expert_agg_6 [label="GPU-9→GPU-12
+[1024×2048×4096]" color=purple style=dashed]
+	gate_6 -> expert5_up_6 [label="Route tokens
+GPU-5→GPU-10" color=blue style=dashed]
+	expert5_up_6 -> expert5_act_6
+	expert5_act_6 -> expert5_down_6
+	expert5_down_6 -> expert5_agg_6
+	expert5_agg_6 -> expert_agg_6 [label="GPU-10→GPU-12
+[1024×2048×4096]" color=purple style=dashed]
+	gate_6 -> expert6_up_6 [label="Route tokens
+GPU-5→GPU-11" color=blue style=dashed]
+	expert6_up_6 -> expert6_act_6
+	expert6_act_6 -> expert6_down_6
+	expert6_down_6 -> expert6_agg_6
+	expert6_agg_6 -> expert_agg_6 [label="GPU-11→GPU-12
+[1024×2048×4096]" color=purple style=dashed]
+	gate_6 -> expert7_up_6 [label="Route tokens
+GPU-5→GPU-12" color=blue style=dashed]
+	expert7_up_6 -> expert7_act_6
+	expert7_act_6 -> expert7_down_6
+	expert7_down_6 -> expert7_agg_6
+	expert7_agg_6 -> expert_agg_6 [label="GPU-12→GPU-12
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_6 -> residual2_6
+	residual1_6 -> residual2_6
+	residual2_6 -> layer_out_6
+	layer_out_6 -> ln1_7 [label="GPU-47→GPU-6
+[1024×2048×4096]" color=red style=dashed]
+	ln1_7 -> mha_q_7
+	ln1_7 -> mha_k_7
+	ln1_7 -> mha_v_7
+	mha_q_7 -> mha_attn_7
+	mha_k_7 -> mha_attn_7
+	mha_v_7 -> mha_attn_7
+	mha_attn_7 -> mha_out_7
+	layer_out_6 -> residual1_7
+	mha_out_7 -> residual1_7
+	residual1_7 -> ln2_7
+	ln2_7 -> gate_7
+	gate_7 -> expert0_up_7 [label="Route tokens
+GPU-6→GPU-6" color=blue style=dashed]
+	expert0_up_7 -> expert0_act_7
+	expert0_act_7 -> expert0_down_7
+	expert0_down_7 -> expert0_agg_7
+	expert0_agg_7 -> expert_agg_7 [label="GPU-6→GPU-13
+[1024×2048×4096]" color=purple style=dashed]
+	gate_7 -> expert1_up_7 [label="Route tokens
+GPU-6→GPU-7" color=blue style=dashed]
+	expert1_up_7 -> expert1_act_7
+	expert1_act_7 -> expert1_down_7
+	expert1_down_7 -> expert1_agg_7
+	expert1_agg_7 -> expert_agg_7 [label="GPU-7→GPU-13
+[1024×2048×4096]" color=purple style=dashed]
+	gate_7 -> expert2_up_7 [label="Route tokens
+GPU-6→GPU-8" color=blue style=dashed]
+	expert2_up_7 -> expert2_act_7
+	expert2_act_7 -> expert2_down_7
+	expert2_down_7 -> expert2_agg_7
+	expert2_agg_7 -> expert_agg_7 [label="GPU-8→GPU-13
+[1024×2048×4096]" color=purple style=dashed]
+	gate_7 -> expert3_up_7 [label="Route tokens
+GPU-6→GPU-9" color=blue style=dashed]
+	expert3_up_7 -> expert3_act_7
+	expert3_act_7 -> expert3_down_7
+	expert3_down_7 -> expert3_agg_7
+	expert3_agg_7 -> expert_agg_7 [label="GPU-9→GPU-13
+[1024×2048×4096]" color=purple style=dashed]
+	gate_7 -> expert4_up_7 [label="Route tokens
+GPU-6→GPU-10" color=blue style=dashed]
+	expert4_up_7 -> expert4_act_7
+	expert4_act_7 -> expert4_down_7
+	expert4_down_7 -> expert4_agg_7
+	expert4_agg_7 -> expert_agg_7 [label="GPU-10→GPU-13
+[1024×2048×4096]" color=purple style=dashed]
+	gate_7 -> expert5_up_7 [label="Route tokens
+GPU-6→GPU-11" color=blue style=dashed]
+	expert5_up_7 -> expert5_act_7
+	expert5_act_7 -> expert5_down_7
+	expert5_down_7 -> expert5_agg_7
+	expert5_agg_7 -> expert_agg_7 [label="GPU-11→GPU-13
+[1024×2048×4096]" color=purple style=dashed]
+	gate_7 -> expert6_up_7 [label="Route tokens
+GPU-6→GPU-12" color=blue style=dashed]
+	expert6_up_7 -> expert6_act_7
+	expert6_act_7 -> expert6_down_7
+	expert6_down_7 -> expert6_agg_7
+	expert6_agg_7 -> expert_agg_7 [label="GPU-12→GPU-13
+[1024×2048×4096]" color=purple style=dashed]
+	gate_7 -> expert7_up_7 [label="Route tokens
+GPU-6→GPU-13" color=blue style=dashed]
+	expert7_up_7 -> expert7_act_7
+	expert7_act_7 -> expert7_down_7
+	expert7_down_7 -> expert7_agg_7
+	expert7_agg_7 -> expert_agg_7 [label="GPU-13→GPU-13
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_7 -> residual2_7
+	residual1_7 -> residual2_7
+	residual2_7 -> layer_out_7
+	layer_out_7 -> ln1_8 [label="GPU-55→GPU-7
+[1024×2048×4096]" color=red style=dashed]
+	ln1_8 -> mha_q_8
+	ln1_8 -> mha_k_8
+	ln1_8 -> mha_v_8
+	mha_q_8 -> mha_attn_8
+	mha_k_8 -> mha_attn_8
+	mha_v_8 -> mha_attn_8
+	mha_attn_8 -> mha_out_8
+	layer_out_7 -> residual1_8
+	mha_out_8 -> residual1_8
+	residual1_8 -> ln2_8
+	ln2_8 -> gate_8
+	gate_8 -> expert0_up_8 [label="Route tokens
+GPU-7→GPU-7" color=blue style=dashed]
+	expert0_up_8 -> expert0_act_8
+	expert0_act_8 -> expert0_down_8
+	expert0_down_8 -> expert0_agg_8
+	expert0_agg_8 -> expert_agg_8 [label="GPU-7→GPU-14
+[1024×2048×4096]" color=purple style=dashed]
+	gate_8 -> expert1_up_8 [label="Route tokens
+GPU-7→GPU-8" color=blue style=dashed]
+	expert1_up_8 -> expert1_act_8
+	expert1_act_8 -> expert1_down_8
+	expert1_down_8 -> expert1_agg_8
+	expert1_agg_8 -> expert_agg_8 [label="GPU-8→GPU-14
+[1024×2048×4096]" color=purple style=dashed]
+	gate_8 -> expert2_up_8 [label="Route tokens
+GPU-7→GPU-9" color=blue style=dashed]
+	expert2_up_8 -> expert2_act_8
+	expert2_act_8 -> expert2_down_8
+	expert2_down_8 -> expert2_agg_8
+	expert2_agg_8 -> expert_agg_8 [label="GPU-9→GPU-14
+[1024×2048×4096]" color=purple style=dashed]
+	gate_8 -> expert3_up_8 [label="Route tokens
+GPU-7→GPU-10" color=blue style=dashed]
+	expert3_up_8 -> expert3_act_8
+	expert3_act_8 -> expert3_down_8
+	expert3_down_8 -> expert3_agg_8
+	expert3_agg_8 -> expert_agg_8 [label="GPU-10→GPU-14
+[1024×2048×4096]" color=purple style=dashed]
+	gate_8 -> expert4_up_8 [label="Route tokens
+GPU-7→GPU-11" color=blue style=dashed]
+	expert4_up_8 -> expert4_act_8
+	expert4_act_8 -> expert4_down_8
+	expert4_down_8 -> expert4_agg_8
+	expert4_agg_8 -> expert_agg_8 [label="GPU-11→GPU-14
+[1024×2048×4096]" color=purple style=dashed]
+	gate_8 -> expert5_up_8 [label="Route tokens
+GPU-7→GPU-12" color=blue style=dashed]
+	expert5_up_8 -> expert5_act_8
+	expert5_act_8 -> expert5_down_8
+	expert5_down_8 -> expert5_agg_8
+	expert5_agg_8 -> expert_agg_8 [label="GPU-12→GPU-14
+[1024×2048×4096]" color=purple style=dashed]
+	gate_8 -> expert6_up_8 [label="Route tokens
+GPU-7→GPU-13" color=blue style=dashed]
+	expert6_up_8 -> expert6_act_8
+	expert6_act_8 -> expert6_down_8
+	expert6_down_8 -> expert6_agg_8
+	expert6_agg_8 -> expert_agg_8 [label="GPU-13→GPU-14
+[1024×2048×4096]" color=purple style=dashed]
+	gate_8 -> expert7_up_8 [label="Route tokens
+GPU-7→GPU-14" color=blue style=dashed]
+	expert7_up_8 -> expert7_act_8
+	expert7_act_8 -> expert7_down_8
+	expert7_down_8 -> expert7_agg_8
+	expert7_agg_8 -> expert_agg_8 [label="GPU-14→GPU-14
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_8 -> residual2_8
+	residual1_8 -> residual2_8
+	residual2_8 -> layer_out_8
+	layer_out_8 -> ln1_9 [label="GPU-63→GPU-8
+[1024×2048×4096]" color=red style=dashed]
+	ln1_9 -> mha_q_9
+	ln1_9 -> mha_k_9
+	ln1_9 -> mha_v_9
+	mha_q_9 -> mha_attn_9
+	mha_k_9 -> mha_attn_9
+	mha_v_9 -> mha_attn_9
+	mha_attn_9 -> mha_out_9
+	layer_out_8 -> residual1_9
+	mha_out_9 -> residual1_9
+	residual1_9 -> ln2_9
+	ln2_9 -> gate_9
+	gate_9 -> expert0_up_9 [label="Route tokens
+GPU-8→GPU-8" color=blue style=dashed]
+	expert0_up_9 -> expert0_act_9
+	expert0_act_9 -> expert0_down_9
+	expert0_down_9 -> expert0_agg_9
+	expert0_agg_9 -> expert_agg_9 [label="GPU-8→GPU-15
+[1024×2048×4096]" color=purple style=dashed]
+	gate_9 -> expert1_up_9 [label="Route tokens
+GPU-8→GPU-9" color=blue style=dashed]
+	expert1_up_9 -> expert1_act_9
+	expert1_act_9 -> expert1_down_9
+	expert1_down_9 -> expert1_agg_9
+	expert1_agg_9 -> expert_agg_9 [label="GPU-9→GPU-15
+[1024×2048×4096]" color=purple style=dashed]
+	gate_9 -> expert2_up_9 [label="Route tokens
+GPU-8→GPU-10" color=blue style=dashed]
+	expert2_up_9 -> expert2_act_9
+	expert2_act_9 -> expert2_down_9
+	expert2_down_9 -> expert2_agg_9
+	expert2_agg_9 -> expert_agg_9 [label="GPU-10→GPU-15
+[1024×2048×4096]" color=purple style=dashed]
+	gate_9 -> expert3_up_9 [label="Route tokens
+GPU-8→GPU-11" color=blue style=dashed]
+	expert3_up_9 -> expert3_act_9
+	expert3_act_9 -> expert3_down_9
+	expert3_down_9 -> expert3_agg_9
+	expert3_agg_9 -> expert_agg_9 [label="GPU-11→GPU-15
+[1024×2048×4096]" color=purple style=dashed]
+	gate_9 -> expert4_up_9 [label="Route tokens
+GPU-8→GPU-12" color=blue style=dashed]
+	expert4_up_9 -> expert4_act_9
+	expert4_act_9 -> expert4_down_9
+	expert4_down_9 -> expert4_agg_9
+	expert4_agg_9 -> expert_agg_9 [label="GPU-12→GPU-15
+[1024×2048×4096]" color=purple style=dashed]
+	gate_9 -> expert5_up_9 [label="Route tokens
+GPU-8→GPU-13" color=blue style=dashed]
+	expert5_up_9 -> expert5_act_9
+	expert5_act_9 -> expert5_down_9
+	expert5_down_9 -> expert5_agg_9
+	expert5_agg_9 -> expert_agg_9 [label="GPU-13→GPU-15
+[1024×2048×4096]" color=purple style=dashed]
+	gate_9 -> expert6_up_9 [label="Route tokens
+GPU-8→GPU-14" color=blue style=dashed]
+	expert6_up_9 -> expert6_act_9
+	expert6_act_9 -> expert6_down_9
+	expert6_down_9 -> expert6_agg_9
+	expert6_agg_9 -> expert_agg_9 [label="GPU-14→GPU-15
+[1024×2048×4096]" color=purple style=dashed]
+	gate_9 -> expert7_up_9 [label="Route tokens
+GPU-8→GPU-15" color=blue style=dashed]
+	expert7_up_9 -> expert7_act_9
+	expert7_act_9 -> expert7_down_9
+	expert7_down_9 -> expert7_agg_9
+	expert7_agg_9 -> expert_agg_9 [label="GPU-15→GPU-15
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_9 -> residual2_9
+	residual1_9 -> residual2_9
+	residual2_9 -> layer_out_9
+	layer_out_9 -> ln1_10 [label="GPU-71→GPU-9
+[1024×2048×4096]" color=red style=dashed]
+	ln1_10 -> mha_q_10
+	ln1_10 -> mha_k_10
+	ln1_10 -> mha_v_10
+	mha_q_10 -> mha_attn_10
+	mha_k_10 -> mha_attn_10
+	mha_v_10 -> mha_attn_10
+	mha_attn_10 -> mha_out_10
+	layer_out_9 -> residual1_10
+	mha_out_10 -> residual1_10
+	residual1_10 -> ln2_10
+	ln2_10 -> gate_10
+	gate_10 -> expert0_up_10 [label="Route tokens
+GPU-9→GPU-9" color=blue style=dashed]
+	expert0_up_10 -> expert0_act_10
+	expert0_act_10 -> expert0_down_10
+	expert0_down_10 -> expert0_agg_10
+	expert0_agg_10 -> expert_agg_10 [label="GPU-9→GPU-16
+[1024×2048×4096]" color=purple style=dashed]
+	gate_10 -> expert1_up_10 [label="Route tokens
+GPU-9→GPU-10" color=blue style=dashed]
+	expert1_up_10 -> expert1_act_10
+	expert1_act_10 -> expert1_down_10
+	expert1_down_10 -> expert1_agg_10
+	expert1_agg_10 -> expert_agg_10 [label="GPU-10→GPU-16
+[1024×2048×4096]" color=purple style=dashed]
+	gate_10 -> expert2_up_10 [label="Route tokens
+GPU-9→GPU-11" color=blue style=dashed]
+	expert2_up_10 -> expert2_act_10
+	expert2_act_10 -> expert2_down_10
+	expert2_down_10 -> expert2_agg_10
+	expert2_agg_10 -> expert_agg_10 [label="GPU-11→GPU-16
+[1024×2048×4096]" color=purple style=dashed]
+	gate_10 -> expert3_up_10 [label="Route tokens
+GPU-9→GPU-12" color=blue style=dashed]
+	expert3_up_10 -> expert3_act_10
+	expert3_act_10 -> expert3_down_10
+	expert3_down_10 -> expert3_agg_10
+	expert3_agg_10 -> expert_agg_10 [label="GPU-12→GPU-16
+[1024×2048×4096]" color=purple style=dashed]
+	gate_10 -> expert4_up_10 [label="Route tokens
+GPU-9→GPU-13" color=blue style=dashed]
+	expert4_up_10 -> expert4_act_10
+	expert4_act_10 -> expert4_down_10
+	expert4_down_10 -> expert4_agg_10
+	expert4_agg_10 -> expert_agg_10 [label="GPU-13→GPU-16
+[1024×2048×4096]" color=purple style=dashed]
+	gate_10 -> expert5_up_10 [label="Route tokens
+GPU-9→GPU-14" color=blue style=dashed]
+	expert5_up_10 -> expert5_act_10
+	expert5_act_10 -> expert5_down_10
+	expert5_down_10 -> expert5_agg_10
+	expert5_agg_10 -> expert_agg_10 [label="GPU-14→GPU-16
+[1024×2048×4096]" color=purple style=dashed]
+	gate_10 -> expert6_up_10 [label="Route tokens
+GPU-9→GPU-15" color=blue style=dashed]
+	expert6_up_10 -> expert6_act_10
+	expert6_act_10 -> expert6_down_10
+	expert6_down_10 -> expert6_agg_10
+	expert6_agg_10 -> expert_agg_10 [label="GPU-15→GPU-16
+[1024×2048×4096]" color=purple style=dashed]
+	gate_10 -> expert7_up_10 [label="Route tokens
+GPU-9→GPU-16" color=blue style=dashed]
+	expert7_up_10 -> expert7_act_10
+	expert7_act_10 -> expert7_down_10
+	expert7_down_10 -> expert7_agg_10
+	expert7_agg_10 -> expert_agg_10 [label="GPU-16→GPU-16
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_10 -> residual2_10
+	residual1_10 -> residual2_10
+	residual2_10 -> layer_out_10
+	layer_out_10 -> ln1_11 [label="GPU-79→GPU-10
+[1024×2048×4096]" color=red style=dashed]
+	ln1_11 -> mha_q_11
+	ln1_11 -> mha_k_11
+	ln1_11 -> mha_v_11
+	mha_q_11 -> mha_attn_11
+	mha_k_11 -> mha_attn_11
+	mha_v_11 -> mha_attn_11
+	mha_attn_11 -> mha_out_11
+	layer_out_10 -> residual1_11
+	mha_out_11 -> residual1_11
+	residual1_11 -> ln2_11
+	ln2_11 -> gate_11
+	gate_11 -> expert0_up_11 [label="Route tokens
+GPU-10→GPU-10" color=blue style=dashed]
+	expert0_up_11 -> expert0_act_11
+	expert0_act_11 -> expert0_down_11
+	expert0_down_11 -> expert0_agg_11
+	expert0_agg_11 -> expert_agg_11 [label="GPU-10→GPU-17
+[1024×2048×4096]" color=purple style=dashed]
+	gate_11 -> expert1_up_11 [label="Route tokens
+GPU-10→GPU-11" color=blue style=dashed]
+	expert1_up_11 -> expert1_act_11
+	expert1_act_11 -> expert1_down_11
+	expert1_down_11 -> expert1_agg_11
+	expert1_agg_11 -> expert_agg_11 [label="GPU-11→GPU-17
+[1024×2048×4096]" color=purple style=dashed]
+	gate_11 -> expert2_up_11 [label="Route tokens
+GPU-10→GPU-12" color=blue style=dashed]
+	expert2_up_11 -> expert2_act_11
+	expert2_act_11 -> expert2_down_11
+	expert2_down_11 -> expert2_agg_11
+	expert2_agg_11 -> expert_agg_11 [label="GPU-12→GPU-17
+[1024×2048×4096]" color=purple style=dashed]
+	gate_11 -> expert3_up_11 [label="Route tokens
+GPU-10→GPU-13" color=blue style=dashed]
+	expert3_up_11 -> expert3_act_11
+	expert3_act_11 -> expert3_down_11
+	expert3_down_11 -> expert3_agg_11
+	expert3_agg_11 -> expert_agg_11 [label="GPU-13→GPU-17
+[1024×2048×4096]" color=purple style=dashed]
+	gate_11 -> expert4_up_11 [label="Route tokens
+GPU-10→GPU-14" color=blue style=dashed]
+	expert4_up_11 -> expert4_act_11
+	expert4_act_11 -> expert4_down_11
+	expert4_down_11 -> expert4_agg_11
+	expert4_agg_11 -> expert_agg_11 [label="GPU-14→GPU-17
+[1024×2048×4096]" color=purple style=dashed]
+	gate_11 -> expert5_up_11 [label="Route tokens
+GPU-10→GPU-15" color=blue style=dashed]
+	expert5_up_11 -> expert5_act_11
+	expert5_act_11 -> expert5_down_11
+	expert5_down_11 -> expert5_agg_11
+	expert5_agg_11 -> expert_agg_11 [label="GPU-15→GPU-17
+[1024×2048×4096]" color=purple style=dashed]
+	gate_11 -> expert6_up_11 [label="Route tokens
+GPU-10→GPU-16" color=blue style=dashed]
+	expert6_up_11 -> expert6_act_11
+	expert6_act_11 -> expert6_down_11
+	expert6_down_11 -> expert6_agg_11
+	expert6_agg_11 -> expert_agg_11 [label="GPU-16→GPU-17
+[1024×2048×4096]" color=purple style=dashed]
+	gate_11 -> expert7_up_11 [label="Route tokens
+GPU-10→GPU-17" color=blue style=dashed]
+	expert7_up_11 -> expert7_act_11
+	expert7_act_11 -> expert7_down_11
+	expert7_down_11 -> expert7_agg_11
+	expert7_agg_11 -> expert_agg_11 [label="GPU-17→GPU-17
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_11 -> residual2_11
+	residual1_11 -> residual2_11
+	residual2_11 -> layer_out_11
+	layer_out_11 -> ln1_12 [label="GPU-87→GPU-11
+[1024×2048×4096]" color=red style=dashed]
+	ln1_12 -> mha_q_12
+	ln1_12 -> mha_k_12
+	ln1_12 -> mha_v_12
+	mha_q_12 -> mha_attn_12
+	mha_k_12 -> mha_attn_12
+	mha_v_12 -> mha_attn_12
+	mha_attn_12 -> mha_out_12
+	layer_out_11 -> residual1_12
+	mha_out_12 -> residual1_12
+	residual1_12 -> ln2_12
+	ln2_12 -> gate_12
+	gate_12 -> expert0_up_12 [label="Route tokens
+GPU-11→GPU-11" color=blue style=dashed]
+	expert0_up_12 -> expert0_act_12
+	expert0_act_12 -> expert0_down_12
+	expert0_down_12 -> expert0_agg_12
+	expert0_agg_12 -> expert_agg_12 [label="GPU-11→GPU-18
+[1024×2048×4096]" color=purple style=dashed]
+	gate_12 -> expert1_up_12 [label="Route tokens
+GPU-11→GPU-12" color=blue style=dashed]
+	expert1_up_12 -> expert1_act_12
+	expert1_act_12 -> expert1_down_12
+	expert1_down_12 -> expert1_agg_12
+	expert1_agg_12 -> expert_agg_12 [label="GPU-12→GPU-18
+[1024×2048×4096]" color=purple style=dashed]
+	gate_12 -> expert2_up_12 [label="Route tokens
+GPU-11→GPU-13" color=blue style=dashed]
+	expert2_up_12 -> expert2_act_12
+	expert2_act_12 -> expert2_down_12
+	expert2_down_12 -> expert2_agg_12
+	expert2_agg_12 -> expert_agg_12 [label="GPU-13→GPU-18
+[1024×2048×4096]" color=purple style=dashed]
+	gate_12 -> expert3_up_12 [label="Route tokens
+GPU-11→GPU-14" color=blue style=dashed]
+	expert3_up_12 -> expert3_act_12
+	expert3_act_12 -> expert3_down_12
+	expert3_down_12 -> expert3_agg_12
+	expert3_agg_12 -> expert_agg_12 [label="GPU-14→GPU-18
+[1024×2048×4096]" color=purple style=dashed]
+	gate_12 -> expert4_up_12 [label="Route tokens
+GPU-11→GPU-15" color=blue style=dashed]
+	expert4_up_12 -> expert4_act_12
+	expert4_act_12 -> expert4_down_12
+	expert4_down_12 -> expert4_agg_12
+	expert4_agg_12 -> expert_agg_12 [label="GPU-15→GPU-18
+[1024×2048×4096]" color=purple style=dashed]
+	gate_12 -> expert5_up_12 [label="Route tokens
+GPU-11→GPU-16" color=blue style=dashed]
+	expert5_up_12 -> expert5_act_12
+	expert5_act_12 -> expert5_down_12
+	expert5_down_12 -> expert5_agg_12
+	expert5_agg_12 -> expert_agg_12 [label="GPU-16→GPU-18
+[1024×2048×4096]" color=purple style=dashed]
+	gate_12 -> expert6_up_12 [label="Route tokens
+GPU-11→GPU-17" color=blue style=dashed]
+	expert6_up_12 -> expert6_act_12
+	expert6_act_12 -> expert6_down_12
+	expert6_down_12 -> expert6_agg_12
+	expert6_agg_12 -> expert_agg_12 [label="GPU-17→GPU-18
+[1024×2048×4096]" color=purple style=dashed]
+	gate_12 -> expert7_up_12 [label="Route tokens
+GPU-11→GPU-18" color=blue style=dashed]
+	expert7_up_12 -> expert7_act_12
+	expert7_act_12 -> expert7_down_12
+	expert7_down_12 -> expert7_agg_12
+	expert7_agg_12 -> expert_agg_12 [label="GPU-18→GPU-18
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_12 -> residual2_12
+	residual1_12 -> residual2_12
+	residual2_12 -> layer_out_12
+	layer_out_12 -> ln1_13 [label="GPU-95→GPU-12
+[1024×2048×4096]" color=red style=dashed]
+	ln1_13 -> mha_q_13
+	ln1_13 -> mha_k_13
+	ln1_13 -> mha_v_13
+	mha_q_13 -> mha_attn_13
+	mha_k_13 -> mha_attn_13
+	mha_v_13 -> mha_attn_13
+	mha_attn_13 -> mha_out_13
+	layer_out_12 -> residual1_13
+	mha_out_13 -> residual1_13
+	residual1_13 -> ln2_13
+	ln2_13 -> gate_13
+	gate_13 -> expert0_up_13 [label="Route tokens
+GPU-12→GPU-12" color=blue style=dashed]
+	expert0_up_13 -> expert0_act_13
+	expert0_act_13 -> expert0_down_13
+	expert0_down_13 -> expert0_agg_13
+	expert0_agg_13 -> expert_agg_13 [label="GPU-12→GPU-19
+[1024×2048×4096]" color=purple style=dashed]
+	gate_13 -> expert1_up_13 [label="Route tokens
+GPU-12→GPU-13" color=blue style=dashed]
+	expert1_up_13 -> expert1_act_13
+	expert1_act_13 -> expert1_down_13
+	expert1_down_13 -> expert1_agg_13
+	expert1_agg_13 -> expert_agg_13 [label="GPU-13→GPU-19
+[1024×2048×4096]" color=purple style=dashed]
+	gate_13 -> expert2_up_13 [label="Route tokens
+GPU-12→GPU-14" color=blue style=dashed]
+	expert2_up_13 -> expert2_act_13
+	expert2_act_13 -> expert2_down_13
+	expert2_down_13 -> expert2_agg_13
+	expert2_agg_13 -> expert_agg_13 [label="GPU-14→GPU-19
+[1024×2048×4096]" color=purple style=dashed]
+	gate_13 -> expert3_up_13 [label="Route tokens
+GPU-12→GPU-15" color=blue style=dashed]
+	expert3_up_13 -> expert3_act_13
+	expert3_act_13 -> expert3_down_13
+	expert3_down_13 -> expert3_agg_13
+	expert3_agg_13 -> expert_agg_13 [label="GPU-15→GPU-19
+[1024×2048×4096]" color=purple style=dashed]
+	gate_13 -> expert4_up_13 [label="Route tokens
+GPU-12→GPU-16" color=blue style=dashed]
+	expert4_up_13 -> expert4_act_13
+	expert4_act_13 -> expert4_down_13
+	expert4_down_13 -> expert4_agg_13
+	expert4_agg_13 -> expert_agg_13 [label="GPU-16→GPU-19
+[1024×2048×4096]" color=purple style=dashed]
+	gate_13 -> expert5_up_13 [label="Route tokens
+GPU-12→GPU-17" color=blue style=dashed]
+	expert5_up_13 -> expert5_act_13
+	expert5_act_13 -> expert5_down_13
+	expert5_down_13 -> expert5_agg_13
+	expert5_agg_13 -> expert_agg_13 [label="GPU-17→GPU-19
+[1024×2048×4096]" color=purple style=dashed]
+	gate_13 -> expert6_up_13 [label="Route tokens
+GPU-12→GPU-18" color=blue style=dashed]
+	expert6_up_13 -> expert6_act_13
+	expert6_act_13 -> expert6_down_13
+	expert6_down_13 -> expert6_agg_13
+	expert6_agg_13 -> expert_agg_13 [label="GPU-18→GPU-19
+[1024×2048×4096]" color=purple style=dashed]
+	gate_13 -> expert7_up_13 [label="Route tokens
+GPU-12→GPU-19" color=blue style=dashed]
+	expert7_up_13 -> expert7_act_13
+	expert7_act_13 -> expert7_down_13
+	expert7_down_13 -> expert7_agg_13
+	expert7_agg_13 -> expert_agg_13 [label="GPU-19→GPU-19
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_13 -> residual2_13
+	residual1_13 -> residual2_13
+	residual2_13 -> layer_out_13
+	layer_out_13 -> ln1_14 [label="GPU-103→GPU-13
+[1024×2048×4096]" color=red style=dashed]
+	ln1_14 -> mha_q_14
+	ln1_14 -> mha_k_14
+	ln1_14 -> mha_v_14
+	mha_q_14 -> mha_attn_14
+	mha_k_14 -> mha_attn_14
+	mha_v_14 -> mha_attn_14
+	mha_attn_14 -> mha_out_14
+	layer_out_13 -> residual1_14
+	mha_out_14 -> residual1_14
+	residual1_14 -> ln2_14
+	ln2_14 -> gate_14
+	gate_14 -> expert0_up_14 [label="Route tokens
+GPU-13→GPU-13" color=blue style=dashed]
+	expert0_up_14 -> expert0_act_14
+	expert0_act_14 -> expert0_down_14
+	expert0_down_14 -> expert0_agg_14
+	expert0_agg_14 -> expert_agg_14 [label="GPU-13→GPU-20
+[1024×2048×4096]" color=purple style=dashed]
+	gate_14 -> expert1_up_14 [label="Route tokens
+GPU-13→GPU-14" color=blue style=dashed]
+	expert1_up_14 -> expert1_act_14
+	expert1_act_14 -> expert1_down_14
+	expert1_down_14 -> expert1_agg_14
+	expert1_agg_14 -> expert_agg_14 [label="GPU-14→GPU-20
+[1024×2048×4096]" color=purple style=dashed]
+	gate_14 -> expert2_up_14 [label="Route tokens
+GPU-13→GPU-15" color=blue style=dashed]
+	expert2_up_14 -> expert2_act_14
+	expert2_act_14 -> expert2_down_14
+	expert2_down_14 -> expert2_agg_14
+	expert2_agg_14 -> expert_agg_14 [label="GPU-15→GPU-20
+[1024×2048×4096]" color=purple style=dashed]
+	gate_14 -> expert3_up_14 [label="Route tokens
+GPU-13→GPU-16" color=blue style=dashed]
+	expert3_up_14 -> expert3_act_14
+	expert3_act_14 -> expert3_down_14
+	expert3_down_14 -> expert3_agg_14
+	expert3_agg_14 -> expert_agg_14 [label="GPU-16→GPU-20
+[1024×2048×4096]" color=purple style=dashed]
+	gate_14 -> expert4_up_14 [label="Route tokens
+GPU-13→GPU-17" color=blue style=dashed]
+	expert4_up_14 -> expert4_act_14
+	expert4_act_14 -> expert4_down_14
+	expert4_down_14 -> expert4_agg_14
+	expert4_agg_14 -> expert_agg_14 [label="GPU-17→GPU-20
+[1024×2048×4096]" color=purple style=dashed]
+	gate_14 -> expert5_up_14 [label="Route tokens
+GPU-13→GPU-18" color=blue style=dashed]
+	expert5_up_14 -> expert5_act_14
+	expert5_act_14 -> expert5_down_14
+	expert5_down_14 -> expert5_agg_14
+	expert5_agg_14 -> expert_agg_14 [label="GPU-18→GPU-20
+[1024×2048×4096]" color=purple style=dashed]
+	gate_14 -> expert6_up_14 [label="Route tokens
+GPU-13→GPU-19" color=blue style=dashed]
+	expert6_up_14 -> expert6_act_14
+	expert6_act_14 -> expert6_down_14
+	expert6_down_14 -> expert6_agg_14
+	expert6_agg_14 -> expert_agg_14 [label="GPU-19→GPU-20
+[1024×2048×4096]" color=purple style=dashed]
+	gate_14 -> expert7_up_14 [label="Route tokens
+GPU-13→GPU-20" color=blue style=dashed]
+	expert7_up_14 -> expert7_act_14
+	expert7_act_14 -> expert7_down_14
+	expert7_down_14 -> expert7_agg_14
+	expert7_agg_14 -> expert_agg_14 [label="GPU-20→GPU-20
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_14 -> residual2_14
+	residual1_14 -> residual2_14
+	residual2_14 -> layer_out_14
+	layer_out_14 -> ln1_15 [label="GPU-111→GPU-14
+[1024×2048×4096]" color=red style=dashed]
+	ln1_15 -> mha_q_15
+	ln1_15 -> mha_k_15
+	ln1_15 -> mha_v_15
+	mha_q_15 -> mha_attn_15
+	mha_k_15 -> mha_attn_15
+	mha_v_15 -> mha_attn_15
+	mha_attn_15 -> mha_out_15
+	layer_out_14 -> residual1_15
+	mha_out_15 -> residual1_15
+	residual1_15 -> ln2_15
+	ln2_15 -> gate_15
+	gate_15 -> expert0_up_15 [label="Route tokens
+GPU-14→GPU-14" color=blue style=dashed]
+	expert0_up_15 -> expert0_act_15
+	expert0_act_15 -> expert0_down_15
+	expert0_down_15 -> expert0_agg_15
+	expert0_agg_15 -> expert_agg_15 [label="GPU-14→GPU-21
+[1024×2048×4096]" color=purple style=dashed]
+	gate_15 -> expert1_up_15 [label="Route tokens
+GPU-14→GPU-15" color=blue style=dashed]
+	expert1_up_15 -> expert1_act_15
+	expert1_act_15 -> expert1_down_15
+	expert1_down_15 -> expert1_agg_15
+	expert1_agg_15 -> expert_agg_15 [label="GPU-15→GPU-21
+[1024×2048×4096]" color=purple style=dashed]
+	gate_15 -> expert2_up_15 [label="Route tokens
+GPU-14→GPU-16" color=blue style=dashed]
+	expert2_up_15 -> expert2_act_15
+	expert2_act_15 -> expert2_down_15
+	expert2_down_15 -> expert2_agg_15
+	expert2_agg_15 -> expert_agg_15 [label="GPU-16→GPU-21
+[1024×2048×4096]" color=purple style=dashed]
+	gate_15 -> expert3_up_15 [label="Route tokens
+GPU-14→GPU-17" color=blue style=dashed]
+	expert3_up_15 -> expert3_act_15
+	expert3_act_15 -> expert3_down_15
+	expert3_down_15 -> expert3_agg_15
+	expert3_agg_15 -> expert_agg_15 [label="GPU-17→GPU-21
+[1024×2048×4096]" color=purple style=dashed]
+	gate_15 -> expert4_up_15 [label="Route tokens
+GPU-14→GPU-18" color=blue style=dashed]
+	expert4_up_15 -> expert4_act_15
+	expert4_act_15 -> expert4_down_15
+	expert4_down_15 -> expert4_agg_15
+	expert4_agg_15 -> expert_agg_15 [label="GPU-18→GPU-21
+[1024×2048×4096]" color=purple style=dashed]
+	gate_15 -> expert5_up_15 [label="Route tokens
+GPU-14→GPU-19" color=blue style=dashed]
+	expert5_up_15 -> expert5_act_15
+	expert5_act_15 -> expert5_down_15
+	expert5_down_15 -> expert5_agg_15
+	expert5_agg_15 -> expert_agg_15 [label="GPU-19→GPU-21
+[1024×2048×4096]" color=purple style=dashed]
+	gate_15 -> expert6_up_15 [label="Route tokens
+GPU-14→GPU-20" color=blue style=dashed]
+	expert6_up_15 -> expert6_act_15
+	expert6_act_15 -> expert6_down_15
+	expert6_down_15 -> expert6_agg_15
+	expert6_agg_15 -> expert_agg_15 [label="GPU-20→GPU-21
+[1024×2048×4096]" color=purple style=dashed]
+	gate_15 -> expert7_up_15 [label="Route tokens
+GPU-14→GPU-21" color=blue style=dashed]
+	expert7_up_15 -> expert7_act_15
+	expert7_act_15 -> expert7_down_15
+	expert7_down_15 -> expert7_agg_15
+	expert7_agg_15 -> expert_agg_15 [label="GPU-21→GPU-21
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_15 -> residual2_15
+	residual1_15 -> residual2_15
+	residual2_15 -> layer_out_15
+	layer_out_15 -> ln1_16 [label="GPU-119→GPU-15
+[1024×2048×4096]" color=red style=dashed]
+	ln1_16 -> mha_q_16
+	ln1_16 -> mha_k_16
+	ln1_16 -> mha_v_16
+	mha_q_16 -> mha_attn_16
+	mha_k_16 -> mha_attn_16
+	mha_v_16 -> mha_attn_16
+	mha_attn_16 -> mha_out_16
+	layer_out_15 -> residual1_16
+	mha_out_16 -> residual1_16
+	residual1_16 -> ln2_16
+	ln2_16 -> gate_16
+	gate_16 -> expert0_up_16 [label="Route tokens
+GPU-15→GPU-15" color=blue style=dashed]
+	expert0_up_16 -> expert0_act_16
+	expert0_act_16 -> expert0_down_16
+	expert0_down_16 -> expert0_agg_16
+	expert0_agg_16 -> expert_agg_16 [label="GPU-15→GPU-22
+[1024×2048×4096]" color=purple style=dashed]
+	gate_16 -> expert1_up_16 [label="Route tokens
+GPU-15→GPU-16" color=blue style=dashed]
+	expert1_up_16 -> expert1_act_16
+	expert1_act_16 -> expert1_down_16
+	expert1_down_16 -> expert1_agg_16
+	expert1_agg_16 -> expert_agg_16 [label="GPU-16→GPU-22
+[1024×2048×4096]" color=purple style=dashed]
+	gate_16 -> expert2_up_16 [label="Route tokens
+GPU-15→GPU-17" color=blue style=dashed]
+	expert2_up_16 -> expert2_act_16
+	expert2_act_16 -> expert2_down_16
+	expert2_down_16 -> expert2_agg_16
+	expert2_agg_16 -> expert_agg_16 [label="GPU-17→GPU-22
+[1024×2048×4096]" color=purple style=dashed]
+	gate_16 -> expert3_up_16 [label="Route tokens
+GPU-15→GPU-18" color=blue style=dashed]
+	expert3_up_16 -> expert3_act_16
+	expert3_act_16 -> expert3_down_16
+	expert3_down_16 -> expert3_agg_16
+	expert3_agg_16 -> expert_agg_16 [label="GPU-18→GPU-22
+[1024×2048×4096]" color=purple style=dashed]
+	gate_16 -> expert4_up_16 [label="Route tokens
+GPU-15→GPU-19" color=blue style=dashed]
+	expert4_up_16 -> expert4_act_16
+	expert4_act_16 -> expert4_down_16
+	expert4_down_16 -> expert4_agg_16
+	expert4_agg_16 -> expert_agg_16 [label="GPU-19→GPU-22
+[1024×2048×4096]" color=purple style=dashed]
+	gate_16 -> expert5_up_16 [label="Route tokens
+GPU-15→GPU-20" color=blue style=dashed]
+	expert5_up_16 -> expert5_act_16
+	expert5_act_16 -> expert5_down_16
+	expert5_down_16 -> expert5_agg_16
+	expert5_agg_16 -> expert_agg_16 [label="GPU-20→GPU-22
+[1024×2048×4096]" color=purple style=dashed]
+	gate_16 -> expert6_up_16 [label="Route tokens
+GPU-15→GPU-21" color=blue style=dashed]
+	expert6_up_16 -> expert6_act_16
+	expert6_act_16 -> expert6_down_16
+	expert6_down_16 -> expert6_agg_16
+	expert6_agg_16 -> expert_agg_16 [label="GPU-21→GPU-22
+[1024×2048×4096]" color=purple style=dashed]
+	gate_16 -> expert7_up_16 [label="Route tokens
+GPU-15→GPU-22" color=blue style=dashed]
+	expert7_up_16 -> expert7_act_16
+	expert7_act_16 -> expert7_down_16
+	expert7_down_16 -> expert7_agg_16
+	expert7_agg_16 -> expert_agg_16 [label="GPU-22→GPU-22
+[1024×2048×4096]" color=purple style=dashed]
+	expert_agg_16 -> residual2_16
+	residual1_16 -> residual2_16
+	residual2_16 -> layer_out_16
+	final_output [label="Final Output
+[1024×2048×4096]
+GPU-127" fillcolor=gold shape=ellipse]
+	layer_out_16 -> final_output
+}

@@ -1,8 +1,5 @@
 {
-  "baseline_deployment": "/home/wzc/data/file-share/submission/baseline_moe_deployment.svg",
-  "proposed_deployment": "/home/wzc/data/file-share/submission/proposed_moe_deployment.svg",
-  "python_files": [
-    "/home/wzc/data/file-share/submission/baseline_dag.py",
-    "/home/wzc/data/file-share/submission/proposed_dag.py"
-  ]
+  "dense_model_dag": "/home/wzc/data/file-share/submission/dense_model_dag.svg",
+  "moe_model_dag": "/home/wzc/data/file-share/submission/moe_model_dag.svg",
+  "description": "Complete DAGs for both dense and MoE models deployed using layer-wise strategy across 16 GPUs as described in the paper"
 }

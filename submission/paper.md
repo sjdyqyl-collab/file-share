@@ -1,74 +1,72 @@
-# Large-Scale Cross-Node Expert Parallelism for Mixture-of-Experts Models
+# Layer-wise Deployment Strategy for Large Neural Networks
 
-## Experiments
+## Abstract
+We propose a layer-wise deployment strategy that partitions neural network layers across multiple accelerators such that each partition fits entirely within SRAM/L2 cache, minimizing off-chip memory access. Our method achieves 20-31% throughput improvements over traditional tensor/pipeline parallelism.
 
-### Experimental Setup
+## 1. Problem Statement
+Large neural networks face memory access bottlenecks due to limited on-chip SRAM/L2 cache capacity. Traditional tensor and pipeline parallelism don't explicitly optimize for on-chip memory constraints, leading to frequent off-chip memory accesses that introduce significant latency.
 
-#### Model Configuration
-- **Architecture**: 4-layer Mixture-of-Experts (MoE)
-- **Experts**: 16 experts per layer, each expert is an MLP
-- **Precision**: FP16
-- **Batch Size**: 1024 tokens per forward pass
-- **Attention**: 16 heads, 512 dimensions per head
-- **MLP Hidden Size**: 32,768
+## 2. Proposed Solution
+**Layer-wise partitioning** that splits n layers into k groups P = {P₁, P₂, ..., Pₖ} where:
+- Memory constraint: S(Pᵢ) = Σ size(lⱼ) ≤ C (cache capacity)
+- Execution order: Layers assigned contiguously in original order
+- Optimization: Minimize k while maximizing hardware utilization
 
-#### Environment
-- **Hardware**: H100 GPUs
-- **Setting**: Inference-only evaluation
-- **Metrics**: 
-  - TPS (Tokens per Second) - throughput measurement
-  - TPOT (Time per Output Token) - latency per token
+## 3. Methodology
 
-### Deployment Configurations
+### 3.1 Memory Footprint Estimation
+**Layer memory calculation:**
+```
+size(lⱼ) = weight_size(lⱼ) + activation_size(lⱼ) + buffer_size(lⱼ)
+```
 
-#### Baseline (Conventional Approach)
-- **GPUs**: 16 H100s
-- **Parallelism**: TP=8, PP=2
-- **Expert Placement**: 4 experts per GPU (colocated)
-- **Processing**: Sequential pipeline with shared GPU resources
-- **Characteristics**: Intra-GPU contention, pipeline stalls
+**Components:**
+- **Weights**: Parameter tensors × datatype size (FP16 = 2 bytes)
+- **Activations**: Output feature maps × batch size
+- **Temporary Buffers**: Operator workspace from profiling
 
-#### Proposed Method (Large EP)
-- **GPUs**: 64 H100s
-- **Parallelism**: EP=64 (one expert per GPU)
-- **Expert Placement**: One expert per GPU across nodes
-- **Processing**: 
-  - Each MoE layer as micro-stage
-  - Overlapped communication and computation
-  - Asynchronous token routing
+### 3.2 Partitioning Algorithms
 
-### Results
+**Greedy Layer Aggregation:**
+1. Initialize empty partition Pᵢ
+2. Iteratively add layers lⱼ to Pᵢ, accumulating S(Pᵢ)
+3. If S(Pᵢ) > C, finalize Pᵢ with layers {lₛₜₐᵣₜ, ..., lⱼ₋₁}
+4. Start new partition Pᵢ₊₁ from layer lⱼ
+5. Repeat until all layers assigned
 
-| Method | GPUs | Expert Placement | TPS (Tokens/s) | TPOT (ms) |
-|--------|------|------------------|----------------|-----------|
-| Baseline (TP=8, PP=2) | 16 | 4 experts/GPU | 120,000 | 8.3 |
-| Proposed (Large EP) | 64 | 1 expert/GPU | 450,000 | 2.2 |
+**Dynamic Programming (Optional):**
+- Minimize maximum partition size while respecting cache constraints
+- Balance load across partitions
 
-### Performance Analysis
+### 3.3 Deployment Strategy
+1. **Load phase**: Load weights and pre-allocate memory in SRAM/L2 cache
+2. **Execution**: Sequential layer execution on assigned card
+3. **Communication**: Transfer outputs only between partitions on different cards
 
-#### Throughput Improvement
-- **3.75× increase** in TPS (450,000 vs 120,000 tokens/second)
-- Achieved through maximal expert-level parallelism
-- Elimination of intra-GPU resource contention
+## 4. Experiments
 
-#### Latency Reduction
-- **3.8× decrease** in TPOT (2.2ms vs 8.3ms per token)
-- Reduced pipeline stalls through asynchronous routing
-- Immediate processing of partial batches
+### 4.1 Experimental Setup
+- **Hardware**: 16 NVIDIA H100 GPUs
+- **Models**: 
+  - 16-layer dense network
+  - 16-layer MoE (8 experts/layer)
+- **Configuration**: FP16 precision, batch size 1024
+- **Baseline**: Tensor parallelism=8, pipeline parallelism=2 (TP=8, PP=2)
+- **Metrics**: Tokens Per Second (TPS), Time Per Output Token (TPOT)
 
-#### Scalability Characteristics
-- **Near-linear scaling** in large EP regime (EP ≥ 16)
-- Effective utilization of 64 GPUs vs baseline 16 GPUs
-- Communication overhead successfully mitigated through overlap techniques
+### 4.2 Results
 
-### Key Findings
+| Model | Method | GPUs | TPS (tokens/s) | TPOT (ms) |
+|-------|--------|------|----------------|-----------|
+| Dense (16-layer) | Baseline (TP=8, PP=2) | 16 | 12,800 | 0.078 |
+| Dense (16-layer) | **Proposed Layer-wise** | 16 | **15,360** | **0.065** |
+| MoE (16-layer, 8 experts) | Baseline (TP=8, PP=2) | 16 | 10,200 | 0.098 |
+| MoE (16-layer, 8 experts) | **Proposed Layer-wise** | 16 | **13,400** | **0.075** |
 
-1. **Expert Isolation Benefit**: One expert per GPU eliminates computational bottlenecks from resource sharing
-2. **Communication-Compute Overlap**: Asynchronous routing enables effective hiding of cross-node latency
-3. **Scalability**: Method scales effectively with available GPU resources in HPC environments
-4. **Resource Efficiency**: Higher GPU count (64 vs 16) yields superlinear performance improvement due to eliminated contention
+### 4.3 Analysis
+- **Dense model**: 20% TPS improvement (12,800→15,360), 17% TPOT reduction
+- **MoE model**: 31% TPS improvement (10,200→13,400), 23% TPOT reduction
+- **Key insight**: Explicit cache-aware partitioning reduces off-chip memory accesses more effectively than traditional parallelism
 
-### Experimental Validation
-- Results confirm theoretical benefits of large EP approach
-- Demonstrates practical feasibility in H100 cluster environment
-- Validates design choice to prioritize compute concurrency over communication reduction
+## 5. Conclusion
+Our layer-wise deployment strategy achieves significant performance gains (20-31% throughput improvement) by ensuring each model partition fits within on-chip cache, minimizing expensive off-chip memory accesses. This approach is particularly effective for complex models like MoE with irregular computation patterns.
