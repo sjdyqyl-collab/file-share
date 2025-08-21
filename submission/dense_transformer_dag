@@ -1,0 +1,476 @@
+// Dense Transformer - Ring Attention + Sequence Parallelism
+digraph {
+	rankdir=TB size="20,20"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	edge [fontsize=10]
+	input_total [label="Input
+(B, L, d_model)" fillcolor=lightgreen shape=ellipse]
+	split [label="Split Sequence
+(B, L/P, d_model)" fillcolor=yellow shape=parallelogram]
+	input_total -> split
+	input_0 [label="Input Segment 0
+(B, L/4, d_model)
+GPU_0" fillcolor=lightcyan]
+	split -> input_0
+	qkv_proj_0 [label="QKV Projection
+(B, L/4, d_model) -> (B, L/4, 3*d_model)
+GPU_0" fillcolor=lightblue]
+	input_0 -> qkv_proj_0
+	split_qkv_0 [label="Split QKV
+(B, L/4, d_model) each
+GPU_0" fillcolor=yellow shape=parallelogram]
+	qkv_proj_0 -> split_qkv_0
+	attn_stage_0_0 [label="Ring Attention Stage 0
+Q0 × K0 × V0
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_0" fillcolor=orange]
+	split_qkv_0 -> attn_stage_0_0
+	send_kv_0_0 [label="Send K,V to GPU1
+(B, L/4, d_model) each
+GPU_0" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_0 -> send_kv_0_0
+	accum_0_0 [label="Initialize Output
+(B, L/4, d_model)
+GPU_0" fillcolor=lightgray]
+	attn_stage_0_0 -> accum_0_0
+	attn_stage_0_1 [label="Ring Attention Stage 1
+Q0 × K3 × V3
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_0" fillcolor=orange]
+	recv_kv_0_1 [label="Receive K,V from GPU3
+(B, L/4, d_model) each
+GPU_0" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_0_1 -> attn_stage_0_1
+	send_kv_0_1 [label="Send K,V to GPU1
+(B, L/4, d_model) each
+GPU_0" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_0 -> send_kv_0_1
+	accum_0_1 [label="Accumulate Output 1
+(B, L/4, d_model)
+GPU_0" fillcolor=lightgray]
+	accum_0_0 -> accum_0_1
+	attn_stage_0_1 -> accum_0_1
+	attn_stage_0_2 [label="Ring Attention Stage 2
+Q0 × K2 × V2
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_0" fillcolor=orange]
+	recv_kv_0_2 [label="Receive K,V from GPU3
+(B, L/4, d_model) each
+GPU_0" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_0_2 -> attn_stage_0_2
+	send_kv_0_2 [label="Send K,V to GPU1
+(B, L/4, d_model) each
+GPU_0" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_0 -> send_kv_0_2
+	accum_0_2 [label="Accumulate Output 2
+(B, L/4, d_model)
+GPU_0" fillcolor=lightgray]
+	accum_0_1 -> accum_0_2
+	attn_stage_0_2 -> accum_0_2
+	attn_stage_0_3 [label="Ring Attention Stage 3
+Q0 × K1 × V1
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_0" fillcolor=orange]
+	recv_kv_0_3 [label="Receive K,V from GPU3
+(B, L/4, d_model) each
+GPU_0" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_0_3 -> attn_stage_0_3
+	send_kv_0_3 [label="Send K,V to GPU1
+(B, L/4, d_model) each
+GPU_0" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_0 -> send_kv_0_3
+	accum_0_3 [label="Accumulate Output 3
+(B, L/4, d_model)
+GPU_0" fillcolor=lightgray]
+	accum_0_2 -> accum_0_3
+	attn_stage_0_3 -> accum_0_3
+	output_proj_0 [label="Output Projection
+(B, L/4, d_model) -> (B, L/4, d_model)
+GPU_0" fillcolor=lightblue]
+	accum_0_3 -> output_proj_0
+	residual_0 [label="Residual Add
+(B, L/4, d_model)
+GPU_0" fillcolor=pink]
+	input_0 -> residual_0
+	output_proj_0 -> residual_0
+	ln1_0 [label="Layer Norm 1
+(B, L/4, d_model)
+GPU_0" fillcolor=lightyellow]
+	residual_0 -> ln1_0
+	mlp_col_0 [label="MLP Column Parallel
+(B, L/4, d_model) -> (B, L/4, ffn_hidden_size/2)
+GPU_0" fillcolor=lightcoral]
+	ln1_0 -> mlp_col_0
+	mlp_activation_0 [label="GELU Activation
+(B, L/4, ffn_hidden_size/2)
+GPU_0" fillcolor=lightgreen]
+	mlp_col_0 -> mlp_activation_0
+	mlp_row_0 [label="MLP Row Parallel
+(B, L/4, ffn_hidden_size/2) -> (B, L/4, d_model)
+GPU_0" fillcolor=lightcoral]
+	mlp_activation_0 -> mlp_row_0
+	residual2_0 [label="Residual Add 2
+(B, L/4, d_model)
+GPU_0" fillcolor=pink]
+	ln1_0 -> residual2_0
+	mlp_row_0 -> residual2_0
+	ln2_0 [label="Layer Norm 2
+(B, L/4, d_model)
+GPU_0" fillcolor=lightyellow]
+	residual2_0 -> ln2_0
+	output_seg_0 [label="Output Segment 0
+(B, L/4, d_model)
+GPU_0" fillcolor=lightcyan]
+	ln2_0 -> output_seg_0
+	input_1 [label="Input Segment 1
+(B, L/4, d_model)
+GPU_1" fillcolor=lightcyan]
+	split -> input_1
+	qkv_proj_1 [label="QKV Projection
+(B, L/4, d_model) -> (B, L/4, 3*d_model)
+GPU_1" fillcolor=lightblue]
+	input_1 -> qkv_proj_1
+	split_qkv_1 [label="Split QKV
+(B, L/4, d_model) each
+GPU_1" fillcolor=yellow shape=parallelogram]
+	qkv_proj_1 -> split_qkv_1
+	attn_stage_1_0 [label="Ring Attention Stage 0
+Q1 × K1 × V1
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_1" fillcolor=orange]
+	split_qkv_1 -> attn_stage_1_0
+	send_kv_1_0 [label="Send K,V to GPU2
+(B, L/4, d_model) each
+GPU_1" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_1 -> send_kv_1_0
+	accum_1_0 [label="Initialize Output
+(B, L/4, d_model)
+GPU_1" fillcolor=lightgray]
+	attn_stage_1_0 -> accum_1_0
+	attn_stage_1_1 [label="Ring Attention Stage 1
+Q1 × K0 × V0
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_1" fillcolor=orange]
+	recv_kv_1_1 [label="Receive K,V from GPU0
+(B, L/4, d_model) each
+GPU_1" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_1_1 -> attn_stage_1_1
+	send_kv_1_1 [label="Send K,V to GPU2
+(B, L/4, d_model) each
+GPU_1" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_1 -> send_kv_1_1
+	accum_1_1 [label="Accumulate Output 1
+(B, L/4, d_model)
+GPU_1" fillcolor=lightgray]
+	accum_1_0 -> accum_1_1
+	attn_stage_1_1 -> accum_1_1
+	attn_stage_1_2 [label="Ring Attention Stage 2
+Q1 × K3 × V3
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_1" fillcolor=orange]
+	recv_kv_1_2 [label="Receive K,V from GPU0
+(B, L/4, d_model) each
+GPU_1" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_1_2 -> attn_stage_1_2
+	send_kv_1_2 [label="Send K,V to GPU2
+(B, L/4, d_model) each
+GPU_1" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_1 -> send_kv_1_2
+	accum_1_2 [label="Accumulate Output 2
+(B, L/4, d_model)
+GPU_1" fillcolor=lightgray]
+	accum_1_1 -> accum_1_2
+	attn_stage_1_2 -> accum_1_2
+	attn_stage_1_3 [label="Ring Attention Stage 3
+Q1 × K2 × V2
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_1" fillcolor=orange]
+	recv_kv_1_3 [label="Receive K,V from GPU0
+(B, L/4, d_model) each
+GPU_1" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_1_3 -> attn_stage_1_3
+	send_kv_1_3 [label="Send K,V to GPU2
+(B, L/4, d_model) each
+GPU_1" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_1 -> send_kv_1_3
+	accum_1_3 [label="Accumulate Output 3
+(B, L/4, d_model)
+GPU_1" fillcolor=lightgray]
+	accum_1_2 -> accum_1_3
+	attn_stage_1_3 -> accum_1_3
+	output_proj_1 [label="Output Projection
+(B, L/4, d_model) -> (B, L/4, d_model)
+GPU_1" fillcolor=lightblue]
+	accum_1_3 -> output_proj_1
+	residual_1 [label="Residual Add
+(B, L/4, d_model)
+GPU_1" fillcolor=pink]
+	input_1 -> residual_1
+	output_proj_1 -> residual_1
+	ln1_1 [label="Layer Norm 1
+(B, L/4, d_model)
+GPU_1" fillcolor=lightyellow]
+	residual_1 -> ln1_1
+	mlp_col_1 [label="MLP Column Parallel
+(B, L/4, d_model) -> (B, L/4, ffn_hidden_size/2)
+GPU_1" fillcolor=lightcoral]
+	ln1_1 -> mlp_col_1
+	mlp_activation_1 [label="GELU Activation
+(B, L/4, ffn_hidden_size/2)
+GPU_1" fillcolor=lightgreen]
+	mlp_col_1 -> mlp_activation_1
+	mlp_row_1 [label="MLP Row Parallel
+(B, L/4, ffn_hidden_size/2) -> (B, L/4, d_model)
+GPU_1" fillcolor=lightcoral]
+	mlp_activation_1 -> mlp_row_1
+	residual2_1 [label="Residual Add 2
+(B, L/4, d_model)
+GPU_1" fillcolor=pink]
+	ln1_1 -> residual2_1
+	mlp_row_1 -> residual2_1
+	ln2_1 [label="Layer Norm 2
+(B, L/4, d_model)
+GPU_1" fillcolor=lightyellow]
+	residual2_1 -> ln2_1
+	output_seg_1 [label="Output Segment 1
+(B, L/4, d_model)
+GPU_1" fillcolor=lightcyan]
+	ln2_1 -> output_seg_1
+	input_2 [label="Input Segment 2
+(B, L/4, d_model)
+GPU_2" fillcolor=lightcyan]
+	split -> input_2
+	qkv_proj_2 [label="QKV Projection
+(B, L/4, d_model) -> (B, L/4, 3*d_model)
+GPU_2" fillcolor=lightblue]
+	input_2 -> qkv_proj_2
+	split_qkv_2 [label="Split QKV
+(B, L/4, d_model) each
+GPU_2" fillcolor=yellow shape=parallelogram]
+	qkv_proj_2 -> split_qkv_2
+	attn_stage_2_0 [label="Ring Attention Stage 0
+Q2 × K2 × V2
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_2" fillcolor=orange]
+	split_qkv_2 -> attn_stage_2_0
+	send_kv_2_0 [label="Send K,V to GPU3
+(B, L/4, d_model) each
+GPU_2" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_2 -> send_kv_2_0
+	accum_2_0 [label="Initialize Output
+(B, L/4, d_model)
+GPU_2" fillcolor=lightgray]
+	attn_stage_2_0 -> accum_2_0
+	attn_stage_2_1 [label="Ring Attention Stage 1
+Q2 × K1 × V1
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_2" fillcolor=orange]
+	recv_kv_2_1 [label="Receive K,V from GPU1
+(B, L/4, d_model) each
+GPU_2" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_2_1 -> attn_stage_2_1
+	send_kv_2_1 [label="Send K,V to GPU3
+(B, L/4, d_model) each
+GPU_2" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_2 -> send_kv_2_1
+	accum_2_1 [label="Accumulate Output 1
+(B, L/4, d_model)
+GPU_2" fillcolor=lightgray]
+	accum_2_0 -> accum_2_1
+	attn_stage_2_1 -> accum_2_1
+	attn_stage_2_2 [label="Ring Attention Stage 2
+Q2 × K0 × V0
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_2" fillcolor=orange]
+	recv_kv_2_2 [label="Receive K,V from GPU1
+(B, L/4, d_model) each
+GPU_2" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_2_2 -> attn_stage_2_2
+	send_kv_2_2 [label="Send K,V to GPU3
+(B, L/4, d_model) each
+GPU_2" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_2 -> send_kv_2_2
+	accum_2_2 [label="Accumulate Output 2
+(B, L/4, d_model)
+GPU_2" fillcolor=lightgray]
+	accum_2_1 -> accum_2_2
+	attn_stage_2_2 -> accum_2_2
+	attn_stage_2_3 [label="Ring Attention Stage 3
+Q2 × K3 × V3
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_2" fillcolor=orange]
+	recv_kv_2_3 [label="Receive K,V from GPU1
+(B, L/4, d_model) each
+GPU_2" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_2_3 -> attn_stage_2_3
+	send_kv_2_3 [label="Send K,V to GPU3
+(B, L/4, d_model) each
+GPU_2" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_2 -> send_kv_2_3
+	accum_2_3 [label="Accumulate Output 3
+(B, L/4, d_model)
+GPU_2" fillcolor=lightgray]
+	accum_2_2 -> accum_2_3
+	attn_stage_2_3 -> accum_2_3
+	output_proj_2 [label="Output Projection
+(B, L/4, d_model) -> (B, L/4, d_model)
+GPU_2" fillcolor=lightblue]
+	accum_2_3 -> output_proj_2
+	residual_2 [label="Residual Add
+(B, L/4, d_model)
+GPU_2" fillcolor=pink]
+	input_2 -> residual_2
+	output_proj_2 -> residual_2
+	ln1_2 [label="Layer Norm 1
+(B, L/4, d_model)
+GPU_2" fillcolor=lightyellow]
+	residual_2 -> ln1_2
+	mlp_col_2 [label="MLP Column Parallel
+(B, L/4, d_model) -> (B, L/4, ffn_hidden_size/2)
+GPU_2" fillcolor=lightcoral]
+	ln1_2 -> mlp_col_2
+	mlp_activation_2 [label="GELU Activation
+(B, L/4, ffn_hidden_size/2)
+GPU_2" fillcolor=lightgreen]
+	mlp_col_2 -> mlp_activation_2
+	mlp_row_2 [label="MLP Row Parallel
+(B, L/4, ffn_hidden_size/2) -> (B, L/4, d_model)
+GPU_2" fillcolor=lightcoral]
+	mlp_activation_2 -> mlp_row_2
+	residual2_2 [label="Residual Add 2
+(B, L/4, d_model)
+GPU_2" fillcolor=pink]
+	ln1_2 -> residual2_2
+	mlp_row_2 -> residual2_2
+	ln2_2 [label="Layer Norm 2
+(B, L/4, d_model)
+GPU_2" fillcolor=lightyellow]
+	residual2_2 -> ln2_2
+	output_seg_2 [label="Output Segment 2
+(B, L/4, d_model)
+GPU_2" fillcolor=lightcyan]
+	ln2_2 -> output_seg_2
+	input_3 [label="Input Segment 3
+(B, L/4, d_model)
+GPU_3" fillcolor=lightcyan]
+	split -> input_3
+	qkv_proj_3 [label="QKV Projection
+(B, L/4, d_model) -> (B, L/4, 3*d_model)
+GPU_3" fillcolor=lightblue]
+	input_3 -> qkv_proj_3
+	split_qkv_3 [label="Split QKV
+(B, L/4, d_model) each
+GPU_3" fillcolor=yellow shape=parallelogram]
+	qkv_proj_3 -> split_qkv_3
+	attn_stage_3_0 [label="Ring Attention Stage 0
+Q3 × K3 × V3
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_3" fillcolor=orange]
+	split_qkv_3 -> attn_stage_3_0
+	send_kv_3_0 [label="Send K,V to GPU0
+(B, L/4, d_model) each
+GPU_3" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_3 -> send_kv_3_0
+	accum_3_0 [label="Initialize Output
+(B, L/4, d_model)
+GPU_3" fillcolor=lightgray]
+	attn_stage_3_0 -> accum_3_0
+	attn_stage_3_1 [label="Ring Attention Stage 1
+Q3 × K2 × V2
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_3" fillcolor=orange]
+	recv_kv_3_1 [label="Receive K,V from GPU2
+(B, L/4, d_model) each
+GPU_3" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_3_1 -> attn_stage_3_1
+	send_kv_3_1 [label="Send K,V to GPU0
+(B, L/4, d_model) each
+GPU_3" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_3 -> send_kv_3_1
+	accum_3_1 [label="Accumulate Output 1
+(B, L/4, d_model)
+GPU_3" fillcolor=lightgray]
+	accum_3_0 -> accum_3_1
+	attn_stage_3_1 -> accum_3_1
+	attn_stage_3_2 [label="Ring Attention Stage 2
+Q3 × K1 × V1
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_3" fillcolor=orange]
+	recv_kv_3_2 [label="Receive K,V from GPU2
+(B, L/4, d_model) each
+GPU_3" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_3_2 -> attn_stage_3_2
+	send_kv_3_2 [label="Send K,V to GPU0
+(B, L/4, d_model) each
+GPU_3" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_3 -> send_kv_3_2
+	accum_3_2 [label="Accumulate Output 2
+(B, L/4, d_model)
+GPU_3" fillcolor=lightgray]
+	accum_3_1 -> accum_3_2
+	attn_stage_3_2 -> accum_3_2
+	attn_stage_3_3 [label="Ring Attention Stage 3
+Q3 × K0 × V0
+(B, L/4, L/4) × (B, L/4, d_model)
+GPU_3" fillcolor=orange]
+	recv_kv_3_3 [label="Receive K,V from GPU2
+(B, L/4, d_model) each
+GPU_3" fillcolor=lightgreen shape=ellipse style=dashed]
+	recv_kv_3_3 -> attn_stage_3_3
+	send_kv_3_3 [label="Send K,V to GPU0
+(B, L/4, d_model) each
+GPU_3" fillcolor=lightgreen shape=ellipse style=dashed]
+	split_qkv_3 -> send_kv_3_3
+	accum_3_3 [label="Accumulate Output 3
+(B, L/4, d_model)
+GPU_3" fillcolor=lightgray]
+	accum_3_2 -> accum_3_3
+	attn_stage_3_3 -> accum_3_3
+	output_proj_3 [label="Output Projection
+(B, L/4, d_model) -> (B, L/4, d_model)
+GPU_3" fillcolor=lightblue]
+	accum_3_3 -> output_proj_3
+	residual_3 [label="Residual Add
+(B, L/4, d_model)
+GPU_3" fillcolor=pink]
+	input_3 -> residual_3
+	output_proj_3 -> residual_3
+	ln1_3 [label="Layer Norm 1
+(B, L/4, d_model)
+GPU_3" fillcolor=lightyellow]
+	residual_3 -> ln1_3
+	mlp_col_3 [label="MLP Column Parallel
+(B, L/4, d_model) -> (B, L/4, ffn_hidden_size/2)
+GPU_3" fillcolor=lightcoral]
+	ln1_3 -> mlp_col_3
+	mlp_activation_3 [label="GELU Activation
+(B, L/4, ffn_hidden_size/2)
+GPU_3" fillcolor=lightgreen]
+	mlp_col_3 -> mlp_activation_3
+	mlp_row_3 [label="MLP Row Parallel
+(B, L/4, ffn_hidden_size/2) -> (B, L/4, d_model)
+GPU_3" fillcolor=lightcoral]
+	mlp_activation_3 -> mlp_row_3
+	residual2_3 [label="Residual Add 2
+(B, L/4, d_model)
+GPU_3" fillcolor=pink]
+	ln1_3 -> residual2_3
+	mlp_row_3 -> residual2_3
+	ln2_3 [label="Layer Norm 2
+(B, L/4, d_model)
+GPU_3" fillcolor=lightyellow]
+	residual2_3 -> ln2_3
+	output_seg_3 [label="Output Segment 3
+(B, L/4, d_model)
+GPU_3" fillcolor=lightcyan]
+	ln2_3 -> output_seg_3
+	gather [label="Gather All Segments
+(B, L, d_model)" fillcolor=yellow shape=parallelogram]
+	output_seg_0 -> gather
+	output_seg_1 -> gather
+	output_seg_2 -> gather
+	output_seg_3 -> gather
+	output_total [label="Final Output
+(B, L, d_model)" fillcolor=lightgreen shape=ellipse]
+	gather -> output_total
+}

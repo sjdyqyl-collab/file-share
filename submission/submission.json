@@ -1,25 +1,6 @@
 {
-  "dense_model_dag": "/home/wzc/data/file-share/submission/ring_attention_dense.svg",
-  "moe_model_dag": "/home/wzc/data/file-share/submission/ring_attention_moe.svg",
-  "description": "Complete DAGs for Ring Attention + Sequence Parallelism deployment on 4 GPUs",
-  "models": [
-    {
-      "name": "Dense Transformer",
-      "method": "Ring Attention + Sequence Parallelism",
-      "gpus": 4,
-      "sequence_split": "L/4 per GPU",
-      "communication_pattern": "Ring topology for KV blocks"
-    },
-    {
-      "name": "Mixture of Experts (MoE)",
-      "method": "Ring Attention + Sequence Parallelism + Expert Parallelism",
-      "gpus": 4,
-      "experts": 8,
-      "expert_placement": "2 experts per GPU",
-      "communication_patterns": [
-        "Ring topology for attention KV blocks",
-        "Expert routing across GPUs"
-      ]
-    }
+  "generated_dags": [
+    "/home/wzc/data/file-share/submission/dense_transformer_dag.svg",
+    "/home/wzc/data/file-share/submission/moe_transformer_dag.svg"
   ]
 }
