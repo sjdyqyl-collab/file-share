@@ -1,0 +1,2235 @@
+// Helix Two-Level Partitioning - Dense Model
+digraph Helix_Dense_Transformer {
+	rankdir=TB size="20,30"
+	subgraph cluster_legend {
+		label=Legend style=dashed
+		comp [label=Computation shape=rectangle]
+		comm [label=Communication shape=ellipse]
+		route [label="Routing/Aggregation" shape=parallelogram]
+	}
+	input [label="Input
+B×L×D" shape=ellipse]
+	subgraph cluster_layer1 {
+		label="Layer 1 - Multi-Head Attention" style=rounded
+		q_proj_l1_0_0 [label="Q Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		k_proj_l1_0_0 [label="K Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		v_proj_l1_0_0 [label="V Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		attn_l1_0_0 [label="Attention
+B×L×d_s
+GPU 0" shape=rectangle]
+		q_proj_l1_0_0 -> attn_l1_0_0
+		k_proj_l1_0_0 -> attn_l1_0_0
+		v_proj_l1_0_0 -> attn_l1_0_0
+		q_proj_l1_0_1 [label="Q Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		k_proj_l1_0_1 [label="K Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		v_proj_l1_0_1 [label="V Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		attn_l1_0_1 [label="Attention
+B×L×d_s
+GPU 1" shape=rectangle]
+		q_proj_l1_0_1 -> attn_l1_0_1
+		k_proj_l1_0_1 -> attn_l1_0_1
+		v_proj_l1_0_1 -> attn_l1_0_1
+		q_proj_l1_0_2 [label="Q Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		k_proj_l1_0_2 [label="K Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		v_proj_l1_0_2 [label="V Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		attn_l1_0_2 [label="Attention
+B×L×d_s
+GPU 2" shape=rectangle]
+		q_proj_l1_0_2 -> attn_l1_0_2
+		k_proj_l1_0_2 -> attn_l1_0_2
+		v_proj_l1_0_2 -> attn_l1_0_2
+		q_proj_l1_0_3 [label="Q Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		k_proj_l1_0_3 [label="K Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		v_proj_l1_0_3 [label="V Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		attn_l1_0_3 [label="Attention
+B×L×d_s
+GPU 3" shape=rectangle]
+		q_proj_l1_0_3 -> attn_l1_0_3
+		k_proj_l1_0_3 -> attn_l1_0_3
+		v_proj_l1_0_3 -> attn_l1_0_3
+		q_proj_l1_1_0 [label="Q Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		k_proj_l1_1_0 [label="K Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		v_proj_l1_1_0 [label="V Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		attn_l1_1_0 [label="Attention
+B×L×d_s
+GPU 4" shape=rectangle]
+		q_proj_l1_1_0 -> attn_l1_1_0
+		k_proj_l1_1_0 -> attn_l1_1_0
+		v_proj_l1_1_0 -> attn_l1_1_0
+		q_proj_l1_1_1 [label="Q Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		k_proj_l1_1_1 [label="K Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		v_proj_l1_1_1 [label="V Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		attn_l1_1_1 [label="Attention
+B×L×d_s
+GPU 5" shape=rectangle]
+		q_proj_l1_1_1 -> attn_l1_1_1
+		k_proj_l1_1_1 -> attn_l1_1_1
+		v_proj_l1_1_1 -> attn_l1_1_1
+		q_proj_l1_1_2 [label="Q Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		k_proj_l1_1_2 [label="K Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		v_proj_l1_1_2 [label="V Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		attn_l1_1_2 [label="Attention
+B×L×d_s
+GPU 6" shape=rectangle]
+		q_proj_l1_1_2 -> attn_l1_1_2
+		k_proj_l1_1_2 -> attn_l1_1_2
+		v_proj_l1_1_2 -> attn_l1_1_2
+		q_proj_l1_1_3 [label="Q Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		k_proj_l1_1_3 [label="K Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		v_proj_l1_1_3 [label="V Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		attn_l1_1_3 [label="Attention
+B×L×d_s
+GPU 7" shape=rectangle]
+		q_proj_l1_1_3 -> attn_l1_1_3
+		k_proj_l1_1_3 -> attn_l1_1_3
+		v_proj_l1_1_3 -> attn_l1_1_3
+		q_proj_l1_2_0 [label="Q Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		k_proj_l1_2_0 [label="K Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		v_proj_l1_2_0 [label="V Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		attn_l1_2_0 [label="Attention
+B×L×d_s
+GPU 8" shape=rectangle]
+		q_proj_l1_2_0 -> attn_l1_2_0
+		k_proj_l1_2_0 -> attn_l1_2_0
+		v_proj_l1_2_0 -> attn_l1_2_0
+		q_proj_l1_2_1 [label="Q Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		k_proj_l1_2_1 [label="K Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		v_proj_l1_2_1 [label="V Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		attn_l1_2_1 [label="Attention
+B×L×d_s
+GPU 9" shape=rectangle]
+		q_proj_l1_2_1 -> attn_l1_2_1
+		k_proj_l1_2_1 -> attn_l1_2_1
+		v_proj_l1_2_1 -> attn_l1_2_1
+		q_proj_l1_2_2 [label="Q Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		k_proj_l1_2_2 [label="K Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		v_proj_l1_2_2 [label="V Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		attn_l1_2_2 [label="Attention
+B×L×d_s
+GPU 10" shape=rectangle]
+		q_proj_l1_2_2 -> attn_l1_2_2
+		k_proj_l1_2_2 -> attn_l1_2_2
+		v_proj_l1_2_2 -> attn_l1_2_2
+		q_proj_l1_2_3 [label="Q Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		k_proj_l1_2_3 [label="K Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		v_proj_l1_2_3 [label="V Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		attn_l1_2_3 [label="Attention
+B×L×d_s
+GPU 11" shape=rectangle]
+		q_proj_l1_2_3 -> attn_l1_2_3
+		k_proj_l1_2_3 -> attn_l1_2_3
+		v_proj_l1_2_3 -> attn_l1_2_3
+		q_proj_l1_3_0 [label="Q Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		k_proj_l1_3_0 [label="K Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		v_proj_l1_3_0 [label="V Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		attn_l1_3_0 [label="Attention
+B×L×d_s
+GPU 12" shape=rectangle]
+		q_proj_l1_3_0 -> attn_l1_3_0
+		k_proj_l1_3_0 -> attn_l1_3_0
+		v_proj_l1_3_0 -> attn_l1_3_0
+		q_proj_l1_3_1 [label="Q Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		k_proj_l1_3_1 [label="K Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		v_proj_l1_3_1 [label="V Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		attn_l1_3_1 [label="Attention
+B×L×d_s
+GPU 13" shape=rectangle]
+		q_proj_l1_3_1 -> attn_l1_3_1
+		k_proj_l1_3_1 -> attn_l1_3_1
+		v_proj_l1_3_1 -> attn_l1_3_1
+		q_proj_l1_3_2 [label="Q Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		k_proj_l1_3_2 [label="K Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		v_proj_l1_3_2 [label="V Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		attn_l1_3_2 [label="Attention
+B×L×d_s
+GPU 14" shape=rectangle]
+		q_proj_l1_3_2 -> attn_l1_3_2
+		k_proj_l1_3_2 -> attn_l1_3_2
+		v_proj_l1_3_2 -> attn_l1_3_2
+		q_proj_l1_3_3 [label="Q Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		k_proj_l1_3_3 [label="K Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		v_proj_l1_3_3 [label="V Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		attn_l1_3_3 [label="Attention
+B×L×d_s
+GPU 15" shape=rectangle]
+		q_proj_l1_3_3 -> attn_l1_3_3
+		k_proj_l1_3_3 -> attn_l1_3_3
+		v_proj_l1_3_3 -> attn_l1_3_3
+		concat_dim_l1_0 [label="Concatenate
+Dimension Slices
+Head Group 0
+GPU 0-3" shape=parallelogram]
+		attn_l1_0_0 -> concat_dim_l1_0
+		attn_l1_0_1 -> concat_dim_l1_0
+		attn_l1_0_2 -> concat_dim_l1_0
+		attn_l1_0_3 -> concat_dim_l1_0
+		concat_dim_l1_1 [label="Concatenate
+Dimension Slices
+Head Group 1
+GPU 4-7" shape=parallelogram]
+		attn_l1_1_0 -> concat_dim_l1_1
+		attn_l1_1_1 -> concat_dim_l1_1
+		attn_l1_1_2 -> concat_dim_l1_1
+		attn_l1_1_3 -> concat_dim_l1_1
+		concat_dim_l1_2 [label="Concatenate
+Dimension Slices
+Head Group 2
+GPU 8-11" shape=parallelogram]
+		attn_l1_2_0 -> concat_dim_l1_2
+		attn_l1_2_1 -> concat_dim_l1_2
+		attn_l1_2_2 -> concat_dim_l1_2
+		attn_l1_2_3 -> concat_dim_l1_2
+		concat_dim_l1_3 [label="Concatenate
+Dimension Slices
+Head Group 3
+GPU 12-15" shape=parallelogram]
+		attn_l1_3_0 -> concat_dim_l1_3
+		attn_l1_3_1 -> concat_dim_l1_3
+		attn_l1_3_2 -> concat_dim_l1_3
+		attn_l1_3_3 -> concat_dim_l1_3
+		concat_heads_l1 [label="Concatenate
+All Head Groups
+All GPUs" shape=parallelogram]
+		concat_dim_l1_0 -> concat_heads_l1
+		concat_dim_l1_1 -> concat_heads_l1
+		concat_dim_l1_2 -> concat_heads_l1
+		concat_dim_l1_3 -> concat_heads_l1
+		residual_l1 [label="Residual Add
+B×L×D
+All GPUs" shape=parallelogram]
+		concat_heads_l1 -> residual_l1
+	}
+	subgraph cluster_mlp1 {
+		label="Layer 1 - MLP" style=rounded
+		mlp_fc1_l1_0 [label="MLP FC1
+B×L×2048
+GPU 0" shape=rectangle]
+		mlp_gelu_l1_0 [label="GELU
+B×L×2048
+GPU 0" shape=rectangle]
+		mlp_fc2_l1_0 [label="MLP FC2
+B×L×D
+GPU 0" shape=rectangle]
+		mlp_fc1_l1_0 -> mlp_gelu_l1_0
+		mlp_gelu_l1_0 -> mlp_fc2_l1_0
+		mlp_fc1_l1_1 [label="MLP FC1
+B×L×2048
+GPU 1" shape=rectangle]
+		mlp_gelu_l1_1 [label="GELU
+B×L×2048
+GPU 1" shape=rectangle]
+		mlp_fc2_l1_1 [label="MLP FC2
+B×L×D
+GPU 1" shape=rectangle]
+		mlp_fc1_l1_1 -> mlp_gelu_l1_1
+		mlp_gelu_l1_1 -> mlp_fc2_l1_1
+		mlp_fc1_l1_2 [label="MLP FC1
+B×L×2048
+GPU 2" shape=rectangle]
+		mlp_gelu_l1_2 [label="GELU
+B×L×2048
+GPU 2" shape=rectangle]
+		mlp_fc2_l1_2 [label="MLP FC2
+B×L×D
+GPU 2" shape=rectangle]
+		mlp_fc1_l1_2 -> mlp_gelu_l1_2
+		mlp_gelu_l1_2 -> mlp_fc2_l1_2
+		mlp_fc1_l1_3 [label="MLP FC1
+B×L×2048
+GPU 3" shape=rectangle]
+		mlp_gelu_l1_3 [label="GELU
+B×L×2048
+GPU 3" shape=rectangle]
+		mlp_fc2_l1_3 [label="MLP FC2
+B×L×D
+GPU 3" shape=rectangle]
+		mlp_fc1_l1_3 -> mlp_gelu_l1_3
+		mlp_gelu_l1_3 -> mlp_fc2_l1_3
+		mlp_fc1_l1_4 [label="MLP FC1
+B×L×2048
+GPU 4" shape=rectangle]
+		mlp_gelu_l1_4 [label="GELU
+B×L×2048
+GPU 4" shape=rectangle]
+		mlp_fc2_l1_4 [label="MLP FC2
+B×L×D
+GPU 4" shape=rectangle]
+		mlp_fc1_l1_4 -> mlp_gelu_l1_4
+		mlp_gelu_l1_4 -> mlp_fc2_l1_4
+		mlp_fc1_l1_5 [label="MLP FC1
+B×L×2048
+GPU 5" shape=rectangle]
+		mlp_gelu_l1_5 [label="GELU
+B×L×2048
+GPU 5" shape=rectangle]
+		mlp_fc2_l1_5 [label="MLP FC2
+B×L×D
+GPU 5" shape=rectangle]
+		mlp_fc1_l1_5 -> mlp_gelu_l1_5
+		mlp_gelu_l1_5 -> mlp_fc2_l1_5
+		mlp_fc1_l1_6 [label="MLP FC1
+B×L×2048
+GPU 6" shape=rectangle]
+		mlp_gelu_l1_6 [label="GELU
+B×L×2048
+GPU 6" shape=rectangle]
+		mlp_fc2_l1_6 [label="MLP FC2
+B×L×D
+GPU 6" shape=rectangle]
+		mlp_fc1_l1_6 -> mlp_gelu_l1_6
+		mlp_gelu_l1_6 -> mlp_fc2_l1_6
+		mlp_fc1_l1_7 [label="MLP FC1
+B×L×2048
+GPU 7" shape=rectangle]
+		mlp_gelu_l1_7 [label="GELU
+B×L×2048
+GPU 7" shape=rectangle]
+		mlp_fc2_l1_7 [label="MLP FC2
+B×L×D
+GPU 7" shape=rectangle]
+		mlp_fc1_l1_7 -> mlp_gelu_l1_7
+		mlp_gelu_l1_7 -> mlp_fc2_l1_7
+		mlp_fc1_l1_8 [label="MLP FC1
+B×L×2048
+GPU 8" shape=rectangle]
+		mlp_gelu_l1_8 [label="GELU
+B×L×2048
+GPU 8" shape=rectangle]
+		mlp_fc2_l1_8 [label="MLP FC2
+B×L×D
+GPU 8" shape=rectangle]
+		mlp_fc1_l1_8 -> mlp_gelu_l1_8
+		mlp_gelu_l1_8 -> mlp_fc2_l1_8
+		mlp_fc1_l1_9 [label="MLP FC1
+B×L×2048
+GPU 9" shape=rectangle]
+		mlp_gelu_l1_9 [label="GELU
+B×L×2048
+GPU 9" shape=rectangle]
+		mlp_fc2_l1_9 [label="MLP FC2
+B×L×D
+GPU 9" shape=rectangle]
+		mlp_fc1_l1_9 -> mlp_gelu_l1_9
+		mlp_gelu_l1_9 -> mlp_fc2_l1_9
+		mlp_fc1_l1_10 [label="MLP FC1
+B×L×2048
+GPU 10" shape=rectangle]
+		mlp_gelu_l1_10 [label="GELU
+B×L×2048
+GPU 10" shape=rectangle]
+		mlp_fc2_l1_10 [label="MLP FC2
+B×L×D
+GPU 10" shape=rectangle]
+		mlp_fc1_l1_10 -> mlp_gelu_l1_10
+		mlp_gelu_l1_10 -> mlp_fc2_l1_10
+		mlp_fc1_l1_11 [label="MLP FC1
+B×L×2048
+GPU 11" shape=rectangle]
+		mlp_gelu_l1_11 [label="GELU
+B×L×2048
+GPU 11" shape=rectangle]
+		mlp_fc2_l1_11 [label="MLP FC2
+B×L×D
+GPU 11" shape=rectangle]
+		mlp_fc1_l1_11 -> mlp_gelu_l1_11
+		mlp_gelu_l1_11 -> mlp_fc2_l1_11
+		mlp_fc1_l1_12 [label="MLP FC1
+B×L×2048
+GPU 12" shape=rectangle]
+		mlp_gelu_l1_12 [label="GELU
+B×L×2048
+GPU 12" shape=rectangle]
+		mlp_fc2_l1_12 [label="MLP FC2
+B×L×D
+GPU 12" shape=rectangle]
+		mlp_fc1_l1_12 -> mlp_gelu_l1_12
+		mlp_gelu_l1_12 -> mlp_fc2_l1_12
+		mlp_fc1_l1_13 [label="MLP FC1
+B×L×2048
+GPU 13" shape=rectangle]
+		mlp_gelu_l1_13 [label="GELU
+B×L×2048
+GPU 13" shape=rectangle]
+		mlp_fc2_l1_13 [label="MLP FC2
+B×L×D
+GPU 13" shape=rectangle]
+		mlp_fc1_l1_13 -> mlp_gelu_l1_13
+		mlp_gelu_l1_13 -> mlp_fc2_l1_13
+		mlp_fc1_l1_14 [label="MLP FC1
+B×L×2048
+GPU 14" shape=rectangle]
+		mlp_gelu_l1_14 [label="GELU
+B×L×2048
+GPU 14" shape=rectangle]
+		mlp_fc2_l1_14 [label="MLP FC2
+B×L×D
+GPU 14" shape=rectangle]
+		mlp_fc1_l1_14 -> mlp_gelu_l1_14
+		mlp_gelu_l1_14 -> mlp_fc2_l1_14
+		mlp_fc1_l1_15 [label="MLP FC1
+B×L×2048
+GPU 15" shape=rectangle]
+		mlp_gelu_l1_15 [label="GELU
+B×L×2048
+GPU 15" shape=rectangle]
+		mlp_fc2_l1_15 [label="MLP FC2
+B×L×D
+GPU 15" shape=rectangle]
+		mlp_fc1_l1_15 -> mlp_gelu_l1_15
+		mlp_gelu_l1_15 -> mlp_fc2_l1_15
+		mlp_agg_l1 [label="MLP Output
+Aggregation
+B×L×D
+All GPUs" shape=parallelogram]
+		mlp_fc2_l1_0 -> mlp_agg_l1
+		mlp_fc2_l1_1 -> mlp_agg_l1
+		mlp_fc2_l1_2 -> mlp_agg_l1
+		mlp_fc2_l1_3 -> mlp_agg_l1
+		mlp_fc2_l1_4 -> mlp_agg_l1
+		mlp_fc2_l1_5 -> mlp_agg_l1
+		mlp_fc2_l1_6 -> mlp_agg_l1
+		mlp_fc2_l1_7 -> mlp_agg_l1
+		mlp_fc2_l1_8 -> mlp_agg_l1
+		mlp_fc2_l1_9 -> mlp_agg_l1
+		mlp_fc2_l1_10 -> mlp_agg_l1
+		mlp_fc2_l1_11 -> mlp_agg_l1
+		mlp_fc2_l1_12 -> mlp_agg_l1
+		mlp_fc2_l1_13 -> mlp_agg_l1
+		mlp_fc2_l1_14 -> mlp_agg_l1
+		mlp_fc2_l1_15 -> mlp_agg_l1
+		mlp_residual_l1 [label="MLP Residual Add
+B×L×D
+All GPUs" shape=parallelogram]
+		mlp_agg_l1 -> mlp_residual_l1
+	}
+	subgraph cluster_layer2 {
+		label="Layer 2 - Multi-Head Attention" style=rounded
+		q_proj_l2_0_0 [label="Q Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		k_proj_l2_0_0 [label="K Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		v_proj_l2_0_0 [label="V Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		attn_l2_0_0 [label="Attention
+B×L×d_s
+GPU 0" shape=rectangle]
+		q_proj_l2_0_0 -> attn_l2_0_0
+		k_proj_l2_0_0 -> attn_l2_0_0
+		v_proj_l2_0_0 -> attn_l2_0_0
+		q_proj_l2_0_1 [label="Q Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		k_proj_l2_0_1 [label="K Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		v_proj_l2_0_1 [label="V Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		attn_l2_0_1 [label="Attention
+B×L×d_s
+GPU 1" shape=rectangle]
+		q_proj_l2_0_1 -> attn_l2_0_1
+		k_proj_l2_0_1 -> attn_l2_0_1
+		v_proj_l2_0_1 -> attn_l2_0_1
+		q_proj_l2_0_2 [label="Q Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		k_proj_l2_0_2 [label="K Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		v_proj_l2_0_2 [label="V Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		attn_l2_0_2 [label="Attention
+B×L×d_s
+GPU 2" shape=rectangle]
+		q_proj_l2_0_2 -> attn_l2_0_2
+		k_proj_l2_0_2 -> attn_l2_0_2
+		v_proj_l2_0_2 -> attn_l2_0_2
+		q_proj_l2_0_3 [label="Q Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		k_proj_l2_0_3 [label="K Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		v_proj_l2_0_3 [label="V Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		attn_l2_0_3 [label="Attention
+B×L×d_s
+GPU 3" shape=rectangle]
+		q_proj_l2_0_3 -> attn_l2_0_3
+		k_proj_l2_0_3 -> attn_l2_0_3
+		v_proj_l2_0_3 -> attn_l2_0_3
+		q_proj_l2_1_0 [label="Q Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		k_proj_l2_1_0 [label="K Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		v_proj_l2_1_0 [label="V Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		attn_l2_1_0 [label="Attention
+B×L×d_s
+GPU 4" shape=rectangle]
+		q_proj_l2_1_0 -> attn_l2_1_0
+		k_proj_l2_1_0 -> attn_l2_1_0
+		v_proj_l2_1_0 -> attn_l2_1_0
+		q_proj_l2_1_1 [label="Q Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		k_proj_l2_1_1 [label="K Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		v_proj_l2_1_1 [label="V Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		attn_l2_1_1 [label="Attention
+B×L×d_s
+GPU 5" shape=rectangle]
+		q_proj_l2_1_1 -> attn_l2_1_1
+		k_proj_l2_1_1 -> attn_l2_1_1
+		v_proj_l2_1_1 -> attn_l2_1_1
+		q_proj_l2_1_2 [label="Q Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		k_proj_l2_1_2 [label="K Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		v_proj_l2_1_2 [label="V Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		attn_l2_1_2 [label="Attention
+B×L×d_s
+GPU 6" shape=rectangle]
+		q_proj_l2_1_2 -> attn_l2_1_2
+		k_proj_l2_1_2 -> attn_l2_1_2
+		v_proj_l2_1_2 -> attn_l2_1_2
+		q_proj_l2_1_3 [label="Q Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		k_proj_l2_1_3 [label="K Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		v_proj_l2_1_3 [label="V Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		attn_l2_1_3 [label="Attention
+B×L×d_s
+GPU 7" shape=rectangle]
+		q_proj_l2_1_3 -> attn_l2_1_3
+		k_proj_l2_1_3 -> attn_l2_1_3
+		v_proj_l2_1_3 -> attn_l2_1_3
+		q_proj_l2_2_0 [label="Q Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		k_proj_l2_2_0 [label="K Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		v_proj_l2_2_0 [label="V Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		attn_l2_2_0 [label="Attention
+B×L×d_s
+GPU 8" shape=rectangle]
+		q_proj_l2_2_0 -> attn_l2_2_0
+		k_proj_l2_2_0 -> attn_l2_2_0
+		v_proj_l2_2_0 -> attn_l2_2_0
+		q_proj_l2_2_1 [label="Q Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		k_proj_l2_2_1 [label="K Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		v_proj_l2_2_1 [label="V Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		attn_l2_2_1 [label="Attention
+B×L×d_s
+GPU 9" shape=rectangle]
+		q_proj_l2_2_1 -> attn_l2_2_1
+		k_proj_l2_2_1 -> attn_l2_2_1
+		v_proj_l2_2_1 -> attn_l2_2_1
+		q_proj_l2_2_2 [label="Q Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		k_proj_l2_2_2 [label="K Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		v_proj_l2_2_2 [label="V Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		attn_l2_2_2 [label="Attention
+B×L×d_s
+GPU 10" shape=rectangle]
+		q_proj_l2_2_2 -> attn_l2_2_2
+		k_proj_l2_2_2 -> attn_l2_2_2
+		v_proj_l2_2_2 -> attn_l2_2_2
+		q_proj_l2_2_3 [label="Q Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		k_proj_l2_2_3 [label="K Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		v_proj_l2_2_3 [label="V Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		attn_l2_2_3 [label="Attention
+B×L×d_s
+GPU 11" shape=rectangle]
+		q_proj_l2_2_3 -> attn_l2_2_3
+		k_proj_l2_2_3 -> attn_l2_2_3
+		v_proj_l2_2_3 -> attn_l2_2_3
+		q_proj_l2_3_0 [label="Q Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		k_proj_l2_3_0 [label="K Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		v_proj_l2_3_0 [label="V Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		attn_l2_3_0 [label="Attention
+B×L×d_s
+GPU 12" shape=rectangle]
+		q_proj_l2_3_0 -> attn_l2_3_0
+		k_proj_l2_3_0 -> attn_l2_3_0
+		v_proj_l2_3_0 -> attn_l2_3_0
+		q_proj_l2_3_1 [label="Q Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		k_proj_l2_3_1 [label="K Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		v_proj_l2_3_1 [label="V Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		attn_l2_3_1 [label="Attention
+B×L×d_s
+GPU 13" shape=rectangle]
+		q_proj_l2_3_1 -> attn_l2_3_1
+		k_proj_l2_3_1 -> attn_l2_3_1
+		v_proj_l2_3_1 -> attn_l2_3_1
+		q_proj_l2_3_2 [label="Q Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		k_proj_l2_3_2 [label="K Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		v_proj_l2_3_2 [label="V Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		attn_l2_3_2 [label="Attention
+B×L×d_s
+GPU 14" shape=rectangle]
+		q_proj_l2_3_2 -> attn_l2_3_2
+		k_proj_l2_3_2 -> attn_l2_3_2
+		v_proj_l2_3_2 -> attn_l2_3_2
+		q_proj_l2_3_3 [label="Q Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		k_proj_l2_3_3 [label="K Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		v_proj_l2_3_3 [label="V Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		attn_l2_3_3 [label="Attention
+B×L×d_s
+GPU 15" shape=rectangle]
+		q_proj_l2_3_3 -> attn_l2_3_3
+		k_proj_l2_3_3 -> attn_l2_3_3
+		v_proj_l2_3_3 -> attn_l2_3_3
+		concat_dim_l2_0 [label="Concatenate
+Dimension Slices
+Head Group 0
+GPU 0-3" shape=parallelogram]
+		attn_l2_0_0 -> concat_dim_l2_0
+		attn_l2_0_1 -> concat_dim_l2_0
+		attn_l2_0_2 -> concat_dim_l2_0
+		attn_l2_0_3 -> concat_dim_l2_0
+		concat_dim_l2_1 [label="Concatenate
+Dimension Slices
+Head Group 1
+GPU 4-7" shape=parallelogram]
+		attn_l2_1_0 -> concat_dim_l2_1
+		attn_l2_1_1 -> concat_dim_l2_1
+		attn_l2_1_2 -> concat_dim_l2_1
+		attn_l2_1_3 -> concat_dim_l2_1
+		concat_dim_l2_2 [label="Concatenate
+Dimension Slices
+Head Group 2
+GPU 8-11" shape=parallelogram]
+		attn_l2_2_0 -> concat_dim_l2_2
+		attn_l2_2_1 -> concat_dim_l2_2
+		attn_l2_2_2 -> concat_dim_l2_2
+		attn_l2_2_3 -> concat_dim_l2_2
+		concat_dim_l2_3 [label="Concatenate
+Dimension Slices
+Head Group 3
+GPU 12-15" shape=parallelogram]
+		attn_l2_3_0 -> concat_dim_l2_3
+		attn_l2_3_1 -> concat_dim_l2_3
+		attn_l2_3_2 -> concat_dim_l2_3
+		attn_l2_3_3 -> concat_dim_l2_3
+		concat_heads_l2 [label="Concatenate
+All Head Groups
+All GPUs" shape=parallelogram]
+		concat_dim_l2_0 -> concat_heads_l2
+		concat_dim_l2_1 -> concat_heads_l2
+		concat_dim_l2_2 -> concat_heads_l2
+		concat_dim_l2_3 -> concat_heads_l2
+		residual_l2 [label="Residual Add
+B×L×D
+All GPUs" shape=parallelogram]
+		concat_heads_l2 -> residual_l2
+	}
+	subgraph cluster_mlp2 {
+		label="Layer 2 - MLP" style=rounded
+		mlp_fc1_l2_0 [label="MLP FC1
+B×L×2048
+GPU 0" shape=rectangle]
+		mlp_gelu_l2_0 [label="GELU
+B×L×2048
+GPU 0" shape=rectangle]
+		mlp_fc2_l2_0 [label="MLP FC2
+B×L×D
+GPU 0" shape=rectangle]
+		mlp_fc1_l2_0 -> mlp_gelu_l2_0
+		mlp_gelu_l2_0 -> mlp_fc2_l2_0
+		mlp_fc1_l2_1 [label="MLP FC1
+B×L×2048
+GPU 1" shape=rectangle]
+		mlp_gelu_l2_1 [label="GELU
+B×L×2048
+GPU 1" shape=rectangle]
+		mlp_fc2_l2_1 [label="MLP FC2
+B×L×D
+GPU 1" shape=rectangle]
+		mlp_fc1_l2_1 -> mlp_gelu_l2_1
+		mlp_gelu_l2_1 -> mlp_fc2_l2_1
+		mlp_fc1_l2_2 [label="MLP FC1
+B×L×2048
+GPU 2" shape=rectangle]
+		mlp_gelu_l2_2 [label="GELU
+B×L×2048
+GPU 2" shape=rectangle]
+		mlp_fc2_l2_2 [label="MLP FC2
+B×L×D
+GPU 2" shape=rectangle]
+		mlp_fc1_l2_2 -> mlp_gelu_l2_2
+		mlp_gelu_l2_2 -> mlp_fc2_l2_2
+		mlp_fc1_l2_3 [label="MLP FC1
+B×L×2048
+GPU 3" shape=rectangle]
+		mlp_gelu_l2_3 [label="GELU
+B×L×2048
+GPU 3" shape=rectangle]
+		mlp_fc2_l2_3 [label="MLP FC2
+B×L×D
+GPU 3" shape=rectangle]
+		mlp_fc1_l2_3 -> mlp_gelu_l2_3
+		mlp_gelu_l2_3 -> mlp_fc2_l2_3
+		mlp_fc1_l2_4 [label="MLP FC1
+B×L×2048
+GPU 4" shape=rectangle]
+		mlp_gelu_l2_4 [label="GELU
+B×L×2048
+GPU 4" shape=rectangle]
+		mlp_fc2_l2_4 [label="MLP FC2
+B×L×D
+GPU 4" shape=rectangle]
+		mlp_fc1_l2_4 -> mlp_gelu_l2_4
+		mlp_gelu_l2_4 -> mlp_fc2_l2_4
+		mlp_fc1_l2_5 [label="MLP FC1
+B×L×2048
+GPU 5" shape=rectangle]
+		mlp_gelu_l2_5 [label="GELU
+B×L×2048
+GPU 5" shape=rectangle]
+		mlp_fc2_l2_5 [label="MLP FC2
+B×L×D
+GPU 5" shape=rectangle]
+		mlp_fc1_l2_5 -> mlp_gelu_l2_5
+		mlp_gelu_l2_5 -> mlp_fc2_l2_5
+		mlp_fc1_l2_6 [label="MLP FC1
+B×L×2048
+GPU 6" shape=rectangle]
+		mlp_gelu_l2_6 [label="GELU
+B×L×2048
+GPU 6" shape=rectangle]
+		mlp_fc2_l2_6 [label="MLP FC2
+B×L×D
+GPU 6" shape=rectangle]
+		mlp_fc1_l2_6 -> mlp_gelu_l2_6
+		mlp_gelu_l2_6 -> mlp_fc2_l2_6
+		mlp_fc1_l2_7 [label="MLP FC1
+B×L×2048
+GPU 7" shape=rectangle]
+		mlp_gelu_l2_7 [label="GELU
+B×L×2048
+GPU 7" shape=rectangle]
+		mlp_fc2_l2_7 [label="MLP FC2
+B×L×D
+GPU 7" shape=rectangle]
+		mlp_fc1_l2_7 -> mlp_gelu_l2_7
+		mlp_gelu_l2_7 -> mlp_fc2_l2_7
+		mlp_fc1_l2_8 [label="MLP FC1
+B×L×2048
+GPU 8" shape=rectangle]
+		mlp_gelu_l2_8 [label="GELU
+B×L×2048
+GPU 8" shape=rectangle]
+		mlp_fc2_l2_8 [label="MLP FC2
+B×L×D
+GPU 8" shape=rectangle]
+		mlp_fc1_l2_8 -> mlp_gelu_l2_8
+		mlp_gelu_l2_8 -> mlp_fc2_l2_8
+		mlp_fc1_l2_9 [label="MLP FC1
+B×L×2048
+GPU 9" shape=rectangle]
+		mlp_gelu_l2_9 [label="GELU
+B×L×2048
+GPU 9" shape=rectangle]
+		mlp_fc2_l2_9 [label="MLP FC2
+B×L×D
+GPU 9" shape=rectangle]
+		mlp_fc1_l2_9 -> mlp_gelu_l2_9
+		mlp_gelu_l2_9 -> mlp_fc2_l2_9
+		mlp_fc1_l2_10 [label="MLP FC1
+B×L×2048
+GPU 10" shape=rectangle]
+		mlp_gelu_l2_10 [label="GELU
+B×L×2048
+GPU 10" shape=rectangle]
+		mlp_fc2_l2_10 [label="MLP FC2
+B×L×D
+GPU 10" shape=rectangle]
+		mlp_fc1_l2_10 -> mlp_gelu_l2_10
+		mlp_gelu_l2_10 -> mlp_fc2_l2_10
+		mlp_fc1_l2_11 [label="MLP FC1
+B×L×2048
+GPU 11" shape=rectangle]
+		mlp_gelu_l2_11 [label="GELU
+B×L×2048
+GPU 11" shape=rectangle]
+		mlp_fc2_l2_11 [label="MLP FC2
+B×L×D
+GPU 11" shape=rectangle]
+		mlp_fc1_l2_11 -> mlp_gelu_l2_11
+		mlp_gelu_l2_11 -> mlp_fc2_l2_11
+		mlp_fc1_l2_12 [label="MLP FC1
+B×L×2048
+GPU 12" shape=rectangle]
+		mlp_gelu_l2_12 [label="GELU
+B×L×2048
+GPU 12" shape=rectangle]
+		mlp_fc2_l2_12 [label="MLP FC2
+B×L×D
+GPU 12" shape=rectangle]
+		mlp_fc1_l2_12 -> mlp_gelu_l2_12
+		mlp_gelu_l2_12 -> mlp_fc2_l2_12
+		mlp_fc1_l2_13 [label="MLP FC1
+B×L×2048
+GPU 13" shape=rectangle]
+		mlp_gelu_l2_13 [label="GELU
+B×L×2048
+GPU 13" shape=rectangle]
+		mlp_fc2_l2_13 [label="MLP FC2
+B×L×D
+GPU 13" shape=rectangle]
+		mlp_fc1_l2_13 -> mlp_gelu_l2_13
+		mlp_gelu_l2_13 -> mlp_fc2_l2_13
+		mlp_fc1_l2_14 [label="MLP FC1
+B×L×2048
+GPU 14" shape=rectangle]
+		mlp_gelu_l2_14 [label="GELU
+B×L×2048
+GPU 14" shape=rectangle]
+		mlp_fc2_l2_14 [label="MLP FC2
+B×L×D
+GPU 14" shape=rectangle]
+		mlp_fc1_l2_14 -> mlp_gelu_l2_14
+		mlp_gelu_l2_14 -> mlp_fc2_l2_14
+		mlp_fc1_l2_15 [label="MLP FC1
+B×L×2048
+GPU 15" shape=rectangle]
+		mlp_gelu_l2_15 [label="GELU
+B×L×2048
+GPU 15" shape=rectangle]
+		mlp_fc2_l2_15 [label="MLP FC2
+B×L×D
+GPU 15" shape=rectangle]
+		mlp_fc1_l2_15 -> mlp_gelu_l2_15
+		mlp_gelu_l2_15 -> mlp_fc2_l2_15
+		mlp_agg_l2 [label="MLP Output
+Aggregation
+B×L×D
+All GPUs" shape=parallelogram]
+		mlp_fc2_l2_0 -> mlp_agg_l2
+		mlp_fc2_l2_1 -> mlp_agg_l2
+		mlp_fc2_l2_2 -> mlp_agg_l2
+		mlp_fc2_l2_3 -> mlp_agg_l2
+		mlp_fc2_l2_4 -> mlp_agg_l2
+		mlp_fc2_l2_5 -> mlp_agg_l2
+		mlp_fc2_l2_6 -> mlp_agg_l2
+		mlp_fc2_l2_7 -> mlp_agg_l2
+		mlp_fc2_l2_8 -> mlp_agg_l2
+		mlp_fc2_l2_9 -> mlp_agg_l2
+		mlp_fc2_l2_10 -> mlp_agg_l2
+		mlp_fc2_l2_11 -> mlp_agg_l2
+		mlp_fc2_l2_12 -> mlp_agg_l2
+		mlp_fc2_l2_13 -> mlp_agg_l2
+		mlp_fc2_l2_14 -> mlp_agg_l2
+		mlp_fc2_l2_15 -> mlp_agg_l2
+		mlp_residual_l2 [label="MLP Residual Add
+B×L×D
+All GPUs" shape=parallelogram]
+		mlp_agg_l2 -> mlp_residual_l2
+	}
+	subgraph cluster_layer3 {
+		label="Layer 3 - Multi-Head Attention" style=rounded
+		q_proj_l3_0_0 [label="Q Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		k_proj_l3_0_0 [label="K Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		v_proj_l3_0_0 [label="V Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		attn_l3_0_0 [label="Attention
+B×L×d_s
+GPU 0" shape=rectangle]
+		q_proj_l3_0_0 -> attn_l3_0_0
+		k_proj_l3_0_0 -> attn_l3_0_0
+		v_proj_l3_0_0 -> attn_l3_0_0
+		q_proj_l3_0_1 [label="Q Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		k_proj_l3_0_1 [label="K Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		v_proj_l3_0_1 [label="V Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		attn_l3_0_1 [label="Attention
+B×L×d_s
+GPU 1" shape=rectangle]
+		q_proj_l3_0_1 -> attn_l3_0_1
+		k_proj_l3_0_1 -> attn_l3_0_1
+		v_proj_l3_0_1 -> attn_l3_0_1
+		q_proj_l3_0_2 [label="Q Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		k_proj_l3_0_2 [label="K Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		v_proj_l3_0_2 [label="V Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		attn_l3_0_2 [label="Attention
+B×L×d_s
+GPU 2" shape=rectangle]
+		q_proj_l3_0_2 -> attn_l3_0_2
+		k_proj_l3_0_2 -> attn_l3_0_2
+		v_proj_l3_0_2 -> attn_l3_0_2
+		q_proj_l3_0_3 [label="Q Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		k_proj_l3_0_3 [label="K Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		v_proj_l3_0_3 [label="V Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		attn_l3_0_3 [label="Attention
+B×L×d_s
+GPU 3" shape=rectangle]
+		q_proj_l3_0_3 -> attn_l3_0_3
+		k_proj_l3_0_3 -> attn_l3_0_3
+		v_proj_l3_0_3 -> attn_l3_0_3
+		q_proj_l3_1_0 [label="Q Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		k_proj_l3_1_0 [label="K Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		v_proj_l3_1_0 [label="V Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		attn_l3_1_0 [label="Attention
+B×L×d_s
+GPU 4" shape=rectangle]
+		q_proj_l3_1_0 -> attn_l3_1_0
+		k_proj_l3_1_0 -> attn_l3_1_0
+		v_proj_l3_1_0 -> attn_l3_1_0
+		q_proj_l3_1_1 [label="Q Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		k_proj_l3_1_1 [label="K Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		v_proj_l3_1_1 [label="V Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		attn_l3_1_1 [label="Attention
+B×L×d_s
+GPU 5" shape=rectangle]
+		q_proj_l3_1_1 -> attn_l3_1_1
+		k_proj_l3_1_1 -> attn_l3_1_1
+		v_proj_l3_1_1 -> attn_l3_1_1
+		q_proj_l3_1_2 [label="Q Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		k_proj_l3_1_2 [label="K Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		v_proj_l3_1_2 [label="V Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		attn_l3_1_2 [label="Attention
+B×L×d_s
+GPU 6" shape=rectangle]
+		q_proj_l3_1_2 -> attn_l3_1_2
+		k_proj_l3_1_2 -> attn_l3_1_2
+		v_proj_l3_1_2 -> attn_l3_1_2
+		q_proj_l3_1_3 [label="Q Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		k_proj_l3_1_3 [label="K Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		v_proj_l3_1_3 [label="V Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		attn_l3_1_3 [label="Attention
+B×L×d_s
+GPU 7" shape=rectangle]
+		q_proj_l3_1_3 -> attn_l3_1_3
+		k_proj_l3_1_3 -> attn_l3_1_3
+		v_proj_l3_1_3 -> attn_l3_1_3
+		q_proj_l3_2_0 [label="Q Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		k_proj_l3_2_0 [label="K Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		v_proj_l3_2_0 [label="V Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		attn_l3_2_0 [label="Attention
+B×L×d_s
+GPU 8" shape=rectangle]
+		q_proj_l3_2_0 -> attn_l3_2_0
+		k_proj_l3_2_0 -> attn_l3_2_0
+		v_proj_l3_2_0 -> attn_l3_2_0
+		q_proj_l3_2_1 [label="Q Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		k_proj_l3_2_1 [label="K Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		v_proj_l3_2_1 [label="V Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		attn_l3_2_1 [label="Attention
+B×L×d_s
+GPU 9" shape=rectangle]
+		q_proj_l3_2_1 -> attn_l3_2_1
+		k_proj_l3_2_1 -> attn_l3_2_1
+		v_proj_l3_2_1 -> attn_l3_2_1
+		q_proj_l3_2_2 [label="Q Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		k_proj_l3_2_2 [label="K Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		v_proj_l3_2_2 [label="V Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		attn_l3_2_2 [label="Attention
+B×L×d_s
+GPU 10" shape=rectangle]
+		q_proj_l3_2_2 -> attn_l3_2_2
+		k_proj_l3_2_2 -> attn_l3_2_2
+		v_proj_l3_2_2 -> attn_l3_2_2
+		q_proj_l3_2_3 [label="Q Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		k_proj_l3_2_3 [label="K Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		v_proj_l3_2_3 [label="V Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		attn_l3_2_3 [label="Attention
+B×L×d_s
+GPU 11" shape=rectangle]
+		q_proj_l3_2_3 -> attn_l3_2_3
+		k_proj_l3_2_3 -> attn_l3_2_3
+		v_proj_l3_2_3 -> attn_l3_2_3
+		q_proj_l3_3_0 [label="Q Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		k_proj_l3_3_0 [label="K Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		v_proj_l3_3_0 [label="V Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		attn_l3_3_0 [label="Attention
+B×L×d_s
+GPU 12" shape=rectangle]
+		q_proj_l3_3_0 -> attn_l3_3_0
+		k_proj_l3_3_0 -> attn_l3_3_0
+		v_proj_l3_3_0 -> attn_l3_3_0
+		q_proj_l3_3_1 [label="Q Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		k_proj_l3_3_1 [label="K Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		v_proj_l3_3_1 [label="V Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		attn_l3_3_1 [label="Attention
+B×L×d_s
+GPU 13" shape=rectangle]
+		q_proj_l3_3_1 -> attn_l3_3_1
+		k_proj_l3_3_1 -> attn_l3_3_1
+		v_proj_l3_3_1 -> attn_l3_3_1
+		q_proj_l3_3_2 [label="Q Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		k_proj_l3_3_2 [label="K Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		v_proj_l3_3_2 [label="V Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		attn_l3_3_2 [label="Attention
+B×L×d_s
+GPU 14" shape=rectangle]
+		q_proj_l3_3_2 -> attn_l3_3_2
+		k_proj_l3_3_2 -> attn_l3_3_2
+		v_proj_l3_3_2 -> attn_l3_3_2
+		q_proj_l3_3_3 [label="Q Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		k_proj_l3_3_3 [label="K Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		v_proj_l3_3_3 [label="V Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		attn_l3_3_3 [label="Attention
+B×L×d_s
+GPU 15" shape=rectangle]
+		q_proj_l3_3_3 -> attn_l3_3_3
+		k_proj_l3_3_3 -> attn_l3_3_3
+		v_proj_l3_3_3 -> attn_l3_3_3
+		concat_dim_l3_0 [label="Concatenate
+Dimension Slices
+Head Group 0
+GPU 0-3" shape=parallelogram]
+		attn_l3_0_0 -> concat_dim_l3_0
+		attn_l3_0_1 -> concat_dim_l3_0
+		attn_l3_0_2 -> concat_dim_l3_0
+		attn_l3_0_3 -> concat_dim_l3_0
+		concat_dim_l3_1 [label="Concatenate
+Dimension Slices
+Head Group 1
+GPU 4-7" shape=parallelogram]
+		attn_l3_1_0 -> concat_dim_l3_1
+		attn_l3_1_1 -> concat_dim_l3_1
+		attn_l3_1_2 -> concat_dim_l3_1
+		attn_l3_1_3 -> concat_dim_l3_1
+		concat_dim_l3_2 [label="Concatenate
+Dimension Slices
+Head Group 2
+GPU 8-11" shape=parallelogram]
+		attn_l3_2_0 -> concat_dim_l3_2
+		attn_l3_2_1 -> concat_dim_l3_2
+		attn_l3_2_2 -> concat_dim_l3_2
+		attn_l3_2_3 -> concat_dim_l3_2
+		concat_dim_l3_3 [label="Concatenate
+Dimension Slices
+Head Group 3
+GPU 12-15" shape=parallelogram]
+		attn_l3_3_0 -> concat_dim_l3_3
+		attn_l3_3_1 -> concat_dim_l3_3
+		attn_l3_3_2 -> concat_dim_l3_3
+		attn_l3_3_3 -> concat_dim_l3_3
+		concat_heads_l3 [label="Concatenate
+All Head Groups
+All GPUs" shape=parallelogram]
+		concat_dim_l3_0 -> concat_heads_l3
+		concat_dim_l3_1 -> concat_heads_l3
+		concat_dim_l3_2 -> concat_heads_l3
+		concat_dim_l3_3 -> concat_heads_l3
+		residual_l3 [label="Residual Add
+B×L×D
+All GPUs" shape=parallelogram]
+		concat_heads_l3 -> residual_l3
+	}
+	subgraph cluster_mlp3 {
+		label="Layer 3 - MLP" style=rounded
+		mlp_fc1_l3_0 [label="MLP FC1
+B×L×2048
+GPU 0" shape=rectangle]
+		mlp_gelu_l3_0 [label="GELU
+B×L×2048
+GPU 0" shape=rectangle]
+		mlp_fc2_l3_0 [label="MLP FC2
+B×L×D
+GPU 0" shape=rectangle]
+		mlp_fc1_l3_0 -> mlp_gelu_l3_0
+		mlp_gelu_l3_0 -> mlp_fc2_l3_0
+		mlp_fc1_l3_1 [label="MLP FC1
+B×L×2048
+GPU 1" shape=rectangle]
+		mlp_gelu_l3_1 [label="GELU
+B×L×2048
+GPU 1" shape=rectangle]
+		mlp_fc2_l3_1 [label="MLP FC2
+B×L×D
+GPU 1" shape=rectangle]
+		mlp_fc1_l3_1 -> mlp_gelu_l3_1
+		mlp_gelu_l3_1 -> mlp_fc2_l3_1
+		mlp_fc1_l3_2 [label="MLP FC1
+B×L×2048
+GPU 2" shape=rectangle]
+		mlp_gelu_l3_2 [label="GELU
+B×L×2048
+GPU 2" shape=rectangle]
+		mlp_fc2_l3_2 [label="MLP FC2
+B×L×D
+GPU 2" shape=rectangle]
+		mlp_fc1_l3_2 -> mlp_gelu_l3_2
+		mlp_gelu_l3_2 -> mlp_fc2_l3_2
+		mlp_fc1_l3_3 [label="MLP FC1
+B×L×2048
+GPU 3" shape=rectangle]
+		mlp_gelu_l3_3 [label="GELU
+B×L×2048
+GPU 3" shape=rectangle]
+		mlp_fc2_l3_3 [label="MLP FC2
+B×L×D
+GPU 3" shape=rectangle]
+		mlp_fc1_l3_3 -> mlp_gelu_l3_3
+		mlp_gelu_l3_3 -> mlp_fc2_l3_3
+		mlp_fc1_l3_4 [label="MLP FC1
+B×L×2048
+GPU 4" shape=rectangle]
+		mlp_gelu_l3_4 [label="GELU
+B×L×2048
+GPU 4" shape=rectangle]
+		mlp_fc2_l3_4 [label="MLP FC2
+B×L×D
+GPU 4" shape=rectangle]
+		mlp_fc1_l3_4 -> mlp_gelu_l3_4
+		mlp_gelu_l3_4 -> mlp_fc2_l3_4
+		mlp_fc1_l3_5 [label="MLP FC1
+B×L×2048
+GPU 5" shape=rectangle]
+		mlp_gelu_l3_5 [label="GELU
+B×L×2048
+GPU 5" shape=rectangle]
+		mlp_fc2_l3_5 [label="MLP FC2
+B×L×D
+GPU 5" shape=rectangle]
+		mlp_fc1_l3_5 -> mlp_gelu_l3_5
+		mlp_gelu_l3_5 -> mlp_fc2_l3_5
+		mlp_fc1_l3_6 [label="MLP FC1
+B×L×2048
+GPU 6" shape=rectangle]
+		mlp_gelu_l3_6 [label="GELU
+B×L×2048
+GPU 6" shape=rectangle]
+		mlp_fc2_l3_6 [label="MLP FC2
+B×L×D
+GPU 6" shape=rectangle]
+		mlp_fc1_l3_6 -> mlp_gelu_l3_6
+		mlp_gelu_l3_6 -> mlp_fc2_l3_6
+		mlp_fc1_l3_7 [label="MLP FC1
+B×L×2048
+GPU 7" shape=rectangle]
+		mlp_gelu_l3_7 [label="GELU
+B×L×2048
+GPU 7" shape=rectangle]
+		mlp_fc2_l3_7 [label="MLP FC2
+B×L×D
+GPU 7" shape=rectangle]
+		mlp_fc1_l3_7 -> mlp_gelu_l3_7
+		mlp_gelu_l3_7 -> mlp_fc2_l3_7
+		mlp_fc1_l3_8 [label="MLP FC1
+B×L×2048
+GPU 8" shape=rectangle]
+		mlp_gelu_l3_8 [label="GELU
+B×L×2048
+GPU 8" shape=rectangle]
+		mlp_fc2_l3_8 [label="MLP FC2
+B×L×D
+GPU 8" shape=rectangle]
+		mlp_fc1_l3_8 -> mlp_gelu_l3_8
+		mlp_gelu_l3_8 -> mlp_fc2_l3_8
+		mlp_fc1_l3_9 [label="MLP FC1
+B×L×2048
+GPU 9" shape=rectangle]
+		mlp_gelu_l3_9 [label="GELU
+B×L×2048
+GPU 9" shape=rectangle]
+		mlp_fc2_l3_9 [label="MLP FC2
+B×L×D
+GPU 9" shape=rectangle]
+		mlp_fc1_l3_9 -> mlp_gelu_l3_9
+		mlp_gelu_l3_9 -> mlp_fc2_l3_9
+		mlp_fc1_l3_10 [label="MLP FC1
+B×L×2048
+GPU 10" shape=rectangle]
+		mlp_gelu_l3_10 [label="GELU
+B×L×2048
+GPU 10" shape=rectangle]
+		mlp_fc2_l3_10 [label="MLP FC2
+B×L×D
+GPU 10" shape=rectangle]
+		mlp_fc1_l3_10 -> mlp_gelu_l3_10
+		mlp_gelu_l3_10 -> mlp_fc2_l3_10
+		mlp_fc1_l3_11 [label="MLP FC1
+B×L×2048
+GPU 11" shape=rectangle]
+		mlp_gelu_l3_11 [label="GELU
+B×L×2048
+GPU 11" shape=rectangle]
+		mlp_fc2_l3_11 [label="MLP FC2
+B×L×D
+GPU 11" shape=rectangle]
+		mlp_fc1_l3_11 -> mlp_gelu_l3_11
+		mlp_gelu_l3_11 -> mlp_fc2_l3_11
+		mlp_fc1_l3_12 [label="MLP FC1
+B×L×2048
+GPU 12" shape=rectangle]
+		mlp_gelu_l3_12 [label="GELU
+B×L×2048
+GPU 12" shape=rectangle]
+		mlp_fc2_l3_12 [label="MLP FC2
+B×L×D
+GPU 12" shape=rectangle]
+		mlp_fc1_l3_12 -> mlp_gelu_l3_12
+		mlp_gelu_l3_12 -> mlp_fc2_l3_12
+		mlp_fc1_l3_13 [label="MLP FC1
+B×L×2048
+GPU 13" shape=rectangle]
+		mlp_gelu_l3_13 [label="GELU
+B×L×2048
+GPU 13" shape=rectangle]
+		mlp_fc2_l3_13 [label="MLP FC2
+B×L×D
+GPU 13" shape=rectangle]
+		mlp_fc1_l3_13 -> mlp_gelu_l3_13
+		mlp_gelu_l3_13 -> mlp_fc2_l3_13
+		mlp_fc1_l3_14 [label="MLP FC1
+B×L×2048
+GPU 14" shape=rectangle]
+		mlp_gelu_l3_14 [label="GELU
+B×L×2048
+GPU 14" shape=rectangle]
+		mlp_fc2_l3_14 [label="MLP FC2
+B×L×D
+GPU 14" shape=rectangle]
+		mlp_fc1_l3_14 -> mlp_gelu_l3_14
+		mlp_gelu_l3_14 -> mlp_fc2_l3_14
+		mlp_fc1_l3_15 [label="MLP FC1
+B×L×2048
+GPU 15" shape=rectangle]
+		mlp_gelu_l3_15 [label="GELU
+B×L×2048
+GPU 15" shape=rectangle]
+		mlp_fc2_l3_15 [label="MLP FC2
+B×L×D
+GPU 15" shape=rectangle]
+		mlp_fc1_l3_15 -> mlp_gelu_l3_15
+		mlp_gelu_l3_15 -> mlp_fc2_l3_15
+		mlp_agg_l3 [label="MLP Output
+Aggregation
+B×L×D
+All GPUs" shape=parallelogram]
+		mlp_fc2_l3_0 -> mlp_agg_l3
+		mlp_fc2_l3_1 -> mlp_agg_l3
+		mlp_fc2_l3_2 -> mlp_agg_l3
+		mlp_fc2_l3_3 -> mlp_agg_l3
+		mlp_fc2_l3_4 -> mlp_agg_l3
+		mlp_fc2_l3_5 -> mlp_agg_l3
+		mlp_fc2_l3_6 -> mlp_agg_l3
+		mlp_fc2_l3_7 -> mlp_agg_l3
+		mlp_fc2_l3_8 -> mlp_agg_l3
+		mlp_fc2_l3_9 -> mlp_agg_l3
+		mlp_fc2_l3_10 -> mlp_agg_l3
+		mlp_fc2_l3_11 -> mlp_agg_l3
+		mlp_fc2_l3_12 -> mlp_agg_l3
+		mlp_fc2_l3_13 -> mlp_agg_l3
+		mlp_fc2_l3_14 -> mlp_agg_l3
+		mlp_fc2_l3_15 -> mlp_agg_l3
+		mlp_residual_l3 [label="MLP Residual Add
+B×L×D
+All GPUs" shape=parallelogram]
+		mlp_agg_l3 -> mlp_residual_l3
+	}
+	subgraph cluster_layer4 {
+		label="Layer 4 - Multi-Head Attention" style=rounded
+		q_proj_l4_0_0 [label="Q Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		k_proj_l4_0_0 [label="K Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		v_proj_l4_0_0 [label="V Projection
+B×L×d_s
+GPU 0" shape=rectangle]
+		attn_l4_0_0 [label="Attention
+B×L×d_s
+GPU 0" shape=rectangle]
+		q_proj_l4_0_0 -> attn_l4_0_0
+		k_proj_l4_0_0 -> attn_l4_0_0
+		v_proj_l4_0_0 -> attn_l4_0_0
+		q_proj_l4_0_1 [label="Q Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		k_proj_l4_0_1 [label="K Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		v_proj_l4_0_1 [label="V Projection
+B×L×d_s
+GPU 1" shape=rectangle]
+		attn_l4_0_1 [label="Attention
+B×L×d_s
+GPU 1" shape=rectangle]
+		q_proj_l4_0_1 -> attn_l4_0_1
+		k_proj_l4_0_1 -> attn_l4_0_1
+		v_proj_l4_0_1 -> attn_l4_0_1
+		q_proj_l4_0_2 [label="Q Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		k_proj_l4_0_2 [label="K Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		v_proj_l4_0_2 [label="V Projection
+B×L×d_s
+GPU 2" shape=rectangle]
+		attn_l4_0_2 [label="Attention
+B×L×d_s
+GPU 2" shape=rectangle]
+		q_proj_l4_0_2 -> attn_l4_0_2
+		k_proj_l4_0_2 -> attn_l4_0_2
+		v_proj_l4_0_2 -> attn_l4_0_2
+		q_proj_l4_0_3 [label="Q Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		k_proj_l4_0_3 [label="K Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		v_proj_l4_0_3 [label="V Projection
+B×L×d_s
+GPU 3" shape=rectangle]
+		attn_l4_0_3 [label="Attention
+B×L×d_s
+GPU 3" shape=rectangle]
+		q_proj_l4_0_3 -> attn_l4_0_3
+		k_proj_l4_0_3 -> attn_l4_0_3
+		v_proj_l4_0_3 -> attn_l4_0_3
+		q_proj_l4_1_0 [label="Q Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		k_proj_l4_1_0 [label="K Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		v_proj_l4_1_0 [label="V Projection
+B×L×d_s
+GPU 4" shape=rectangle]
+		attn_l4_1_0 [label="Attention
+B×L×d_s
+GPU 4" shape=rectangle]
+		q_proj_l4_1_0 -> attn_l4_1_0
+		k_proj_l4_1_0 -> attn_l4_1_0
+		v_proj_l4_1_0 -> attn_l4_1_0
+		q_proj_l4_1_1 [label="Q Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		k_proj_l4_1_1 [label="K Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		v_proj_l4_1_1 [label="V Projection
+B×L×d_s
+GPU 5" shape=rectangle]
+		attn_l4_1_1 [label="Attention
+B×L×d_s
+GPU 5" shape=rectangle]
+		q_proj_l4_1_1 -> attn_l4_1_1
+		k_proj_l4_1_1 -> attn_l4_1_1
+		v_proj_l4_1_1 -> attn_l4_1_1
+		q_proj_l4_1_2 [label="Q Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		k_proj_l4_1_2 [label="K Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		v_proj_l4_1_2 [label="V Projection
+B×L×d_s
+GPU 6" shape=rectangle]
+		attn_l4_1_2 [label="Attention
+B×L×d_s
+GPU 6" shape=rectangle]
+		q_proj_l4_1_2 -> attn_l4_1_2
+		k_proj_l4_1_2 -> attn_l4_1_2
+		v_proj_l4_1_2 -> attn_l4_1_2
+		q_proj_l4_1_3 [label="Q Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		k_proj_l4_1_3 [label="K Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		v_proj_l4_1_3 [label="V Projection
+B×L×d_s
+GPU 7" shape=rectangle]
+		attn_l4_1_3 [label="Attention
+B×L×d_s
+GPU 7" shape=rectangle]
+		q_proj_l4_1_3 -> attn_l4_1_3
+		k_proj_l4_1_3 -> attn_l4_1_3
+		v_proj_l4_1_3 -> attn_l4_1_3
+		q_proj_l4_2_0 [label="Q Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		k_proj_l4_2_0 [label="K Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		v_proj_l4_2_0 [label="V Projection
+B×L×d_s
+GPU 8" shape=rectangle]
+		attn_l4_2_0 [label="Attention
+B×L×d_s
+GPU 8" shape=rectangle]
+		q_proj_l4_2_0 -> attn_l4_2_0
+		k_proj_l4_2_0 -> attn_l4_2_0
+		v_proj_l4_2_0 -> attn_l4_2_0
+		q_proj_l4_2_1 [label="Q Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		k_proj_l4_2_1 [label="K Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		v_proj_l4_2_1 [label="V Projection
+B×L×d_s
+GPU 9" shape=rectangle]
+		attn_l4_2_1 [label="Attention
+B×L×d_s
+GPU 9" shape=rectangle]
+		q_proj_l4_2_1 -> attn_l4_2_1
+		k_proj_l4_2_1 -> attn_l4_2_1
+		v_proj_l4_2_1 -> attn_l4_2_1
+		q_proj_l4_2_2 [label="Q Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		k_proj_l4_2_2 [label="K Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		v_proj_l4_2_2 [label="V Projection
+B×L×d_s
+GPU 10" shape=rectangle]
+		attn_l4_2_2 [label="Attention
+B×L×d_s
+GPU 10" shape=rectangle]
+		q_proj_l4_2_2 -> attn_l4_2_2
+		k_proj_l4_2_2 -> attn_l4_2_2
+		v_proj_l4_2_2 -> attn_l4_2_2
+		q_proj_l4_2_3 [label="Q Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		k_proj_l4_2_3 [label="K Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		v_proj_l4_2_3 [label="V Projection
+B×L×d_s
+GPU 11" shape=rectangle]
+		attn_l4_2_3 [label="Attention
+B×L×d_s
+GPU 11" shape=rectangle]
+		q_proj_l4_2_3 -> attn_l4_2_3
+		k_proj_l4_2_3 -> attn_l4_2_3
+		v_proj_l4_2_3 -> attn_l4_2_3
+		q_proj_l4_3_0 [label="Q Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		k_proj_l4_3_0 [label="K Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		v_proj_l4_3_0 [label="V Projection
+B×L×d_s
+GPU 12" shape=rectangle]
+		attn_l4_3_0 [label="Attention
+B×L×d_s
+GPU 12" shape=rectangle]
+		q_proj_l4_3_0 -> attn_l4_3_0
+		k_proj_l4_3_0 -> attn_l4_3_0
+		v_proj_l4_3_0 -> attn_l4_3_0
+		q_proj_l4_3_1 [label="Q Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		k_proj_l4_3_1 [label="K Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		v_proj_l4_3_1 [label="V Projection
+B×L×d_s
+GPU 13" shape=rectangle]
+		attn_l4_3_1 [label="Attention
+B×L×d_s
+GPU 13" shape=rectangle]
+		q_proj_l4_3_1 -> attn_l4_3_1
+		k_proj_l4_3_1 -> attn_l4_3_1
+		v_proj_l4_3_1 -> attn_l4_3_1
+		q_proj_l4_3_2 [label="Q Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		k_proj_l4_3_2 [label="K Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		v_proj_l4_3_2 [label="V Projection
+B×L×d_s
+GPU 14" shape=rectangle]
+		attn_l4_3_2 [label="Attention
+B×L×d_s
+GPU 14" shape=rectangle]
+		q_proj_l4_3_2 -> attn_l4_3_2
+		k_proj_l4_3_2 -> attn_l4_3_2
+		v_proj_l4_3_2 -> attn_l4_3_2
+		q_proj_l4_3_3 [label="Q Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		k_proj_l4_3_3 [label="K Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		v_proj_l4_3_3 [label="V Projection
+B×L×d_s
+GPU 15" shape=rectangle]
+		attn_l4_3_3 [label="Attention
+B×L×d_s
+GPU 15" shape=rectangle]
+		q_proj_l4_3_3 -> attn_l4_3_3
+		k_proj_l4_3_3 -> attn_l4_3_3
+		v_proj_l4_3_3 -> attn_l4_3_3
+		concat_dim_l4_0 [label="Concatenate
+Dimension Slices
+Head Group 0
+GPU 0-3" shape=parallelogram]
+		attn_l4_0_0 -> concat_dim_l4_0
+		attn_l4_0_1 -> concat_dim_l4_0
+		attn_l4_0_2 -> concat_dim_l4_0
+		attn_l4_0_3 -> concat_dim_l4_0
+		concat_dim_l4_1 [label="Concatenate
+Dimension Slices
+Head Group 1
+GPU 4-7" shape=parallelogram]
+		attn_l4_1_0 -> concat_dim_l4_1
+		attn_l4_1_1 -> concat_dim_l4_1
+		attn_l4_1_2 -> concat_dim_l4_1
+		attn_l4_1_3 -> concat_dim_l4_1
+		concat_dim_l4_2 [label="Concatenate
+Dimension Slices
+Head Group 2
+GPU 8-11" shape=parallelogram]
+		attn_l4_2_0 -> concat_dim_l4_2
+		attn_l4_2_1 -> concat_dim_l4_2
+		attn_l4_2_2 -> concat_dim_l4_2
+		attn_l4_2_3 -> concat_dim_l4_2
+		concat_dim_l4_3 [label="Concatenate
+Dimension Slices
+Head Group 3
+GPU 12-15" shape=parallelogram]
+		attn_l4_3_0 -> concat_dim_l4_3
+		attn_l4_3_1 -> concat_dim_l4_3
+		attn_l4_3_2 -> concat_dim_l4_3
+		attn_l4_3_3 -> concat_dim_l4_3
+		concat_heads_l4 [label="Concatenate
+All Head Groups
+All GPUs" shape=parallelogram]
+		concat_dim_l4_0 -> concat_heads_l4
+		concat_dim_l4_1 -> concat_heads_l4
+		concat_dim_l4_2 -> concat_heads_l4
+		concat_dim_l4_3 -> concat_heads_l4
+		residual_l4 [label="Residual Add
+B×L×D
+All GPUs" shape=parallelogram]
+		concat_heads_l4 -> residual_l4
+	}
+	subgraph cluster_mlp4 {
+		label="Layer 4 - MLP" style=rounded
+		mlp_fc1_l4_0 [label="MLP FC1
+B×L×2048
+GPU 0" shape=rectangle]
+		mlp_gelu_l4_0 [label="GELU
+B×L×2048
+GPU 0" shape=rectangle]
+		mlp_fc2_l4_0 [label="MLP FC2
+B×L×D
+GPU 0" shape=rectangle]
+		mlp_fc1_l4_0 -> mlp_gelu_l4_0
+		mlp_gelu_l4_0 -> mlp_fc2_l4_0
+		mlp_fc1_l4_1 [label="MLP FC1
+B×L×2048
+GPU 1" shape=rectangle]
+		mlp_gelu_l4_1 [label="GELU
+B×L×2048
+GPU 1" shape=rectangle]
+		mlp_fc2_l4_1 [label="MLP FC2
+B×L×D
+GPU 1" shape=rectangle]
+		mlp_fc1_l4_1 -> mlp_gelu_l4_1
+		mlp_gelu_l4_1 -> mlp_fc2_l4_1
+		mlp_fc1_l4_2 [label="MLP FC1
+B×L×2048
+GPU 2" shape=rectangle]
+		mlp_gelu_l4_2 [label="GELU
+B×L×2048
+GPU 2" shape=rectangle]
+		mlp_fc2_l4_2 [label="MLP FC2
+B×L×D
+GPU 2" shape=rectangle]
+		mlp_fc1_l4_2 -> mlp_gelu_l4_2
+		mlp_gelu_l4_2 -> mlp_fc2_l4_2
+		mlp_fc1_l4_3 [label="MLP FC1
+B×L×2048
+GPU 3" shape=rectangle]
+		mlp_gelu_l4_3 [label="GELU
+B×L×2048
+GPU 3" shape=rectangle]
+		mlp_fc2_l4_3 [label="MLP FC2
+B×L×D
+GPU 3" shape=rectangle]
+		mlp_fc1_l4_3 -> mlp_gelu_l4_3
+		mlp_gelu_l4_3 -> mlp_fc2_l4_3
+		mlp_fc1_l4_4 [label="MLP FC1
+B×L×2048
+GPU 4" shape=rectangle]
+		mlp_gelu_l4_4 [label="GELU
+B×L×2048
+GPU 4" shape=rectangle]
+		mlp_fc2_l4_4 [label="MLP FC2
+B×L×D
+GPU 4" shape=rectangle]
+		mlp_fc1_l4_4 -> mlp_gelu_l4_4
+		mlp_gelu_l4_4 -> mlp_fc2_l4_4
+		mlp_fc1_l4_5 [label="MLP FC1
+B×L×2048
+GPU 5" shape=rectangle]
+		mlp_gelu_l4_5 [label="GELU
+B×L×2048
+GPU 5" shape=rectangle]
+		mlp_fc2_l4_5 [label="MLP FC2
+B×L×D
+GPU 5" shape=rectangle]
+		mlp_fc1_l4_5 -> mlp_gelu_l4_5
+		mlp_gelu_l4_5 -> mlp_fc2_l4_5
+		mlp_fc1_l4_6 [label="MLP FC1
+B×L×2048
+GPU 6" shape=rectangle]
+		mlp_gelu_l4_6 [label="GELU
+B×L×2048
+GPU 6" shape=rectangle]
+		mlp_fc2_l4_6 [label="MLP FC2
+B×L×D
+GPU 6" shape=rectangle]
+		mlp_fc1_l4_6 -> mlp_gelu_l4_6
+		mlp_gelu_l4_6 -> mlp_fc2_l4_6
+		mlp_fc1_l4_7 [label="MLP FC1
+B×L×2048
+GPU 7" shape=rectangle]
+		mlp_gelu_l4_7 [label="GELU
+B×L×2048
+GPU 7" shape=rectangle]
+		mlp_fc2_l4_7 [label="MLP FC2
+B×L×D
+GPU 7" shape=rectangle]
+		mlp_fc1_l4_7 -> mlp_gelu_l4_7
+		mlp_gelu_l4_7 -> mlp_fc2_l4_7
+		mlp_fc1_l4_8 [label="MLP FC1
+B×L×2048
+GPU 8" shape=rectangle]
+		mlp_gelu_l4_8 [label="GELU
+B×L×2048
+GPU 8" shape=rectangle]
+		mlp_fc2_l4_8 [label="MLP FC2
+B×L×D
+GPU 8" shape=rectangle]
+		mlp_fc1_l4_8 -> mlp_gelu_l4_8
+		mlp_gelu_l4_8 -> mlp_fc2_l4_8
+		mlp_fc1_l4_9 [label="MLP FC1
+B×L×2048
+GPU 9" shape=rectangle]
+		mlp_gelu_l4_9 [label="GELU
+B×L×2048
+GPU 9" shape=rectangle]
+		mlp_fc2_l4_9 [label="MLP FC2
+B×L×D
+GPU 9" shape=rectangle]
+		mlp_fc1_l4_9 -> mlp_gelu_l4_9
+		mlp_gelu_l4_9 -> mlp_fc2_l4_9
+		mlp_fc1_l4_10 [label="MLP FC1
+B×L×2048
+GPU 10" shape=rectangle]
+		mlp_gelu_l4_10 [label="GELU
+B×L×2048
+GPU 10" shape=rectangle]
+		mlp_fc2_l4_10 [label="MLP FC2
+B×L×D
+GPU 10" shape=rectangle]
+		mlp_fc1_l4_10 -> mlp_gelu_l4_10
+		mlp_gelu_l4_10 -> mlp_fc2_l4_10
+		mlp_fc1_l4_11 [label="MLP FC1
+B×L×2048
+GPU 11" shape=rectangle]
+		mlp_gelu_l4_11 [label="GELU
+B×L×2048
+GPU 11" shape=rectangle]
+		mlp_fc2_l4_11 [label="MLP FC2
+B×L×D
+GPU 11" shape=rectangle]
+		mlp_fc1_l4_11 -> mlp_gelu_l4_11
+		mlp_gelu_l4_11 -> mlp_fc2_l4_11
+		mlp_fc1_l4_12 [label="MLP FC1
+B×L×2048
+GPU 12" shape=rectangle]
+		mlp_gelu_l4_12 [label="GELU
+B×L×2048
+GPU 12" shape=rectangle]
+		mlp_fc2_l4_12 [label="MLP FC2
+B×L×D
+GPU 12" shape=rectangle]
+		mlp_fc1_l4_12 -> mlp_gelu_l4_12
+		mlp_gelu_l4_12 -> mlp_fc2_l4_12
+		mlp_fc1_l4_13 [label="MLP FC1
+B×L×2048
+GPU 13" shape=rectangle]
+		mlp_gelu_l4_13 [label="GELU
+B×L×2048
+GPU 13" shape=rectangle]
+		mlp_fc2_l4_13 [label="MLP FC2
+B×L×D
+GPU 13" shape=rectangle]
+		mlp_fc1_l4_13 -> mlp_gelu_l4_13
+		mlp_gelu_l4_13 -> mlp_fc2_l4_13
+		mlp_fc1_l4_14 [label="MLP FC1
+B×L×2048
+GPU 14" shape=rectangle]
+		mlp_gelu_l4_14 [label="GELU
+B×L×2048
+GPU 14" shape=rectangle]
+		mlp_fc2_l4_14 [label="MLP FC2
+B×L×D
+GPU 14" shape=rectangle]
+		mlp_fc1_l4_14 -> mlp_gelu_l4_14
+		mlp_gelu_l4_14 -> mlp_fc2_l4_14
+		mlp_fc1_l4_15 [label="MLP FC1
+B×L×2048
+GPU 15" shape=rectangle]
+		mlp_gelu_l4_15 [label="GELU
+B×L×2048
+GPU 15" shape=rectangle]
+		mlp_fc2_l4_15 [label="MLP FC2
+B×L×D
+GPU 15" shape=rectangle]
+		mlp_fc1_l4_15 -> mlp_gelu_l4_15
+		mlp_gelu_l4_15 -> mlp_fc2_l4_15
+		mlp_agg_l4 [label="MLP Output
+Aggregation
+B×L×D
+All GPUs" shape=parallelogram]
+		mlp_fc2_l4_0 -> mlp_agg_l4
+		mlp_fc2_l4_1 -> mlp_agg_l4
+		mlp_fc2_l4_2 -> mlp_agg_l4
+		mlp_fc2_l4_3 -> mlp_agg_l4
+		mlp_fc2_l4_4 -> mlp_agg_l4
+		mlp_fc2_l4_5 -> mlp_agg_l4
+		mlp_fc2_l4_6 -> mlp_agg_l4
+		mlp_fc2_l4_7 -> mlp_agg_l4
+		mlp_fc2_l4_8 -> mlp_agg_l4
+		mlp_fc2_l4_9 -> mlp_agg_l4
+		mlp_fc2_l4_10 -> mlp_agg_l4
+		mlp_fc2_l4_11 -> mlp_agg_l4
+		mlp_fc2_l4_12 -> mlp_agg_l4
+		mlp_fc2_l4_13 -> mlp_agg_l4
+		mlp_fc2_l4_14 -> mlp_agg_l4
+		mlp_fc2_l4_15 -> mlp_agg_l4
+		mlp_residual_l4 [label="MLP Residual Add
+B×L×D
+All GPUs" shape=parallelogram]
+		mlp_agg_l4 -> mlp_residual_l4
+	}
+	input -> q_proj_l1_0_0
+	input -> k_proj_l1_0_0
+	input -> v_proj_l1_0_0
+	input -> q_proj_l1_0_1
+	input -> k_proj_l1_0_1
+	input -> v_proj_l1_0_1
+	input -> q_proj_l1_0_2
+	input -> k_proj_l1_0_2
+	input -> v_proj_l1_0_2
+	input -> q_proj_l1_0_3
+	input -> k_proj_l1_0_3
+	input -> v_proj_l1_0_3
+	input -> q_proj_l1_1_0
+	input -> k_proj_l1_1_0
+	input -> v_proj_l1_1_0
+	input -> q_proj_l1_1_1
+	input -> k_proj_l1_1_1
+	input -> v_proj_l1_1_1
+	input -> q_proj_l1_1_2
+	input -> k_proj_l1_1_2
+	input -> v_proj_l1_1_2
+	input -> q_proj_l1_1_3
+	input -> k_proj_l1_1_3
+	input -> v_proj_l1_1_3
+	input -> q_proj_l1_2_0
+	input -> k_proj_l1_2_0
+	input -> v_proj_l1_2_0
+	input -> q_proj_l1_2_1
+	input -> k_proj_l1_2_1
+	input -> v_proj_l1_2_1
+	input -> q_proj_l1_2_2
+	input -> k_proj_l1_2_2
+	input -> v_proj_l1_2_2
+	input -> q_proj_l1_2_3
+	input -> k_proj_l1_2_3
+	input -> v_proj_l1_2_3
+	input -> q_proj_l1_3_0
+	input -> k_proj_l1_3_0
+	input -> v_proj_l1_3_0
+	input -> q_proj_l1_3_1
+	input -> k_proj_l1_3_1
+	input -> v_proj_l1_3_1
+	input -> q_proj_l1_3_2
+	input -> k_proj_l1_3_2
+	input -> v_proj_l1_3_2
+	input -> q_proj_l1_3_3
+	input -> k_proj_l1_3_3
+	input -> v_proj_l1_3_3
+	input -> residual_l1
+	residual_l1 -> mlp_fc1_l1_0
+	residual_l1 -> mlp_fc1_l1_1
+	residual_l1 -> mlp_fc1_l1_2
+	residual_l1 -> mlp_fc1_l1_3
+	residual_l1 -> mlp_fc1_l1_4
+	residual_l1 -> mlp_fc1_l1_5
+	residual_l1 -> mlp_fc1_l1_6
+	residual_l1 -> mlp_fc1_l1_7
+	residual_l1 -> mlp_fc1_l1_8
+	residual_l1 -> mlp_fc1_l1_9
+	residual_l1 -> mlp_fc1_l1_10
+	residual_l1 -> mlp_fc1_l1_11
+	residual_l1 -> mlp_fc1_l1_12
+	residual_l1 -> mlp_fc1_l1_13
+	residual_l1 -> mlp_fc1_l1_14
+	residual_l1 -> mlp_fc1_l1_15
+	residual_l1 -> mlp_residual_l1
+	mlp_residual_l1 -> q_proj_l2_0_0
+	mlp_residual_l1 -> k_proj_l2_0_0
+	mlp_residual_l1 -> v_proj_l2_0_0
+	mlp_residual_l1 -> q_proj_l2_0_1
+	mlp_residual_l1 -> k_proj_l2_0_1
+	mlp_residual_l1 -> v_proj_l2_0_1
+	mlp_residual_l1 -> q_proj_l2_0_2
+	mlp_residual_l1 -> k_proj_l2_0_2
+	mlp_residual_l1 -> v_proj_l2_0_2
+	mlp_residual_l1 -> q_proj_l2_0_3
+	mlp_residual_l1 -> k_proj_l2_0_3
+	mlp_residual_l1 -> v_proj_l2_0_3
+	mlp_residual_l1 -> q_proj_l2_1_0
+	mlp_residual_l1 -> k_proj_l2_1_0
+	mlp_residual_l1 -> v_proj_l2_1_0
+	mlp_residual_l1 -> q_proj_l2_1_1
+	mlp_residual_l1 -> k_proj_l2_1_1
+	mlp_residual_l1 -> v_proj_l2_1_1
+	mlp_residual_l1 -> q_proj_l2_1_2
+	mlp_residual_l1 -> k_proj_l2_1_2
+	mlp_residual_l1 -> v_proj_l2_1_2
+	mlp_residual_l1 -> q_proj_l2_1_3
+	mlp_residual_l1 -> k_proj_l2_1_3
+	mlp_residual_l1 -> v_proj_l2_1_3
+	mlp_residual_l1 -> q_proj_l2_2_0
+	mlp_residual_l1 -> k_proj_l2_2_0
+	mlp_residual_l1 -> v_proj_l2_2_0
+	mlp_residual_l1 -> q_proj_l2_2_1
+	mlp_residual_l1 -> k_proj_l2_2_1
+	mlp_residual_l1 -> v_proj_l2_2_1
+	mlp_residual_l1 -> q_proj_l2_2_2
+	mlp_residual_l1 -> k_proj_l2_2_2
+	mlp_residual_l1 -> v_proj_l2_2_2
+	mlp_residual_l1 -> q_proj_l2_2_3
+	mlp_residual_l1 -> k_proj_l2_2_3
+	mlp_residual_l1 -> v_proj_l2_2_3
+	mlp_residual_l1 -> q_proj_l2_3_0
+	mlp_residual_l1 -> k_proj_l2_3_0
+	mlp_residual_l1 -> v_proj_l2_3_0
+	mlp_residual_l1 -> q_proj_l2_3_1
+	mlp_residual_l1 -> k_proj_l2_3_1
+	mlp_residual_l1 -> v_proj_l2_3_1
+	mlp_residual_l1 -> q_proj_l2_3_2
+	mlp_residual_l1 -> k_proj_l2_3_2
+	mlp_residual_l1 -> v_proj_l2_3_2
+	mlp_residual_l1 -> q_proj_l2_3_3
+	mlp_residual_l1 -> k_proj_l2_3_3
+	mlp_residual_l1 -> v_proj_l2_3_3
+	mlp_residual_l1 -> residual_l2
+	residual_l2 -> mlp_fc1_l2_0
+	residual_l2 -> mlp_fc1_l2_1
+	residual_l2 -> mlp_fc1_l2_2
+	residual_l2 -> mlp_fc1_l2_3
+	residual_l2 -> mlp_fc1_l2_4
+	residual_l2 -> mlp_fc1_l2_5
+	residual_l2 -> mlp_fc1_l2_6
+	residual_l2 -> mlp_fc1_l2_7
+	residual_l2 -> mlp_fc1_l2_8
+	residual_l2 -> mlp_fc1_l2_9
+	residual_l2 -> mlp_fc1_l2_10
+	residual_l2 -> mlp_fc1_l2_11
+	residual_l2 -> mlp_fc1_l2_12
+	residual_l2 -> mlp_fc1_l2_13
+	residual_l2 -> mlp_fc1_l2_14
+	residual_l2 -> mlp_fc1_l2_15
+	residual_l2 -> mlp_residual_l2
+	mlp_residual_l2 -> q_proj_l3_0_0
+	mlp_residual_l2 -> k_proj_l3_0_0
+	mlp_residual_l2 -> v_proj_l3_0_0
+	mlp_residual_l2 -> q_proj_l3_0_1
+	mlp_residual_l2 -> k_proj_l3_0_1
+	mlp_residual_l2 -> v_proj_l3_0_1
+	mlp_residual_l2 -> q_proj_l3_0_2
+	mlp_residual_l2 -> k_proj_l3_0_2
+	mlp_residual_l2 -> v_proj_l3_0_2
+	mlp_residual_l2 -> q_proj_l3_0_3
+	mlp_residual_l2 -> k_proj_l3_0_3
+	mlp_residual_l2 -> v_proj_l3_0_3
+	mlp_residual_l2 -> q_proj_l3_1_0
+	mlp_residual_l2 -> k_proj_l3_1_0
+	mlp_residual_l2 -> v_proj_l3_1_0
+	mlp_residual_l2 -> q_proj_l3_1_1
+	mlp_residual_l2 -> k_proj_l3_1_1
+	mlp_residual_l2 -> v_proj_l3_1_1
+	mlp_residual_l2 -> q_proj_l3_1_2
+	mlp_residual_l2 -> k_proj_l3_1_2
+	mlp_residual_l2 -> v_proj_l3_1_2
+	mlp_residual_l2 -> q_proj_l3_1_3
+	mlp_residual_l2 -> k_proj_l3_1_3
+	mlp_residual_l2 -> v_proj_l3_1_3
+	mlp_residual_l2 -> q_proj_l3_2_0
+	mlp_residual_l2 -> k_proj_l3_2_0
+	mlp_residual_l2 -> v_proj_l3_2_0
+	mlp_residual_l2 -> q_proj_l3_2_1
+	mlp_residual_l2 -> k_proj_l3_2_1
+	mlp_residual_l2 -> v_proj_l3_2_1
+	mlp_residual_l2 -> q_proj_l3_2_2
+	mlp_residual_l2 -> k_proj_l3_2_2
+	mlp_residual_l2 -> v_proj_l3_2_2
+	mlp_residual_l2 -> q_proj_l3_2_3
+	mlp_residual_l2 -> k_proj_l3_2_3
+	mlp_residual_l2 -> v_proj_l3_2_3
+	mlp_residual_l2 -> q_proj_l3_3_0
+	mlp_residual_l2 -> k_proj_l3_3_0
+	mlp_residual_l2 -> v_proj_l3_3_0
+	mlp_residual_l2 -> q_proj_l3_3_1
+	mlp_residual_l2 -> k_proj_l3_3_1
+	mlp_residual_l2 -> v_proj_l3_3_1
+	mlp_residual_l2 -> q_proj_l3_3_2
+	mlp_residual_l2 -> k_proj_l3_3_2
+	mlp_residual_l2 -> v_proj_l3_3_2
+	mlp_residual_l2 -> q_proj_l3_3_3
+	mlp_residual_l2 -> k_proj_l3_3_3
+	mlp_residual_l2 -> v_proj_l3_3_3
+	mlp_residual_l2 -> residual_l3
+	residual_l3 -> mlp_fc1_l3_0
+	residual_l3 -> mlp_fc1_l3_1
+	residual_l3 -> mlp_fc1_l3_2
+	residual_l3 -> mlp_fc1_l3_3
+	residual_l3 -> mlp_fc1_l3_4
+	residual_l3 -> mlp_fc1_l3_5
+	residual_l3 -> mlp_fc1_l3_6
+	residual_l3 -> mlp_fc1_l3_7
+	residual_l3 -> mlp_fc1_l3_8
+	residual_l3 -> mlp_fc1_l3_9
+	residual_l3 -> mlp_fc1_l3_10
+	residual_l3 -> mlp_fc1_l3_11
+	residual_l3 -> mlp_fc1_l3_12
+	residual_l3 -> mlp_fc1_l3_13
+	residual_l3 -> mlp_fc1_l3_14
+	residual_l3 -> mlp_fc1_l3_15
+	residual_l3 -> mlp_residual_l3
+	mlp_residual_l3 -> q_proj_l4_0_0
+	mlp_residual_l3 -> k_proj_l4_0_0
+	mlp_residual_l3 -> v_proj_l4_0_0
+	mlp_residual_l3 -> q_proj_l4_0_1
+	mlp_residual_l3 -> k_proj_l4_0_1
+	mlp_residual_l3 -> v_proj_l4_0_1
+	mlp_residual_l3 -> q_proj_l4_0_2
+	mlp_residual_l3 -> k_proj_l4_0_2
+	mlp_residual_l3 -> v_proj_l4_0_2
+	mlp_residual_l3 -> q_proj_l4_0_3
+	mlp_residual_l3 -> k_proj_l4_0_3
+	mlp_residual_l3 -> v_proj_l4_0_3
+	mlp_residual_l3 -> q_proj_l4_1_0
+	mlp_residual_l3 -> k_proj_l4_1_0
+	mlp_residual_l3 -> v_proj_l4_1_0
+	mlp_residual_l3 -> q_proj_l4_1_1
+	mlp_residual_l3 -> k_proj_l4_1_1
+	mlp_residual_l3 -> v_proj_l4_1_1
+	mlp_residual_l3 -> q_proj_l4_1_2
+	mlp_residual_l3 -> k_proj_l4_1_2
+	mlp_residual_l3 -> v_proj_l4_1_2
+	mlp_residual_l3 -> q_proj_l4_1_3
+	mlp_residual_l3 -> k_proj_l4_1_3
+	mlp_residual_l3 -> v_proj_l4_1_3
+	mlp_residual_l3 -> q_proj_l4_2_0
+	mlp_residual_l3 -> k_proj_l4_2_0
+	mlp_residual_l3 -> v_proj_l4_2_0
+	mlp_residual_l3 -> q_proj_l4_2_1
+	mlp_residual_l3 -> k_proj_l4_2_1
+	mlp_residual_l3 -> v_proj_l4_2_1
+	mlp_residual_l3 -> q_proj_l4_2_2
+	mlp_residual_l3 -> k_proj_l4_2_2
+	mlp_residual_l3 -> v_proj_l4_2_2
+	mlp_residual_l3 -> q_proj_l4_2_3
+	mlp_residual_l3 -> k_proj_l4_2_3
+	mlp_residual_l3 -> v_proj_l4_2_3
+	mlp_residual_l3 -> q_proj_l4_3_0
+	mlp_residual_l3 -> k_proj_l4_3_0
+	mlp_residual_l3 -> v_proj_l4_3_0
+	mlp_residual_l3 -> q_proj_l4_3_1
+	mlp_residual_l3 -> k_proj_l4_3_1
+	mlp_residual_l3 -> v_proj_l4_3_1
+	mlp_residual_l3 -> q_proj_l4_3_2
+	mlp_residual_l3 -> k_proj_l4_3_2
+	mlp_residual_l3 -> v_proj_l4_3_2
+	mlp_residual_l3 -> q_proj_l4_3_3
+	mlp_residual_l3 -> k_proj_l4_3_3
+	mlp_residual_l3 -> v_proj_l4_3_3
+	mlp_residual_l3 -> residual_l4
+	residual_l4 -> mlp_fc1_l4_0
+	residual_l4 -> mlp_fc1_l4_1
+	residual_l4 -> mlp_fc1_l4_2
+	residual_l4 -> mlp_fc1_l4_3
+	residual_l4 -> mlp_fc1_l4_4
+	residual_l4 -> mlp_fc1_l4_5
+	residual_l4 -> mlp_fc1_l4_6
+	residual_l4 -> mlp_fc1_l4_7
+	residual_l4 -> mlp_fc1_l4_8
+	residual_l4 -> mlp_fc1_l4_9
+	residual_l4 -> mlp_fc1_l4_10
+	residual_l4 -> mlp_fc1_l4_11
+	residual_l4 -> mlp_fc1_l4_12
+	residual_l4 -> mlp_fc1_l4_13
+	residual_l4 -> mlp_fc1_l4_14
+	residual_l4 -> mlp_fc1_l4_15
+	residual_l4 -> mlp_residual_l4
+	output [label="Output
+B×L×D" shape=ellipse]
+	mlp_residual_l4 -> output
+}
