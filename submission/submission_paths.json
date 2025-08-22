@@ -1,8 +1,0 @@
-{
-  "dense_dag": "/home/wzc/data/file-share/submission/helix_dense_dag.svg",
-  "moe_dag": "/home/wzc/data/file-share/submission/helix_moe_dag.svg",
-  "generation_scripts": [
-    "/home/wzc/data/file-share/submission/generate_dense_dag.py",
-    "/home/wzc/data/file-share/submission/generate_moe_dag.py"
-  ]
-}
