@@ -1,0 +1,741 @@
+// Dense Transformer Baseline (TP=8, PP=2)
+digraph {
+	rankdir=TB size="20,30"
+	node [color=lightblue shape=ellipse style=filled]
+	node [color=lightgreen shape=rectangle style=filled]
+	node [color=lightyellow shape=parallelogram style=filled]
+	subgraph cluster_input {
+		label="Input Layer"
+		input [label="Input
+X: [B, L, d_model]
+GPU: Host" shape=parallelogram]
+	}
+	subgraph cluster_mha0 {
+		label="Multi-Head Attention"
+		qkv0_0 [label="QKV Projection 0
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 0" shape=rectangle]
+		qkv0_1 [label="QKV Projection 1
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 1" shape=rectangle]
+		qkv0_2 [label="QKV Projection 2
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 2" shape=rectangle]
+		qkv0_3 [label="QKV Projection 3
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 3" shape=rectangle]
+		qkv0_4 [label="QKV Projection 4
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 4" shape=rectangle]
+		qkv0_5 [label="QKV Projection 5
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 5" shape=rectangle]
+		qkv0_6 [label="QKV Projection 6
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 6" shape=rectangle]
+		qkv0_7 [label="QKV Projection 7
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 7" shape=rectangle]
+		attn0_0 [label="Attention 0
+Output: [B, L/P, d_model/8]
+GPU: 0" shape=rectangle]
+		attn0_1 [label="Attention 1
+Output: [B, L/P, d_model/8]
+GPU: 1" shape=rectangle]
+		attn0_2 [label="Attention 2
+Output: [B, L/P, d_model/8]
+GPU: 2" shape=rectangle]
+		attn0_3 [label="Attention 3
+Output: [B, L/P, d_model/8]
+GPU: 3" shape=rectangle]
+		attn0_4 [label="Attention 4
+Output: [B, L/P, d_model/8]
+GPU: 4" shape=rectangle]
+		attn0_5 [label="Attention 5
+Output: [B, L/P, d_model/8]
+GPU: 5" shape=rectangle]
+		attn0_6 [label="Attention 6
+Output: [B, L/P, d_model/8]
+GPU: 6" shape=rectangle]
+		attn0_7 [label="Attention 7
+Output: [B, L/P, d_model/8]
+GPU: 7" shape=rectangle]
+		out0_0 [label="Output Proj 0
+Output: [B, L/P, d_model/8]
+GPU: 0" shape=rectangle]
+		out0_1 [label="Output Proj 1
+Output: [B, L/P, d_model/8]
+GPU: 1" shape=rectangle]
+		out0_2 [label="Output Proj 2
+Output: [B, L/P, d_model/8]
+GPU: 2" shape=rectangle]
+		out0_3 [label="Output Proj 3
+Output: [B, L/P, d_model/8]
+GPU: 3" shape=rectangle]
+		out0_4 [label="Output Proj 4
+Output: [B, L/P, d_model/8]
+GPU: 4" shape=rectangle]
+		out0_5 [label="Output Proj 5
+Output: [B, L/P, d_model/8]
+GPU: 5" shape=rectangle]
+		out0_6 [label="Output Proj 6
+Output: [B, L/P, d_model/8]
+GPU: 6" shape=rectangle]
+		out0_7 [label="Output Proj 7
+Output: [B, L/P, d_model/8]
+GPU: 7" shape=rectangle]
+		ar0 [label="All-Reduce
+Sum across 8 GPUs
+GPU: 0-7" shape=ellipse]
+	}
+	subgraph cluster_ffn0 {
+		label="Feed Forward Network"
+		ffn1_0_0 [label="FFN Linear1 0
+Output: [B, L/P, ffn_dim/8]
+GPU: 0" shape=rectangle]
+		ffn1_0_1 [label="FFN Linear1 1
+Output: [B, L/P, ffn_dim/8]
+GPU: 1" shape=rectangle]
+		ffn1_0_2 [label="FFN Linear1 2
+Output: [B, L/P, ffn_dim/8]
+GPU: 2" shape=rectangle]
+		ffn1_0_3 [label="FFN Linear1 3
+Output: [B, L/P, ffn_dim/8]
+GPU: 3" shape=rectangle]
+		ffn1_0_4 [label="FFN Linear1 4
+Output: [B, L/P, ffn_dim/8]
+GPU: 4" shape=rectangle]
+		ffn1_0_5 [label="FFN Linear1 5
+Output: [B, L/P, ffn_dim/8]
+GPU: 5" shape=rectangle]
+		ffn1_0_6 [label="FFN Linear1 6
+Output: [B, L/P, ffn_dim/8]
+GPU: 6" shape=rectangle]
+		ffn1_0_7 [label="FFN Linear1 7
+Output: [B, L/P, ffn_dim/8]
+GPU: 7" shape=rectangle]
+		act0_0 [label="GELU 0
+Output: [B, L/P, ffn_dim/8]
+GPU: 0" shape=rectangle]
+		act0_1 [label="GELU 1
+Output: [B, L/P, ffn_dim/8]
+GPU: 1" shape=rectangle]
+		act0_2 [label="GELU 2
+Output: [B, L/P, ffn_dim/8]
+GPU: 2" shape=rectangle]
+		act0_3 [label="GELU 3
+Output: [B, L/P, ffn_dim/8]
+GPU: 3" shape=rectangle]
+		act0_4 [label="GELU 4
+Output: [B, L/P, ffn_dim/8]
+GPU: 4" shape=rectangle]
+		act0_5 [label="GELU 5
+Output: [B, L/P, ffn_dim/8]
+GPU: 5" shape=rectangle]
+		act0_6 [label="GELU 6
+Output: [B, L/P, ffn_dim/8]
+GPU: 6" shape=rectangle]
+		act0_7 [label="GELU 7
+Output: [B, L/P, ffn_dim/8]
+GPU: 7" shape=rectangle]
+		ffn2_0_0 [label="FFN Linear2 0
+Output: [B, L/P, d_model/8]
+GPU: 0" shape=rectangle]
+		ffn2_0_1 [label="FFN Linear2 1
+Output: [B, L/P, d_model/8]
+GPU: 1" shape=rectangle]
+		ffn2_0_2 [label="FFN Linear2 2
+Output: [B, L/P, d_model/8]
+GPU: 2" shape=rectangle]
+		ffn2_0_3 [label="FFN Linear2 3
+Output: [B, L/P, d_model/8]
+GPU: 3" shape=rectangle]
+		ffn2_0_4 [label="FFN Linear2 4
+Output: [B, L/P, d_model/8]
+GPU: 4" shape=rectangle]
+		ffn2_0_5 [label="FFN Linear2 5
+Output: [B, L/P, d_model/8]
+GPU: 5" shape=rectangle]
+		ffn2_0_6 [label="FFN Linear2 6
+Output: [B, L/P, d_model/8]
+GPU: 6" shape=rectangle]
+		ffn2_0_7 [label="FFN Linear2 7
+Output: [B, L/P, d_model/8]
+GPU: 7" shape=rectangle]
+		ar_ffn0 [label="All-Reduce
+Sum across 8 GPUs
+GPU: 0-7" shape=ellipse]
+	}
+	subgraph cluster_layer0 {
+		label="Layer 0"
+		split0 [label="Split for Pipeline
+X: [B, L/P, d_model]
+GPU: 0-7" shape=parallelogram]
+		res0 [label="Residual Add
+Input: [B, L/P, d_model]
+GPU: 0-7" shape=parallelogram]
+		res_ffn0 [label="Residual Add
+Input: [B, L/P, d_model]
+GPU: 0-7" shape=parallelogram]
+	}
+	subgraph cluster_stage0 {
+		label="Pipeline Stage 0 (GPUs 0-7)"
+	}
+	send_stage0 [label="Send to Stage 1
+X: [B, L/P, d_model]
+GPU: 0-7 → 8-15" shape=ellipse]
+	subgraph cluster_mha2 {
+		label="Multi-Head Attention"
+		qkv2_8 [label="QKV Projection 8
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 8" shape=rectangle]
+		qkv2_9 [label="QKV Projection 9
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 9" shape=rectangle]
+		qkv2_10 [label="QKV Projection 10
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 10" shape=rectangle]
+		qkv2_11 [label="QKV Projection 11
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 11" shape=rectangle]
+		qkv2_12 [label="QKV Projection 12
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 12" shape=rectangle]
+		qkv2_13 [label="QKV Projection 13
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 13" shape=rectangle]
+		qkv2_14 [label="QKV Projection 14
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 14" shape=rectangle]
+		qkv2_15 [label="QKV Projection 15
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 15" shape=rectangle]
+		attn2_8 [label="Attention 8
+Output: [B, L/P, d_model/8]
+GPU: 8" shape=rectangle]
+		attn2_9 [label="Attention 9
+Output: [B, L/P, d_model/8]
+GPU: 9" shape=rectangle]
+		attn2_10 [label="Attention 10
+Output: [B, L/P, d_model/8]
+GPU: 10" shape=rectangle]
+		attn2_11 [label="Attention 11
+Output: [B, L/P, d_model/8]
+GPU: 11" shape=rectangle]
+		attn2_12 [label="Attention 12
+Output: [B, L/P, d_model/8]
+GPU: 12" shape=rectangle]
+		attn2_13 [label="Attention 13
+Output: [B, L/P, d_model/8]
+GPU: 13" shape=rectangle]
+		attn2_14 [label="Attention 14
+Output: [B, L/P, d_model/8]
+GPU: 14" shape=rectangle]
+		attn2_15 [label="Attention 15
+Output: [B, L/P, d_model/8]
+GPU: 15" shape=rectangle]
+		out2_8 [label="Output Proj 8
+Output: [B, L/P, d_model/8]
+GPU: 8" shape=rectangle]
+		out2_9 [label="Output Proj 9
+Output: [B, L/P, d_model/8]
+GPU: 9" shape=rectangle]
+		out2_10 [label="Output Proj 10
+Output: [B, L/P, d_model/8]
+GPU: 10" shape=rectangle]
+		out2_11 [label="Output Proj 11
+Output: [B, L/P, d_model/8]
+GPU: 11" shape=rectangle]
+		out2_12 [label="Output Proj 12
+Output: [B, L/P, d_model/8]
+GPU: 12" shape=rectangle]
+		out2_13 [label="Output Proj 13
+Output: [B, L/P, d_model/8]
+GPU: 13" shape=rectangle]
+		out2_14 [label="Output Proj 14
+Output: [B, L/P, d_model/8]
+GPU: 14" shape=rectangle]
+		out2_15 [label="Output Proj 15
+Output: [B, L/P, d_model/8]
+GPU: 15" shape=rectangle]
+		ar2 [label="All-Reduce
+Sum across 8 GPUs
+GPU: 8-15" shape=ellipse]
+	}
+	subgraph cluster_ffn2 {
+		label="Feed Forward Network"
+		ffn1_2_8 [label="FFN Linear1 8
+Output: [B, L/P, ffn_dim/8]
+GPU: 8" shape=rectangle]
+		ffn1_2_9 [label="FFN Linear1 9
+Output: [B, L/P, ffn_dim/8]
+GPU: 9" shape=rectangle]
+		ffn1_2_10 [label="FFN Linear1 10
+Output: [B, L/P, ffn_dim/8]
+GPU: 10" shape=rectangle]
+		ffn1_2_11 [label="FFN Linear1 11
+Output: [B, L/P, ffn_dim/8]
+GPU: 11" shape=rectangle]
+		ffn1_2_12 [label="FFN Linear1 12
+Output: [B, L/P, ffn_dim/8]
+GPU: 12" shape=rectangle]
+		ffn1_2_13 [label="FFN Linear1 13
+Output: [B, L/P, ffn_dim/8]
+GPU: 13" shape=rectangle]
+		ffn1_2_14 [label="FFN Linear1 14
+Output: [B, L/P, ffn_dim/8]
+GPU: 14" shape=rectangle]
+		ffn1_2_15 [label="FFN Linear1 15
+Output: [B, L/P, ffn_dim/8]
+GPU: 15" shape=rectangle]
+		act2_8 [label="GELU 8
+Output: [B, L/P, ffn_dim/8]
+GPU: 8" shape=rectangle]
+		act2_9 [label="GELU 9
+Output: [B, L/P, ffn_dim/8]
+GPU: 9" shape=rectangle]
+		act2_10 [label="GELU 10
+Output: [B, L/P, ffn_dim/8]
+GPU: 10" shape=rectangle]
+		act2_11 [label="GELU 11
+Output: [B, L/P, ffn_dim/8]
+GPU: 11" shape=rectangle]
+		act2_12 [label="GELU 12
+Output: [B, L/P, ffn_dim/8]
+GPU: 12" shape=rectangle]
+		act2_13 [label="GELU 13
+Output: [B, L/P, ffn_dim/8]
+GPU: 13" shape=rectangle]
+		act2_14 [label="GELU 14
+Output: [B, L/P, ffn_dim/8]
+GPU: 14" shape=rectangle]
+		act2_15 [label="GELU 15
+Output: [B, L/P, ffn_dim/8]
+GPU: 15" shape=rectangle]
+		ffn2_2_8 [label="FFN Linear2 8
+Output: [B, L/P, d_model/8]
+GPU: 8" shape=rectangle]
+		ffn2_2_9 [label="FFN Linear2 9
+Output: [B, L/P, d_model/8]
+GPU: 9" shape=rectangle]
+		ffn2_2_10 [label="FFN Linear2 10
+Output: [B, L/P, d_model/8]
+GPU: 10" shape=rectangle]
+		ffn2_2_11 [label="FFN Linear2 11
+Output: [B, L/P, d_model/8]
+GPU: 11" shape=rectangle]
+		ffn2_2_12 [label="FFN Linear2 12
+Output: [B, L/P, d_model/8]
+GPU: 12" shape=rectangle]
+		ffn2_2_13 [label="FFN Linear2 13
+Output: [B, L/P, d_model/8]
+GPU: 13" shape=rectangle]
+		ffn2_2_14 [label="FFN Linear2 14
+Output: [B, L/P, d_model/8]
+GPU: 14" shape=rectangle]
+		ffn2_2_15 [label="FFN Linear2 15
+Output: [B, L/P, d_model/8]
+GPU: 15" shape=rectangle]
+		ar_ffn2 [label="All-Reduce
+Sum across 8 GPUs
+GPU: 8-15" shape=ellipse]
+	}
+	subgraph cluster_layer2 {
+		label="Layer 2"
+		recv_stage1 [label="Receive from Stage 0
+X: [B, L/P, d_model]
+GPU: 8-15" shape=ellipse]
+		res2 [label="Residual Add
+Input: [B, L/P, d_model]
+GPU: 8-15" shape=parallelogram]
+		res_ffn2 [label="Residual Add
+Input: [B, L/P, d_model]
+GPU: 8-15" shape=parallelogram]
+	}
+	subgraph cluster_mha3 {
+		label="Multi-Head Attention"
+		qkv3_8 [label="QKV Projection 8
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 8" shape=rectangle]
+		qkv3_9 [label="QKV Projection 9
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 9" shape=rectangle]
+		qkv3_10 [label="QKV Projection 10
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 10" shape=rectangle]
+		qkv3_11 [label="QKV Projection 11
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 11" shape=rectangle]
+		qkv3_12 [label="QKV Projection 12
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 12" shape=rectangle]
+		qkv3_13 [label="QKV Projection 13
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 13" shape=rectangle]
+		qkv3_14 [label="QKV Projection 14
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 14" shape=rectangle]
+		qkv3_15 [label="QKV Projection 15
+[Q,K,V]: [B, L/P, d_model/8]
+GPU: 15" shape=rectangle]
+		attn3_8 [label="Attention 8
+Output: [B, L/P, d_model/8]
+GPU: 8" shape=rectangle]
+		attn3_9 [label="Attention 9
+Output: [B, L/P, d_model/8]
+GPU: 9" shape=rectangle]
+		attn3_10 [label="Attention 10
+Output: [B, L/P, d_model/8]
+GPU: 10" shape=rectangle]
+		attn3_11 [label="Attention 11
+Output: [B, L/P, d_model/8]
+GPU: 11" shape=rectangle]
+		attn3_12 [label="Attention 12
+Output: [B, L/P, d_model/8]
+GPU: 12" shape=rectangle]
+		attn3_13 [label="Attention 13
+Output: [B, L/P, d_model/8]
+GPU: 13" shape=rectangle]
+		attn3_14 [label="Attention 14
+Output: [B, L/P, d_model/8]
+GPU: 14" shape=rectangle]
+		attn3_15 [label="Attention 15
+Output: [B, L/P, d_model/8]
+GPU: 15" shape=rectangle]
+		out3_8 [label="Output Proj 8
+Output: [B, L/P, d_model/8]
+GPU: 8" shape=rectangle]
+		out3_9 [label="Output Proj 9
+Output: [B, L/P, d_model/8]
+GPU: 9" shape=rectangle]
+		out3_10 [label="Output Proj 10
+Output: [B, L/P, d_model/8]
+GPU: 10" shape=rectangle]
+		out3_11 [label="Output Proj 11
+Output: [B, L/P, d_model/8]
+GPU: 11" shape=rectangle]
+		out3_12 [label="Output Proj 12
+Output: [B, L/P, d_model/8]
+GPU: 12" shape=rectangle]
+		out3_13 [label="Output Proj 13
+Output: [B, L/P, d_model/8]
+GPU: 13" shape=rectangle]
+		out3_14 [label="Output Proj 14
+Output: [B, L/P, d_model/8]
+GPU: 14" shape=rectangle]
+		out3_15 [label="Output Proj 15
+Output: [B, L/P, d_model/8]
+GPU: 15" shape=rectangle]
+		ar3 [label="All-Reduce
+Sum across 8 GPUs
+GPU: 8-15" shape=ellipse]
+	}
+	subgraph cluster_ffn3 {
+		label="Feed Forward Network"
+		ffn1_3_8 [label="FFN Linear1 8
+Output: [B, L/P, ffn_dim/8]
+GPU: 8" shape=rectangle]
+		ffn1_3_9 [label="FFN Linear1 9
+Output: [B, L/P, ffn_dim/8]
+GPU: 9" shape=rectangle]
+		ffn1_3_10 [label="FFN Linear1 10
+Output: [B, L/P, ffn_dim/8]
+GPU: 10" shape=rectangle]
+		ffn1_3_11 [label="FFN Linear1 11
+Output: [B, L/P, ffn_dim/8]
+GPU: 11" shape=rectangle]
+		ffn1_3_12 [label="FFN Linear1 12
+Output: [B, L/P, ffn_dim/8]
+GPU: 12" shape=rectangle]
+		ffn1_3_13 [label="FFN Linear1 13
+Output: [B, L/P, ffn_dim/8]
+GPU: 13" shape=rectangle]
+		ffn1_3_14 [label="FFN Linear1 14
+Output: [B, L/P, ffn_dim/8]
+GPU: 14" shape=rectangle]
+		ffn1_3_15 [label="FFN Linear1 15
+Output: [B, L/P, ffn_dim/8]
+GPU: 15" shape=rectangle]
+		act3_8 [label="GELU 8
+Output: [B, L/P, ffn_dim/8]
+GPU: 8" shape=rectangle]
+		act3_9 [label="GELU 9
+Output: [B, L/P, ffn_dim/8]
+GPU: 9" shape=rectangle]
+		act3_10 [label="GELU 10
+Output: [B, L/P, ffn_dim/8]
+GPU: 10" shape=rectangle]
+		act3_11 [label="GELU 11
+Output: [B, L/P, ffn_dim/8]
+GPU: 11" shape=rectangle]
+		act3_12 [label="GELU 12
+Output: [B, L/P, ffn_dim/8]
+GPU: 12" shape=rectangle]
+		act3_13 [label="GELU 13
+Output: [B, L/P, ffn_dim/8]
+GPU: 13" shape=rectangle]
+		act3_14 [label="GELU 14
+Output: [B, L/P, ffn_dim/8]
+GPU: 14" shape=rectangle]
+		act3_15 [label="GELU 15
+Output: [B, L/P, ffn_dim/8]
+GPU: 15" shape=rectangle]
+		ffn2_3_8 [label="FFN Linear2 8
+Output: [B, L/P, d_model/8]
+GPU: 8" shape=rectangle]
+		ffn2_3_9 [label="FFN Linear2 9
+Output: [B, L/P, d_model/8]
+GPU: 9" shape=rectangle]
+		ffn2_3_10 [label="FFN Linear2 10
+Output: [B, L/P, d_model/8]
+GPU: 10" shape=rectangle]
+		ffn2_3_11 [label="FFN Linear2 11
+Output: [B, L/P, d_model/8]
+GPU: 11" shape=rectangle]
+		ffn2_3_12 [label="FFN Linear2 12
+Output: [B, L/P, d_model/8]
+GPU: 12" shape=rectangle]
+		ffn2_3_13 [label="FFN Linear2 13
+Output: [B, L/P, d_model/8]
+GPU: 13" shape=rectangle]
+		ffn2_3_14 [label="FFN Linear2 14
+Output: [B, L/P, d_model/8]
+GPU: 14" shape=rectangle]
+		ffn2_3_15 [label="FFN Linear2 15
+Output: [B, L/P, d_model/8]
+GPU: 15" shape=rectangle]
+		ar_ffn3 [label="All-Reduce
+Sum across 8 GPUs
+GPU: 8-15" shape=ellipse]
+	}
+	subgraph cluster_layer3 {
+		label="Layer 3"
+		res3 [label="Residual Add
+Input: [B, L/P, d_model]
+GPU: 8-15" shape=parallelogram]
+		res_ffn3 [label="Residual Add
+Input: [B, L/P, d_model]
+GPU: 8-15" shape=parallelogram]
+	}
+	subgraph cluster_stage1 {
+		label="Pipeline Stage 1 (GPUs 8-15)"
+	}
+	subgraph cluster_output {
+		label="Output Layer"
+		gather [label="Gather from Pipeline
+X: [B, L, d_model]
+GPU: 8-15 → Host" shape=parallelogram]
+		output [label="Output
+X: [B, L, d_model]
+GPU: Host" shape=parallelogram]
+	}
+	input -> split0
+	split0 -> qkv0_0
+	qkv0_0 -> attn0_0
+	attn0_0 -> out0_0
+	out0_0 -> ar0
+	split0 -> qkv0_1
+	qkv0_1 -> attn0_1
+	attn0_1 -> out0_1
+	out0_1 -> ar0
+	split0 -> qkv0_2
+	qkv0_2 -> attn0_2
+	attn0_2 -> out0_2
+	out0_2 -> ar0
+	split0 -> qkv0_3
+	qkv0_3 -> attn0_3
+	attn0_3 -> out0_3
+	out0_3 -> ar0
+	split0 -> qkv0_4
+	qkv0_4 -> attn0_4
+	attn0_4 -> out0_4
+	out0_4 -> ar0
+	split0 -> qkv0_5
+	qkv0_5 -> attn0_5
+	attn0_5 -> out0_5
+	out0_5 -> ar0
+	split0 -> qkv0_6
+	qkv0_6 -> attn0_6
+	attn0_6 -> out0_6
+	out0_6 -> ar0
+	split0 -> qkv0_7
+	qkv0_7 -> attn0_7
+	attn0_7 -> out0_7
+	out0_7 -> ar0
+	ar0 -> res0
+	split0 -> res0
+	res0 -> ffn1_0_0
+	ffn1_0_0 -> act0_0
+	act0_0 -> ffn2_0_0
+	ffn2_0_0 -> ar_ffn0
+	res0 -> ffn1_0_1
+	ffn1_0_1 -> act0_1
+	act0_1 -> ffn2_0_1
+	ffn2_0_1 -> ar_ffn0
+	res0 -> ffn1_0_2
+	ffn1_0_2 -> act0_2
+	act0_2 -> ffn2_0_2
+	ffn2_0_2 -> ar_ffn0
+	res0 -> ffn1_0_3
+	ffn1_0_3 -> act0_3
+	act0_3 -> ffn2_0_3
+	ffn2_0_3 -> ar_ffn0
+	res0 -> ffn1_0_4
+	ffn1_0_4 -> act0_4
+	act0_4 -> ffn2_0_4
+	ffn2_0_4 -> ar_ffn0
+	res0 -> ffn1_0_5
+	ffn1_0_5 -> act0_5
+	act0_5 -> ffn2_0_5
+	ffn2_0_5 -> ar_ffn0
+	res0 -> ffn1_0_6
+	ffn1_0_6 -> act0_6
+	act0_6 -> ffn2_0_6
+	ffn2_0_6 -> ar_ffn0
+	res0 -> ffn1_0_7
+	ffn1_0_7 -> act0_7
+	act0_7 -> ffn2_0_7
+	ffn2_0_7 -> ar_ffn0
+	ar_ffn0 -> res_ffn0
+	res0 -> res_ffn0
+	res_ffn0 -> send_stage0
+	send_stage0 -> recv_stage1
+	recv_stage1 -> qkv2_8
+	qkv2_8 -> attn2_8
+	attn2_8 -> out2_8
+	out2_8 -> ar2
+	recv_stage1 -> qkv2_9
+	qkv2_9 -> attn2_9
+	attn2_9 -> out2_9
+	out2_9 -> ar2
+	recv_stage1 -> qkv2_10
+	qkv2_10 -> attn2_10
+	attn2_10 -> out2_10
+	out2_10 -> ar2
+	recv_stage1 -> qkv2_11
+	qkv2_11 -> attn2_11
+	attn2_11 -> out2_11
+	out2_11 -> ar2
+	recv_stage1 -> qkv2_12
+	qkv2_12 -> attn2_12
+	attn2_12 -> out2_12
+	out2_12 -> ar2
+	recv_stage1 -> qkv2_13
+	qkv2_13 -> attn2_13
+	attn2_13 -> out2_13
+	out2_13 -> ar2
+	recv_stage1 -> qkv2_14
+	qkv2_14 -> attn2_14
+	attn2_14 -> out2_14
+	out2_14 -> ar2
+	recv_stage1 -> qkv2_15
+	qkv2_15 -> attn2_15
+	attn2_15 -> out2_15
+	out2_15 -> ar2
+	ar2 -> res2
+	recv_stage1 -> res2
+	res2 -> ffn1_2_8
+	ffn1_2_8 -> act2_8
+	act2_8 -> ffn2_2_8
+	ffn2_2_8 -> ar_ffn2
+	res2 -> ffn1_2_9
+	ffn1_2_9 -> act2_9
+	act2_9 -> ffn2_2_9
+	ffn2_2_9 -> ar_ffn2
+	res2 -> ffn1_2_10
+	ffn1_2_10 -> act2_10
+	act2_10 -> ffn2_2_10
+	ffn2_2_10 -> ar_ffn2
+	res2 -> ffn1_2_11
+	ffn1_2_11 -> act2_11
+	act2_11 -> ffn2_2_11
+	ffn2_2_11 -> ar_ffn2
+	res2 -> ffn1_2_12
+	ffn1_2_12 -> act2_12
+	act2_12 -> ffn2_2_12
+	ffn2_2_12 -> ar_ffn2
+	res2 -> ffn1_2_13
+	ffn1_2_13 -> act2_13
+	act2_13 -> ffn2_2_13
+	ffn2_2_13 -> ar_ffn2
+	res2 -> ffn1_2_14
+	ffn1_2_14 -> act2_14
+	act2_14 -> ffn2_2_14
+	ffn2_2_14 -> ar_ffn2
+	res2 -> ffn1_2_15
+	ffn1_2_15 -> act2_15
+	act2_15 -> ffn2_2_15
+	ffn2_2_15 -> ar_ffn2
+	ar_ffn2 -> res_ffn2
+	res2 -> res_ffn2
+	res_ffn2 -> qkv3_8
+	qkv3_8 -> attn3_8
+	attn3_8 -> out3_8
+	out3_8 -> ar3
+	res_ffn2 -> qkv3_9
+	qkv3_9 -> attn3_9
+	attn3_9 -> out3_9
+	out3_9 -> ar3
+	res_ffn2 -> qkv3_10
+	qkv3_10 -> attn3_10
+	attn3_10 -> out3_10
+	out3_10 -> ar3
+	res_ffn2 -> qkv3_11
+	qkv3_11 -> attn3_11
+	attn3_11 -> out3_11
+	out3_11 -> ar3
+	res_ffn2 -> qkv3_12
+	qkv3_12 -> attn3_12
+	attn3_12 -> out3_12
+	out3_12 -> ar3
+	res_ffn2 -> qkv3_13
+	qkv3_13 -> attn3_13
+	attn3_13 -> out3_13
+	out3_13 -> ar3
+	res_ffn2 -> qkv3_14
+	qkv3_14 -> attn3_14
+	attn3_14 -> out3_14
+	out3_14 -> ar3
+	res_ffn2 -> qkv3_15
+	qkv3_15 -> attn3_15
+	attn3_15 -> out3_15
+	out3_15 -> ar3
+	ar3 -> res3
+	res_ffn2 -> res3
+	res3 -> ffn1_3_8
+	ffn1_3_8 -> act3_8
+	act3_8 -> ffn2_3_8
+	ffn2_3_8 -> ar_ffn3
+	res3 -> ffn1_3_9
+	ffn1_3_9 -> act3_9
+	act3_9 -> ffn2_3_9
+	ffn2_3_9 -> ar_ffn3
+	res3 -> ffn1_3_10
+	ffn1_3_10 -> act3_10
+	act3_10 -> ffn2_3_10
+	ffn2_3_10 -> ar_ffn3
+	res3 -> ffn1_3_11
+	ffn1_3_11 -> act3_11
+	act3_11 -> ffn2_3_11
+	ffn2_3_11 -> ar_ffn3
+	res3 -> ffn1_3_12
+	ffn1_3_12 -> act3_12
+	act3_12 -> ffn2_3_12
+	ffn2_3_12 -> ar_ffn3
+	res3 -> ffn1_3_13
+	ffn1_3_13 -> act3_13
+	act3_13 -> ffn2_3_13
+	ffn2_3_13 -> ar_ffn3
+	res3 -> ffn1_3_14
+	ffn1_3_14 -> act3_14
+	act3_14 -> ffn2_3_14
+	ffn2_3_14 -> ar_ffn3
+	res3 -> ffn1_3_15
+	ffn1_3_15 -> act3_15
+	act3_15 -> ffn2_3_15
+	ffn2_3_15 -> ar_ffn3
+	ar_ffn3 -> res_ffn3
+	res3 -> res_ffn3
+	res_ffn3 -> gather
+	gather -> output
+}
