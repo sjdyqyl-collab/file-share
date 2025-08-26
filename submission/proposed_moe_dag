@@ -1,0 +1,392 @@
+digraph proposed_moe {
+	rankdir=TB size="30,40"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	node [fillcolor=lightgreen shape=ellipse style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	input [label="Total Input
+[1024 tokens, hidden_size]" fillcolor=lightcoral shape=ellipse]
+	subgraph cluster_layer_0 {
+		label="Layer 1"
+		route_0 [label="Routing Layer 1
+[1024 tokens]
+Gate Computation" shape=parallelogram]
+		split_0 [label="Split Tokens Layer 1
+[Variable tokens per expert]" shape=parallelogram]
+		expert_0_0 [label="Expert 0
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_1 [label="Expert 1
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_2 [label="Expert 2
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_3 [label="Expert 3
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_4 [label="Expert 4
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_5 [label="Expert 5
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_6 [label="Expert 6
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_7 [label="Expert 7
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_8 [label="Expert 8
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_9 [label="Expert 9
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_10 [label="Expert 10
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_11 [label="Expert 11
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_12 [label="Expert 12
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_13 [label="Expert 13
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_14 [label="Expert 14
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_0_15 [label="Expert 15
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		gather_0 [label="Gather Results Layer 1
+[1024 tokens]" shape=parallelogram]
+		residual_0 [label="Residual Add Layer 1
+[1024 tokens]" fillcolor=orange shape=rectangle]
+	}
+	subgraph cluster_layer_1 {
+		label="Layer 2"
+		route_1 [label="Routing Layer 2
+[1024 tokens]
+Gate Computation" shape=parallelogram]
+		split_1 [label="Split Tokens Layer 2
+[Variable tokens per expert]" shape=parallelogram]
+		expert_1_0 [label="Expert 16
+GPU 16
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_1 [label="Expert 17
+GPU 17
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_2 [label="Expert 18
+GPU 18
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_3 [label="Expert 19
+GPU 19
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_4 [label="Expert 20
+GPU 20
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_5 [label="Expert 21
+GPU 21
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_6 [label="Expert 22
+GPU 22
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_7 [label="Expert 23
+GPU 23
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_8 [label="Expert 24
+GPU 24
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_9 [label="Expert 25
+GPU 25
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_10 [label="Expert 26
+GPU 26
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_11 [label="Expert 27
+GPU 27
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_12 [label="Expert 28
+GPU 28
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_13 [label="Expert 29
+GPU 29
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_14 [label="Expert 30
+GPU 30
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_1_15 [label="Expert 31
+GPU 31
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		gather_1 [label="Gather Results Layer 2
+[1024 tokens]" shape=parallelogram]
+		residual_1 [label="Residual Add Layer 2
+[1024 tokens]" fillcolor=orange shape=rectangle]
+	}
+	subgraph cluster_layer_2 {
+		label="Layer 3"
+		route_2 [label="Routing Layer 3
+[1024 tokens]
+Gate Computation" shape=parallelogram]
+		split_2 [label="Split Tokens Layer 3
+[Variable tokens per expert]" shape=parallelogram]
+		expert_2_0 [label="Expert 32
+GPU 32
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_1 [label="Expert 33
+GPU 33
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_2 [label="Expert 34
+GPU 34
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_3 [label="Expert 35
+GPU 35
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_4 [label="Expert 36
+GPU 36
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_5 [label="Expert 37
+GPU 37
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_6 [label="Expert 38
+GPU 38
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_7 [label="Expert 39
+GPU 39
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_8 [label="Expert 40
+GPU 40
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_9 [label="Expert 41
+GPU 41
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_10 [label="Expert 42
+GPU 42
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_11 [label="Expert 43
+GPU 43
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_12 [label="Expert 44
+GPU 44
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_13 [label="Expert 45
+GPU 45
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_14 [label="Expert 46
+GPU 46
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_2_15 [label="Expert 47
+GPU 47
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		gather_2 [label="Gather Results Layer 3
+[1024 tokens]" shape=parallelogram]
+		residual_2 [label="Residual Add Layer 3
+[1024 tokens]" fillcolor=orange shape=rectangle]
+	}
+	subgraph cluster_layer_3 {
+		label="Layer 4"
+		route_3 [label="Routing Layer 4
+[1024 tokens]
+Gate Computation" shape=parallelogram]
+		split_3 [label="Split Tokens Layer 4
+[Variable tokens per expert]" shape=parallelogram]
+		expert_3_0 [label="Expert 48
+GPU 48
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_1 [label="Expert 49
+GPU 49
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_2 [label="Expert 50
+GPU 50
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_3 [label="Expert 51
+GPU 51
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_4 [label="Expert 52
+GPU 52
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_5 [label="Expert 53
+GPU 53
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_6 [label="Expert 54
+GPU 54
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_7 [label="Expert 55
+GPU 55
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_8 [label="Expert 56
+GPU 56
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_9 [label="Expert 57
+GPU 57
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_10 [label="Expert 58
+GPU 58
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_11 [label="Expert 59
+GPU 59
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_12 [label="Expert 60
+GPU 60
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_13 [label="Expert 61
+GPU 61
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_14 [label="Expert 62
+GPU 62
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		expert_3_15 [label="Expert 63
+GPU 63
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		gather_3 [label="Gather Results Layer 4
+[1024 tokens]" shape=parallelogram]
+		residual_3 [label="Residual Add Layer 4
+[1024 tokens]" fillcolor=orange shape=rectangle]
+	}
+	output [label="Total Output
+[1024 tokens, hidden_size]" fillcolor=lightcoral shape=ellipse]
+	input -> route_0
+	route_0 -> split_0
+	split_0 -> expert_0_0 [label="token routing" style=dashed]
+	split_0 -> expert_0_1 [label="token routing" style=dashed]
+	split_0 -> expert_0_2 [label="token routing" style=dashed]
+	split_0 -> expert_0_3 [label="token routing" style=dashed]
+	split_0 -> expert_0_4 [label="token routing" style=dashed]
+	split_0 -> expert_0_5 [label="token routing" style=dashed]
+	split_0 -> expert_0_6 [label="token routing" style=dashed]
+	split_0 -> expert_0_7 [label="token routing" style=dashed]
+	split_0 -> expert_0_8 [label="token routing" style=dashed]
+	split_0 -> expert_0_9 [label="token routing" style=dashed]
+	split_0 -> expert_0_10 [label="token routing" style=dashed]
+	split_0 -> expert_0_11 [label="token routing" style=dashed]
+	split_0 -> expert_0_12 [label="token routing" style=dashed]
+	split_0 -> expert_0_13 [label="token routing" style=dashed]
+	split_0 -> expert_0_14 [label="token routing" style=dashed]
+	split_0 -> expert_0_15 [label="token routing" style=dashed]
+	expert_0_0 -> gather_0
+	expert_0_1 -> gather_0
+	expert_0_2 -> gather_0
+	expert_0_3 -> gather_0
+	expert_0_4 -> gather_0
+	expert_0_5 -> gather_0
+	expert_0_6 -> gather_0
+	expert_0_7 -> gather_0
+	expert_0_8 -> gather_0
+	expert_0_9 -> gather_0
+	expert_0_10 -> gather_0
+	expert_0_11 -> gather_0
+	expert_0_12 -> gather_0
+	expert_0_13 -> gather_0
+	expert_0_14 -> gather_0
+	expert_0_15 -> gather_0
+	gather_0 -> residual_0
+	residual_0 -> route_1
+	residual_0 -> route_1
+	route_1 -> split_1
+	split_1 -> expert_1_0 [style=dashed]
+	expert_1_0 -> gather_1
+	split_1 -> expert_1_1 [style=dashed]
+	expert_1_1 -> gather_1
+	split_1 -> expert_1_2 [style=dashed]
+	expert_1_2 -> gather_1
+	split_1 -> expert_1_3 [style=dashed]
+	expert_1_3 -> gather_1
+	split_1 -> expert_1_4 [style=dashed]
+	expert_1_4 -> gather_1
+	split_1 -> expert_1_5 [style=dashed]
+	expert_1_5 -> gather_1
+	split_1 -> expert_1_6 [style=dashed]
+	expert_1_6 -> gather_1
+	split_1 -> expert_1_7 [style=dashed]
+	expert_1_7 -> gather_1
+	split_1 -> expert_1_8 [style=dashed]
+	expert_1_8 -> gather_1
+	split_1 -> expert_1_9 [style=dashed]
+	expert_1_9 -> gather_1
+	split_1 -> expert_1_10 [style=dashed]
+	expert_1_10 -> gather_1
+	split_1 -> expert_1_11 [style=dashed]
+	expert_1_11 -> gather_1
+	split_1 -> expert_1_12 [style=dashed]
+	expert_1_12 -> gather_1
+	split_1 -> expert_1_13 [style=dashed]
+	expert_1_13 -> gather_1
+	split_1 -> expert_1_14 [style=dashed]
+	expert_1_14 -> gather_1
+	split_1 -> expert_1_15 [style=dashed]
+	expert_1_15 -> gather_1
+	gather_1 -> residual_1
+	residual_1 -> route_2
+	route_2 -> split_2
+	split_2 -> expert_2_0 [style=dashed]
+	expert_2_0 -> gather_2
+	split_2 -> expert_2_1 [style=dashed]
+	expert_2_1 -> gather_2
+	split_2 -> expert_2_2 [style=dashed]
+	expert_2_2 -> gather_2
+	split_2 -> expert_2_3 [style=dashed]
+	expert_2_3 -> gather_2
+	split_2 -> expert_2_4 [style=dashed]
+	expert_2_4 -> gather_2
+	split_2 -> expert_2_5 [style=dashed]
+	expert_2_5 -> gather_2
+	split_2 -> expert_2_6 [style=dashed]
+	expert_2_6 -> gather_2
+	split_2 -> expert_2_7 [style=dashed]
+	expert_2_7 -> gather_2
+	split_2 -> expert_2_8 [style=dashed]
+	expert_2_8 -> gather_2
+	split_2 -> expert_2_9 [style=dashed]
+	expert_2_9 -> gather_2
+	split_2 -> expert_2_10 [style=dashed]
+	expert_2_10 -> gather_2
+	split_2 -> expert_2_11 [style=dashed]
+	expert_2_11 -> gather_2
+	split_2 -> expert_2_12 [style=dashed]
+	expert_2_12 -> gather_2
+	split_2 -> expert_2_13 [style=dashed]
+	expert_2_13 -> gather_2
+	split_2 -> expert_2_14 [style=dashed]
+	expert_2_14 -> gather_2
+	split_2 -> expert_2_15 [style=dashed]
+	expert_2_15 -> gather_2
+	gather_2 -> residual_2
+	residual_2 -> route_3
+	route_3 -> split_3
+	split_3 -> expert_3_0 [style=dashed]
+	expert_3_0 -> gather_3
+	split_3 -> expert_3_1 [style=dashed]
+	expert_3_1 -> gather_3
+	split_3 -> expert_3_2 [style=dashed]
+	expert_3_2 -> gather_3
+	split_3 -> expert_3_3 [style=dashed]
+	expert_3_3 -> gather_3
+	split_3 -> expert_3_4 [style=dashed]
+	expert_3_4 -> gather_3
+	split_3 -> expert_3_5 [style=dashed]
+	expert_3_5 -> gather_3
+	split_3 -> expert_3_6 [style=dashed]
+	expert_3_6 -> gather_3
+	split_3 -> expert_3_7 [style=dashed]
+	expert_3_7 -> gather_3
+	split_3 -> expert_3_8 [style=dashed]
+	expert_3_8 -> gather_3
+	split_3 -> expert_3_9 [style=dashed]
+	expert_3_9 -> gather_3
+	split_3 -> expert_3_10 [style=dashed]
+	expert_3_10 -> gather_3
+	split_3 -> expert_3_11 [style=dashed]
+	expert_3_11 -> gather_3
+	split_3 -> expert_3_12 [style=dashed]
+	expert_3_12 -> gather_3
+	split_3 -> expert_3_13 [style=dashed]
+	expert_3_13 -> gather_3
+	split_3 -> expert_3_14 [style=dashed]
+	expert_3_14 -> gather_3
+	split_3 -> expert_3_15 [style=dashed]
+	expert_3_15 -> gather_3
+	gather_3 -> residual_3
+	residual_3 -> output
+}

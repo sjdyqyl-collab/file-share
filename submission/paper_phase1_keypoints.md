@@ -1,24 +1,33 @@
-# Phase 1: Key Points Extraction
+## **Abstract**
 
-## Key Points of the Paper
+We propose a large-scale cross-node expert parallelism strategy for Mixture-of-Experts (MoE) models, designed to maximize computational parallelism by deploying at most one expert per GPU. Unlike conventional approaches that colocate multiple experts on the same device, our method fully exploits distributed resources to reduce expert-level contention and improve throughput. By ensuring that Expert Parallelism (EP) is at least 16—qualifying as "large EP" in our definition—we significantly increase the independence of expert computation, enabling better scalability and reduced inter-expert interference. This approach is particularly effective in high-performance computing (HPC) and large GPU cluster environments, where the balance between communication overhead and compute saturation is critical.
 
-1. **Novel Parallelization Strategy**: The paper presents a new approach that combines **Ring Attention** with **sequence parallelism** for Multi-Head Attention (MHA) in large-scale transformer models.
+## **Key Points**
 
-2. **Problem Addressed**: Transformers face challenges with quadratic attention complexity and heavy memory requirements, especially when scaling to trillions of parameters or handling extremely long input sequences.
+### **Problem Statement**
+- Traditional MoE parallelization assigns multiple experts to the same GPU to reduce communication
+- This creates computational bottlenecks and limits true expert parallelism
+- As model and cluster sizes grow, this trade-off becomes increasingly suboptimal
 
-3. **Solution Components**:
-   - **Ring Attention**: Uses a ring topology to decompose attention operations into sequential peer-to-peer exchanges, reducing synchronization overhead
-   - **Sequence Parallelism**: Splits input sequences across devices to reduce memory footprint by ensuring each worker stores only a fraction of the total sequence
+### **Proposed Solution**
+- **Large-scale cross-node expert parallelism** with at most one expert per GPU
+- **Large EP regime**: EP ≥ 16 (experts per parallel group)
+- **Key principle**: Shift bottleneck from intra-GPU contention to network communication
 
-4. **Benefits**:
-   - Minimizes all-to-all communication overhead
-   - Enhances scalability for extremely long sequences
-   - Enables efficient utilization of distributed hardware resources
-   - Reduces activation memory from O(L·d_model) to O(L/P·d_model)
+### **Core Methodology**
+1. **Expert Placement**: One expert per GPU, distributed across nodes
+2. **Routing & Load Balancing**: Asynchronous token routing with dynamic gating
+3. **Communication Overlap**: Interleave computation and communication using CUDA streams
+4. **Scalability**: Integrates with TP and DP for memory-constrained scenarios
 
-5. **Performance Results**:
-   - Dense model: 20.8% TPS improvement, 17.6% TPOT reduction
-   - MoE model: 24.2% TPS improvement, 21.9% TPOT reduction
-   - Consistent benefits across both dense and MoE architectures
+### **Experimental Results**
+- **Setup**: 4-layer MoE, 16 experts/layer, FP16, 1024 tokens/batch
+- **Baseline**: TP=8, PP=2, 16 H100s (4 experts/GPU)
+- **Proposed**: 64 H100s (1 expert/GPU)
+- **Performance**: 3.75× higher throughput (450k vs 120k TPS), 3.8× lower latency (2.2ms vs 8.3ms TPOT)
 
-6. **Experimental Validation**: Tested on 16×H100 GPUs with both dense 4-layer transformer and 4-layer Mixture-of-Experts (MoE) models, showing significant improvements over baseline (TP=8, PP=2) approaches.
+### **Key Contributions**
+- Demonstrates effectiveness of large EP (≥16) in practical deployments
+- Shows communication overhead can be mitigated through careful scheduling
+- Provides scalable blueprint for high-performance MoE inference
+- Validated on H100 clusters with near-linear scaling in large EP regime

@@ -1,0 +1,43 @@
+digraph proposed_communication {
+	rankdir=LR size="30,20"
+	node [fillcolor=lightgreen shape=ellipse]
+	input_broadcast [label="Input Broadcast
+[1024 tokens]
+To 64 GPUs"]
+	layer1_routing [label="Layer 1 Routing
+Async token routing
+To 16 experts"]
+	layer1_gather [label="Layer 1 Gather
+Async all-gather
+From 16 experts"]
+	layer2_routing [label="Layer 2 Routing
+Async token routing
+To 16 experts"]
+	layer2_gather [label="Layer 2 Gather
+Async all-gather
+From 16 experts"]
+	layer3_routing [label="Layer 3 Routing
+Async token routing
+To 16 experts"]
+	layer3_gather [label="Layer 3 Gather
+Async all-gather
+From 16 experts"]
+	layer4_routing [label="Layer 4 Routing
+Async token routing
+To 16 experts"]
+	layer4_gather [label="Layer 4 Gather
+Async all-gather
+From 16 experts"]
+	output_collect [label="Output Collection
+[1024 tokens]
+From GPU 63"]
+	input_broadcast -> layer1_routing
+	layer1_routing -> layer1_gather
+	layer1_gather -> layer2_routing
+	layer2_routing -> layer2_gather
+	layer2_gather -> layer3_routing
+	layer3_routing -> layer3_gather
+	layer3_gather -> layer4_routing
+	layer4_routing -> layer4_gather
+	layer4_gather -> output_collect
+}

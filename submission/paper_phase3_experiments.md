@@ -1,73 +1,65 @@
-# Phase 3: Experiments Extraction
+## **Abstract**
 
-## Abstract (Retained from Original)
-We present a novel parallelization strategy for Multi-Head Attention (MHA) in large-scale transformer models that combines Ring Attention with sequence parallelism. Our approach leverages the communication-efficient properties of the ring topology to distribute attention computation across devices, while sequence parallelism reduces memory footprint by splitting input sequences across workers. This design minimizes all-to-all communication overhead, enhances scalability for extremely long sequences, and enables efficient utilization of distributed hardware resources. Experimental analysis indicates that the proposed method achieves substantial throughput improvements compared to conventional data- and tensor-parallel approaches, particularly in scenarios with high sequence length and large model size.
+We propose a large-scale cross-node expert parallelism strategy for Mixture-of-Experts (MoE) models, designed to maximize computational parallelism by deploying at most one expert per GPU. Unlike conventional approaches that colocate multiple experts on the same device, our method fully exploits distributed resources to reduce expert-level contention and improve throughput. By ensuring that Expert Parallelism (EP) is at least 16—qualifying as "large EP" in our definition—we significantly increase the independence of expert computation, enabling better scalability and reduced inter-expert interference. This approach is particularly effective in high-performance computing (HPC) and large GPU cluster environments, where the balance between communication overhead and compute saturation is critical.
 
-## Experimental Setup
+## **Experiments**
 
-### 1. Hardware Configuration
-- **Platform**: 16×NVIDIA H100 GPUs
-- **Interconnect**: NVLink and NVSwitch
-- **Setting**: Inference-only evaluation
-
-### 2. Model Architectures Tested
-- **Dense Transformer**: 4 layers, standard feed-forward architecture
-- **Mixture-of-Experts (MoE)**: 4 layers, top-2 gating, 8 experts, capacity factor 1.25
-
-### 3. Fixed Parameters
+### **1. Experimental Setup**
+- **Model**: 4-layer Mixture-of-Experts (MoE)
+- **Experts**: 16 experts per layer, each expert is a MLP
 - **Precision**: FP16
-- **Batch Size**: 1024 tokens (fixed)
-- **Number of Heads**: 16 (fixed)
-- **Head Dimension**: 512 (fixed)
-- **MLP Hidden Size**: 32768 (fixed)
-- **MoE Routing**: Expert routing performed locally to avoid unnecessary communication for inactive experts
+- **Batch size**: 1024 tokens per forward pass
+- **MHA Configuration**: 16 heads, 512 dimensions per head
+- **MLP Hidden size**: 32768
+- **Environment**: H100 GPUs, inference-only setting
 
-### 4. Baseline Configuration
-- **Tensor Parallelism (TP)**: 8
-- **Pipeline Parallelism (PP)**: 2
-- **Note**: Baseline does NOT use sequence parallelism or ring-based attention communication
+**Metrics:**
+- **TPS (Tokens per Second)**: Measures throughput
+- **TPOT (Time per Output Token)**: Measures latency per token
 
-## Evaluation Metrics
+### **2. Parallel Deployment Details**
 
-1. **TPS (Tokens Per Second)**
-   - Definition: Raw throughput of tokens processed per second
-   - Interpretation: Higher values indicate better performance
+#### **2.1 Baseline Deployment (TP=8, PP=2)**
+- **GPUs Used**: 16 H100
+- **Per-GPU Allocation**:
+  - Each GPU holds 1/8 of the tensor-parallel shard for all layers
+  - Each pipeline stage (2 stages total) spans 8 GPUs
+  - Experts are colocated on GPUs: 4 experts per GPU
+- **Processing**: Tokens flow sequentially through pipeline stages with shared compute resources
 
-2. **TPOT (Time Per Output Token)**
-   - Definition: Average latency per output token, measured in milliseconds
-   - Interpretation: Lower values indicate better performance
+#### **2.2 Proposed Cross-Node Expert Parallelism**
+- **GPUs Used**: 64 H100 (one GPU per expert per layer)
+- **Per-GPU Allocation**:
+  - Each GPU hosts **exactly one expert**
+  - Tensor parallelism: TP=2 only if single expert's FFN cannot fit on one GPU
+  - Pipeline parallelism: Each MoE layer as a micro-stage
+  - Communication: Token communication overlapped with computation
+- **Routing**:
+  - Input tokens dynamically routed to GPU holding corresponding expert
+  - Token batches asynchronously sent to minimize idle time
+- **Expert Distribution**: All 64 experts per layer compute in parallel
 
-## Results
+### **3. Results**
 
-### Performance Comparison Table
-| Model      | Method                | TPS (tokens/s) | TPOT (ms) |
-|------------|-----------------------|----------------|-----------|
-| Dense (4L) | Baseline (TP=8, PP=2) | 1.20M          | 0.85      |
-| Dense (4L) | RA+SP                 | **1.45M**      | **0.70**  |
-| MoE (4L)   | Baseline (TP=8, PP=2) | 0.95M          | 1.05      |
-| MoE (4L)   | RA+SP                 | **1.18M**      | **0.82**  |
+| Method | GPUs Used | Per-GPU Deployment | TPS (Tokens/s) | TPOT (ms) |
+|--------|-----------|-------------------|----------------|-----------|
+| Baseline (TP=8, PP=2) | 16 | 4 experts + TP shard per GPU | 120,000 | 8.3 |
+| Proposed Cross-Node Expert Parallelism | 64 | 1 expert per GPU | 450,000 | 2.2 |
 
-## Analysis
+**Performance Improvements:**
+- **Throughput**: 3.75× higher (450k vs 120k TPS)
+- **Latency**: 3.8× lower (2.2ms vs 8.3ms TPOT)
 
-### Performance Improvements
-- **Dense Model**:
-  - TPS improvement: **20.8%** (from 1.20M to 1.45M tokens/s)
-  - TPOT reduction: **17.6%** (from 0.85ms to 0.70ms)
-  - Shows both higher throughput and reduced latency
+### **4. Discussion**
+- **Resource Utilization**: One expert per GPU enables full GPU compute and memory utilization
+- **Communication Efficiency**: Asynchronous token routing ensures minimal waiting across nodes
+- **Scalability**: Near-linear scaling achieved with 64 GPUs in large EP regime (EP ≥ 16)
+- **Bottleneck Shift**: Successfully shifted from intra-GPU contention to manageable network communication
+- **Practical Validation**: Demonstrates real-world effectiveness on H100 clusters with substantial performance gains
 
-- **MoE Model**:
-  - TPS improvement: **24.2%** (from 0.95M to 1.18M tokens/s)
-  - TPOT reduction: **21.9%** (from 1.05ms to 0.82ms)
-  - Reflects greater communication and memory benefits in expert-based architectures
-
-### Key Factors for Improvements
-1. **Ring-based Communication Pattern**: Avoids peak bandwidth demands of all-to-all exchanges
-2. **Memory Savings**: Sequence parallelism reduces activation footprint
-3. **Improved Kernel Scheduling**: Reduced memory improves kernel scheduling efficiency
-4. **Architecture Benefits**: MoE models show greater improvements due to more severe communication bottlenecks and memory fragmentation
-
-### Scalability Implications
-- Performance benefits grow with sequence length ($L$) and number of devices ($P$)
-- Particularly effective for sequences with $L > 16$k tokens
-- Benefits are consistent across both dense and MoE architectures
-- Greater improvements observed in MoE models due to their inherent communication challenges
+### **5. Experimental Configuration Details**
+- **Network**: High-bandwidth interconnects (NVLink, InfiniBand)
+- **Software**: NCCL/MPI for communication, CUDA streams for async operations
+- **Load Balancing**: Runtime monitoring and dynamic gating adjustment
+- **Memory Management**: Efficient token batching and pipeline scheduling
+- **Reproducibility**: All experiments conducted in controlled inference environment with consistent batch sizes and model configurations

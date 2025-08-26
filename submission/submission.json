@@ -1,0 +1,24 @@
+{
+  "baseline_dags": [
+    "/home/wzc/data/file-share/submission/baseline_moe_dag.svg",
+    "/home/wzc/data/file-share/submission/baseline_moe_detailed.svg",
+    "/home/wzc/data/file-share/submission/baseline_moe_final.svg"
+  ],
+  "proposed_dags": [
+    "/home/wzc/data/file-share/submission/proposed_moe_dag.svg",
+    "/home/wzc/data/file-share/submission/proposed_moe_detailed.svg",
+    "/home/wzc/data/file-share/submission/proposed_moe_final.svg"
+  ],
+  "communication_dags": [
+    "/home/wzc/data/file-share/submission/proposed_communication.svg"
+  ],
+  "all_dags": [
+    "/home/wzc/data/file-share/submission/baseline_moe_dag.svg",
+    "/home/wzc/data/file-share/submission/baseline_moe_detailed.svg",
+    "/home/wzc/data/file-share/submission/baseline_moe_final.svg",
+    "/home/wzc/data/file-share/submission/proposed_moe_dag.svg",
+    "/home/wzc/data/file-share/submission/proposed_moe_detailed.svg",
+    "/home/wzc/data/file-share/submission/proposed_moe_final.svg",
+    "/home/wzc/data/file-share/submission/proposed_communication.svg"
+  ]
+}

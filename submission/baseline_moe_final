@@ -1,0 +1,400 @@
+digraph baseline_moe_final {
+	nodesep=0.5 rankdir=TB ranksep=1.0 size="35,45"
+	input [label="Input
+[1024 tokens]
+All 16 GPUs" fillcolor=lightcoral shape=ellipse]
+	subgraph layer1 {
+		label="Layer 1"
+		l1_attn [label="MHA
+[1024, hidden]
+TP8 GPUs 0-7,8-15" fillcolor=lightblue]
+		l1_gate [label="Gate
+[1024 tokens]
+All 16 GPUs" shape=parallelogram]
+		l1_gpu0_exp0 [label="Expert 0
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu0_exp1 [label="Expert 1
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu0_exp2 [label="Expert 2
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu0_exp3 [label="Expert 3
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu1_exp0 [label="Expert 4
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu1_exp1 [label="Expert 5
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu1_exp2 [label="Expert 6
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu1_exp3 [label="Expert 7
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu2_exp0 [label="Expert 8
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu2_exp1 [label="Expert 9
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu2_exp2 [label="Expert 10
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu2_exp3 [label="Expert 11
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu3_exp0 [label="Expert 12
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu3_exp1 [label="Expert 13
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu3_exp2 [label="Expert 14
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l1_gpu3_exp3 [label="Expert 15
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l1_agg [label="Aggregate
+[1024 tokens]
+All 16 GPUs" shape=parallelogram]
+		l1_res [label="Residual
+[1024 tokens]
+All 16 GPUs" shape=diamond]
+	}
+	subgraph layer2 {
+		label="Layer 2"
+		l2_attn [label="MHA
+[1024, hidden]
+TP8 GPUs 0-7,8-15" fillcolor=lightblue]
+		l2_gate [label="Gate
+[1024 tokens]
+All 16 GPUs" shape=parallelogram]
+		l2_gpu0_exp0 [label="Expert 0
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu0_exp1 [label="Expert 1
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu0_exp2 [label="Expert 2
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu0_exp3 [label="Expert 3
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu1_exp0 [label="Expert 4
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu1_exp1 [label="Expert 5
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu1_exp2 [label="Expert 6
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu1_exp3 [label="Expert 7
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu2_exp0 [label="Expert 8
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu2_exp1 [label="Expert 9
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu2_exp2 [label="Expert 10
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu2_exp3 [label="Expert 11
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu3_exp0 [label="Expert 12
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu3_exp1 [label="Expert 13
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu3_exp2 [label="Expert 14
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l2_gpu3_exp3 [label="Expert 15
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l2_agg [label="Aggregate
+[1024 tokens]
+All 16 GPUs" shape=parallelogram]
+		l2_res [label="Residual
+[1024 tokens]
+All 16 GPUs" shape=diamond]
+	}
+	subgraph layer3 {
+		label="Layer 3"
+		l3_attn [label="MHA
+[1024, hidden]
+TP8 GPUs 0-7,8-15" fillcolor=lightblue]
+		l3_gate [label="Gate
+[1024 tokens]
+All 16 GPUs" shape=parallelogram]
+		l3_gpu0_exp0 [label="Expert 0
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu0_exp1 [label="Expert 1
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu0_exp2 [label="Expert 2
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu0_exp3 [label="Expert 3
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu1_exp0 [label="Expert 4
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu1_exp1 [label="Expert 5
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu1_exp2 [label="Expert 6
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu1_exp3 [label="Expert 7
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu2_exp0 [label="Expert 8
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu2_exp1 [label="Expert 9
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu2_exp2 [label="Expert 10
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu2_exp3 [label="Expert 11
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu3_exp0 [label="Expert 12
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu3_exp1 [label="Expert 13
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu3_exp2 [label="Expert 14
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l3_gpu3_exp3 [label="Expert 15
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l3_agg [label="Aggregate
+[1024 tokens]
+All 16 GPUs" shape=parallelogram]
+		l3_res [label="Residual
+[1024 tokens]
+All 16 GPUs" shape=diamond]
+	}
+	subgraph layer4 {
+		label="Layer 4"
+		l4_attn [label="MHA
+[1024, hidden]
+TP8 GPUs 0-7,8-15" fillcolor=lightblue]
+		l4_gate [label="Gate
+[1024 tokens]
+All 16 GPUs" shape=parallelogram]
+		l4_gpu0_exp0 [label="Expert 0
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu0_exp1 [label="Expert 1
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu0_exp2 [label="Expert 2
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu0_exp3 [label="Expert 3
+GPU 0
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu1_exp0 [label="Expert 4
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu1_exp1 [label="Expert 5
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu1_exp2 [label="Expert 6
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu1_exp3 [label="Expert 7
+GPU 1
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu2_exp0 [label="Expert 8
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu2_exp1 [label="Expert 9
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu2_exp2 [label="Expert 10
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu2_exp3 [label="Expert 11
+GPU 2
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu3_exp0 [label="Expert 12
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu3_exp1 [label="Expert 13
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu3_exp2 [label="Expert 14
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l4_gpu3_exp3 [label="Expert 15
+GPU 3
+[Variable tokens]" fillcolor=lightblue]
+		l4_agg [label="Aggregate
+[1024 tokens]
+All 16 GPUs" shape=parallelogram]
+		l4_res [label="Residual
+[1024 tokens]
+All 16 GPUs" shape=diamond]
+	}
+	output [label="Output
+[1024 tokens]
+GPU 15" fillcolor=lightcoral shape=ellipse]
+	input -> l1_attn
+	l1_attn -> l1_gate
+	l1_gate -> l1_gpu0_exp0 [style=dashed]
+	l1_gate -> l1_gpu0_exp1 [style=dashed]
+	l1_gate -> l1_gpu0_exp2 [style=dashed]
+	l1_gate -> l1_gpu0_exp3 [style=dashed]
+	l1_gate -> l1_gpu1_exp0 [style=dashed]
+	l1_gate -> l1_gpu1_exp1 [style=dashed]
+	l1_gate -> l1_gpu1_exp2 [style=dashed]
+	l1_gate -> l1_gpu1_exp3 [style=dashed]
+	l1_gate -> l1_gpu2_exp0 [style=dashed]
+	l1_gate -> l1_gpu2_exp1 [style=dashed]
+	l1_gate -> l1_gpu2_exp2 [style=dashed]
+	l1_gate -> l1_gpu2_exp3 [style=dashed]
+	l1_gate -> l1_gpu3_exp0 [style=dashed]
+	l1_gate -> l1_gpu3_exp1 [style=dashed]
+	l1_gate -> l1_gpu3_exp2 [style=dashed]
+	l1_gate -> l1_gpu3_exp3 [style=dashed]
+	l1_gpu0_exp0 -> l1_agg
+	l1_gpu0_exp1 -> l1_agg
+	l1_gpu0_exp2 -> l1_agg
+	l1_gpu0_exp3 -> l1_agg
+	l1_gpu1_exp0 -> l1_agg
+	l1_gpu1_exp1 -> l1_agg
+	l1_gpu1_exp2 -> l1_agg
+	l1_gpu1_exp3 -> l1_agg
+	l1_gpu2_exp0 -> l1_agg
+	l1_gpu2_exp1 -> l1_agg
+	l1_gpu2_exp2 -> l1_agg
+	l1_gpu2_exp3 -> l1_agg
+	l1_gpu3_exp0 -> l1_agg
+	l1_gpu3_exp1 -> l1_agg
+	l1_gpu3_exp2 -> l1_agg
+	l1_gpu3_exp3 -> l1_agg
+	l1_agg -> l1_res
+	l1_res -> l2_attn
+	l2_attn -> l2_gate
+	l2_gate -> l2_gpu0_exp0 [style=dashed]
+	l2_gpu0_exp0 -> l2_agg
+	l2_gate -> l2_gpu0_exp1 [style=dashed]
+	l2_gpu0_exp1 -> l2_agg
+	l2_gate -> l2_gpu0_exp2 [style=dashed]
+	l2_gpu0_exp2 -> l2_agg
+	l2_gate -> l2_gpu0_exp3 [style=dashed]
+	l2_gpu0_exp3 -> l2_agg
+	l2_gate -> l2_gpu1_exp0 [style=dashed]
+	l2_gpu1_exp0 -> l2_agg
+	l2_gate -> l2_gpu1_exp1 [style=dashed]
+	l2_gpu1_exp1 -> l2_agg
+	l2_gate -> l2_gpu1_exp2 [style=dashed]
+	l2_gpu1_exp2 -> l2_agg
+	l2_gate -> l2_gpu1_exp3 [style=dashed]
+	l2_gpu1_exp3 -> l2_agg
+	l2_gate -> l2_gpu2_exp0 [style=dashed]
+	l2_gpu2_exp0 -> l2_agg
+	l2_gate -> l2_gpu2_exp1 [style=dashed]
+	l2_gpu2_exp1 -> l2_agg
+	l2_gate -> l2_gpu2_exp2 [style=dashed]
+	l2_gpu2_exp2 -> l2_agg
+	l2_gate -> l2_gpu2_exp3 [style=dashed]
+	l2_gpu2_exp3 -> l2_agg
+	l2_gate -> l2_gpu3_exp0 [style=dashed]
+	l2_gpu3_exp0 -> l2_agg
+	l2_gate -> l2_gpu3_exp1 [style=dashed]
+	l2_gpu3_exp1 -> l2_agg
+	l2_gate -> l2_gpu3_exp2 [style=dashed]
+	l2_gpu3_exp2 -> l2_agg
+	l2_gate -> l2_gpu3_exp3 [style=dashed]
+	l2_gpu3_exp3 -> l2_agg
+	l2_agg -> l2_res
+	l2_res -> l3_attn
+	l3_gate -> l3_gpu0_exp0 [style=dashed]
+	l3_gpu0_exp0 -> l3_agg
+	l3_gate -> l3_gpu0_exp1 [style=dashed]
+	l3_gpu0_exp1 -> l3_agg
+	l3_gate -> l3_gpu0_exp2 [style=dashed]
+	l3_gpu0_exp2 -> l3_agg
+	l3_gate -> l3_gpu0_exp3 [style=dashed]
+	l3_gpu0_exp3 -> l3_agg
+	l3_gate -> l3_gpu1_exp0 [style=dashed]
+	l3_gpu1_exp0 -> l3_agg
+	l3_gate -> l3_gpu1_exp1 [style=dashed]
+	l3_gpu1_exp1 -> l3_agg
+	l3_gate -> l3_gpu1_exp2 [style=dashed]
+	l3_gpu1_exp2 -> l3_agg
+	l3_gate -> l3_gpu1_exp3 [style=dashed]
+	l3_gpu1_exp3 -> l3_agg
+	l3_gate -> l3_gpu2_exp0 [style=dashed]
+	l3_gpu2_exp0 -> l3_agg
+	l3_gate -> l3_gpu2_exp1 [style=dashed]
+	l3_gpu2_exp1 -> l3_agg
+	l3_gate -> l3_gpu2_exp2 [style=dashed]
+	l3_gpu2_exp2 -> l3_agg
+	l3_gate -> l3_gpu2_exp3 [style=dashed]
+	l3_gpu2_exp3 -> l3_agg
+	l3_gate -> l3_gpu3_exp0 [style=dashed]
+	l3_gpu3_exp0 -> l3_agg
+	l3_gate -> l3_gpu3_exp1 [style=dashed]
+	l3_gpu3_exp1 -> l3_agg
+	l3_gate -> l3_gpu3_exp2 [style=dashed]
+	l3_gpu3_exp2 -> l3_agg
+	l3_gate -> l3_gpu3_exp3 [style=dashed]
+	l3_gpu3_exp3 -> l3_agg
+	l3_agg -> l3_res
+	l3_res -> l4_attn
+	l4_gate -> l4_gpu0_exp0 [style=dashed]
+	l4_gpu0_exp0 -> l4_agg
+	l4_gate -> l4_gpu0_exp1 [style=dashed]
+	l4_gpu0_exp1 -> l4_agg
+	l4_gate -> l4_gpu0_exp2 [style=dashed]
+	l4_gpu0_exp2 -> l4_agg
+	l4_gate -> l4_gpu0_exp3 [style=dashed]
+	l4_gpu0_exp3 -> l4_agg
+	l4_gate -> l4_gpu1_exp0 [style=dashed]
+	l4_gpu1_exp0 -> l4_agg
+	l4_gate -> l4_gpu1_exp1 [style=dashed]
+	l4_gpu1_exp1 -> l4_agg
+	l4_gate -> l4_gpu1_exp2 [style=dashed]
+	l4_gpu1_exp2 -> l4_agg
+	l4_gate -> l4_gpu1_exp3 [style=dashed]
+	l4_gpu1_exp3 -> l4_agg
+	l4_gate -> l4_gpu2_exp0 [style=dashed]
+	l4_gpu2_exp0 -> l4_agg
+	l4_gate -> l4_gpu2_exp1 [style=dashed]
+	l4_gpu2_exp1 -> l4_agg
+	l4_gate -> l4_gpu2_exp2 [style=dashed]
+	l4_gpu2_exp2 -> l4_agg
+	l4_gate -> l4_gpu2_exp3 [style=dashed]
+	l4_gpu2_exp3 -> l4_agg
+	l4_gate -> l4_gpu3_exp0 [style=dashed]
+	l4_gpu3_exp0 -> l4_agg
+	l4_gate -> l4_gpu3_exp1 [style=dashed]
+	l4_gpu3_exp1 -> l4_agg
+	l4_gate -> l4_gpu3_exp2 [style=dashed]
+	l4_gpu3_exp2 -> l4_agg
+	l4_gate -> l4_gpu3_exp3 [style=dashed]
+	l4_gpu3_exp3 -> l4_agg
+	l4_agg -> l4_res
+	l4_res -> output
+}

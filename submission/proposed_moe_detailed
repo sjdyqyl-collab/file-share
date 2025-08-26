@@ -1,0 +1,430 @@
+digraph proposed_moe_detailed {
+	nodesep=0.6 rankdir=TB ranksep=1.2 size="50,60"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	node [fillcolor=lightgreen shape=ellipse style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	node [fillcolor=orange shape=diamond style=filled]
+	input [label="Model Input
+[1024 tokens, hidden_dim]
+Broadcast to all 64 GPUs" fillcolor=lightcoral shape=ellipse]
+	subgraph cluster_layer1 {
+		label="Layer 1 (16 experts, 1 expert/GPU)"
+		layer1_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+Replicated on GPUs 0-15" fillcolor=lightblue]
+		layer1_gate [label="Gate Network
+[1024 tokens]
+Compute routing probs
+GPUs 0-15" shape=parallelogram]
+		layer1_split [label="Split Tokens by Expert
+[Variable tokens per expert]
+Async routing" shape=parallelogram]
+		layer1_expert0_gpu0 [label="Expert 0
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert1_gpu1 [label="Expert 1
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert2_gpu2 [label="Expert 2
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert3_gpu3 [label="Expert 3
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert4_gpu4 [label="Expert 4
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert5_gpu5 [label="Expert 5
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert6_gpu6 [label="Expert 6
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert7_gpu7 [label="Expert 7
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert8_gpu8 [label="Expert 8
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert9_gpu9 [label="Expert 9
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert10_gpu10 [label="Expert 10
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert11_gpu11 [label="Expert 11
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert12_gpu12 [label="Expert 12
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert13_gpu13 [label="Expert 13
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert14_gpu14 [label="Expert 14
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_expert15_gpu15 [label="Expert 15
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer1_gather [label="Gather Expert Outputs
+[1024 tokens]
+Async all-gather
+GPUs 0-15" shape=parallelogram]
+		layer1_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 0-15" shape=diamond]
+	}
+	subgraph cluster_layer2 {
+		label="Layer 2 (16 experts, 1 expert/GPU)"
+		layer2_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+Replicated on GPUs 16-31" fillcolor=lightblue]
+		layer2_gate [label="Gate Network
+[1024 tokens]
+Compute routing probs
+GPUs 16-31" shape=parallelogram]
+		layer2_split [label="Split Tokens by Expert
+[Variable tokens per expert]
+Async routing" shape=parallelogram]
+		layer2_expert0_gpu16 [label="Expert 16
+GPU 16
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert1_gpu17 [label="Expert 17
+GPU 17
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert2_gpu18 [label="Expert 18
+GPU 18
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert3_gpu19 [label="Expert 19
+GPU 19
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert4_gpu20 [label="Expert 20
+GPU 20
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert5_gpu21 [label="Expert 21
+GPU 21
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert6_gpu22 [label="Expert 22
+GPU 22
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert7_gpu23 [label="Expert 23
+GPU 23
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert8_gpu24 [label="Expert 24
+GPU 24
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert9_gpu25 [label="Expert 25
+GPU 25
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert10_gpu26 [label="Expert 26
+GPU 26
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert11_gpu27 [label="Expert 27
+GPU 27
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert12_gpu28 [label="Expert 28
+GPU 28
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert13_gpu29 [label="Expert 29
+GPU 29
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert14_gpu30 [label="Expert 30
+GPU 30
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_expert15_gpu31 [label="Expert 31
+GPU 31
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer2_gather [label="Gather Expert Outputs
+[1024 tokens]
+Async all-gather
+GPUs 16-31" shape=parallelogram]
+		layer2_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 16-31" shape=diamond]
+	}
+	subgraph cluster_layer3 {
+		label="Layer 3 (16 experts, 1 expert/GPU)"
+		layer3_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+Replicated on GPUs 32-47" fillcolor=lightblue]
+		layer3_gate [label="Gate Network
+[1024 tokens]
+Compute routing probs
+GPUs 32-47" shape=parallelogram]
+		layer3_split [label="Split Tokens by Expert
+[Variable tokens per expert]
+Async routing" shape=parallelogram]
+		layer3_expert0_gpu32 [label="Expert 32
+GPU 32
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert1_gpu33 [label="Expert 33
+GPU 33
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert2_gpu34 [label="Expert 34
+GPU 34
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert3_gpu35 [label="Expert 35
+GPU 35
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert4_gpu36 [label="Expert 36
+GPU 36
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert5_gpu37 [label="Expert 37
+GPU 37
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert6_gpu38 [label="Expert 38
+GPU 38
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert7_gpu39 [label="Expert 39
+GPU 39
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert8_gpu40 [label="Expert 40
+GPU 40
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert9_gpu41 [label="Expert 41
+GPU 41
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert10_gpu42 [label="Expert 42
+GPU 42
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert11_gpu43 [label="Expert 43
+GPU 43
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert12_gpu44 [label="Expert 44
+GPU 44
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert13_gpu45 [label="Expert 45
+GPU 45
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert14_gpu46 [label="Expert 46
+GPU 46
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_expert15_gpu47 [label="Expert 47
+GPU 47
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer3_gather [label="Gather Expert Outputs
+[1024 tokens]
+Async all-gather
+GPUs 32-47" shape=parallelogram]
+		layer3_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 32-47" shape=diamond]
+	}
+	subgraph cluster_layer4 {
+		label="Layer 4 (16 experts, 1 expert/GPU)"
+		layer4_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+Replicated on GPUs 48-63" fillcolor=lightblue]
+		layer4_gate [label="Gate Network
+[1024 tokens]
+Compute routing probs
+GPUs 48-63" shape=parallelogram]
+		layer4_split [label="Split Tokens by Expert
+[Variable tokens per expert]
+Async routing" shape=parallelogram]
+		layer4_expert0_gpu48 [label="Expert 48
+GPU 48
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert1_gpu49 [label="Expert 49
+GPU 49
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert2_gpu50 [label="Expert 50
+GPU 50
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert3_gpu51 [label="Expert 51
+GPU 51
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert4_gpu52 [label="Expert 52
+GPU 52
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert5_gpu53 [label="Expert 53
+GPU 53
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert6_gpu54 [label="Expert 54
+GPU 54
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert7_gpu55 [label="Expert 55
+GPU 55
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert8_gpu56 [label="Expert 56
+GPU 56
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert9_gpu57 [label="Expert 57
+GPU 57
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert10_gpu58 [label="Expert 58
+GPU 58
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert11_gpu59 [label="Expert 59
+GPU 59
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert12_gpu60 [label="Expert 60
+GPU 60
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert13_gpu61 [label="Expert 61
+GPU 61
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert14_gpu62 [label="Expert 62
+GPU 62
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_expert15_gpu63 [label="Expert 63
+GPU 63
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+		layer4_gather [label="Gather Expert Outputs
+[1024 tokens]
+Async all-gather
+GPUs 48-63" shape=parallelogram]
+		layer4_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 48-63" shape=diamond]
+	}
+	output [label="Model Output
+[1024 tokens, hidden_dim]
+From GPU 63" fillcolor=lightcoral shape=ellipse]
+	input -> layer1_attn
+	layer1_attn -> layer1_gate
+	layer1_gate -> layer1_split
+	layer1_split -> layer1_expert0_gpu0 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert1_gpu1 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert2_gpu2 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert3_gpu3 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert4_gpu4 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert5_gpu5 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert6_gpu6 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert7_gpu7 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert8_gpu8 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert9_gpu9 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert10_gpu10 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert11_gpu11 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert12_gpu12 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert13_gpu13 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert14_gpu14 [label="routed tokens" style=dashed]
+	layer1_split -> layer1_expert15_gpu15 [label="routed tokens" style=dashed]
+	layer1_expert0_gpu0 -> layer1_gather
+	layer1_expert1_gpu1 -> layer1_gather
+	layer1_expert2_gpu2 -> layer1_gather
+	layer1_expert3_gpu3 -> layer1_gather
+	layer1_expert4_gpu4 -> layer1_gather
+	layer1_expert5_gpu5 -> layer1_gather
+	layer1_expert6_gpu6 -> layer1_gather
+	layer1_expert7_gpu7 -> layer1_gather
+	layer1_expert8_gpu8 -> layer1_gather
+	layer1_expert9_gpu9 -> layer1_gather
+	layer1_expert10_gpu10 -> layer1_gather
+	layer1_expert11_gpu11 -> layer1_gather
+	layer1_expert12_gpu12 -> layer1_gather
+	layer1_expert13_gpu13 -> layer1_gather
+	layer1_expert14_gpu14 -> layer1_gather
+	layer1_expert15_gpu15 -> layer1_gather
+	layer1_gather -> layer1_residual
+	layer1_residual -> layer2_attn
+	layer2_attn -> layer2_gate
+	layer2_gate -> layer2_split
+	layer2_split -> layer2_expert0_gpu16 [label="routed tokens" style=dashed]
+	layer2_expert0_gpu16 -> layer2_gather
+	layer2_split -> layer2_expert1_gpu17 [label="routed tokens" style=dashed]
+	layer2_expert1_gpu17 -> layer2_gather
+	layer2_split -> layer2_expert2_gpu18 [label="routed tokens" style=dashed]
+	layer2_expert2_gpu18 -> layer2_gather
+	layer2_split -> layer2_expert3_gpu19 [label="routed tokens" style=dashed]
+	layer2_expert3_gpu19 -> layer2_gather
+	layer2_split -> layer2_expert4_gpu20 [label="routed tokens" style=dashed]
+	layer2_expert4_gpu20 -> layer2_gather
+	layer2_split -> layer2_expert5_gpu21 [label="routed tokens" style=dashed]
+	layer2_expert5_gpu21 -> layer2_gather
+	layer2_split -> layer2_expert6_gpu22 [label="routed tokens" style=dashed]
+	layer2_expert6_gpu22 -> layer2_gather
+	layer2_split -> layer2_expert7_gpu23 [label="routed tokens" style=dashed]
+	layer2_expert7_gpu23 -> layer2_gather
+	layer2_split -> layer2_expert8_gpu24 [label="routed tokens" style=dashed]
+	layer2_expert8_gpu24 -> layer2_gather
+	layer2_split -> layer2_expert9_gpu25 [label="routed tokens" style=dashed]
+	layer2_expert9_gpu25 -> layer2_gather
+	layer2_split -> layer2_expert10_gpu26 [label="routed tokens" style=dashed]
+	layer2_expert10_gpu26 -> layer2_gather
+	layer2_split -> layer2_expert11_gpu27 [label="routed tokens" style=dashed]
+	layer2_expert11_gpu27 -> layer2_gather
+	layer2_split -> layer2_expert12_gpu28 [label="routed tokens" style=dashed]
+	layer2_expert12_gpu28 -> layer2_gather
+	layer2_split -> layer2_expert13_gpu29 [label="routed tokens" style=dashed]
+	layer2_expert13_gpu29 -> layer2_gather
+	layer2_split -> layer2_expert14_gpu30 [label="routed tokens" style=dashed]
+	layer2_expert14_gpu30 -> layer2_gather
+	layer2_split -> layer2_expert15_gpu31 [label="routed tokens" style=dashed]
+	layer2_expert15_gpu31 -> layer2_gather
+	layer2_gather -> layer2_residual
+	layer2_residual -> layer3_attn
+	layer3_attn -> layer3_gate
+	layer3_gate -> layer3_split
+	layer3_split -> layer3_expert0_gpu32 [label="routed tokens" style=dashed]
+	layer3_expert0_gpu32 -> layer3_gather
+	layer3_split -> layer3_expert1_gpu33 [label="routed tokens" style=dashed]
+	layer3_expert1_gpu33 -> layer3_gather
+	layer3_split -> layer3_expert2_gpu34 [label="routed tokens" style=dashed]
+	layer3_expert2_gpu34 -> layer3_gather
+	layer3_split -> layer3_expert3_gpu35 [label="routed tokens" style=dashed]
+	layer3_expert3_gpu35 -> layer3_gather
+	layer3_split -> layer3_expert4_gpu36 [label="routed tokens" style=dashed]
+	layer3_expert4_gpu36 -> layer3_gather
+	layer3_split -> layer3_expert5_gpu37 [label="routed tokens" style=dashed]
+	layer3_expert5_gpu37 -> layer3_gather
+	layer3_split -> layer3_expert6_gpu38 [label="routed tokens" style=dashed]
+	layer3_expert6_gpu38 -> layer3_gather
+	layer3_split -> layer3_expert7_gpu39 [label="routed tokens" style=dashed]
+	layer3_expert7_gpu39 -> layer3_gather
+	layer3_split -> layer3_expert8_gpu40 [label="routed tokens" style=dashed]
+	layer3_expert8_gpu40 -> layer3_gather
+	layer3_split -> layer3_expert9_gpu41 [label="routed tokens" style=dashed]
+	layer3_expert9_gpu41 -> layer3_gather
+	layer3_split -> layer3_expert10_gpu42 [label="routed tokens" style=dashed]
+	layer3_expert10_gpu42 -> layer3_gather
+	layer3_split -> layer3_expert11_gpu43 [label="routed tokens" style=dashed]
+	layer3_expert11_gpu43 -> layer3_gather
+	layer3_split -> layer3_expert12_gpu44 [label="routed tokens" style=dashed]
+	layer3_expert12_gpu44 -> layer3_gather
+	layer3_split -> layer3_expert13_gpu45 [label="routed tokens" style=dashed]
+	layer3_expert13_gpu45 -> layer3_gather
+	layer3_split -> layer3_expert14_gpu46 [label="routed tokens" style=dashed]
+	layer3_expert14_gpu46 -> layer3_gather
+	layer3_split -> layer3_expert15_gpu47 [label="routed tokens" style=dashed]
+	layer3_expert15_gpu47 -> layer3_gather
+	layer3_gather -> layer3_residual
+	layer3_residual -> layer4_attn
+	layer4_attn -> layer4_gate
+	layer4_gate -> layer4_split
+	layer4_split -> layer4_expert0_gpu48 [label="routed tokens" style=dashed]
+	layer4_expert0_gpu48 -> layer4_gather
+	layer4_split -> layer4_expert1_gpu49 [label="routed tokens" style=dashed]
+	layer4_expert1_gpu49 -> layer4_gather
+	layer4_split -> layer4_expert2_gpu50 [label="routed tokens" style=dashed]
+	layer4_expert2_gpu50 -> layer4_gather
+	layer4_split -> layer4_expert3_gpu51 [label="routed tokens" style=dashed]
+	layer4_expert3_gpu51 -> layer4_gather
+	layer4_split -> layer4_expert4_gpu52 [label="routed tokens" style=dashed]
+	layer4_expert4_gpu52 -> layer4_gather
+	layer4_split -> layer4_expert5_gpu53 [label="routed tokens" style=dashed]
+	layer4_expert5_gpu53 -> layer4_gather
+	layer4_split -> layer4_expert6_gpu54 [label="routed tokens" style=dashed]
+	layer4_expert6_gpu54 -> layer4_gather
+	layer4_split -> layer4_expert7_gpu55 [label="routed tokens" style=dashed]
+	layer4_expert7_gpu55 -> layer4_gather
+	layer4_split -> layer4_expert8_gpu56 [label="routed tokens" style=dashed]
+	layer4_expert8_gpu56 -> layer4_gather
+	layer4_split -> layer4_expert9_gpu57 [label="routed tokens" style=dashed]
+	layer4_expert9_gpu57 -> layer4_gather
+	layer4_split -> layer4_expert10_gpu58 [label="routed tokens" style=dashed]
+	layer4_expert10_gpu58 -> layer4_gather
+	layer4_split -> layer4_expert11_gpu59 [label="routed tokens" style=dashed]
+	layer4_expert11_gpu59 -> layer4_gather
+	layer4_split -> layer4_expert12_gpu60 [label="routed tokens" style=dashed]
+	layer4_expert12_gpu60 -> layer4_gather
+	layer4_split -> layer4_expert13_gpu61 [label="routed tokens" style=dashed]
+	layer4_expert13_gpu61 -> layer4_gather
+	layer4_split -> layer4_expert14_gpu62 [label="routed tokens" style=dashed]
+	layer4_expert14_gpu62 -> layer4_gather
+	layer4_split -> layer4_expert15_gpu63 [label="routed tokens" style=dashed]
+	layer4_expert15_gpu63 -> layer4_gather
+	layer4_gather -> layer4_residual
+	layer4_residual -> output
+}

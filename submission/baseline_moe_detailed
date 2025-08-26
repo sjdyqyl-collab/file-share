@@ -1,0 +1,981 @@
+digraph baseline_moe_detailed {
+	nodesep=0.8 rankdir=TB ranksep=1.5 size="40,50"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	node [fillcolor=lightgreen shape=ellipse style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	node [fillcolor=orange shape=diamond style=filled]
+	input [label="Model Input
+[1024 tokens, hidden_dim]
+All GPUs" fillcolor=lightcoral shape=ellipse]
+	subgraph cluster_layer1 {
+		label="Layer 1 (16 experts total, 4 experts/GPU)"
+		subgraph cluster_layer1_stage1 {
+			label="Stage 1 (GPUs 0-7)"
+			l1_s1_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+TP across GPUs 0-7" fillcolor=lightblue]
+			l1_s1_route [label="Expert Routing
+[1024 tokens]
+Gate on GPUs 0-7" shape=parallelogram]
+			l1_s1_gpu0_exp0 [label="Expert 0
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu0_exp1 [label="Expert 1
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu0_exp2 [label="Expert 2
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu0_exp3 [label="Expert 3
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu1_exp0 [label="Expert 4
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu1_exp1 [label="Expert 5
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu1_exp2 [label="Expert 6
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu1_exp3 [label="Expert 7
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu2_exp0 [label="Expert 0
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu2_exp1 [label="Expert 1
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu2_exp2 [label="Expert 2
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu2_exp3 [label="Expert 3
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu3_exp0 [label="Expert 4
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu3_exp1 [label="Expert 5
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu3_exp2 [label="Expert 6
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu3_exp3 [label="Expert 7
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu4_exp0 [label="Expert 0
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu4_exp1 [label="Expert 1
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu4_exp2 [label="Expert 2
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu4_exp3 [label="Expert 3
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu5_exp0 [label="Expert 4
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu5_exp1 [label="Expert 5
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu5_exp2 [label="Expert 6
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu5_exp3 [label="Expert 7
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu6_exp0 [label="Expert 0
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu6_exp1 [label="Expert 1
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu6_exp2 [label="Expert 2
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu6_exp3 [label="Expert 3
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu7_exp0 [label="Expert 4
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu7_exp1 [label="Expert 5
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu7_exp2 [label="Expert 6
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_gpu7_exp3 [label="Expert 7
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s1_agg [label="Expert Aggregation
+[1024 tokens]
+All-reduce across GPUs 0-7" shape=parallelogram]
+			l1_s1_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 0-7" shape=diamond]
+		}
+		subgraph cluster_layer1_stage2 {
+			label="Stage 2 (GPUs 8-15)"
+			l1_s2_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+TP across GPUs 8-15" fillcolor=lightblue]
+			l1_s2_route [label="Expert Routing
+[1024 tokens]
+Gate on GPUs 8-15" shape=parallelogram]
+			l1_s2_gpu8_exp0 [label="Expert 8
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu8_exp1 [label="Expert 9
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu8_exp2 [label="Expert 10
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu8_exp3 [label="Expert 11
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu9_exp0 [label="Expert 12
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu9_exp1 [label="Expert 13
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu9_exp2 [label="Expert 14
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu9_exp3 [label="Expert 15
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu10_exp0 [label="Expert 8
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu10_exp1 [label="Expert 9
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu10_exp2 [label="Expert 10
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu10_exp3 [label="Expert 11
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu11_exp0 [label="Expert 12
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu11_exp1 [label="Expert 13
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu11_exp2 [label="Expert 14
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu11_exp3 [label="Expert 15
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu12_exp0 [label="Expert 8
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu12_exp1 [label="Expert 9
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu12_exp2 [label="Expert 10
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu12_exp3 [label="Expert 11
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu13_exp0 [label="Expert 12
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu13_exp1 [label="Expert 13
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu13_exp2 [label="Expert 14
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu13_exp3 [label="Expert 15
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu14_exp0 [label="Expert 8
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu14_exp1 [label="Expert 9
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu14_exp2 [label="Expert 10
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu14_exp3 [label="Expert 11
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu15_exp0 [label="Expert 12
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu15_exp1 [label="Expert 13
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu15_exp2 [label="Expert 14
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_gpu15_exp3 [label="Expert 15
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l1_s2_agg [label="Expert Aggregation
+[1024 tokens]
+All-reduce across GPUs 8-15" shape=parallelogram]
+			l1_s2_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 8-15" shape=diamond]
+		}
+	}
+	subgraph cluster_layer2 {
+		label="Layer 2 (16 experts total, 4 experts/GPU)"
+		subgraph cluster_layer2_stage1 {
+			label="Stage 1 (GPUs 0-7)"
+			l2_s1_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+TP across GPUs 0-7" fillcolor=lightblue]
+			l2_s1_route [label="Expert Routing
+[1024 tokens]
+Gate on GPUs 0-7" shape=parallelogram]
+			l2_s1_gpu0_exp0 [label="Expert 16
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu0_exp1 [label="Expert 17
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu0_exp2 [label="Expert 18
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu0_exp3 [label="Expert 19
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu1_exp0 [label="Expert 20
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu1_exp1 [label="Expert 21
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu1_exp2 [label="Expert 22
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu1_exp3 [label="Expert 23
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu2_exp0 [label="Expert 24
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu2_exp1 [label="Expert 25
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu2_exp2 [label="Expert 26
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu2_exp3 [label="Expert 27
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu3_exp0 [label="Expert 28
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu3_exp1 [label="Expert 29
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu3_exp2 [label="Expert 30
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu3_exp3 [label="Expert 31
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu4_exp0 [label="Expert 32
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu4_exp1 [label="Expert 33
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu4_exp2 [label="Expert 34
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu4_exp3 [label="Expert 35
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu5_exp0 [label="Expert 36
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu5_exp1 [label="Expert 37
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu5_exp2 [label="Expert 38
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu5_exp3 [label="Expert 39
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu6_exp0 [label="Expert 40
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu6_exp1 [label="Expert 41
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu6_exp2 [label="Expert 42
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu6_exp3 [label="Expert 43
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu7_exp0 [label="Expert 44
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu7_exp1 [label="Expert 45
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu7_exp2 [label="Expert 46
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_gpu7_exp3 [label="Expert 47
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s1_agg [label="Expert Aggregation
+[1024 tokens]
+All-reduce across GPUs 0-7" shape=parallelogram]
+			l2_s1_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 0-7" shape=diamond]
+		}
+		subgraph cluster_layer2_stage2 {
+			label="Stage 2 (GPUs 8-15)"
+			l2_s2_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+TP across GPUs 8-15" fillcolor=lightblue]
+			l2_s2_route [label="Expert Routing
+[1024 tokens]
+Gate on GPUs 8-15" shape=parallelogram]
+			l2_s2_gpu8_exp0 [label="Expert 24
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu8_exp1 [label="Expert 25
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu8_exp2 [label="Expert 26
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu8_exp3 [label="Expert 27
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu9_exp0 [label="Expert 28
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu9_exp1 [label="Expert 29
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu9_exp2 [label="Expert 30
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu9_exp3 [label="Expert 31
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu10_exp0 [label="Expert 32
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu10_exp1 [label="Expert 33
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu10_exp2 [label="Expert 34
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu10_exp3 [label="Expert 35
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu11_exp0 [label="Expert 36
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu11_exp1 [label="Expert 37
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu11_exp2 [label="Expert 38
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu11_exp3 [label="Expert 39
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu12_exp0 [label="Expert 40
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu12_exp1 [label="Expert 41
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu12_exp2 [label="Expert 42
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu12_exp3 [label="Expert 43
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu13_exp0 [label="Expert 44
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu13_exp1 [label="Expert 45
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu13_exp2 [label="Expert 46
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu13_exp3 [label="Expert 47
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu14_exp0 [label="Expert 48
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu14_exp1 [label="Expert 49
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu14_exp2 [label="Expert 50
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu14_exp3 [label="Expert 51
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu15_exp0 [label="Expert 52
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu15_exp1 [label="Expert 53
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu15_exp2 [label="Expert 54
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_gpu15_exp3 [label="Expert 55
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l2_s2_agg [label="Expert Aggregation
+[1024 tokens]
+All-reduce across GPUs 8-15" shape=parallelogram]
+			l2_s2_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 8-15" shape=diamond]
+		}
+	}
+	subgraph cluster_layer3 {
+		label="Layer 3 (16 experts total, 4 experts/GPU)"
+		subgraph cluster_layer3_stage1 {
+			label="Stage 1 (GPUs 0-7)"
+			l3_s1_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+TP across GPUs 0-7" fillcolor=lightblue]
+			l3_s1_route [label="Expert Routing
+[1024 tokens]
+Gate on GPUs 0-7" shape=parallelogram]
+			l3_s1_gpu0_exp0 [label="Expert 32
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu0_exp1 [label="Expert 33
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu0_exp2 [label="Expert 34
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu0_exp3 [label="Expert 35
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu1_exp0 [label="Expert 36
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu1_exp1 [label="Expert 37
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu1_exp2 [label="Expert 38
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu1_exp3 [label="Expert 39
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu2_exp0 [label="Expert 40
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu2_exp1 [label="Expert 41
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu2_exp2 [label="Expert 42
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu2_exp3 [label="Expert 43
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu3_exp0 [label="Expert 44
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu3_exp1 [label="Expert 45
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu3_exp2 [label="Expert 46
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu3_exp3 [label="Expert 47
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu4_exp0 [label="Expert 48
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu4_exp1 [label="Expert 49
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu4_exp2 [label="Expert 50
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu4_exp3 [label="Expert 51
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu5_exp0 [label="Expert 52
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu5_exp1 [label="Expert 53
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu5_exp2 [label="Expert 54
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu5_exp3 [label="Expert 55
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu6_exp0 [label="Expert 56
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu6_exp1 [label="Expert 57
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu6_exp2 [label="Expert 58
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu6_exp3 [label="Expert 59
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu7_exp0 [label="Expert 60
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu7_exp1 [label="Expert 61
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu7_exp2 [label="Expert 62
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_gpu7_exp3 [label="Expert 63
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s1_agg [label="Expert Aggregation
+[1024 tokens]
+All-reduce across GPUs 0-7" shape=parallelogram]
+			l3_s1_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 0-7" shape=diamond]
+		}
+		subgraph cluster_layer3_stage2 {
+			label="Stage 2 (GPUs 8-15)"
+			l3_s2_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+TP across GPUs 8-15" fillcolor=lightblue]
+			l3_s2_route [label="Expert Routing
+[1024 tokens]
+Gate on GPUs 8-15" shape=parallelogram]
+			l3_s2_gpu8_exp0 [label="Expert 40
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu8_exp1 [label="Expert 41
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu8_exp2 [label="Expert 42
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu8_exp3 [label="Expert 43
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu9_exp0 [label="Expert 44
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu9_exp1 [label="Expert 45
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu9_exp2 [label="Expert 46
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu9_exp3 [label="Expert 47
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu10_exp0 [label="Expert 48
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu10_exp1 [label="Expert 49
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu10_exp2 [label="Expert 50
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu10_exp3 [label="Expert 51
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu11_exp0 [label="Expert 52
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu11_exp1 [label="Expert 53
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu11_exp2 [label="Expert 54
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu11_exp3 [label="Expert 55
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu12_exp0 [label="Expert 56
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu12_exp1 [label="Expert 57
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu12_exp2 [label="Expert 58
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu12_exp3 [label="Expert 59
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu13_exp0 [label="Expert 60
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu13_exp1 [label="Expert 61
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu13_exp2 [label="Expert 62
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu13_exp3 [label="Expert 63
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu14_exp0 [label="Expert 64
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu14_exp1 [label="Expert 65
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu14_exp2 [label="Expert 66
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu14_exp3 [label="Expert 67
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu15_exp0 [label="Expert 68
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu15_exp1 [label="Expert 69
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu15_exp2 [label="Expert 70
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_gpu15_exp3 [label="Expert 71
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l3_s2_agg [label="Expert Aggregation
+[1024 tokens]
+All-reduce across GPUs 8-15" shape=parallelogram]
+			l3_s2_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 8-15" shape=diamond]
+		}
+	}
+	subgraph cluster_layer4 {
+		label="Layer 4 (16 experts total, 4 experts/GPU)"
+		subgraph cluster_layer4_stage1 {
+			label="Stage 1 (GPUs 0-7)"
+			l4_s1_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+TP across GPUs 0-7" fillcolor=lightblue]
+			l4_s1_route [label="Expert Routing
+[1024 tokens]
+Gate on GPUs 0-7" shape=parallelogram]
+			l4_s1_gpu0_exp0 [label="Expert 48
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu0_exp1 [label="Expert 49
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu0_exp2 [label="Expert 50
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu0_exp3 [label="Expert 51
+GPU 0
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu1_exp0 [label="Expert 52
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu1_exp1 [label="Expert 53
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu1_exp2 [label="Expert 54
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu1_exp3 [label="Expert 55
+GPU 1
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu2_exp0 [label="Expert 56
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu2_exp1 [label="Expert 57
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu2_exp2 [label="Expert 58
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu2_exp3 [label="Expert 59
+GPU 2
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu3_exp0 [label="Expert 60
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu3_exp1 [label="Expert 61
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu3_exp2 [label="Expert 62
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu3_exp3 [label="Expert 63
+GPU 3
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu4_exp0 [label="Expert 64
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu4_exp1 [label="Expert 65
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu4_exp2 [label="Expert 66
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu4_exp3 [label="Expert 67
+GPU 4
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu5_exp0 [label="Expert 68
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu5_exp1 [label="Expert 69
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu5_exp2 [label="Expert 70
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu5_exp3 [label="Expert 71
+GPU 5
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu6_exp0 [label="Expert 72
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu6_exp1 [label="Expert 73
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu6_exp2 [label="Expert 74
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu6_exp3 [label="Expert 75
+GPU 6
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu7_exp0 [label="Expert 76
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu7_exp1 [label="Expert 77
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu7_exp2 [label="Expert 78
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_gpu7_exp3 [label="Expert 79
+GPU 7
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s1_agg [label="Expert Aggregation
+[1024 tokens]
+All-reduce across GPUs 0-7" shape=parallelogram]
+			l4_s1_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 0-7" shape=diamond]
+		}
+		subgraph cluster_layer4_stage2 {
+			label="Stage 2 (GPUs 8-15)"
+			l4_s2_attn [label="Multi-Head Attention
+[1024 tokens, hidden_dim]
+TP across GPUs 8-15" fillcolor=lightblue]
+			l4_s2_route [label="Expert Routing
+[1024 tokens]
+Gate on GPUs 8-15" shape=parallelogram]
+			l4_s2_gpu8_exp0 [label="Expert 56
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu8_exp1 [label="Expert 57
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu8_exp2 [label="Expert 58
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu8_exp3 [label="Expert 59
+GPU 8
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu9_exp0 [label="Expert 60
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu9_exp1 [label="Expert 61
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu9_exp2 [label="Expert 62
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu9_exp3 [label="Expert 63
+GPU 9
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu10_exp0 [label="Expert 64
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu10_exp1 [label="Expert 65
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu10_exp2 [label="Expert 66
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu10_exp3 [label="Expert 67
+GPU 10
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu11_exp0 [label="Expert 68
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu11_exp1 [label="Expert 69
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu11_exp2 [label="Expert 70
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu11_exp3 [label="Expert 71
+GPU 11
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu12_exp0 [label="Expert 72
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu12_exp1 [label="Expert 73
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu12_exp2 [label="Expert 74
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu12_exp3 [label="Expert 75
+GPU 12
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu13_exp0 [label="Expert 76
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu13_exp1 [label="Expert 77
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu13_exp2 [label="Expert 78
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu13_exp3 [label="Expert 79
+GPU 13
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu14_exp0 [label="Expert 80
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu14_exp1 [label="Expert 81
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu14_exp2 [label="Expert 82
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu14_exp3 [label="Expert 83
+GPU 14
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu15_exp0 [label="Expert 84
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu15_exp1 [label="Expert 85
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu15_exp2 [label="Expert 86
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_gpu15_exp3 [label="Expert 87
+GPU 15
+[Variable tokens, expert_dim]" fillcolor=lightblue]
+			l4_s2_agg [label="Expert Aggregation
+[1024 tokens]
+All-reduce across GPUs 8-15" shape=parallelogram]
+			l4_s2_residual [label="Residual Add
+[1024 tokens]
+Across GPUs 8-15" shape=diamond]
+		}
+	}
+	output [label="Model Output
+[1024 tokens, hidden_dim]
+All GPUs" fillcolor=lightcoral shape=ellipse]
+	input -> l1_s1_attn
+	l1_s1_attn -> l1_s1_route
+	l1_s1_route -> l1_s1_gpu0_exp0 [style=dashed]
+	l1_s1_route -> l1_s1_gpu0_exp1 [style=dashed]
+	l1_s1_route -> l1_s1_gpu0_exp2 [style=dashed]
+	l1_s1_route -> l1_s1_gpu0_exp3 [style=dashed]
+	l1_s1_route -> l1_s1_gpu1_exp0 [style=dashed]
+	l1_s1_route -> l1_s1_gpu1_exp1 [style=dashed]
+	l1_s1_route -> l1_s1_gpu1_exp2 [style=dashed]
+	l1_s1_route -> l1_s1_gpu1_exp3 [style=dashed]
+	l1_s1_route -> l1_s1_gpu2_exp0 [style=dashed]
+	l1_s1_route -> l1_s1_gpu2_exp1 [style=dashed]
+	l1_s1_route -> l1_s1_gpu2_exp2 [style=dashed]
+	l1_s1_route -> l1_s1_gpu2_exp3 [style=dashed]
+	l1_s1_route -> l1_s1_gpu3_exp0 [style=dashed]
+	l1_s1_route -> l1_s1_gpu3_exp1 [style=dashed]
+	l1_s1_route -> l1_s1_gpu3_exp2 [style=dashed]
+	l1_s1_route -> l1_s1_gpu3_exp3 [style=dashed]
+	l1_s1_route -> l1_s1_gpu4_exp0 [style=dashed]
+	l1_s1_route -> l1_s1_gpu4_exp1 [style=dashed]
+	l1_s1_route -> l1_s1_gpu4_exp2 [style=dashed]
+	l1_s1_route -> l1_s1_gpu4_exp3 [style=dashed]
+	l1_s1_route -> l1_s1_gpu5_exp0 [style=dashed]
+	l1_s1_route -> l1_s1_gpu5_exp1 [style=dashed]
+	l1_s1_route -> l1_s1_gpu5_exp2 [style=dashed]
+	l1_s1_route -> l1_s1_gpu5_exp3 [style=dashed]
+	l1_s1_route -> l1_s1_gpu6_exp0 [style=dashed]
+	l1_s1_route -> l1_s1_gpu6_exp1 [style=dashed]
+	l1_s1_route -> l1_s1_gpu6_exp2 [style=dashed]
+	l1_s1_route -> l1_s1_gpu6_exp3 [style=dashed]
+	l1_s1_route -> l1_s1_gpu7_exp0 [style=dashed]
+	l1_s1_route -> l1_s1_gpu7_exp1 [style=dashed]
+	l1_s1_route -> l1_s1_gpu7_exp2 [style=dashed]
+	l1_s1_route -> l1_s1_gpu7_exp3 [style=dashed]
+	l1_s1_gpu0_exp0 -> l1_s1_agg
+	l1_s1_gpu0_exp1 -> l1_s1_agg
+	l1_s1_gpu0_exp2 -> l1_s1_agg
+	l1_s1_gpu0_exp3 -> l1_s1_agg
+	l1_s1_gpu1_exp0 -> l1_s1_agg
+	l1_s1_gpu1_exp1 -> l1_s1_agg
+	l1_s1_gpu1_exp2 -> l1_s1_agg
+	l1_s1_gpu1_exp3 -> l1_s1_agg
+	l1_s1_gpu2_exp0 -> l1_s1_agg
+	l1_s1_gpu2_exp1 -> l1_s1_agg
+	l1_s1_gpu2_exp2 -> l1_s1_agg
+	l1_s1_gpu2_exp3 -> l1_s1_agg
+	l1_s1_gpu3_exp0 -> l1_s1_agg
+	l1_s1_gpu3_exp1 -> l1_s1_agg
+	l1_s1_gpu3_exp2 -> l1_s1_agg
+	l1_s1_gpu3_exp3 -> l1_s1_agg
+	l1_s1_gpu4_exp0 -> l1_s1_agg
+	l1_s1_gpu4_exp1 -> l1_s1_agg
+	l1_s1_gpu4_exp2 -> l1_s1_agg
+	l1_s1_gpu4_exp3 -> l1_s1_agg
+	l1_s1_gpu5_exp0 -> l1_s1_agg
+	l1_s1_gpu5_exp1 -> l1_s1_agg
+	l1_s1_gpu5_exp2 -> l1_s1_agg
+	l1_s1_gpu5_exp3 -> l1_s1_agg
+	l1_s1_gpu6_exp0 -> l1_s1_agg
+	l1_s1_gpu6_exp1 -> l1_s1_agg
+	l1_s1_gpu6_exp2 -> l1_s1_agg
+	l1_s1_gpu6_exp3 -> l1_s1_agg
+	l1_s1_gpu7_exp0 -> l1_s1_agg
+	l1_s1_gpu7_exp1 -> l1_s1_agg
+	l1_s1_gpu7_exp2 -> l1_s1_agg
+	l1_s1_gpu7_exp3 -> l1_s1_agg
+	l1_s1_agg -> l1_s1_residual
+	l1_s1_residual -> l1_s2_attn
+}
