@@ -1,109 +1,162 @@
 {
-  "deployment_configurations": {
-    "proposed_method": {
-      "name": "Two-Level Attention Partitioning",
-      "description": "Novel partitioning combining head-level and intra-head dimension-level splits",
-      "parameters": {
-        "total_heads": 16,
-        "dimension_per_head": 512,
-        "total_embedding_dim": 8192,
-        "batch_size": 1024,
-        "precision": "FP16",
-        "partitioning_scheme": {
-          "head_partitions": "n",
-          "dimension_partitions": "m",
-          "total_partitions": "m×n",
-          "partition_formula": "m×n = 16"
-        }
-      },
-      "device_mapping": {
-        "total_devices": 16,
-        "mapping_strategy": "one-to-one",
-        "partition_to_device": "direct_mapping"
-      },
-      "parallel_strategies": {
-        "level_1": {
-          "type": "head_partitioning",
-          "description": "Split h=16 heads into n groups",
-          "heads_per_group": "h/n = 16/n",
-          "implementation": "Each device handles subset of heads"
-        },
-        "level_2": {
-          "type": "intra_head_dimension_partitioning", 
-          "description": "Split each head's d=512 dimensions into m segments",
-          "dimensions_per_segment": "d/m = 512/m",
-          "implementation": "Each device handles subset of dimensions within assigned heads"
-        }
-      },
-      "communication_pattern": {
-        "input_distribution": "broadcast_input_to_all_devices",
-        "intra_group_concatenation": "gather_dimension_slices_within_head_group",
-        "inter_group_concatenation": "gather_head_groups_final_output",
-        "communication_overhead": "0.22ms (dense), 0.30ms (MoE)"
-      },
-      "supported_configurations": [
-        {"m": 4, "n": 4, "heads_per_group": 4, "dimensions_per_segment": 128},
-        {"m": 2, "n": 8, "heads_per_group": 2, "dimensions_per_segment": 256},
-        {"m": 8, "n": 2, "heads_per_group": 8, "dimensions_per_segment": 64}
-      ]
-    },
+  "model_deployments": {
     "baseline": {
-      "name": "Tensor Parallelism + Pipeline Parallelism",
-      "description": "Traditional approach combining TP and PP",
-      "parameters": {
-        "total_heads": 16,
-        "dimension_per_head": 512,
-        "total_embedding_dim": 8192,
-        "batch_size": 1024,
-        "precision": "FP16"
-      },
-      "parallel_strategies": {
-        "tensor_parallelism": {
-          "degree": 8,
-          "description": "Split model tensors across 8 devices",
-          "implementation": "Column-wise/row-wise splitting of weight matrices",
-          "communication": "All-reduce operations for tensor synchronization"
+      "name": "Baseline MoE Deployment",
+      "description": "Traditional approach with colocated experts",
+      "configuration": {
+        "model": {
+          "type": "Mixture-of-Experts",
+          "layers": 4,
+          "experts_per_layer": 16,
+          "total_experts": 64,
+          "expert_type": "MLP",
+          "precision": "FP16",
+          "mha_heads": 16,
+          "mha_head_dim": 512,
+          "mlp_hidden_size": 32768
         },
-        "pipeline_parallelism": {
-          "degree": 2,
-          "description": "Split model layers across 2 pipeline stages",
-          "implementation": "Layer-wise partitioning with micro-batching",
-          "communication": "Point-to-point communication between stages"
+        "parallelism": {
+          "tensor_parallel": 8,
+          "pipeline_parallel": 2,
+          "expert_parallel": 2,
+          "data_parallel": 1
+        },
+        "hardware": {
+          "gpus": 16,
+          "gpu_type": "H100",
+          "per_gpu_experts": 4,
+          "per_gpu_tensor_shard": "1/8"
+        },
+        "deployment_strategy": {
+          "placement": "colocated_experts",
+          "experts_per_gpu": 4,
+          "pipeline_stages": 2,
+          "gpus_per_stage": 8,
+          "communication": "synchronous"
+        },
+        "performance": {
+          "tps": 120000,
+          "tpot_ms": 8.3,
+          "batch_size": 1024
         }
-      },
-      "device_mapping": {
-        "total_devices": 16,
-        "mapping_strategy": "TP×PP = 8×2 = 16",
-        "tensor_parallel_group": 8,
-        "pipeline_stages": 2
-      },
-      "communication_pattern": {
-        "tensor_parallel_communication": "all_reduce_within_TP_group",
-        "pipeline_communication": "send_recv_between_stages",
-        "communication_overhead": "0.35ms (dense), 0.45ms (MoE)"
+      }
+    },
+    "proposed": {
+      "name": "Large-Scale Cross-Node Expert Parallelism",
+      "description": "One expert per GPU with cross-node distribution",
+      "configuration": {
+        "model": {
+          "type": "Mixture-of-Experts",
+          "layers": 4,
+          "experts_per_layer": 16,
+          "total_experts": 64,
+          "expert_type": "MLP",
+          "precision": "FP16",
+          "mha_heads": 16,
+          "mha_head_dim": 512,
+          "mlp_hidden_size": 32768
+        },
+        "parallelism": {
+          "tensor_parallel": 1,
+          "pipeline_parallel": 1,
+          "expert_parallel": 64,
+          "data_parallel": 1,
+          "optional_tensor_parallel": 2
+        },
+        "hardware": {
+          "gpus": 64,
+          "gpu_type": "H100",
+          "per_gpu_experts": 1,
+          "network": "NVLink/InfiniBand/NVSwitch"
+        },
+        "deployment_strategy": {
+          "placement": "single_expert_per_gpu",
+          "topology_aware": true,
+          "cross_node": true,
+          "communication": {
+            "type": "asynchronous",
+            "libraries": ["NCCL", "MPI"],
+            "overlap_compute": true,
+            "token_batching": true,
+            "cuda_streams": true
+          },
+          "routing": {
+            "mechanism": "dynamic_gating",
+            "top_k": "standard",
+            "load_balancing": "dynamic_probability_adjustment",
+            "asynchronous_routing": true
+          }
+        },
+        "pipeline_scheduling": {
+          "type": "micro_stage_per_layer",
+          "overlap_layers": true,
+          "partial_batch_processing": true
+        },
+        "scalability": {
+          "large_ep_threshold": 16,
+          "current_ep": 64,
+          "scaling_behavior": "near_linear"
+        },
+        "performance": {
+          "tps": 450000,
+          "tpot_ms": 2.2,
+          "batch_size": 1024,
+          "speedup_vs_baseline": 3.75,
+          "latency_reduction": 3.8
+        }
       }
     }
   },
-  "deployment_implementation": {
-    "proposed_method": {
-      "step_1": "Initialize m×n = 16 partitions",
-      "step_2": "Calculate partition parameters: heads_per_group=16/n, dimensions_per_segment=512/m",
-      "step_3": "Partition weight matrices W_Q, W_K, W_V into blocks W^(i,j)",
-      "step_4": "Map each partition (i,j) to device_id = (i-1)×m + (j-1)",
-      "step_5": "Distribute input tensor X to all devices",
-      "step_6": "Each device computes Q^(i,j), K^(i,j), V^(i,j) using assigned partition",
-      "step_7": "Compute attention: Attention^(i,j) = softmax(Q^(i,j)(K^(i,j))^T/√d_s)V^(i,j)",
-      "step_8": "Concatenate dimension slices within each head group",
-      "step_9": "Concatenate head groups to form final output"
+  "implementation_details": {
+    "expert_placement_algorithm": {
+      "input": ["cluster_topology", "bandwidth_matrix", "gpu_memory_capacity", "expected_routing_patterns"],
+      "output": "expert_to_gpu_mapping",
+      "constraints": ["one_expert_per_gpu", "minimize_cross_node_traffic", "balance_memory_usage"]
     },
+    "communication_overlap": {
+      "cuda_streams": {
+        "compute_stream": "default",
+        "communication_stream": "high_priority",
+        "synchronization": "event_based"
+      },
+      "token_routing": {
+        "batching_threshold": "dynamic",
+        "buffer_size": "tunable",
+        "priority": "load_balanced"
+      }
+    },
+    "memory_management": {
+      "tensor_parallel_fallback": {
+        "condition": "expert_size > gpu_memory",
+        "tp_degree": 2,
+        "implementation": "intra_expert_sharding"
+      }
+    }
+  },
+  "deployment_commands": {
     "baseline": {
-      "step_1": "Initialize TP=8, PP=2 configuration",
-      "step_2": "Split model into 2 pipeline stages (layers 0-1, layers 2-3)",
-      "step_3": "Within each stage, apply tensor parallelism degree 8",
-      "step_4": "Map devices: pipeline_stage_0 = devices 0-7, pipeline_stage_1 = devices 8-15",
-      "step_5": "Distribute micro-batches through pipeline",
-      "step_6": "Apply all-reduce within each TP group of 8 devices",
-      "step_7": "Synchronize across pipeline stages"
+      "launcher": "torchrun",
+      "parameters": {
+        "nproc_per_node": 8,
+        "nnodes": 2,
+        "node_rank": "$RANK",
+        "master_addr": "$MASTER_ADDR",
+        "master_port": "$MASTER_PORT",
+        "parallel_config": "tp=8,pp=2,ep=2"
+      }
+    },
+    "proposed": {
+      "launcher": "torchrun",
+      "parameters": {
+        "nproc_per_node": 8,
+        "nnodes": 8,
+        "node_rank": "$RANK",
+        "master_addr": "$MASTER_ADDR",
+        "master_port": "$MASTER_PORT",
+        "parallel_config": "tp=1,pp=1,ep=64",
+        "enable_async_comm": true,
+        "topology_aware": true
+      }
     }
   }
 }

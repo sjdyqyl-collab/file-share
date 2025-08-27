@@ -1,60 +1,65 @@
 # Phase 2: Methodology Extraction
 
-## Multi-Head Attention Foundation
-- Input tensor: X ∈ ℝ^(B×L×D) where B=batch size, L=sequence length, D=embedding dimension
-- MHA projects X into Q, K, V using weight matrices W_Q, W_K, W_V ∈ ℝ^(D×D)
-- D = h × d where h=number of heads, d=dimension per head
+## Methods Overview
+Our approach maximizes expert-level parallelism in MoE models by deploying at most one expert per GPU, distributing experts across nodes to fully exploit compute resources. The method shifts the bottleneck from inter-expert contention to network communication, mitigated through careful scheduling, routing, and overlapping communication/computation.
 
-## Two-Level Partitioning Scheme
+## 1. Expert Placement Strategy
 
-### Parameter Definitions
-- h: total number of heads (fixed at 16 in experiments)
-- d: dimension per head (fixed at 512 in experiments)
-- D: total embedding dimension = h × d = 16 × 512 = 8192
-- n: number of head partitions
-- m: number of dimension partitions per head
-- h_g = h/n: heads per group
-- d_s = d/m: slice dimension per partition
+### 1.1 Single-Expert-Per-GPU Deployment
+- **Policy**: Deploy at most one expert per GPU
+- **Condition**: For E experts and G GPUs, assign each expert to distinct GPU if E ≤ G
+- **When E > G**: Replicate experts across GPUs to maximize concurrency while balancing memory
+- **Benefit**: Each expert processes tokens without contention from other experts on same device
 
-### Partitioning Structure
-- Total partitions: m × n (16 in experiments, so m×n=16)
-- Each partition handles: h_g heads × d_s dimensions
+### 1.2 Cross-Node Distribution
+- **Strategy**: Topology-aware placement considering:
+  - Node-to-node bandwidth and latency
+  - GPU memory capacity per node
+  - Expected token routing patterns
+- **Objective**: Minimize maximum tokens sent across any single link while maintaining one-expert-per-GPU
 
-## Weight Matrix Partitioning
-- Each projection matrix W ∈ ℝ^(D×D) partitioned into blocks W^(i,j)
-- i ∈ [1,n] indexes head group
-- j ∈ [1,m] indexes intra-head dimension slice
-- Block size: W^(i,j) ∈ ℝ^(d_s·h_g × d_s·h_g)
+## 2. Routing and Load Balancing
 
-## Computation Flow
-1. **Input Projection**: Each device (i,j) computes:
-   - Q^(i,j) = X W_Q^(i,j)
-   - K^(i,j) = X W_K^(i,j)
-   - V^(i,j) = X W_V^(i,j)
+### 2.1 Gating Mechanism
+- Standard MoE gating network determines top-K experts per token
 
-2. **Attention Computation**: Each device computes:
-   - Attention^(i,j) = softmax(Q^(i,j)(K^(i,j))^T/√d_s) V^(i,j)
+### 2.2 Token Sharding Across Nodes
+- **Token Batching**: Group tokens by destination expert to reduce network messages
+- **Asynchronous Routing**: Send token batches asynchronously to overlap with computation
+- **Load Balancing**: Monitor per-expert load and dynamically adjust gating probabilities to prevent overloading
 
-3. **Aggregation Process**:
-   - Step 1: Concatenate dimension slices j=1..m within each head group i
-   - Step 2: Concatenate head groups i=1..n along head dimension
-   - Final output: Output = Concat_i=1^n(Concat_j=1^m Attention^(i,j))
+## 3. Communication Overlap and Scheduling
 
-## Communication Pattern
-- **Input Distribution**: Each device receives corresponding input slice for projections
-- **Intra-group Communication**: Devices within same head group communicate to concatenate dimension slices
-- **Inter-group Communication**: Minimal - head groups concatenated without additional communication if properly placed
+### 3.1 Overlapping Compute and Communication
+- **Mechanism**: Interleave expert computation and communication
+  - While batch N processes on GPU, batch N+1 transfers from other nodes
+  - Use CUDA streams or asynchronous libraries (NCCL/MPI)
+- **Implementation**: Non-blocking data transfer during GPU computation
 
-## Implementation Specifications
-- Compatible with existing model parallel frameworks
-- Supports both training and inference modes
-- Precision: Mixed precision (FP16) as used in experiments
-- Batch size: 1024 (fixed in experiments)
-- Device mapping: Direct mapping of m×n partitions to m×n devices
+### 3.2 Pipeline Scheduling
+- **Multi-layer MoE**: 
+  - Token outputs immediately routed to next layer's experts
+  - Subsequent layer experts start processing partial batches without waiting for full batch completion
+- **Benefit**: Fine-grained pipeline increases throughput, reduces idle time
 
-## Partitioning Examples from Experiments
-For 16 GPUs (m×n=16):
-- Option 1: m=4, n=4 → 4×4=16 partitions
-- Option 2: m=2, n=8 → 2×8=16 partitions
-- Option 3: m=8, n=2 → 8×2=16 partitions
-- Each partition processes: (16/n) heads × (512/m) dimensions
+## 4. Scalability Considerations
+
+### 4.1 Large EP Regime (EP ≥ 16)
+- **Definition**: Expert Parallelism degree ≥ 16
+- **Characteristics**:
+  - Network bandwidth becomes primary limiting factor
+  - Mitigated through topology-aware routing and token batching
+  - One-expert-per-GPU ensures full GPU utilization while amortizing communication across tokens
+
+### 4.2 Memory and Model Parallelism Integration
+- **Large Models**: When single expert exceeds GPU memory
+  - Apply tensor model parallelism (TP) within GPU if necessary
+  - Use data parallelism (DP) across MoE network replicas
+- **Synchronization**: Maintain synchronized weight updates while preserving high expert-level parallelism
+
+## 5. Technical Specifications
+- **Parallelism Types**: Combines EP, TP, PP, and DP
+- **Communication Libraries**: NCCL, MPI
+- **Hardware Requirements**: HPC networking (NVLink, InfiniBand, NVSwitch)
+- **Memory Management**: Optional TP=2 for experts exceeding single-GPU memory
+- **Scheduling**: Asynchronous token routing with CUDA stream management
