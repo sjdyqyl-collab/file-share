@@ -1,0 +1,9 @@
+{
+  "submission_paths": {
+    "phase1_keypoints": "/home/wzc/data/file-share/submission/phase1_keypoints.md",
+    "phase2_methodology": "/home/wzc/data/file-share/submission/phase2_methodology.md", 
+    "phase3_experiments": "/home/wzc/data/file-share/submission/phase3_experiments.md",
+    "deployment_config": "/home/wzc/data/file-share/submission/deployment_config.json",
+    "concise_paper": "/home/wzc/data/file-share/submission/concise_paper.md"
+  }
+}
