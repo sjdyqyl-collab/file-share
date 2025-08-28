@@ -1,0 +1,409 @@
+// Tensor Parallelism + Pipeline Parallelism DAG
+digraph Baseline_TP_PP {
+	rankdir=TB size="20,20"
+	input [label="Input Tensor\nX: [B, L, 8192]" fillcolor=lightblue shape=ellipse style=filled]
+	broadcast_s0 [label="Broadcast\nX: [B, L, 8192] → 8 GPUs" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_s0_0 [label="Q Projection\nGPU 0\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s0_1 [label="Q Projection\nGPU 1\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s0_2 [label="Q Projection\nGPU 2\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s0_3 [label="Q Projection\nGPU 3\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s0_4 [label="Q Projection\nGPU 4\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s0_5 [label="Q Projection\nGPU 5\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s0_6 [label="Q Projection\nGPU 6\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s0_7 [label="Q Projection\nGPU 7\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s0_0 [label="K Projection\nGPU 0\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s0_1 [label="K Projection\nGPU 1\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s0_2 [label="K Projection\nGPU 2\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s0_3 [label="K Projection\nGPU 3\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s0_4 [label="K Projection\nGPU 4\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s0_5 [label="K Projection\nGPU 5\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s0_6 [label="K Projection\nGPU 6\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s0_7 [label="K Projection\nGPU 7\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s0_0 [label="V Projection\nGPU 0\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s0_1 [label="V Projection\nGPU 1\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s0_2 [label="V Projection\nGPU 2\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s0_3 [label="V Projection\nGPU 3\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s0_4 [label="V Projection\nGPU 4\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s0_5 [label="V Projection\nGPU 5\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s0_6 [label="V Projection\nGPU 6\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s0_7 [label="V Projection\nGPU 7\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_s0_0 [label="Multi-Head Attention\nGPU 0\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s0_1 [label="Multi-Head Attention\nGPU 1\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s0_2 [label="Multi-Head Attention\nGPU 2\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s0_3 [label="Multi-Head Attention\nGPU 3\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s0_4 [label="Multi-Head Attention\nGPU 4\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s0_5 [label="Multi-Head Attention\nGPU 5\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s0_6 [label="Multi-Head Attention\nGPU 6\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s0_7 [label="Multi-Head Attention\nGPU 7\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	all_reduce_attn_s0 [label="All-Reduce\n8 GPUs\n→ [B, L, 8192]" fillcolor=lightsteelblue shape=parallelogram style=filled]
+	subgraph cluster_stage0_mha {
+		fillcolor=lightcyan label="Layer 0 - MHA (TP=8)" style=rounded
+	}
+	ffn_gate_s0_0 [label="Gate Projection\nGPU 0\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s0_1 [label="Gate Projection\nGPU 1\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s0_2 [label="Gate Projection\nGPU 2\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s0_3 [label="Gate Projection\nGPU 3\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s0_4 [label="Gate Projection\nGPU 4\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s0_5 [label="Gate Projection\nGPU 5\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s0_6 [label="Gate Projection\nGPU 6\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s0_7 [label="Gate Projection\nGPU 7\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s0_0 [label="Up Projection\nGPU 0\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s0_1 [label="Up Projection\nGPU 1\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s0_2 [label="Up Projection\nGPU 2\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s0_3 [label="Up Projection\nGPU 3\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s0_4 [label="Up Projection\nGPU 4\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s0_5 [label="Up Projection\nGPU 5\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s0_6 [label="Up Projection\nGPU 6\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s0_7 [label="Up Projection\nGPU 7\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s0_0 [label="SiLU\nGPU 0\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s0_1 [label="SiLU\nGPU 1\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s0_2 [label="SiLU\nGPU 2\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s0_3 [label="SiLU\nGPU 3\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s0_4 [label="SiLU\nGPU 4\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s0_5 [label="SiLU\nGPU 5\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s0_6 [label="SiLU\nGPU 6\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s0_7 [label="SiLU\nGPU 7\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s0_0 [label="Element-wise Mul\nGPU 0\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s0_1 [label="Element-wise Mul\nGPU 1\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s0_2 [label="Element-wise Mul\nGPU 2\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s0_3 [label="Element-wise Mul\nGPU 3\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s0_4 [label="Element-wise Mul\nGPU 4\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s0_5 [label="Element-wise Mul\nGPU 5\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s0_6 [label="Element-wise Mul\nGPU 6\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s0_7 [label="Element-wise Mul\nGPU 7\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s0_0 [label="Down Projection\nGPU 0\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s0_1 [label="Down Projection\nGPU 1\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s0_2 [label="Down Projection\nGPU 2\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s0_3 [label="Down Projection\nGPU 3\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s0_4 [label="Down Projection\nGPU 4\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s0_5 [label="Down Projection\nGPU 5\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s0_6 [label="Down Projection\nGPU 6\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s0_7 [label="Down Projection\nGPU 7\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	all_reduce_ffn_s0 [label="All-Reduce\n8 GPUs\n→ [B, L, 8192]" fillcolor=lightsteelblue shape=parallelogram style=filled]
+	subgraph cluster_stage0_ffn {
+		fillcolor=lightcyan label="Layer 0 - FFN (TP=8)" style=rounded
+	}
+	residual_s0 [label="Residual Add\nLayer 0\n→ [B, L, 8192]" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_stage0 {
+		fillcolor=lightyellow label="Pipeline Stage 0 - GPUs 0-7" style=rounded
+	}
+	pipeline_comm [label="Pipeline Communication\nStage 0 → Stage 1\n[B, L, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	broadcast_s1 [label="Broadcast\nX: [B, L, 8192] → 8 GPUs" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_s1_8 [label="Q Projection\nGPU 8\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s1_9 [label="Q Projection\nGPU 9\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s1_10 [label="Q Projection\nGPU 10\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s1_11 [label="Q Projection\nGPU 11\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s1_12 [label="Q Projection\nGPU 12\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s1_13 [label="Q Projection\nGPU 13\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s1_14 [label="Q Projection\nGPU 14\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	q_proj_s1_15 [label="Q Projection\nGPU 15\nW_Q: [8192, 1024]\n→ Q: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s1_8 [label="K Projection\nGPU 8\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s1_9 [label="K Projection\nGPU 9\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s1_10 [label="K Projection\nGPU 10\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s1_11 [label="K Projection\nGPU 11\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s1_12 [label="K Projection\nGPU 12\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s1_13 [label="K Projection\nGPU 13\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s1_14 [label="K Projection\nGPU 14\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_s1_15 [label="K Projection\nGPU 15\nW_K: [8192, 1024]\n→ K: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s1_8 [label="V Projection\nGPU 8\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s1_9 [label="V Projection\nGPU 9\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s1_10 [label="V Projection\nGPU 10\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s1_11 [label="V Projection\nGPU 11\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s1_12 [label="V Projection\nGPU 12\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s1_13 [label="V Projection\nGPU 13\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s1_14 [label="V Projection\nGPU 14\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_s1_15 [label="V Projection\nGPU 15\nW_V: [8192, 1024]\n→ V: [B, L, 1024]" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_s1_8 [label="Multi-Head Attention\nGPU 8\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s1_9 [label="Multi-Head Attention\nGPU 9\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s1_10 [label="Multi-Head Attention\nGPU 10\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s1_11 [label="Multi-Head Attention\nGPU 11\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s1_12 [label="Multi-Head Attention\nGPU 12\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s1_13 [label="Multi-Head Attention\nGPU 13\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s1_14 [label="Multi-Head Attention\nGPU 14\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	attn_s1_15 [label="Multi-Head Attention\nGPU 15\n2 heads × 512 dims\n→ [B, L, 1024]" fillcolor=lightgoldenrod shape=rectangle style=filled]
+	all_reduce_attn_s1 [label="All-Reduce\n8 GPUs\n→ [B, L, 8192]" fillcolor=lightsteelblue shape=parallelogram style=filled]
+	subgraph cluster_stage1_mha {
+		fillcolor=lightcyan label="Layer 1 - MHA (TP=8)" style=rounded
+	}
+	ffn_gate_s1_8 [label="Gate Projection\nGPU 8\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s1_9 [label="Gate Projection\nGPU 9\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s1_10 [label="Gate Projection\nGPU 10\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s1_11 [label="Gate Projection\nGPU 11\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s1_12 [label="Gate Projection\nGPU 12\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s1_13 [label="Gate Projection\nGPU 13\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s1_14 [label="Gate Projection\nGPU 14\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_gate_s1_15 [label="Gate Projection\nGPU 15\nW_gate: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s1_8 [label="Up Projection\nGPU 8\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s1_9 [label="Up Projection\nGPU 9\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s1_10 [label="Up Projection\nGPU 10\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s1_11 [label="Up Projection\nGPU 11\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s1_12 [label="Up Projection\nGPU 12\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s1_13 [label="Up Projection\nGPU 13\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s1_14 [label="Up Projection\nGPU 14\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_up_s1_15 [label="Up Projection\nGPU 15\nW_up: [8192, 4096]\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s1_8 [label="SiLU\nGPU 8\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s1_9 [label="SiLU\nGPU 9\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s1_10 [label="SiLU\nGPU 10\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s1_11 [label="SiLU\nGPU 11\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s1_12 [label="SiLU\nGPU 12\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s1_13 [label="SiLU\nGPU 13\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s1_14 [label="SiLU\nGPU 14\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_silu_s1_15 [label="SiLU\nGPU 15\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s1_8 [label="Element-wise Mul\nGPU 8\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s1_9 [label="Element-wise Mul\nGPU 9\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s1_10 [label="Element-wise Mul\nGPU 10\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s1_11 [label="Element-wise Mul\nGPU 11\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s1_12 [label="Element-wise Mul\nGPU 12\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s1_13 [label="Element-wise Mul\nGPU 13\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s1_14 [label="Element-wise Mul\nGPU 14\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_mul_s1_15 [label="Element-wise Mul\nGPU 15\n→ [B, L, 4096]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s1_8 [label="Down Projection\nGPU 8\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s1_9 [label="Down Projection\nGPU 9\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s1_10 [label="Down Projection\nGPU 10\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s1_11 [label="Down Projection\nGPU 11\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s1_12 [label="Down Projection\nGPU 12\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s1_13 [label="Down Projection\nGPU 13\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s1_14 [label="Down Projection\nGPU 14\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	ffn_down_s1_15 [label="Down Projection\nGPU 15\nW_down: [4096, 1024]\n→ [B, L, 1024]" fillcolor=lightpink shape=rectangle style=filled]
+	all_reduce_ffn_s1 [label="All-Reduce\n8 GPUs\n→ [B, L, 8192]" fillcolor=lightsteelblue shape=parallelogram style=filled]
+	subgraph cluster_stage1_ffn {
+		fillcolor=lightcyan label="Layer 1 - FFN (TP=8)" style=rounded
+	}
+	residual_s1 [label="Residual Add\nLayer 1\n→ [B, L, 8192]" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_stage1 {
+		fillcolor=lightyellow label="Pipeline Stage 1 - GPUs 8-15" style=rounded
+	}
+	output [label="Output\nY: [B, L, 8192]" fillcolor=lightblue shape=ellipse style=filled]
+	input -> broadcast_s0
+	broadcast_s0 -> q_proj_s0_0
+	broadcast_s0 -> k_proj_s0_0
+	broadcast_s0 -> v_proj_s0_0
+	q_proj_s0_0 -> attn_s0_0
+	k_proj_s0_0 -> attn_s0_0
+	v_proj_s0_0 -> attn_s0_0
+	attn_s0_0 -> all_reduce_attn_s0
+	broadcast_s0 -> q_proj_s0_1
+	broadcast_s0 -> k_proj_s0_1
+	broadcast_s0 -> v_proj_s0_1
+	q_proj_s0_1 -> attn_s0_1
+	k_proj_s0_1 -> attn_s0_1
+	v_proj_s0_1 -> attn_s0_1
+	attn_s0_1 -> all_reduce_attn_s0
+	broadcast_s0 -> q_proj_s0_2
+	broadcast_s0 -> k_proj_s0_2
+	broadcast_s0 -> v_proj_s0_2
+	q_proj_s0_2 -> attn_s0_2
+	k_proj_s0_2 -> attn_s0_2
+	v_proj_s0_2 -> attn_s0_2
+	attn_s0_2 -> all_reduce_attn_s0
+	broadcast_s0 -> q_proj_s0_3
+	broadcast_s0 -> k_proj_s0_3
+	broadcast_s0 -> v_proj_s0_3
+	q_proj_s0_3 -> attn_s0_3
+	k_proj_s0_3 -> attn_s0_3
+	v_proj_s0_3 -> attn_s0_3
+	attn_s0_3 -> all_reduce_attn_s0
+	broadcast_s0 -> q_proj_s0_4
+	broadcast_s0 -> k_proj_s0_4
+	broadcast_s0 -> v_proj_s0_4
+	q_proj_s0_4 -> attn_s0_4
+	k_proj_s0_4 -> attn_s0_4
+	v_proj_s0_4 -> attn_s0_4
+	attn_s0_4 -> all_reduce_attn_s0
+	broadcast_s0 -> q_proj_s0_5
+	broadcast_s0 -> k_proj_s0_5
+	broadcast_s0 -> v_proj_s0_5
+	q_proj_s0_5 -> attn_s0_5
+	k_proj_s0_5 -> attn_s0_5
+	v_proj_s0_5 -> attn_s0_5
+	attn_s0_5 -> all_reduce_attn_s0
+	broadcast_s0 -> q_proj_s0_6
+	broadcast_s0 -> k_proj_s0_6
+	broadcast_s0 -> v_proj_s0_6
+	q_proj_s0_6 -> attn_s0_6
+	k_proj_s0_6 -> attn_s0_6
+	v_proj_s0_6 -> attn_s0_6
+	attn_s0_6 -> all_reduce_attn_s0
+	broadcast_s0 -> q_proj_s0_7
+	broadcast_s0 -> k_proj_s0_7
+	broadcast_s0 -> v_proj_s0_7
+	q_proj_s0_7 -> attn_s0_7
+	k_proj_s0_7 -> attn_s0_7
+	v_proj_s0_7 -> attn_s0_7
+	attn_s0_7 -> all_reduce_attn_s0
+	all_reduce_attn_s0 -> residual_s0
+	all_reduce_attn_s0 -> ffn_gate_s0_0
+	all_reduce_attn_s0 -> ffn_up_s0_0
+	ffn_gate_s0_0 -> ffn_silu_s0_0
+	ffn_up_s0_0 -> ffn_mul_s0_0
+	ffn_silu_s0_0 -> ffn_mul_s0_0
+	ffn_mul_s0_0 -> ffn_down_s0_0
+	ffn_down_s0_0 -> all_reduce_ffn_s0
+	all_reduce_attn_s0 -> ffn_gate_s0_1
+	all_reduce_attn_s0 -> ffn_up_s0_1
+	ffn_gate_s0_1 -> ffn_silu_s0_1
+	ffn_up_s0_1 -> ffn_mul_s0_1
+	ffn_silu_s0_1 -> ffn_mul_s0_1
+	ffn_mul_s0_1 -> ffn_down_s0_1
+	ffn_down_s0_1 -> all_reduce_ffn_s0
+	all_reduce_attn_s0 -> ffn_gate_s0_2
+	all_reduce_attn_s0 -> ffn_up_s0_2
+	ffn_gate_s0_2 -> ffn_silu_s0_2
+	ffn_up_s0_2 -> ffn_mul_s0_2
+	ffn_silu_s0_2 -> ffn_mul_s0_2
+	ffn_mul_s0_2 -> ffn_down_s0_2
+	ffn_down_s0_2 -> all_reduce_ffn_s0
+	all_reduce_attn_s0 -> ffn_gate_s0_3
+	all_reduce_attn_s0 -> ffn_up_s0_3
+	ffn_gate_s0_3 -> ffn_silu_s0_3
+	ffn_up_s0_3 -> ffn_mul_s0_3
+	ffn_silu_s0_3 -> ffn_mul_s0_3
+	ffn_mul_s0_3 -> ffn_down_s0_3
+	ffn_down_s0_3 -> all_reduce_ffn_s0
+	all_reduce_attn_s0 -> ffn_gate_s0_4
+	all_reduce_attn_s0 -> ffn_up_s0_4
+	ffn_gate_s0_4 -> ffn_silu_s0_4
+	ffn_up_s0_4 -> ffn_mul_s0_4
+	ffn_silu_s0_4 -> ffn_mul_s0_4
+	ffn_mul_s0_4 -> ffn_down_s0_4
+	ffn_down_s0_4 -> all_reduce_ffn_s0
+	all_reduce_attn_s0 -> ffn_gate_s0_5
+	all_reduce_attn_s0 -> ffn_up_s0_5
+	ffn_gate_s0_5 -> ffn_silu_s0_5
+	ffn_up_s0_5 -> ffn_mul_s0_5
+	ffn_silu_s0_5 -> ffn_mul_s0_5
+	ffn_mul_s0_5 -> ffn_down_s0_5
+	ffn_down_s0_5 -> all_reduce_ffn_s0
+	all_reduce_attn_s0 -> ffn_gate_s0_6
+	all_reduce_attn_s0 -> ffn_up_s0_6
+	ffn_gate_s0_6 -> ffn_silu_s0_6
+	ffn_up_s0_6 -> ffn_mul_s0_6
+	ffn_silu_s0_6 -> ffn_mul_s0_6
+	ffn_mul_s0_6 -> ffn_down_s0_6
+	ffn_down_s0_6 -> all_reduce_ffn_s0
+	all_reduce_attn_s0 -> ffn_gate_s0_7
+	all_reduce_attn_s0 -> ffn_up_s0_7
+	ffn_gate_s0_7 -> ffn_silu_s0_7
+	ffn_up_s0_7 -> ffn_mul_s0_7
+	ffn_silu_s0_7 -> ffn_mul_s0_7
+	ffn_mul_s0_7 -> ffn_down_s0_7
+	ffn_down_s0_7 -> all_reduce_ffn_s0
+	all_reduce_ffn_s0 -> residual_s0
+	residual_s0 -> pipeline_comm
+	pipeline_comm -> broadcast_s1
+	broadcast_s1 -> q_proj_s1_8
+	broadcast_s1 -> k_proj_s1_8
+	broadcast_s1 -> v_proj_s1_8
+	q_proj_s1_8 -> attn_s1_8
+	k_proj_s1_8 -> attn_s1_8
+	v_proj_s1_8 -> attn_s1_8
+	attn_s1_8 -> all_reduce_attn_s1
+	broadcast_s1 -> q_proj_s1_9
+	broadcast_s1 -> k_proj_s1_9
+	broadcast_s1 -> v_proj_s1_9
+	q_proj_s1_9 -> attn_s1_9
+	k_proj_s1_9 -> attn_s1_9
+	v_proj_s1_9 -> attn_s1_9
+	attn_s1_9 -> all_reduce_attn_s1
+	broadcast_s1 -> q_proj_s1_10
+	broadcast_s1 -> k_proj_s1_10
+	broadcast_s1 -> v_proj_s1_10
+	q_proj_s1_10 -> attn_s1_10
+	k_proj_s1_10 -> attn_s1_10
+	v_proj_s1_10 -> attn_s1_10
+	attn_s1_10 -> all_reduce_attn_s1
+	broadcast_s1 -> q_proj_s1_11
+	broadcast_s1 -> k_proj_s1_11
+	broadcast_s1 -> v_proj_s1_11
+	q_proj_s1_11 -> attn_s1_11
+	k_proj_s1_11 -> attn_s1_11
+	v_proj_s1_11 -> attn_s1_11
+	attn_s1_11 -> all_reduce_attn_s1
+	broadcast_s1 -> q_proj_s1_12
+	broadcast_s1 -> k_proj_s1_12
+	broadcast_s1 -> v_proj_s1_12
+	q_proj_s1_12 -> attn_s1_12
+	k_proj_s1_12 -> attn_s1_12
+	v_proj_s1_12 -> attn_s1_12
+	attn_s1_12 -> all_reduce_attn_s1
+	broadcast_s1 -> q_proj_s1_13
+	broadcast_s1 -> k_proj_s1_13
+	broadcast_s1 -> v_proj_s1_13
+	q_proj_s1_13 -> attn_s1_13
+	k_proj_s1_13 -> attn_s1_13
+	v_proj_s1_13 -> attn_s1_13
+	attn_s1_13 -> all_reduce_attn_s1
+	broadcast_s1 -> q_proj_s1_14
+	broadcast_s1 -> k_proj_s1_14
+	broadcast_s1 -> v_proj_s1_14
+	q_proj_s1_14 -> attn_s1_14
+	k_proj_s1_14 -> attn_s1_14
+	v_proj_s1_14 -> attn_s1_14
+	attn_s1_14 -> all_reduce_attn_s1
+	broadcast_s1 -> q_proj_s1_15
+	broadcast_s1 -> k_proj_s1_15
+	broadcast_s1 -> v_proj_s1_15
+	q_proj_s1_15 -> attn_s1_15
+	k_proj_s1_15 -> attn_s1_15
+	v_proj_s1_15 -> attn_s1_15
+	attn_s1_15 -> all_reduce_attn_s1
+	all_reduce_attn_s1 -> residual_s1
+	all_reduce_attn_s1 -> ffn_gate_s1_8
+	all_reduce_attn_s1 -> ffn_up_s1_8
+	ffn_gate_s1_8 -> ffn_silu_s1_8
+	ffn_up_s1_8 -> ffn_mul_s1_8
+	ffn_silu_s1_8 -> ffn_mul_s1_8
+	ffn_mul_s1_8 -> ffn_down_s1_8
+	ffn_down_s1_8 -> all_reduce_ffn_s1
+	all_reduce_attn_s1 -> ffn_gate_s1_9
+	all_reduce_attn_s1 -> ffn_up_s1_9
+	ffn_gate_s1_9 -> ffn_silu_s1_9
+	ffn_up_s1_9 -> ffn_mul_s1_9
+	ffn_silu_s1_9 -> ffn_mul_s1_9
+	ffn_mul_s1_9 -> ffn_down_s1_9
+	ffn_down_s1_9 -> all_reduce_ffn_s1
+	all_reduce_attn_s1 -> ffn_gate_s1_10
+	all_reduce_attn_s1 -> ffn_up_s1_10
+	ffn_gate_s1_10 -> ffn_silu_s1_10
+	ffn_up_s1_10 -> ffn_mul_s1_10
+	ffn_silu_s1_10 -> ffn_mul_s1_10
+	ffn_mul_s1_10 -> ffn_down_s1_10
+	ffn_down_s1_10 -> all_reduce_ffn_s1
+	all_reduce_attn_s1 -> ffn_gate_s1_11
+	all_reduce_attn_s1 -> ffn_up_s1_11
+	ffn_gate_s1_11 -> ffn_silu_s1_11
+	ffn_up_s1_11 -> ffn_mul_s1_11
+	ffn_silu_s1_11 -> ffn_mul_s1_11
+	ffn_mul_s1_11 -> ffn_down_s1_11
+	ffn_down_s1_11 -> all_reduce_ffn_s1
+	all_reduce_attn_s1 -> ffn_gate_s1_12
+	all_reduce_attn_s1 -> ffn_up_s1_12
+	ffn_gate_s1_12 -> ffn_silu_s1_12
+	ffn_up_s1_12 -> ffn_mul_s1_12
+	ffn_silu_s1_12 -> ffn_mul_s1_12
+	ffn_mul_s1_12 -> ffn_down_s1_12
+	ffn_down_s1_12 -> all_reduce_ffn_s1
+	all_reduce_attn_s1 -> ffn_gate_s1_13
+	all_reduce_attn_s1 -> ffn_up_s1_13
+	ffn_gate_s1_13 -> ffn_silu_s1_13
+	ffn_up_s1_13 -> ffn_mul_s1_13
+	ffn_silu_s1_13 -> ffn_mul_s1_13
+	ffn_mul_s1_13 -> ffn_down_s1_13
+	ffn_down_s1_13 -> all_reduce_ffn_s1
+	all_reduce_attn_s1 -> ffn_gate_s1_14
+	all_reduce_attn_s1 -> ffn_up_s1_14
+	ffn_gate_s1_14 -> ffn_silu_s1_14
+	ffn_up_s1_14 -> ffn_mul_s1_14
+	ffn_silu_s1_14 -> ffn_mul_s1_14
+	ffn_mul_s1_14 -> ffn_down_s1_14
+	ffn_down_s1_14 -> all_reduce_ffn_s1
+	all_reduce_attn_s1 -> ffn_gate_s1_15
+	all_reduce_attn_s1 -> ffn_up_s1_15
+	ffn_gate_s1_15 -> ffn_silu_s1_15
+	ffn_up_s1_15 -> ffn_mul_s1_15
+	ffn_silu_s1_15 -> ffn_mul_s1_15
+	ffn_mul_s1_15 -> ffn_down_s1_15
+	ffn_down_s1_15 -> all_reduce_ffn_s1
+	all_reduce_ffn_s1 -> residual_s1
+	residual_s1 -> output
+}

@@ -1,0 +1,41 @@
+{
+  "generated_dags": [
+    "/home/wzc/data/file-share/submission/baseline_dense_dag.svg",
+    "/home/wzc/data/file-share/submission/baseline_moe_dag.svg",
+    "/home/wzc/data/file-share/submission/proposed_dense_dag.svg",
+    "/home/wzc/data/file-share/submission/proposed_moe_dag.svg"
+  ],
+  "summary": {
+    "total_dags_generated": 4,
+    "models_covered": ["Dense", "MoE"],
+    "deployment_strategies": ["Baseline TP=8,PP=2", "Proposed Layer-wise"],
+    "gpu_count": 16,
+    "layers_per_model": 16
+  },
+  "dag_details": {
+    "baseline_dense_dag": {
+      "strategy": "Tensor Parallelism + Pipeline Parallelism",
+      "configuration": "TP=8, PP=2",
+      "description": "Standard baseline with 2 pipeline stages, each with 8-way tensor parallelism",
+      "gpu_mapping": "Layers 1-8 on GPUs 0-7, Layers 9-16 on GPUs 8-15"
+    },
+    "baseline_moe_dag": {
+      "strategy": "Tensor Parallelism + Pipeline Parallelism",
+      "configuration": "TP=8, PP=2",
+      "description": "MoE baseline with experts distributed across tensor parallel groups",
+      "gpu_mapping": "Layers 1-8 on GPUs 0-7, Layers 9-16 on GPUs 8-15"
+    },
+    "proposed_dense_dag": {
+      "strategy": "Layer-wise Cache-Fitting Deployment",
+      "configuration": "1 layer per GPU",
+      "description": "Proposed method with each layer fitting entirely in SRAM/L2 cache",
+      "gpu_mapping": "Layer N on GPU N-1 for all 16 layers"
+    },
+    "proposed_moe_dag": {
+      "strategy": "Layer-wise Cache-Fitting Deployment",
+      "configuration": "1 MoE layer per GPU",
+      "description": "Proposed method with each MoE layer (8 experts) fitting entirely in SRAM/L2 cache",
+      "gpu_mapping": "MoE Layer N on GPU N-1 for all 16 layers"
+    }
+  }
+}

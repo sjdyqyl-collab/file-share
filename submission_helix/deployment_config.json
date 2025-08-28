@@ -1,0 +1,138 @@
+{
+  "deployment_configurations": {
+    "baseline": {
+      "name": "Tensor Parallelism + Pipeline Parallelism",
+      "description": "Standard baseline using TP=8 and PP=2 on 16 GPUs",
+      "parallel_strategy": {
+        "tensor_parallelism": {
+          "degree": 8,
+          "split_dimension": "hidden",
+          "implementation": "Split weight matrices across 8 devices along hidden dimension"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "split_dimension": "layers",
+          "implementation": "Split 2 layers across 2 pipeline stages, each stage on 8 GPUs"
+        }
+      },
+      "device_mapping": {
+        "stage_0": {
+          "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+          "layers": [0],
+          "tensor_parallel_group": "tp_group_0"
+        },
+        "stage_1": {
+          "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+          "layers": [1],
+          "tensor_parallel_group": "tp_group_1"
+        }
+      },
+      "communication_pattern": {
+        "intra_stage": "All-reduce across 8 GPUs within each tensor parallel group",
+        "inter_stage": "Pipeline communication between stage 0 and stage 1"
+      },
+      "model_config": {
+        "layers": 2,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "hidden_size": 8192,
+        "mlp_hidden_size": 32768,
+        "batch_size": 1024,
+        "precision": "FP16"
+      }
+    },
+    "proposed": {
+      "name": "Two-Level Attention Partitioning",
+      "description": "Novel partitioning with m×n=16 partitions on 16 GPUs",
+      "parallel_strategy": {
+        "partitioning_scheme": {
+          "level_1": {
+            "name": "head_group_partitioning",
+            "type": "head_wise",
+            "groups": 4,
+            "heads_per_group": 4,
+            "implementation": "Split 16 heads into 4 groups of 4 heads each"
+          },
+          "level_2": {
+            "name": "dimension_partitioning", 
+            "type": "intra_head",
+            "slices": 4,
+            "dimension_per_slice": 128,
+            "implementation": "Split each head's 512 dimensions into 4 slices of 128 dimensions"
+          }
+        }
+      },
+      "device_mapping": {
+        "partition_0_0": {"gpu": 0, "head_group": 0, "dimension_slice": 0},
+        "partition_0_1": {"gpu": 1, "head_group": 0, "dimension_slice": 1},
+        "partition_0_2": {"gpu": 2, "head_group": 0, "dimension_slice": 2},
+        "partition_0_3": {"gpu": 3, "head_group": 0, "dimension_slice": 3},
+        "partition_1_0": {"gpu": 4, "head_group": 1, "dimension_slice": 0},
+        "partition_1_1": {"gpu": 5, "head_group": 1, "dimension_slice": 1},
+        "partition_1_2": {"gpu": 6, "head_group": 1, "dimension_slice": 2},
+        "partition_1_3": {"gpu": 7, "head_group": 1, "dimension_slice": 3},
+        "partition_2_0": {"gpu": 8, "head_group": 2, "dimension_slice": 0},
+        "partition_2_1": {"gpu": 9, "head_group": 2, "dimension_slice": 1},
+        "partition_2_2": {"gpu": 10, "head_group": 2, "dimension_slice": 2},
+        "partition_2_3": {"gpu": 11, "head_group": 2, "dimension_slice": 3},
+        "partition_3_0": {"gpu": 12, "head_group": 3, "dimension_slice": 0},
+        "partition_3_1": {"gpu": 13, "head_group": 3, "dimension_slice": 1},
+        "partition_3_2": {"gpu": 14, "head_group": 3, "dimension_slice": 2},
+        "partition_3_3": {"gpu": 15, "head_group": 3, "dimension_slice": 3}
+      },
+      "computation_flow": {
+        "step_1": "Each GPU computes Q, K, V projections for its assigned head group and dimension slice",
+        "step_2": "Each GPU computes attention for 4 heads × 128 dimensions = 512 total dimensions",
+        "step_3": "Intra-group concatenation: GPUs 0-3 concatenate dimension slices for head group 0",
+        "step_4": "Intra-group concatenation: GPUs 4-7 concatenate dimension slices for head group 1", 
+        "step_5": "Intra-group concatenation: GPUs 8-11 concatenate dimension slices for head group 2",
+        "step_6": "Intra-group concatenation: GPUs 12-15 concatenate dimension slices for head group 3",
+        "step_7": "Final concatenation: Concatenate outputs from 4 head groups to form complete attention output"
+      },
+      "communication_pattern": {
+        "input_distribution": "Broadcast input tensor X to all 16 GPUs",
+        "intra_group_concatenation": "All-gather within each head group (4 GPUs per group)",
+        "final_concatenation": "Concatenate head group outputs across all 16 GPUs",
+        "communication_cost": "Reduced compared to baseline due to localized partitioning"
+      },
+      "memory_distribution": {
+        "parameters_per_gpu": "1/16 of total MHA parameters",
+        "activations_per_gpu": "B×L×128×4 = B×L×512 (for 4 heads × 128 dims)",
+        "memory_efficiency": "Each GPU stores minimal subset of parameters and activations"
+      },
+      "model_config": {
+        "layers": 2,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "hidden_size": 8192,
+        "mlp_hidden_size": 32768,
+        "batch_size": 1024,
+        "precision": "FP16",
+        "partitioning": {
+          "m": 4,
+          "n": 4,
+          "total_partitions": 16
+        }
+      },
+      "implementation_notes": {
+        "framework_integration": "Compatible with existing model parallel frameworks",
+        "gradient_synchronization": "Adapt gradient synchronization for training mode",
+        "hardware_topology": "Optimal for 16 GPU configuration with high bandwidth interconnect",
+        "scalability": "Flexible m and n values based on available devices"
+      }
+    }
+  },
+  "deployment_commands": {
+    "baseline": {
+      "tensor_parallel_launch": "torchrun --nproc_per_node=8 train.py --tensor-parallel-size=8 --pipeline-parallel-size=2",
+      "pipeline_stages": [
+        "CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python train.py --stage=0",
+        "CUDA_VISIBLE_DEVICES=8,9,10,11,12,13,14,15 python train.py --stage=1"
+      ]
+    },
+    "proposed": {
+      "launch_command": "torchrun --nproc_per_node=16 train.py --partition-strategy=two-level --m=4 --n=4",
+      "partition_mapping": "python setup_partitions.py --m=4 --n=4 --gpus=16"
+    }
+  }
+}
