@@ -1,0 +1,26 @@
+{
+  "generated_dags": [
+    {
+      "name": "baseline_dag",
+      "description": "Tensor Parallelism + Pipeline Parallelism baseline",
+      "path": "/home/wzc/data/file-share/submission/baseline_dag.svg",
+      "configuration": {
+        "tensor_parallelism": 8,
+        "pipeline_parallelism": 2,
+        "total_gpus": 16
+      }
+    },
+    {
+      "name": "proposed_dag",
+      "description": "Ring Attention + Sequence Parallelism",
+      "path": "/home/wzc/data/file-share/submission/proposed_dag.svg",
+      "configuration": {
+        "sequence_parallelism": 16,
+        "ring_stages": 16,
+        "total_gpus": 16
+      }
+    }
+  ],
+  "generation_date": "2024",
+  "note": "Both DAGs include complete operator-level details, GPU assignments, communication patterns, and dimensional information as required"
+}
