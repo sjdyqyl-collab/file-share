@@ -1,37 +1,43 @@
-# Phase 1: Keypoints Extraction - Helix: Two-Level Attention Partitioning for Large-Scale Transformers
+# Phase One: Key Points Extraction
 
-## Problem Statement
-- Transformer models with multi-head attention (MHA) are growing exponentially in size
-- Traditional MHA parallelization only splits attention heads across devices
-- This approach leads to suboptimal utilization and communication bottlenecks when devices > heads
-- Need for better parallelization strategy for very large clusters
+## Abstract
+We propose a novel attention partitioning method for large-scale transformer models, which enables efficient distributed deployment of multi-head attention (MHA) layers. Our approach divides the MHA mechanism not only by splitting the attention heads into *n* groups but also further partitions the dimension within each head into *m* segments. This dual-level slicing results in a total of *m × n* partitions, which can be independently assigned to *m × n* devices for parallel processing. By combining head-level and intra-head dimension-level partitioning, our method achieves improved scalability and hardware utilization, facilitating the deployment of very large models across numerous devices with reduced communication overhead and enhanced load balancing.
 
-## Proposed Solution
+## Core Problem
+- Transformer models with multi-head attention (MHA) need efficient distributed deployment
+- Traditional head-wise splitting is limited by fixed number of heads (h)
+- Cannot fully utilize hardware when devices > heads
+- Communication bottlenecks and suboptimal utilization in large clusters
+
+## Key Innovation
 - **Two-level partitioning method** for MHA layers
-- Combines head-level partitioning with intra-head dimension partitioning
-- Creates m×n partitions (m = dimension slices, n = head groups)
-- Enables deployment on m×n devices beyond traditional limits
+- **Level 1**: Split h heads into n groups (each group has h/n heads)
+- **Level 2**: Split each head's feature dimension d into m segments (each segment has d/m dimensions)
+- **Result**: m × n partitions that can be mapped to m × n devices
 
-## Key Innovations
-1. **Dual-level slicing**: Head groups (n) + dimension segments (m)
-2. **Fine-grained distribution**: Each partition handles (head group, dimension slice) pair
-3. **Improved scalability**: Supports deployment on m×n devices
-4. **Better load balancing**: Even division of both heads and dimensions
-5. **Reduced communication**: Localized intra-head partitions reduce synchronization
+## Technical Specifications
+- Input tensor: X ∈ ℝ^(B×L×D) where B=batch size, L=sequence length, D=embedding dimension
+- h = number of heads
+- d = dimension per head (D = h × d)
+- n = head partitions
+- m = dimension partitions per head
+- h_g = h/n (heads per group)
+- d_s = d/m (slice dimension per partition)
 
-## Technical Details
-- Input tensor: X ∈ ℝ^(B×L×D) where B=batch, L=sequence, D=embedding
-- h heads, each with dimension d = D/h
-- Partition parameters: n head groups, m dimension slices per head
-- Each partition handles h_g = h/n heads and d_s = d/m dimensions
+## Key Benefits
+1. **Scalability**: Supports m×n devices, exceeding head-wise splitting limits
+2. **Load Balancing**: Even workload distribution across heads and dimensions
+3. **Reduced Memory**: Each device stores fraction of parameters and activations
+4. **Communication Efficiency**: Localized partitions reduce synchronization bandwidth
 
-## Experimental Results
-- **Setup**: 16 NVIDIA H100 GPUs, FP16, batch size 1024
-- **Models tested**: 2-layer Dense Transformer, 2-layer MoE Transformer (4 experts/layer)
-- **Fixed parameters**: 16 heads, 512 head dimension, 32768 MLP hidden size
-- **Baseline**: Tensor Parallelism (TP=8) + Pipeline Parallelism (PP=2)
+## Experimental Validation
+- **Setup**: 16 NVIDIA H100 GPUs, FP16 precision
+- **Models**: 2-layer Dense Transformer, 2-layer MoE Transformer (4 experts/layer)
+- **Fixed Parameters**: Batch size=1024, heads=16, head dimension=512, MLP hidden size=32768
+- **Results**:
+  - Dense model: 31.7% throughput improvement (1.2M→1.58M tokens/sec), 37.1% overhead reduction
+  - MoE model: 35.3% throughput improvement (850K→1.15M tokens/sec), 33.3% overhead reduction
 
-## Performance Improvements
-- **Dense model**: 31.7% throughput increase (1.2M → 1.58M tokens/sec), 37.1% overhead reduction
-- **MoE model**: 35.3% throughput increase (850K → 1.15M tokens/sec), 33.3% overhead reduction
-- **TPOT reduction**: 0.35ms → 0.22ms (dense), 0.45ms → 0.30ms (MoE)
+## Baseline Comparison
+- **Baseline**: Tensor Parallelism (TP=8) + Pipeline Parallelism (PP=2) on 16 GPUs
+- **Proposed**: m×n=16 partitions (likely m=4, n=4 based on 16 total partitions)

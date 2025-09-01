@@ -1,0 +1,54 @@
+{
+  "generated_dags": [
+    {
+      "method": "helix_two_level_partitioning",
+      "description": "Helix: Two-Level Attention Partitioning DAG",
+      "dot_file": "/home/wzc/data/file-share/submission/helix_two_level_partitioning.dot",
+      "svg_file": "/home/wzc/data/file-share/submission/helix_two_level_partitioning.svg"
+    },
+    {
+      "method": "baseline_tensor_pipeline_parallelism", 
+      "description": "Baseline: Tensor Parallelism + Pipeline Parallelism DAG",
+      "dot_file": "/home/wzc/data/file-share/submission/baseline_tensor_pipeline_parallelism.dot",
+      "svg_file": "/home/wzc/data/file-share/submission/baseline_tensor_pipeline_parallelism.svg"
+    }
+  ],
+  "analysis": {
+    "helix_method": {
+      "total_partitions": 16,
+      "partitioning_strategy": "4 head groups × 4 dimension slices",
+      "gpu_mapping": "one-to-one (16 GPUs)",
+      "communication_pattern": "hierarchical all-gather",
+      "key_features": [
+        "Two-level partitioning (heads + dimensions)",
+        "Perfect load balancing across 16 GPUs",
+        "Reduced communication overhead",
+        "Scalable to m×n devices"
+      ]
+    },
+    "baseline_method": {
+      "total_partitions": 16,
+      "partitioning_strategy": "8-way tensor parallelism × 2-way pipeline parallelism",
+      "gpu_mapping": "TP=8, PP=2",
+      "communication_pattern": "all-reduce + point-to-point",
+      "key_features": [
+        "Conventional tensor parallelism",
+        "Pipeline stages for layer distribution",
+        "All-reduce for tensor parallel communication",
+        "Point-to-point for pipeline communication"
+      ]
+    }
+  },
+  "performance_comparison": {
+    "dense_model": {
+      "helix_throughput": 1580000,
+      "baseline_throughput": 1200000,
+      "improvement": "31.7%"
+    },
+    "moe_model": {
+      "helix_throughput": 1150000,
+      "baseline_throughput": 850000,
+      "improvement": "35.3%"
+    }
+  }
+}

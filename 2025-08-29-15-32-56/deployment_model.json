@@ -1,0 +1,136 @@
+{
+  "models": {
+    "baseline_dense": {
+      "type": "dense",
+      "layers": 16,
+      "parallel_strategy": {
+        "type": "tensor_pipeline_parallel",
+        "tensor_parallel": 8,
+        "pipeline_parallel": 2,
+        "total_gpus": 16,
+        "distribution": "TP=8 across 2 pipeline stages"
+      },
+      "parameters": {
+        "precision": "FP16",
+        "batch_size": 1024,
+        "heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768
+      },
+      "memory_usage": {
+        "on_chip": "not_optimized",
+        "off_chip": "frequent_access"
+      }
+    },
+    "baseline_moe": {
+      "type": "mixture_of_experts",
+      "layers": 16,
+      "experts_per_layer": 8,
+      "parallel_strategy": {
+        "type": "tensor_pipeline_parallel",
+        "tensor_parallel": 8,
+        "pipeline_parallel": 2,
+        "total_gpus": 16,
+        "distribution": "TP=8 across 2 pipeline stages"
+      },
+      "parameters": {
+        "precision": "FP16",
+        "batch_size": 1024,
+        "heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768
+      },
+      "memory_usage": {
+        "on_chip": "not_optimized",
+        "off_chip": "frequent_access"
+      }
+    },
+    "proposed_dense": {
+      "type": "dense",
+      "layers": 16,
+      "parallel_strategy": {
+        "type": "layer_wise_cache_fitting",
+        "method": "greedy_layer_aggregation",
+        "total_gpus": 16,
+        "partitioning_algorithm": {
+          "type": "greedy",
+          "constraint": "SRAM_L2_cache_capacity",
+          "cache_capacity_C": "device_specific",
+          "contiguous_assignment": true,
+          "minimize_partitions": true
+        }
+      },
+      "parameters": {
+        "precision": "FP16",
+        "batch_size": 1024,
+        "heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768
+      },
+      "memory_usage": {
+        "on_chip": "full_partition_in_cache",
+        "off_chip": "minimal_access"
+      },
+      "deployment_steps": [
+        "1. Estimate_memory_footprint_per_layer",
+        "2. Apply_greedy_partitioning_algorithm",
+        "3. Assign_partitions_to_gpus",
+        "4. Load_weights_to_SRAM_L2_cache",
+        "5. Pre_allocate_activations_buffers",
+        "6. Execute_layers_sequentially_per_gpu",
+        "7. Transfer_data_between_partitions_only"
+      ]
+    },
+    "proposed_moe": {
+      "type": "mixture_of_experts",
+      "layers": 16,
+      "experts_per_layer": 8,
+      "parallel_strategy": {
+        "type": "layer_wise_cache_fitting",
+        "method": "greedy_layer_aggregation",
+        "total_gpus": 16,
+        "partitioning_algorithm": {
+          "type": "greedy",
+          "constraint": "SRAM_L2_cache_capacity",
+          "cache_capacity_C": "device_specific",
+          "contiguous_assignment": true,
+          "minimize_partitions": true,
+          "optional_dp": "dynamic_programming_for_balanced_partitions"
+        }
+      },
+      "parameters": {
+        "precision": "FP16",
+        "batch_size": 1024,
+        "heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768
+      },
+      "memory_usage": {
+        "on_chip": "full_partition_in_cache",
+        "off_chip": "minimal_access"
+      },
+      "deployment_steps": [
+        "1. Estimate_memory_footprint_per_layer",
+        "2. Apply_greedy_partitioning_algorithm",
+        "3. Assign_partitions_to_gpus",
+        "4. Load_weights_to_SRAM_L2_cache",
+        "5. Pre_allocate_activations_buffers",
+        "6. Execute_layers_sequentially_per_gpu",
+        "7. Transfer_data_between_partitions_only"
+      ]
+    }
+  },
+  "implementation_details": {
+    "memory_footprint_calculation": {
+      "formula": "size(l_j) = weight_size(l_j) + activation_size(l_j) + buffer_size(l_j)",
+      "weight_size": "parameters_count * datatype_size",
+      "activation_size": "output_feature_map_dimensions * batch_size",
+      "buffer_size": "operator_workspace_requirements"
+    },
+    "edge_case_handling": {
+      "single_layer_exceeds_C": "intra_layer_partitioning_or_compression",
+      "batch_size_tuning": "reduce_activation_memory_footprint",
+      "variable_layer_sizes": "adjust_partitioning_heuristics"
+    }
+  }
+}

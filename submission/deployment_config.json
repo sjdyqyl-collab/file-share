@@ -1,145 +1,180 @@
 {
-  "deployment_configurations": {
-    "baseline": {
+  "models": {
+    "proposed_method": {
+      "name": "Two-Level Attention Partitioning",
+      "description": "Novel partitioning method combining head-wise and intra-head dimension-wise splitting",
+      "partitioning_strategy": {
+        "type": "two_level",
+        "head_partitioning": {
+          "n": 4,
+          "heads_per_group": 4,
+          "description": "Split 16 total heads into 4 groups, each handling 4 heads"
+        },
+        "dimension_partitioning": {
+          "m": 4,
+          "dimensions_per_slice": 128,
+          "description": "Split each head's 512 dimensions into 4 slices of 128 dimensions each"
+        },
+        "total_partitions": 16,
+        "total_devices": 16,
+        "mapping": "one-to-one"
+      },
+      "tensor_dimensions": {
+        "batch_size": 1024,
+        "sequence_length": "variable",
+        "embedding_dimension": 8192,
+        "num_heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768
+      },
+      "weight_matrices": {
+        "Q_projection": {
+          "shape": [8192, 8192],
+          "partitioning": "block_matrix",
+          "block_shape": [2048, 2048],
+          "total_blocks": 16
+        },
+        "K_projection": {
+          "shape": [8192, 8192],
+          "partitioning": "block_matrix",
+          "block_shape": [2048, 2048],
+          "total_blocks": 16
+        },
+        "V_projection": {
+          "shape": [8192, 8192],
+          "partitioning": "block_matrix",
+          "block_shape": [2048, 2048],
+          "total_blocks": 16
+        }
+      },
+      "computation_flow": {
+        "step1_input_distribution": {
+          "description": "Distribute input tensor X to all 16 devices",
+          "communication": "broadcast",
+          "data_shape_per_device": [1024, "L", 512]
+        },
+        "step2_local_projection": {
+          "description": "Each device computes local Q, K, V projections",
+          "computation": "matrix_multiply",
+          "input_shape": [1024, "L", 512],
+          "weight_shape": [2048, 2048],
+          "output_shape": [1024, "L", 512]
+        },
+        "step3_attention_computation": {
+          "description": "Compute scaled dot-product attention locally",
+          "computation": "attention",
+          "scale_factor": 22.6274,
+          "output_shape": [1024, "L", 128]
+        },
+        "step4_intra_group_concatenation": {
+          "description": "Concatenate dimension slices within each head group",
+          "groups": 4,
+          "devices_per_group": 4,
+          "communication": "all_gather",
+          "output_shape_per_group": [1024, "L", 512]
+        },
+        "step5_inter_group_concatenation": {
+          "description": "Concatenate head groups to form final output",
+          "communication": "all_gather",
+          "final_output_shape": [1024, "L", 8192]
+        }
+      },
+      "communication_pattern": {
+        "hierarchical": true,
+        "intra_group_bandwidth": "high",
+        "inter_group_bandwidth": "high",
+        "total_communication_rounds": 2
+      }
+    },
+    "baseline_tensor_parallel": {
       "name": "Tensor Parallelism + Pipeline Parallelism",
-      "description": "Conventional parallelization using TP=8 and PP=2",
-      "parallel_strategy": {
+      "description": "Conventional baseline using TP=8 and PP=2",
+      "parallelism_strategy": {
         "tensor_parallelism": {
           "degree": 8,
-          "type": "head-wise_splitting",
-          "description": "Splits attention heads across 8 devices"
+          "split_dimension": "hidden",
+          "description": "Split model parameters across 8 GPUs"
         },
         "pipeline_parallelism": {
           "degree": 2,
-          "type": "layer-wise_splitting",
-          "description": "Splits model layers across 2 pipeline stages"
-        }
-      },
-      "total_devices": 16,
-      "device_mapping": {
-        "stage_0": {
-          "devices": [0, 1, 2, 3, 4, 5, 6, 7],
-          "layers": [0, 1]
+          "stages": 2,
+          "description": "Split model layers across 2 pipeline stages"
         },
-        "stage_1": {
-          "devices": [8, 9, 10, 11, 12, 13, 14, 15],
-          "layers": [2, 3]
-        }
+        "total_devices": 16,
+        "mapping": "TP×PP"
       },
-      "model_parameters": {
+      "tensor_dimensions": {
+        "batch_size": 1024,
+        "sequence_length": "variable",
+        "embedding_dimension": 8192,
         "num_heads": 16,
         "head_dimension": 512,
-        "hidden_size": 8192,
-        "mlp_hidden_size": 32768,
-        "precision": "FP16"
+        "mlp_hidden_size": 32768
       },
-      "communication_overhead": {
-        "expected_tpot_ms": 0.35,
-        "throughput_tokens_per_sec": 1200000
-      }
-    },
-    "proposed": {
-      "name": "Two-Level Attention Partitioning",
-      "description": "Helix method with head-level and intra-head dimension partitioning",
-      "parallel_strategy": {
-        "type": "two_level_partitioning",
-        "head_partitions": {
-          "n": 4,
-          "description": "Splits 16 heads into 4 groups of 4 heads each"
+      "weight_distribution": {
+        "per_device_tensor_size": 1024,
+        "pipeline_stage_1": {
+          "layers": [1],
+          "devices": [0,1,2,3,4,5,6,7]
         },
-        "dimension_partitions": {
-          "m": 4,
-          "description": "Splits each head's 512-dimension into 4 segments of 128 dimensions each"
-        },
-        "total_partitions": 16,
-        "partition_formula": "m × n = 4 × 4 = 16"
-      },
-      "device_mapping": {
-        "partition_0_0": {"device": 0, "head_group": 0, "dimension_slice": 0},
-        "partition_0_1": {"device": 1, "head_group": 0, "dimension_slice": 1},
-        "partition_0_2": {"device": 2, "head_group": 0, "dimension_slice": 2},
-        "partition_0_3": {"device": 3, "head_group": 0, "dimension_slice": 3},
-        "partition_1_0": {"device": 4, "head_group": 1, "dimension_slice": 0},
-        "partition_1_1": {"device": 5, "head_group": 1, "dimension_slice": 1},
-        "partition_1_2": {"device": 6, "head_group": 1, "dimension_slice": 2},
-        "partition_1_3": {"device": 7, "head_group": 1, "dimension_slice": 3},
-        "partition_2_0": {"device": 8, "head_group": 2, "dimension_slice": 0},
-        "partition_2_1": {"device": 9, "head_group": 2, "dimension_slice": 1},
-        "partition_2_2": {"device": 10, "head_group": 2, "dimension_slice": 2},
-        "partition_2_3": {"device": 11, "head_group": 2, "dimension_slice": 3},
-        "partition_3_0": {"device": 12, "head_group": 3, "dimension_slice": 0},
-        "partition_3_1": {"device": 13, "head_group": 3, "dimension_slice": 1},
-        "partition_3_2": {"device": 14, "head_group": 3, "dimension_slice": 2},
-        "partition_3_3": {"device": 15, "head_group": 3, "dimension_slice": 3}
-      },
-      "computation_per_partition": {
-        "heads_per_partition": 4,
-        "dimensions_per_partition": 128,
-        "weight_matrix_size": "512 × 512",
-        "attention_computation": "softmax(QK^T/√128)V"
+        "pipeline_stage_2": {
+          "layers": [2],
+          "devices": [8,9,10,11,12,13,14,15]
+        }
       },
       "communication_pattern": {
-        "intra_group": {
-          "type": "dimension_concatenation",
-          "description": "Concatenate 4 dimension slices within each head group",
-          "devices_per_group": 4
+        "tensor_parallel_communication": {
+          "type": "all_reduce",
+          "frequency": "per_layer",
+          "bandwidth": "high"
         },
-        "inter_group": {
-          "type": "head_concatenation",
-          "description": "Concatenate 4 head group outputs along head dimension"
-        }
-      },
-      "model_parameters": {
-        "num_heads": 16,
-        "head_dimension": 512,
-        "hidden_size": 8192,
-        "mlp_hidden_size": 32768,
-        "precision": "FP16",
-        "batch_size": 1024
-      },
-      "performance_metrics": {
-        "expected_tpot_ms": 0.22,
-        "throughput_tokens_per_sec": 1580000,
-        "improvement_over_baseline": {
-          "throughput_increase": "31.7%",
-          "overhead_reduction": "37.1%"
-        }
-      }
-    },
-    "moe_model": {
-      "baseline": {
-        "name": "MoE with TP=8 + PP=2",
-        "total_devices": 16,
-        "experts_per_layer": 4,
-        "performance": {
-          "throughput_tokens_per_sec": 850000,
-          "tpot_ms": 0.45
-        }
-      },
-      "proposed": {
-        "name": "MoE with Two-Level Partitioning",
-        "total_devices": 16,
-        "partition_strategy": "m×n=16 applied to attention layers",
-        "experts_per_layer": 4,
-        "performance": {
-          "throughput_tokens_per_sec": 1150000,
-          "tpot_ms": 0.30,
-          "improvement_over_baseline": {
-            "throughput_increase": "35.3%",
-            "overhead_reduction": "33.3%"
-          }
+        "pipeline_parallel_communication": {
+          "type": "point_to_point",
+          "frequency": "per_microbatch",
+          "bandwidth": "medium"
         }
       }
     }
   },
-  "implementation_requirements": {
-    "framework_integration": "Custom tensor partitioning and communication primitives",
-    "precision_support": "FP16 with mixed precision training/inference",
-    "gradient_synchronization": "Adapted for training scenarios",
-    "hardware_topology": "16 GPUs with high-bandwidth interconnect",
-    "parameter_tuning": {
-      "m_n_selection": "Based on hardware topology and network bandwidth",
-      "memory_optimization": "Each device stores fraction of parameters and activations"
+  "deployment_instructions": {
+    "proposed_method": {
+      "step1": "Initialize 16 GPU cluster with high-bandwidth interconnect",
+      "step2": "Partition Q, K, V weight matrices into 16 blocks as specified",
+      "step3": "Assign each (head_group, dimension_slice) partition to unique GPU",
+      "step4": "Implement hierarchical all-gather operations for concatenation",
+      "step5": "Use NCCL for efficient GPU communication",
+      "step6": "Configure CUDA streams for overlapping computation and communication"
+    },
+    "baseline_tensor_parallel": {
+      "step1": "Initialize 16 GPU cluster",
+      "step2": "Configure 8-way tensor parallelism within each pipeline stage",
+      "step3": "Configure 2-way pipeline parallelism across layers",
+      "step4": "Implement all-reduce for tensor parallel communication",
+      "step5": "Implement point-to-point communication for pipeline stages"
+    }
+  },
+  "performance_targets": {
+    "proposed_method": {
+      "dense_model": {
+        "throughput": 1580000,
+        "tput": 0.22,
+        "improvement_over_baseline": 31.7
+      },
+      "moe_model": {
+        "throughput": 1150000,
+        "tput": 0.30,
+        "improvement_over_baseline": 35.3
+      }
+    },
+    "baseline_tensor_parallel": {
+      "dense_model": {
+        "throughput": 1200000,
+        "tput": 0.35
+      },
+      "moe_model": {
+        "throughput": 850000,
+        "tput": 0.45
+      }
     }
   }
 }

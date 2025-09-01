@@ -1,1345 +1,569 @@
-// Helix Two-Level Attention Partitioning (m×n=16)
+// Helix: Two-Level Attention Partitioning DAG
 digraph helix_two_level_partitioning {
-	rankdir=TB size="30,30"
-	input [label="Input
-(B×L×8192)" fillcolor=lightblue shape=ellipse style=filled]
-	global_norm [label="Global LayerNorm
-(B×L×8192)
-All GPUs" fillcolor=lightyellow shape=rectangle style=filled]
-	subgraph cluster_layer0 {
-		color=darkgreen label="Layer 0 - Two-Level Partitioning" style=dashed
-		l0_qkv [label="QKV Linear
-(B×L×8192→B×L×24576)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		subgraph cluster_partition_0_0_0 {
-			color=gray label="Partition 0,0 (GPU 0)" style=dotted
-			l0_qkv_0_0 [label="Extract QKV
-(B×L×1536)
-GPU 0" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_0_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 0" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_0_0 [label="Partition Output
-(B×L×512)
-GPU 0" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_0_1 {
-			color=gray label="Partition 0,1 (GPU 1)" style=dotted
-			l0_qkv_0_1 [label="Extract QKV
-(B×L×1536)
-GPU 1" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_0_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 1" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_0_1 [label="Partition Output
-(B×L×512)
-GPU 1" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_0_2 {
-			color=gray label="Partition 0,2 (GPU 2)" style=dotted
-			l0_qkv_0_2 [label="Extract QKV
-(B×L×1536)
-GPU 2" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_0_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 2" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_0_2 [label="Partition Output
-(B×L×512)
-GPU 2" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_0_3 {
-			color=gray label="Partition 0,3 (GPU 3)" style=dotted
-			l0_qkv_0_3 [label="Extract QKV
-(B×L×1536)
-GPU 3" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_0_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 3" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_0_3 [label="Partition Output
-(B×L×512)
-GPU 3" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_1_0 {
-			color=gray label="Partition 1,0 (GPU 4)" style=dotted
-			l0_qkv_1_0 [label="Extract QKV
-(B×L×1536)
-GPU 4" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_1_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 4" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_1_0 [label="Partition Output
-(B×L×512)
-GPU 4" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_1_1 {
-			color=gray label="Partition 1,1 (GPU 5)" style=dotted
-			l0_qkv_1_1 [label="Extract QKV
-(B×L×1536)
-GPU 5" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_1_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 5" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_1_1 [label="Partition Output
-(B×L×512)
-GPU 5" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_1_2 {
-			color=gray label="Partition 1,2 (GPU 6)" style=dotted
-			l0_qkv_1_2 [label="Extract QKV
-(B×L×1536)
-GPU 6" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_1_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 6" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_1_2 [label="Partition Output
-(B×L×512)
-GPU 6" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_1_3 {
-			color=gray label="Partition 1,3 (GPU 7)" style=dotted
-			l0_qkv_1_3 [label="Extract QKV
-(B×L×1536)
-GPU 7" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_1_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 7" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_1_3 [label="Partition Output
-(B×L×512)
-GPU 7" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_2_0 {
-			color=gray label="Partition 2,0 (GPU 8)" style=dotted
-			l0_qkv_2_0 [label="Extract QKV
-(B×L×1536)
-GPU 8" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_2_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 8" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_2_0 [label="Partition Output
-(B×L×512)
-GPU 8" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_2_1 {
-			color=gray label="Partition 2,1 (GPU 9)" style=dotted
-			l0_qkv_2_1 [label="Extract QKV
-(B×L×1536)
-GPU 9" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_2_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 9" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_2_1 [label="Partition Output
-(B×L×512)
-GPU 9" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_2_2 {
-			color=gray label="Partition 2,2 (GPU 10)" style=dotted
-			l0_qkv_2_2 [label="Extract QKV
-(B×L×1536)
-GPU 10" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_2_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 10" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_2_2 [label="Partition Output
-(B×L×512)
-GPU 10" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_2_3 {
-			color=gray label="Partition 2,3 (GPU 11)" style=dotted
-			l0_qkv_2_3 [label="Extract QKV
-(B×L×1536)
-GPU 11" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_2_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 11" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_2_3 [label="Partition Output
-(B×L×512)
-GPU 11" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_3_0 {
-			color=gray label="Partition 3,0 (GPU 12)" style=dotted
-			l0_qkv_3_0 [label="Extract QKV
-(B×L×1536)
-GPU 12" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_3_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 12" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_3_0 [label="Partition Output
-(B×L×512)
-GPU 12" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_3_1 {
-			color=gray label="Partition 3,1 (GPU 13)" style=dotted
-			l0_qkv_3_1 [label="Extract QKV
-(B×L×1536)
-GPU 13" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_3_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 13" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_3_1 [label="Partition Output
-(B×L×512)
-GPU 13" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_3_2 {
-			color=gray label="Partition 3,2 (GPU 14)" style=dotted
-			l0_qkv_3_2 [label="Extract QKV
-(B×L×1536)
-GPU 14" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_3_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 14" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_3_2 [label="Partition Output
-(B×L×512)
-GPU 14" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_0_3_3 {
-			color=gray label="Partition 3,3 (GPU 15)" style=dotted
-			l0_qkv_3_3 [label="Extract QKV
-(B×L×1536)
-GPU 15" fillcolor=lightcoral shape=parallelogram style=filled]
-			l0_attention_3_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 15" fillcolor=lightcyan shape=rectangle style=filled]
-			l0_output_3_3 [label="Partition Output
-(B×L×512)
-GPU 15" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		l0_intra_concat_0 [label="Intra-Group Concat
-Head Group 0
-Concat 4×128 dims
-(B×L×2048)
-GPUs 0-3" fillcolor=gold shape=parallelogram style=filled]
-		l0_intra_concat_1 [label="Intra-Group Concat
-Head Group 1
-Concat 4×128 dims
-(B×L×2048)
-GPUs 4-7" fillcolor=gold shape=parallelogram style=filled]
-		l0_intra_concat_2 [label="Intra-Group Concat
-Head Group 2
-Concat 4×128 dims
-(B×L×2048)
-GPUs 8-11" fillcolor=gold shape=parallelogram style=filled]
-		l0_intra_concat_3 [label="Intra-Group Concat
-Head Group 3
-Concat 4×128 dims
-(B×L×2048)
-GPUs 12-15" fillcolor=gold shape=parallelogram style=filled]
-		l0_inter_concat [label="Inter-Group Concat
-Concat 4×2048 dims
-(B×L×8192)
-All GPUs" fillcolor=gold shape=parallelogram style=filled]
-		l0_proj [label="Output Projection
-(B×L×8192→B×L×8192)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l0_res1 [label="Residual Add
-(B×L×8192)
-All GPUs" fillcolor=orange shape=ellipse style=filled]
-		l0_ffn_norm [label="FFN LayerNorm
-(B×L×8192)
-All GPUs" fillcolor=lightyellow shape=rectangle style=filled]
-		l0_ffn_up [label="FFN Up
-(B×L×8192→B×L×32768)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l0_ffn_down [label="FFN Down
-(B×L×32768→B×L×8192)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l0_res2 [label="Residual Add
-(B×L×8192)
-All GPUs" fillcolor=orange shape=ellipse style=filled]
-	}
-	subgraph cluster_layer1 {
-		color=darkgreen label="Layer 1 - Two-Level Partitioning" style=dashed
-		l1_qkv [label="QKV Linear
-(B×L×8192→B×L×24576)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		subgraph cluster_partition_1_0_0 {
-			color=gray label="Partition 0,0 (GPU 0)" style=dotted
-			l1_qkv_0_0 [label="Extract QKV
-(B×L×1536)
-GPU 0" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_0_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 0" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_0_0 [label="Partition Output
-(B×L×512)
-GPU 0" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_0_1 {
-			color=gray label="Partition 0,1 (GPU 1)" style=dotted
-			l1_qkv_0_1 [label="Extract QKV
-(B×L×1536)
-GPU 1" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_0_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 1" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_0_1 [label="Partition Output
-(B×L×512)
-GPU 1" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_0_2 {
-			color=gray label="Partition 0,2 (GPU 2)" style=dotted
-			l1_qkv_0_2 [label="Extract QKV
-(B×L×1536)
-GPU 2" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_0_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 2" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_0_2 [label="Partition Output
-(B×L×512)
-GPU 2" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_0_3 {
-			color=gray label="Partition 0,3 (GPU 3)" style=dotted
-			l1_qkv_0_3 [label="Extract QKV
-(B×L×1536)
-GPU 3" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_0_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 3" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_0_3 [label="Partition Output
-(B×L×512)
-GPU 3" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_1_0 {
-			color=gray label="Partition 1,0 (GPU 4)" style=dotted
-			l1_qkv_1_0 [label="Extract QKV
-(B×L×1536)
-GPU 4" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_1_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 4" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_1_0 [label="Partition Output
-(B×L×512)
-GPU 4" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_1_1 {
-			color=gray label="Partition 1,1 (GPU 5)" style=dotted
-			l1_qkv_1_1 [label="Extract QKV
-(B×L×1536)
-GPU 5" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_1_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 5" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_1_1 [label="Partition Output
-(B×L×512)
-GPU 5" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_1_2 {
-			color=gray label="Partition 1,2 (GPU 6)" style=dotted
-			l1_qkv_1_2 [label="Extract QKV
-(B×L×1536)
-GPU 6" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_1_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 6" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_1_2 [label="Partition Output
-(B×L×512)
-GPU 6" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_1_3 {
-			color=gray label="Partition 1,3 (GPU 7)" style=dotted
-			l1_qkv_1_3 [label="Extract QKV
-(B×L×1536)
-GPU 7" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_1_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 7" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_1_3 [label="Partition Output
-(B×L×512)
-GPU 7" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_2_0 {
-			color=gray label="Partition 2,0 (GPU 8)" style=dotted
-			l1_qkv_2_0 [label="Extract QKV
-(B×L×1536)
-GPU 8" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_2_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 8" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_2_0 [label="Partition Output
-(B×L×512)
-GPU 8" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_2_1 {
-			color=gray label="Partition 2,1 (GPU 9)" style=dotted
-			l1_qkv_2_1 [label="Extract QKV
-(B×L×1536)
-GPU 9" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_2_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 9" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_2_1 [label="Partition Output
-(B×L×512)
-GPU 9" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_2_2 {
-			color=gray label="Partition 2,2 (GPU 10)" style=dotted
-			l1_qkv_2_2 [label="Extract QKV
-(B×L×1536)
-GPU 10" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_2_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 10" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_2_2 [label="Partition Output
-(B×L×512)
-GPU 10" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_2_3 {
-			color=gray label="Partition 2,3 (GPU 11)" style=dotted
-			l1_qkv_2_3 [label="Extract QKV
-(B×L×1536)
-GPU 11" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_2_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 11" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_2_3 [label="Partition Output
-(B×L×512)
-GPU 11" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_3_0 {
-			color=gray label="Partition 3,0 (GPU 12)" style=dotted
-			l1_qkv_3_0 [label="Extract QKV
-(B×L×1536)
-GPU 12" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_3_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 12" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_3_0 [label="Partition Output
-(B×L×512)
-GPU 12" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_3_1 {
-			color=gray label="Partition 3,1 (GPU 13)" style=dotted
-			l1_qkv_3_1 [label="Extract QKV
-(B×L×1536)
-GPU 13" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_3_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 13" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_3_1 [label="Partition Output
-(B×L×512)
-GPU 13" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_3_2 {
-			color=gray label="Partition 3,2 (GPU 14)" style=dotted
-			l1_qkv_3_2 [label="Extract QKV
-(B×L×1536)
-GPU 14" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_3_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 14" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_3_2 [label="Partition Output
-(B×L×512)
-GPU 14" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_1_3_3 {
-			color=gray label="Partition 3,3 (GPU 15)" style=dotted
-			l1_qkv_3_3 [label="Extract QKV
-(B×L×1536)
-GPU 15" fillcolor=lightcoral shape=parallelogram style=filled]
-			l1_attention_3_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 15" fillcolor=lightcyan shape=rectangle style=filled]
-			l1_output_3_3 [label="Partition Output
-(B×L×512)
-GPU 15" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		l1_intra_concat_0 [label="Intra-Group Concat
-Head Group 0
-Concat 4×128 dims
-(B×L×2048)
-GPUs 0-3" fillcolor=gold shape=parallelogram style=filled]
-		l1_intra_concat_1 [label="Intra-Group Concat
-Head Group 1
-Concat 4×128 dims
-(B×L×2048)
-GPUs 4-7" fillcolor=gold shape=parallelogram style=filled]
-		l1_intra_concat_2 [label="Intra-Group Concat
-Head Group 2
-Concat 4×128 dims
-(B×L×2048)
-GPUs 8-11" fillcolor=gold shape=parallelogram style=filled]
-		l1_intra_concat_3 [label="Intra-Group Concat
-Head Group 3
-Concat 4×128 dims
-(B×L×2048)
-GPUs 12-15" fillcolor=gold shape=parallelogram style=filled]
-		l1_inter_concat [label="Inter-Group Concat
-Concat 4×2048 dims
-(B×L×8192)
-All GPUs" fillcolor=gold shape=parallelogram style=filled]
-		l1_proj [label="Output Projection
-(B×L×8192→B×L×8192)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l1_res1 [label="Residual Add
-(B×L×8192)
-All GPUs" fillcolor=orange shape=ellipse style=filled]
-		l1_ffn_norm [label="FFN LayerNorm
-(B×L×8192)
-All GPUs" fillcolor=lightyellow shape=rectangle style=filled]
-		l1_ffn_up [label="FFN Up
-(B×L×8192→B×L×32768)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l1_ffn_down [label="FFN Down
-(B×L×32768→B×L×8192)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l1_res2 [label="Residual Add
-(B×L×8192)
-All GPUs" fillcolor=orange shape=ellipse style=filled]
-	}
-	subgraph cluster_layer2 {
-		color=darkgreen label="Layer 2 - Two-Level Partitioning" style=dashed
-		l2_qkv [label="QKV Linear
-(B×L×8192→B×L×24576)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		subgraph cluster_partition_2_0_0 {
-			color=gray label="Partition 0,0 (GPU 0)" style=dotted
-			l2_qkv_0_0 [label="Extract QKV
-(B×L×1536)
-GPU 0" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_0_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 0" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_0_0 [label="Partition Output
-(B×L×512)
-GPU 0" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_0_1 {
-			color=gray label="Partition 0,1 (GPU 1)" style=dotted
-			l2_qkv_0_1 [label="Extract QKV
-(B×L×1536)
-GPU 1" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_0_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 1" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_0_1 [label="Partition Output
-(B×L×512)
-GPU 1" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_0_2 {
-			color=gray label="Partition 0,2 (GPU 2)" style=dotted
-			l2_qkv_0_2 [label="Extract QKV
-(B×L×1536)
-GPU 2" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_0_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 2" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_0_2 [label="Partition Output
-(B×L×512)
-GPU 2" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_0_3 {
-			color=gray label="Partition 0,3 (GPU 3)" style=dotted
-			l2_qkv_0_3 [label="Extract QKV
-(B×L×1536)
-GPU 3" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_0_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 3" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_0_3 [label="Partition Output
-(B×L×512)
-GPU 3" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_1_0 {
-			color=gray label="Partition 1,0 (GPU 4)" style=dotted
-			l2_qkv_1_0 [label="Extract QKV
-(B×L×1536)
-GPU 4" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_1_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 4" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_1_0 [label="Partition Output
-(B×L×512)
-GPU 4" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_1_1 {
-			color=gray label="Partition 1,1 (GPU 5)" style=dotted
-			l2_qkv_1_1 [label="Extract QKV
-(B×L×1536)
-GPU 5" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_1_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 5" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_1_1 [label="Partition Output
-(B×L×512)
-GPU 5" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_1_2 {
-			color=gray label="Partition 1,2 (GPU 6)" style=dotted
-			l2_qkv_1_2 [label="Extract QKV
-(B×L×1536)
-GPU 6" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_1_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 6" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_1_2 [label="Partition Output
-(B×L×512)
-GPU 6" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_1_3 {
-			color=gray label="Partition 1,3 (GPU 7)" style=dotted
-			l2_qkv_1_3 [label="Extract QKV
-(B×L×1536)
-GPU 7" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_1_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 7" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_1_3 [label="Partition Output
-(B×L×512)
-GPU 7" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_2_0 {
-			color=gray label="Partition 2,0 (GPU 8)" style=dotted
-			l2_qkv_2_0 [label="Extract QKV
-(B×L×1536)
-GPU 8" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_2_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 8" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_2_0 [label="Partition Output
-(B×L×512)
-GPU 8" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_2_1 {
-			color=gray label="Partition 2,1 (GPU 9)" style=dotted
-			l2_qkv_2_1 [label="Extract QKV
-(B×L×1536)
-GPU 9" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_2_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 9" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_2_1 [label="Partition Output
-(B×L×512)
-GPU 9" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_2_2 {
-			color=gray label="Partition 2,2 (GPU 10)" style=dotted
-			l2_qkv_2_2 [label="Extract QKV
-(B×L×1536)
-GPU 10" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_2_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 10" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_2_2 [label="Partition Output
-(B×L×512)
-GPU 10" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_2_3 {
-			color=gray label="Partition 2,3 (GPU 11)" style=dotted
-			l2_qkv_2_3 [label="Extract QKV
-(B×L×1536)
-GPU 11" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_2_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 11" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_2_3 [label="Partition Output
-(B×L×512)
-GPU 11" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_3_0 {
-			color=gray label="Partition 3,0 (GPU 12)" style=dotted
-			l2_qkv_3_0 [label="Extract QKV
-(B×L×1536)
-GPU 12" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_3_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 12" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_3_0 [label="Partition Output
-(B×L×512)
-GPU 12" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_3_1 {
-			color=gray label="Partition 3,1 (GPU 13)" style=dotted
-			l2_qkv_3_1 [label="Extract QKV
-(B×L×1536)
-GPU 13" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_3_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 13" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_3_1 [label="Partition Output
-(B×L×512)
-GPU 13" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_3_2 {
-			color=gray label="Partition 3,2 (GPU 14)" style=dotted
-			l2_qkv_3_2 [label="Extract QKV
-(B×L×1536)
-GPU 14" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_3_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 14" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_3_2 [label="Partition Output
-(B×L×512)
-GPU 14" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_2_3_3 {
-			color=gray label="Partition 3,3 (GPU 15)" style=dotted
-			l2_qkv_3_3 [label="Extract QKV
-(B×L×1536)
-GPU 15" fillcolor=lightcoral shape=parallelogram style=filled]
-			l2_attention_3_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 15" fillcolor=lightcyan shape=rectangle style=filled]
-			l2_output_3_3 [label="Partition Output
-(B×L×512)
-GPU 15" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		l2_intra_concat_0 [label="Intra-Group Concat
-Head Group 0
-Concat 4×128 dims
-(B×L×2048)
-GPUs 0-3" fillcolor=gold shape=parallelogram style=filled]
-		l2_intra_concat_1 [label="Intra-Group Concat
-Head Group 1
-Concat 4×128 dims
-(B×L×2048)
-GPUs 4-7" fillcolor=gold shape=parallelogram style=filled]
-		l2_intra_concat_2 [label="Intra-Group Concat
-Head Group 2
-Concat 4×128 dims
-(B×L×2048)
-GPUs 8-11" fillcolor=gold shape=parallelogram style=filled]
-		l2_intra_concat_3 [label="Intra-Group Concat
-Head Group 3
-Concat 4×128 dims
-(B×L×2048)
-GPUs 12-15" fillcolor=gold shape=parallelogram style=filled]
-		l2_inter_concat [label="Inter-Group Concat
-Concat 4×2048 dims
-(B×L×8192)
-All GPUs" fillcolor=gold shape=parallelogram style=filled]
-		l2_proj [label="Output Projection
-(B×L×8192→B×L×8192)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l2_res1 [label="Residual Add
-(B×L×8192)
-All GPUs" fillcolor=orange shape=ellipse style=filled]
-		l2_ffn_norm [label="FFN LayerNorm
-(B×L×8192)
-All GPUs" fillcolor=lightyellow shape=rectangle style=filled]
-		l2_ffn_up [label="FFN Up
-(B×L×8192→B×L×32768)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l2_ffn_down [label="FFN Down
-(B×L×32768→B×L×8192)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l2_res2 [label="Residual Add
-(B×L×8192)
-All GPUs" fillcolor=orange shape=ellipse style=filled]
-	}
-	subgraph cluster_layer3 {
-		color=darkgreen label="Layer 3 - Two-Level Partitioning" style=dashed
-		l3_qkv [label="QKV Linear
-(B×L×8192→B×L×24576)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		subgraph cluster_partition_3_0_0 {
-			color=gray label="Partition 0,0 (GPU 0)" style=dotted
-			l3_qkv_0_0 [label="Extract QKV
-(B×L×1536)
-GPU 0" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_0_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 0" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_0_0 [label="Partition Output
-(B×L×512)
-GPU 0" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_0_1 {
-			color=gray label="Partition 0,1 (GPU 1)" style=dotted
-			l3_qkv_0_1 [label="Extract QKV
-(B×L×1536)
-GPU 1" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_0_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 1" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_0_1 [label="Partition Output
-(B×L×512)
-GPU 1" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_0_2 {
-			color=gray label="Partition 0,2 (GPU 2)" style=dotted
-			l3_qkv_0_2 [label="Extract QKV
-(B×L×1536)
-GPU 2" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_0_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 2" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_0_2 [label="Partition Output
-(B×L×512)
-GPU 2" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_0_3 {
-			color=gray label="Partition 0,3 (GPU 3)" style=dotted
-			l3_qkv_0_3 [label="Extract QKV
-(B×L×1536)
-GPU 3" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_0_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 3" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_0_3 [label="Partition Output
-(B×L×512)
-GPU 3" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_1_0 {
-			color=gray label="Partition 1,0 (GPU 4)" style=dotted
-			l3_qkv_1_0 [label="Extract QKV
-(B×L×1536)
-GPU 4" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_1_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 4" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_1_0 [label="Partition Output
-(B×L×512)
-GPU 4" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_1_1 {
-			color=gray label="Partition 1,1 (GPU 5)" style=dotted
-			l3_qkv_1_1 [label="Extract QKV
-(B×L×1536)
-GPU 5" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_1_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 5" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_1_1 [label="Partition Output
-(B×L×512)
-GPU 5" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_1_2 {
-			color=gray label="Partition 1,2 (GPU 6)" style=dotted
-			l3_qkv_1_2 [label="Extract QKV
-(B×L×1536)
-GPU 6" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_1_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 6" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_1_2 [label="Partition Output
-(B×L×512)
-GPU 6" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_1_3 {
-			color=gray label="Partition 1,3 (GPU 7)" style=dotted
-			l3_qkv_1_3 [label="Extract QKV
-(B×L×1536)
-GPU 7" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_1_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 7" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_1_3 [label="Partition Output
-(B×L×512)
-GPU 7" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_2_0 {
-			color=gray label="Partition 2,0 (GPU 8)" style=dotted
-			l3_qkv_2_0 [label="Extract QKV
-(B×L×1536)
-GPU 8" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_2_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 8" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_2_0 [label="Partition Output
-(B×L×512)
-GPU 8" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_2_1 {
-			color=gray label="Partition 2,1 (GPU 9)" style=dotted
-			l3_qkv_2_1 [label="Extract QKV
-(B×L×1536)
-GPU 9" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_2_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 9" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_2_1 [label="Partition Output
-(B×L×512)
-GPU 9" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_2_2 {
-			color=gray label="Partition 2,2 (GPU 10)" style=dotted
-			l3_qkv_2_2 [label="Extract QKV
-(B×L×1536)
-GPU 10" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_2_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 10" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_2_2 [label="Partition Output
-(B×L×512)
-GPU 10" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_2_3 {
-			color=gray label="Partition 2,3 (GPU 11)" style=dotted
-			l3_qkv_2_3 [label="Extract QKV
-(B×L×1536)
-GPU 11" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_2_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 11" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_2_3 [label="Partition Output
-(B×L×512)
-GPU 11" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_3_0 {
-			color=gray label="Partition 3,0 (GPU 12)" style=dotted
-			l3_qkv_3_0 [label="Extract QKV
-(B×L×1536)
-GPU 12" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_3_0 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 12" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_3_0 [label="Partition Output
-(B×L×512)
-GPU 12" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_3_1 {
-			color=gray label="Partition 3,1 (GPU 13)" style=dotted
-			l3_qkv_3_1 [label="Extract QKV
-(B×L×1536)
-GPU 13" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_3_1 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 13" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_3_1 [label="Partition Output
-(B×L×512)
-GPU 13" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_3_2 {
-			color=gray label="Partition 3,2 (GPU 14)" style=dotted
-			l3_qkv_3_2 [label="Extract QKV
-(B×L×1536)
-GPU 14" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_3_2 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 14" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_3_2 [label="Partition Output
-(B×L×512)
-GPU 14" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		subgraph cluster_partition_3_3_3 {
-			color=gray label="Partition 3,3 (GPU 15)" style=dotted
-			l3_qkv_3_3 [label="Extract QKV
-(B×L×1536)
-GPU 15" fillcolor=lightcoral shape=parallelogram style=filled]
-			l3_attention_3_3 [label="Local Attention
-4 heads × 128 dims
-(B×L×512)
-GPU 15" fillcolor=lightcyan shape=rectangle style=filled]
-			l3_output_3_3 [label="Partition Output
-(B×L×512)
-GPU 15" fillcolor=lightpink shape=ellipse style=filled]
-		}
-		l3_intra_concat_0 [label="Intra-Group Concat
-Head Group 0
-Concat 4×128 dims
-(B×L×2048)
-GPUs 0-3" fillcolor=gold shape=parallelogram style=filled]
-		l3_intra_concat_1 [label="Intra-Group Concat
-Head Group 1
-Concat 4×128 dims
-(B×L×2048)
-GPUs 4-7" fillcolor=gold shape=parallelogram style=filled]
-		l3_intra_concat_2 [label="Intra-Group Concat
-Head Group 2
-Concat 4×128 dims
-(B×L×2048)
-GPUs 8-11" fillcolor=gold shape=parallelogram style=filled]
-		l3_intra_concat_3 [label="Intra-Group Concat
-Head Group 3
-Concat 4×128 dims
-(B×L×2048)
-GPUs 12-15" fillcolor=gold shape=parallelogram style=filled]
-		l3_inter_concat [label="Inter-Group Concat
-Concat 4×2048 dims
-(B×L×8192)
-All GPUs" fillcolor=gold shape=parallelogram style=filled]
-		l3_proj [label="Output Projection
-(B×L×8192→B×L×8192)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l3_res1 [label="Residual Add
-(B×L×8192)
-All GPUs" fillcolor=orange shape=ellipse style=filled]
-		l3_ffn_norm [label="FFN LayerNorm
-(B×L×8192)
-All GPUs" fillcolor=lightyellow shape=rectangle style=filled]
-		l3_ffn_up [label="FFN Up
-(B×L×8192→B×L×32768)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l3_ffn_down [label="FFN Down
-(B×L×32768→B×L×8192)
-All GPUs" fillcolor=lightgreen shape=rectangle style=filled]
-		l3_res2 [label="Residual Add
-(B×L×8192)
-All GPUs" fillcolor=orange shape=ellipse style=filled]
-	}
-	output [label="Output
-(B×L×8192)" fillcolor=lightblue shape=ellipse style=filled]
-	input -> global_norm
-	global_norm -> l0_qkv
-	l0_qkv -> l0_qkv_0_0
-	l0_qkv_0_0 -> l0_attention_0_0
-	l0_attention_0_0 -> l0_output_0_0
-	l0_output_0_0 -> l0_intra_concat_0
-	l0_qkv -> l0_qkv_0_1
-	l0_qkv_0_1 -> l0_attention_0_1
-	l0_attention_0_1 -> l0_output_0_1
-	l0_output_0_1 -> l0_intra_concat_0
-	l0_qkv -> l0_qkv_0_2
-	l0_qkv_0_2 -> l0_attention_0_2
-	l0_attention_0_2 -> l0_output_0_2
-	l0_output_0_2 -> l0_intra_concat_0
-	l0_qkv -> l0_qkv_0_3
-	l0_qkv_0_3 -> l0_attention_0_3
-	l0_attention_0_3 -> l0_output_0_3
-	l0_output_0_3 -> l0_intra_concat_0
-	l0_qkv -> l0_qkv_1_0
-	l0_qkv_1_0 -> l0_attention_1_0
-	l0_attention_1_0 -> l0_output_1_0
-	l0_output_1_0 -> l0_intra_concat_1
-	l0_qkv -> l0_qkv_1_1
-	l0_qkv_1_1 -> l0_attention_1_1
-	l0_attention_1_1 -> l0_output_1_1
-	l0_output_1_1 -> l0_intra_concat_1
-	l0_qkv -> l0_qkv_1_2
-	l0_qkv_1_2 -> l0_attention_1_2
-	l0_attention_1_2 -> l0_output_1_2
-	l0_output_1_2 -> l0_intra_concat_1
-	l0_qkv -> l0_qkv_1_3
-	l0_qkv_1_3 -> l0_attention_1_3
-	l0_attention_1_3 -> l0_output_1_3
-	l0_output_1_3 -> l0_intra_concat_1
-	l0_qkv -> l0_qkv_2_0
-	l0_qkv_2_0 -> l0_attention_2_0
-	l0_attention_2_0 -> l0_output_2_0
-	l0_output_2_0 -> l0_intra_concat_2
-	l0_qkv -> l0_qkv_2_1
-	l0_qkv_2_1 -> l0_attention_2_1
-	l0_attention_2_1 -> l0_output_2_1
-	l0_output_2_1 -> l0_intra_concat_2
-	l0_qkv -> l0_qkv_2_2
-	l0_qkv_2_2 -> l0_attention_2_2
-	l0_attention_2_2 -> l0_output_2_2
-	l0_output_2_2 -> l0_intra_concat_2
-	l0_qkv -> l0_qkv_2_3
-	l0_qkv_2_3 -> l0_attention_2_3
-	l0_attention_2_3 -> l0_output_2_3
-	l0_output_2_3 -> l0_intra_concat_2
-	l0_qkv -> l0_qkv_3_0
-	l0_qkv_3_0 -> l0_attention_3_0
-	l0_attention_3_0 -> l0_output_3_0
-	l0_output_3_0 -> l0_intra_concat_3
-	l0_qkv -> l0_qkv_3_1
-	l0_qkv_3_1 -> l0_attention_3_1
-	l0_attention_3_1 -> l0_output_3_1
-	l0_output_3_1 -> l0_intra_concat_3
-	l0_qkv -> l0_qkv_3_2
-	l0_qkv_3_2 -> l0_attention_3_2
-	l0_attention_3_2 -> l0_output_3_2
-	l0_output_3_2 -> l0_intra_concat_3
-	l0_qkv -> l0_qkv_3_3
-	l0_qkv_3_3 -> l0_attention_3_3
-	l0_attention_3_3 -> l0_output_3_3
-	l0_output_3_3 -> l0_intra_concat_3
-	l0_intra_concat_0 -> l0_inter_concat
-	l0_intra_concat_1 -> l0_inter_concat
-	l0_intra_concat_2 -> l0_inter_concat
-	l0_intra_concat_3 -> l0_inter_concat
-	l0_inter_concat -> l0_proj
-	l0_proj -> l0_res1
-	global_norm -> l0_res1
-	l0_res1 -> l0_ffn_norm
-	l0_ffn_norm -> l0_ffn_up
-	l0_ffn_up -> l0_ffn_down
-	l0_ffn_down -> l0_res2
-	l0_res1 -> l0_res2
-	l0_res2 -> l1_qkv
-	l1_qkv -> l1_qkv_0_0
-	l1_qkv_0_0 -> l1_attention_0_0
-	l1_attention_0_0 -> l1_output_0_0
-	l1_output_0_0 -> l1_intra_concat_0
-	l1_qkv -> l1_qkv_0_1
-	l1_qkv_0_1 -> l1_attention_0_1
-	l1_attention_0_1 -> l1_output_0_1
-	l1_output_0_1 -> l1_intra_concat_0
-	l1_qkv -> l1_qkv_0_2
-	l1_qkv_0_2 -> l1_attention_0_2
-	l1_attention_0_2 -> l1_output_0_2
-	l1_output_0_2 -> l1_intra_concat_0
-	l1_qkv -> l1_qkv_0_3
-	l1_qkv_0_3 -> l1_attention_0_3
-	l1_attention_0_3 -> l1_output_0_3
-	l1_output_0_3 -> l1_intra_concat_0
-	l1_qkv -> l1_qkv_1_0
-	l1_qkv_1_0 -> l1_attention_1_0
-	l1_attention_1_0 -> l1_output_1_0
-	l1_output_1_0 -> l1_intra_concat_1
-	l1_qkv -> l1_qkv_1_1
-	l1_qkv_1_1 -> l1_attention_1_1
-	l1_attention_1_1 -> l1_output_1_1
-	l1_output_1_1 -> l1_intra_concat_1
-	l1_qkv -> l1_qkv_1_2
-	l1_qkv_1_2 -> l1_attention_1_2
-	l1_attention_1_2 -> l1_output_1_2
-	l1_output_1_2 -> l1_intra_concat_1
-	l1_qkv -> l1_qkv_1_3
-	l1_qkv_1_3 -> l1_attention_1_3
-	l1_attention_1_3 -> l1_output_1_3
-	l1_output_1_3 -> l1_intra_concat_1
-	l1_qkv -> l1_qkv_2_0
-	l1_qkv_2_0 -> l1_attention_2_0
-	l1_attention_2_0 -> l1_output_2_0
-	l1_output_2_0 -> l1_intra_concat_2
-	l1_qkv -> l1_qkv_2_1
-	l1_qkv_2_1 -> l1_attention_2_1
-	l1_attention_2_1 -> l1_output_2_1
-	l1_output_2_1 -> l1_intra_concat_2
-	l1_qkv -> l1_qkv_2_2
-	l1_qkv_2_2 -> l1_attention_2_2
-	l1_attention_2_2 -> l1_output_2_2
-	l1_output_2_2 -> l1_intra_concat_2
-	l1_qkv -> l1_qkv_2_3
-	l1_qkv_2_3 -> l1_attention_2_3
-	l1_attention_2_3 -> l1_output_2_3
-	l1_output_2_3 -> l1_intra_concat_2
-	l1_qkv -> l1_qkv_3_0
-	l1_qkv_3_0 -> l1_attention_3_0
-	l1_attention_3_0 -> l1_output_3_0
-	l1_output_3_0 -> l1_intra_concat_3
-	l1_qkv -> l1_qkv_3_1
-	l1_qkv_3_1 -> l1_attention_3_1
-	l1_attention_3_1 -> l1_output_3_1
-	l1_output_3_1 -> l1_intra_concat_3
-	l1_qkv -> l1_qkv_3_2
-	l1_qkv_3_2 -> l1_attention_3_2
-	l1_attention_3_2 -> l1_output_3_2
-	l1_output_3_2 -> l1_intra_concat_3
-	l1_qkv -> l1_qkv_3_3
-	l1_qkv_3_3 -> l1_attention_3_3
-	l1_attention_3_3 -> l1_output_3_3
-	l1_output_3_3 -> l1_intra_concat_3
-	l1_intra_concat_0 -> l1_inter_concat
-	l1_intra_concat_1 -> l1_inter_concat
-	l1_intra_concat_2 -> l1_inter_concat
-	l1_intra_concat_3 -> l1_inter_concat
-	l1_inter_concat -> l1_proj
-	l1_proj -> l1_res1
-	l0_res2 -> l1_res1
-	l1_res1 -> l1_ffn_norm
-	l1_ffn_norm -> l1_ffn_up
-	l1_ffn_up -> l1_ffn_down
-	l1_ffn_down -> l1_res2
-	l1_res1 -> l1_res2
-	l1_res2 -> l2_qkv
-	l2_qkv -> l2_qkv_0_0
-	l2_qkv_0_0 -> l2_attention_0_0
-	l2_attention_0_0 -> l2_output_0_0
-	l2_output_0_0 -> l2_intra_concat_0
-	l2_qkv -> l2_qkv_0_1
-	l2_qkv_0_1 -> l2_attention_0_1
-	l2_attention_0_1 -> l2_output_0_1
-	l2_output_0_1 -> l2_intra_concat_0
-	l2_qkv -> l2_qkv_0_2
-	l2_qkv_0_2 -> l2_attention_0_2
-	l2_attention_0_2 -> l2_output_0_2
-	l2_output_0_2 -> l2_intra_concat_0
-	l2_qkv -> l2_qkv_0_3
-	l2_qkv_0_3 -> l2_attention_0_3
-	l2_attention_0_3 -> l2_output_0_3
-	l2_output_0_3 -> l2_intra_concat_0
-	l2_qkv -> l2_qkv_1_0
-	l2_qkv_1_0 -> l2_attention_1_0
-	l2_attention_1_0 -> l2_output_1_0
-	l2_output_1_0 -> l2_intra_concat_1
-	l2_qkv -> l2_qkv_1_1
-	l2_qkv_1_1 -> l2_attention_1_1
-	l2_attention_1_1 -> l2_output_1_1
-	l2_output_1_1 -> l2_intra_concat_1
-	l2_qkv -> l2_qkv_1_2
-	l2_qkv_1_2 -> l2_attention_1_2
-	l2_attention_1_2 -> l2_output_1_2
-	l2_output_1_2 -> l2_intra_concat_1
-	l2_qkv -> l2_qkv_1_3
-	l2_qkv_1_3 -> l2_attention_1_3
-	l2_attention_1_3 -> l2_output_1_3
-	l2_output_1_3 -> l2_intra_concat_1
-	l2_qkv -> l2_qkv_2_0
-	l2_qkv_2_0 -> l2_attention_2_0
-	l2_attention_2_0 -> l2_output_2_0
-	l2_output_2_0 -> l2_intra_concat_2
-	l2_qkv -> l2_qkv_2_1
-	l2_qkv_2_1 -> l2_attention_2_1
-	l2_attention_2_1 -> l2_output_2_1
-	l2_output_2_1 -> l2_intra_concat_2
-	l2_qkv -> l2_qkv_2_2
-	l2_qkv_2_2 -> l2_attention_2_2
-	l2_attention_2_2 -> l2_output_2_2
-	l2_output_2_2 -> l2_intra_concat_2
-	l2_qkv -> l2_qkv_2_3
-	l2_qkv_2_3 -> l2_attention_2_3
-	l2_attention_2_3 -> l2_output_2_3
-	l2_output_2_3 -> l2_intra_concat_2
-	l2_qkv -> l2_qkv_3_0
-	l2_qkv_3_0 -> l2_attention_3_0
-	l2_attention_3_0 -> l2_output_3_0
-	l2_output_3_0 -> l2_intra_concat_3
-	l2_qkv -> l2_qkv_3_1
-	l2_qkv_3_1 -> l2_attention_3_1
-	l2_attention_3_1 -> l2_output_3_1
-	l2_output_3_1 -> l2_intra_concat_3
-	l2_qkv -> l2_qkv_3_2
-	l2_qkv_3_2 -> l2_attention_3_2
-	l2_attention_3_2 -> l2_output_3_2
-	l2_output_3_2 -> l2_intra_concat_3
-	l2_qkv -> l2_qkv_3_3
-	l2_qkv_3_3 -> l2_attention_3_3
-	l2_attention_3_3 -> l2_output_3_3
-	l2_output_3_3 -> l2_intra_concat_3
-	l2_intra_concat_0 -> l2_inter_concat
-	l2_intra_concat_1 -> l2_inter_concat
-	l2_intra_concat_2 -> l2_inter_concat
-	l2_intra_concat_3 -> l2_inter_concat
-	l2_inter_concat -> l2_proj
-	l2_proj -> l2_res1
-	l1_res2 -> l2_res1
-	l2_res1 -> l2_ffn_norm
-	l2_ffn_norm -> l2_ffn_up
-	l2_ffn_up -> l2_ffn_down
-	l2_ffn_down -> l2_res2
-	l2_res1 -> l2_res2
-	l2_res2 -> l3_qkv
-	l3_qkv -> l3_qkv_0_0
-	l3_qkv_0_0 -> l3_attention_0_0
-	l3_attention_0_0 -> l3_output_0_0
-	l3_output_0_0 -> l3_intra_concat_0
-	l3_qkv -> l3_qkv_0_1
-	l3_qkv_0_1 -> l3_attention_0_1
-	l3_attention_0_1 -> l3_output_0_1
-	l3_output_0_1 -> l3_intra_concat_0
-	l3_qkv -> l3_qkv_0_2
-	l3_qkv_0_2 -> l3_attention_0_2
-	l3_attention_0_2 -> l3_output_0_2
-	l3_output_0_2 -> l3_intra_concat_0
-	l3_qkv -> l3_qkv_0_3
-	l3_qkv_0_3 -> l3_attention_0_3
-	l3_attention_0_3 -> l3_output_0_3
-	l3_output_0_3 -> l3_intra_concat_0
-	l3_qkv -> l3_qkv_1_0
-	l3_qkv_1_0 -> l3_attention_1_0
-	l3_attention_1_0 -> l3_output_1_0
-	l3_output_1_0 -> l3_intra_concat_1
-	l3_qkv -> l3_qkv_1_1
-	l3_qkv_1_1 -> l3_attention_1_1
-	l3_attention_1_1 -> l3_output_1_1
-	l3_output_1_1 -> l3_intra_concat_1
-	l3_qkv -> l3_qkv_1_2
-	l3_qkv_1_2 -> l3_attention_1_2
-	l3_attention_1_2 -> l3_output_1_2
-	l3_output_1_2 -> l3_intra_concat_1
-	l3_qkv -> l3_qkv_1_3
-	l3_qkv_1_3 -> l3_attention_1_3
-	l3_attention_1_3 -> l3_output_1_3
-	l3_output_1_3 -> l3_intra_concat_1
-	l3_qkv -> l3_qkv_2_0
-	l3_qkv_2_0 -> l3_attention_2_0
-	l3_attention_2_0 -> l3_output_2_0
-	l3_output_2_0 -> l3_intra_concat_2
-	l3_qkv -> l3_qkv_2_1
-	l3_qkv_2_1 -> l3_attention_2_1
-	l3_attention_2_1 -> l3_output_2_1
-	l3_output_2_1 -> l3_intra_concat_2
-	l3_qkv -> l3_qkv_2_2
-	l3_qkv_2_2 -> l3_attention_2_2
-	l3_attention_2_2 -> l3_output_2_2
-	l3_output_2_2 -> l3_intra_concat_2
-	l3_qkv -> l3_qkv_2_3
-	l3_qkv_2_3 -> l3_attention_2_3
-	l3_attention_2_3 -> l3_output_2_3
-	l3_output_2_3 -> l3_intra_concat_2
-	l3_qkv -> l3_qkv_3_0
-	l3_qkv_3_0 -> l3_attention_3_0
-	l3_attention_3_0 -> l3_output_3_0
-	l3_output_3_0 -> l3_intra_concat_3
-	l3_qkv -> l3_qkv_3_1
-	l3_qkv_3_1 -> l3_attention_3_1
-	l3_attention_3_1 -> l3_output_3_1
-	l3_output_3_1 -> l3_intra_concat_3
-	l3_qkv -> l3_qkv_3_2
-	l3_qkv_3_2 -> l3_attention_3_2
-	l3_attention_3_2 -> l3_output_3_2
-	l3_output_3_2 -> l3_intra_concat_3
-	l3_qkv -> l3_qkv_3_3
-	l3_qkv_3_3 -> l3_attention_3_3
-	l3_attention_3_3 -> l3_output_3_3
-	l3_output_3_3 -> l3_intra_concat_3
-	l3_intra_concat_0 -> l3_inter_concat
-	l3_intra_concat_1 -> l3_inter_concat
-	l3_intra_concat_2 -> l3_inter_concat
-	l3_intra_concat_3 -> l3_inter_concat
-	l3_inter_concat -> l3_proj
-	l3_proj -> l3_res1
-	l2_res2 -> l3_res1
-	l3_res1 -> l3_ffn_norm
-	l3_ffn_norm -> l3_ffn_up
-	l3_ffn_up -> l3_ffn_down
-	l3_ffn_down -> l3_res2
-	l3_res1 -> l3_res2
-	l3_res2 -> output
+	node [shape=rectangle]
+	fontname=Arial rankdir=TB size="20,30"
+	input [label="Input Tensor
+X: [1024, L, 8192]
+GPU: all" fillcolor=lightblue shape=parallelogram style=filled]
+	head_split [label="Head Group Split
+16 heads → 4 groups
+GPU: all" fillcolor=lightyellow shape=ellipse style=filled]
+	dim_split [label="Dimension Slice
+512 dims → 4 slices
+GPU: all" fillcolor=lightyellow shape=ellipse style=filled]
+	input_0 [label="Input Slice
+X[0,0]: [1024, L, 512]
+GPU: 0" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_0 [label="Q Projection
+W_Q[0,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 0" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_0 [label="K Projection
+W_K[0,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 0" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_0 [label="V Projection
+W_V[0,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 0" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_0 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 0" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_0
+	input_0 -> q_proj_0
+	input_0 -> k_proj_0
+	input_0 -> v_proj_0
+	q_proj_0 -> attn_0
+	k_proj_0 -> attn_0
+	v_proj_0 -> attn_0
+	input_1 [label="Input Slice
+X[0,1]: [1024, L, 512]
+GPU: 1" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_1 [label="Q Projection
+W_Q[0,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 1" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_1 [label="K Projection
+W_K[0,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 1" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_1 [label="V Projection
+W_V[0,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 1" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_1 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 1" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_1
+	input_1 -> q_proj_1
+	input_1 -> k_proj_1
+	input_1 -> v_proj_1
+	q_proj_1 -> attn_1
+	k_proj_1 -> attn_1
+	v_proj_1 -> attn_1
+	input_2 [label="Input Slice
+X[0,2]: [1024, L, 512]
+GPU: 2" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_2 [label="Q Projection
+W_Q[0,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 2" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_2 [label="K Projection
+W_K[0,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 2" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_2 [label="V Projection
+W_V[0,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 2" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_2 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 2" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_2
+	input_2 -> q_proj_2
+	input_2 -> k_proj_2
+	input_2 -> v_proj_2
+	q_proj_2 -> attn_2
+	k_proj_2 -> attn_2
+	v_proj_2 -> attn_2
+	input_3 [label="Input Slice
+X[0,3]: [1024, L, 512]
+GPU: 3" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_3 [label="Q Projection
+W_Q[0,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_3 [label="K Projection
+W_K[0,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_3 [label="V Projection
+W_V[0,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_3 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 3" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_3
+	input_3 -> q_proj_3
+	input_3 -> k_proj_3
+	input_3 -> v_proj_3
+	q_proj_3 -> attn_3
+	k_proj_3 -> attn_3
+	v_proj_3 -> attn_3
+	input_4 [label="Input Slice
+X[1,0]: [1024, L, 512]
+GPU: 4" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_4 [label="Q Projection
+W_Q[1,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 4" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_4 [label="K Projection
+W_K[1,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 4" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_4 [label="V Projection
+W_V[1,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 4" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_4 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_4
+	input_4 -> q_proj_4
+	input_4 -> k_proj_4
+	input_4 -> v_proj_4
+	q_proj_4 -> attn_4
+	k_proj_4 -> attn_4
+	v_proj_4 -> attn_4
+	input_5 [label="Input Slice
+X[1,1]: [1024, L, 512]
+GPU: 5" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_5 [label="Q Projection
+W_Q[1,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 5" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_5 [label="K Projection
+W_K[1,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 5" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_5 [label="V Projection
+W_V[1,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 5" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_5 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 5" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_5
+	input_5 -> q_proj_5
+	input_5 -> k_proj_5
+	input_5 -> v_proj_5
+	q_proj_5 -> attn_5
+	k_proj_5 -> attn_5
+	v_proj_5 -> attn_5
+	input_6 [label="Input Slice
+X[1,2]: [1024, L, 512]
+GPU: 6" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_6 [label="Q Projection
+W_Q[1,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 6" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_6 [label="K Projection
+W_K[1,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 6" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_6 [label="V Projection
+W_V[1,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 6" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_6 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 6" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_6
+	input_6 -> q_proj_6
+	input_6 -> k_proj_6
+	input_6 -> v_proj_6
+	q_proj_6 -> attn_6
+	k_proj_6 -> attn_6
+	v_proj_6 -> attn_6
+	input_7 [label="Input Slice
+X[1,3]: [1024, L, 512]
+GPU: 7" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_7 [label="Q Projection
+W_Q[1,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 7" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_7 [label="K Projection
+W_K[1,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 7" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_7 [label="V Projection
+W_V[1,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 7" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_7 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 7" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_7
+	input_7 -> q_proj_7
+	input_7 -> k_proj_7
+	input_7 -> v_proj_7
+	q_proj_7 -> attn_7
+	k_proj_7 -> attn_7
+	v_proj_7 -> attn_7
+	input_8 [label="Input Slice
+X[2,0]: [1024, L, 512]
+GPU: 8" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_8 [label="Q Projection
+W_Q[2,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 8" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_8 [label="K Projection
+W_K[2,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 8" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_8 [label="V Projection
+W_V[2,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 8" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_8 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 8" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_8
+	input_8 -> q_proj_8
+	input_8 -> k_proj_8
+	input_8 -> v_proj_8
+	q_proj_8 -> attn_8
+	k_proj_8 -> attn_8
+	v_proj_8 -> attn_8
+	input_9 [label="Input Slice
+X[2,1]: [1024, L, 512]
+GPU: 9" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_9 [label="Q Projection
+W_Q[2,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 9" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_9 [label="K Projection
+W_K[2,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 9" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_9 [label="V Projection
+W_V[2,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 9" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_9 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 9" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_9
+	input_9 -> q_proj_9
+	input_9 -> k_proj_9
+	input_9 -> v_proj_9
+	q_proj_9 -> attn_9
+	k_proj_9 -> attn_9
+	v_proj_9 -> attn_9
+	input_10 [label="Input Slice
+X[2,2]: [1024, L, 512]
+GPU: 10" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_10 [label="Q Projection
+W_Q[2,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 10" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_10 [label="K Projection
+W_K[2,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 10" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_10 [label="V Projection
+W_V[2,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 10" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_10 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 10" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_10
+	input_10 -> q_proj_10
+	input_10 -> k_proj_10
+	input_10 -> v_proj_10
+	q_proj_10 -> attn_10
+	k_proj_10 -> attn_10
+	v_proj_10 -> attn_10
+	input_11 [label="Input Slice
+X[2,3]: [1024, L, 512]
+GPU: 11" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_11 [label="Q Projection
+W_Q[2,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_11 [label="K Projection
+W_K[2,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_11 [label="V Projection
+W_V[2,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_11 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 11" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_11
+	input_11 -> q_proj_11
+	input_11 -> k_proj_11
+	input_11 -> v_proj_11
+	q_proj_11 -> attn_11
+	k_proj_11 -> attn_11
+	v_proj_11 -> attn_11
+	input_12 [label="Input Slice
+X[3,0]: [1024, L, 512]
+GPU: 12" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_12 [label="Q Projection
+W_Q[3,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 12" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_12 [label="K Projection
+W_K[3,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 12" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_12 [label="V Projection
+W_V[3,0]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 12" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_12 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_12
+	input_12 -> q_proj_12
+	input_12 -> k_proj_12
+	input_12 -> v_proj_12
+	q_proj_12 -> attn_12
+	k_proj_12 -> attn_12
+	v_proj_12 -> attn_12
+	input_13 [label="Input Slice
+X[3,1]: [1024, L, 512]
+GPU: 13" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_13 [label="Q Projection
+W_Q[3,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 13" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_13 [label="K Projection
+W_K[3,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 13" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_13 [label="V Projection
+W_V[3,1]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 13" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_13 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 13" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_13
+	input_13 -> q_proj_13
+	input_13 -> k_proj_13
+	input_13 -> v_proj_13
+	q_proj_13 -> attn_13
+	k_proj_13 -> attn_13
+	v_proj_13 -> attn_13
+	input_14 [label="Input Slice
+X[3,2]: [1024, L, 512]
+GPU: 14" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_14 [label="Q Projection
+W_Q[3,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 14" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_14 [label="K Projection
+W_K[3,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 14" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_14 [label="V Projection
+W_V[3,2]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 14" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_14 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 14" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_14
+	input_14 -> q_proj_14
+	input_14 -> k_proj_14
+	input_14 -> v_proj_14
+	q_proj_14 -> attn_14
+	k_proj_14 -> attn_14
+	v_proj_14 -> attn_14
+	input_15 [label="Input Slice
+X[3,3]: [1024, L, 512]
+GPU: 15" fillcolor=lightgreen shape=parallelogram style=filled]
+	q_proj_15 [label="Q Projection
+W_Q[3,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 15" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj_15 [label="K Projection
+W_K[3,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 15" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj_15 [label="V Projection
+W_V[3,3]: [2048, 2048]
+Input: [1024, L, 512]
+Output: [1024, L, 128]
+GPU: 15" fillcolor=lightcoral shape=rectangle style=filled]
+	attn_15 [label="Scaled Dot-Product Attention
+Q,K,V: [1024, L, 128]
+Scale: 1/√128
+Output: [1024, L, 128]
+GPU: 15" fillcolor=lightpink shape=rectangle style=filled]
+	input -> head_split
+	head_split -> dim_split
+	dim_split -> input_15
+	input_15 -> q_proj_15
+	input_15 -> k_proj_15
+	input_15 -> v_proj_15
+	q_proj_15 -> attn_15
+	k_proj_15 -> attn_15
+	v_proj_15 -> attn_15
+	intra_concat_0 [label="Intra-Group Concat
+Group 0
+Concat 4×[1024,L,128] → [1024,L,512]
+GPU: [0, 1, 2, 3]" fillcolor=orange shape=ellipse style=filled]
+	attn_0 -> intra_concat_0
+	attn_1 -> intra_concat_0
+	attn_2 -> intra_concat_0
+	attn_3 -> intra_concat_0
+	intra_concat_1 [label="Intra-Group Concat
+Group 1
+Concat 4×[1024,L,128] → [1024,L,512]
+GPU: [4, 5, 6, 7]" fillcolor=orange shape=ellipse style=filled]
+	attn_4 -> intra_concat_1
+	attn_5 -> intra_concat_1
+	attn_6 -> intra_concat_1
+	attn_7 -> intra_concat_1
+	intra_concat_2 [label="Intra-Group Concat
+Group 2
+Concat 4×[1024,L,128] → [1024,L,512]
+GPU: [8, 9, 10, 11]" fillcolor=orange shape=ellipse style=filled]
+	attn_8 -> intra_concat_2
+	attn_9 -> intra_concat_2
+	attn_10 -> intra_concat_2
+	attn_11 -> intra_concat_2
+	intra_concat_3 [label="Intra-Group Concat
+Group 3
+Concat 4×[1024,L,128] → [1024,L,512]
+GPU: [12, 13, 14, 15]" fillcolor=orange shape=ellipse style=filled]
+	attn_12 -> intra_concat_3
+	attn_13 -> intra_concat_3
+	attn_14 -> intra_concat_3
+	attn_15 -> intra_concat_3
+	inter_concat [label="Inter-Group Concat
+Concat 4×[1024,L,512] → [1024,L,8192]
+GPU: all" fillcolor=gold shape=ellipse style=filled]
+	intra_concat_0 -> inter_concat
+	intra_concat_1 -> inter_concat
+	intra_concat_2 -> inter_concat
+	intra_concat_3 -> inter_concat
+	output [label="Output Tensor
+[1024, L, 8192]
+GPU: all" fillcolor=lightblue shape=parallelogram style=filled]
+	inter_concat -> output
 }

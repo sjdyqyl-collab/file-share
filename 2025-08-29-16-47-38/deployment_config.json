@@ -1,0 +1,192 @@
+{
+  "deployment_configurations": {
+    "proposed_method": {
+      "name": "Two-Level Attention Partitioning",
+      "parallel_strategy": {
+        "type": "two_level_partitioning",
+        "parameters": {
+          "m": 4,
+          "n": 4,
+          "total_partitions": 16,
+          "partition_type": "head_dimension_and_intra_head_dimension"
+        }
+      },
+      "model_modules": {
+        "mha_layer": {
+          "type": "multi_head_attention",
+          "parameters": {
+            "num_heads": 16,
+            "head_dimension": 512,
+            "embedding_dimension": 8192,
+            "batch_size": 1024,
+            "sequence_length": 2048
+          },
+          "partitioning": {
+            "head_groups": 4,
+            "heads_per_group": 4,
+            "dimension_slices": 4,
+            "slice_dimension": 128
+          }
+        },
+        "weight_matrices": {
+          "Q_projection": {
+            "shape": [8192, 8192],
+            "partition_shape": [2048, 2048],
+            "partition_count": 16
+          },
+          "K_projection": {
+            "shape": [8192, 8192],
+            "partition_shape": [2048, 2048],
+            "partition_count": 16
+          },
+          "V_projection": {
+            "shape": [8192, 8192],
+            "partition_shape": [2048, 2048],
+            "partition_count": 16
+          }
+        },
+        "output_projection": {
+          "type": "linear",
+          "input_dimension": 8192,
+          "output_dimension": 8192,
+          "partitioning": "follows_mha_output"
+        }
+      },
+      "device_mapping": {
+        "strategy": "one_to_one",
+        "mapping": [
+          {"partition": "(head_group=1, dim_slice=1)", "device": 0},
+          {"partition": "(head_group=1, dim_slice=2)", "device": 1},
+          {"partition": "(head_group=1, dim_slice=3)", "device": 2},
+          {"partition": "(head_group=1, dim_slice=4)", "device": 3},
+          {"partition": "(head_group=2, dim_slice=1)", "device": 4},
+          {"partition": "(head_group=2, dim_slice=2)", "device": 5},
+          {"partition": "(head_group=2, dim_slice=3)", "device": 6},
+          {"partition": "(head_group=2, dim_slice=4)", "device": 7},
+          {"partition": "(head_group=3, dim_slice=1)", "device": 8},
+          {"partition": "(head_group=3, dim_slice=2)", "device": 9},
+          {"partition": "(head_group=3, dim_slice=3)", "device": 10},
+          {"partition": "(head_group=3, dim_slice=4)", "device": 11},
+          {"partition": "(head_group=4, dim_slice=1)", "device": 12},
+          {"partition": "(head_group=4, dim_slice=2)", "device": 13},
+          {"partition": "(head_group=4, dim_slice=3)", "device": 14},
+          {"partition": "(head_group=4, dim_slice=4)", "device": 15}
+        ]
+      },
+      "communication": {
+        "input_distribution": {
+          "type": "broadcast",
+          "source": "host",
+          "targets": "all_devices"
+        },
+        "intra_group_concatenation": {
+          "type": "all_gather",
+          "groups": [
+            [0, 1, 2, 3],
+            [4, 5, 6, 7],
+            [8, 9, 10, 11],
+            [12, 13, 14, 15]
+          ]
+        },
+        "final_concatenation": {
+          "type": "all_gather",
+          "participants": "all_devices"
+        }
+      }
+    },
+    "baseline_method": {
+      "name": "Tensor Parallelism + Pipeline Parallelism",
+      "parallel_strategy": {
+        "type": "hybrid_parallelism",
+        "tensor_parallelism": {
+          "degree": 8,
+          "dimension": "model_parallel"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2
+        },
+        "total_devices": 16
+      },
+      "model_modules": {
+        "layer_1": {
+          "stage": 1,
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+          "tensor_parallel_config": {
+            "attention": {
+              "num_heads": 16,
+              "head_dimension": 512,
+              "partition_heads": false,
+              "partition_dimension": true
+            },
+            "mlp": {
+              "hidden_dimension": 32768,
+              "partition_dimension": true
+            }
+          }
+        },
+        "layer_2": {
+          "stage": 2,
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+          "tensor_parallel_config": {
+            "attention": {
+              "num_heads": 16,
+              "head_dimension": 512,
+              "partition_heads": false,
+              "partition_dimension": true
+            },
+            "mlp": {
+              "hidden_dimension": 32768,
+              "partition_dimension": true
+            }
+          }
+        }
+      },
+      "device_mapping": {
+        "stage_1": {
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+          "tensor_parallel_group": "tp_group_1"
+        },
+        "stage_2": {
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+          "tensor_parallel_group": "tp_group_2"
+        },
+        "pipeline_stages": [
+          {"stage": 1, "devices": "tp_group_1"},
+          {"stage": 2, "devices": "tp_group_2"}
+        ]
+      },
+      "communication": {
+        "tensor_parallel": {
+          "type": "all_reduce",
+          "groups": {
+            "tp_group_1": [0, 1, 2, 3, 4, 5, 6, 7],
+            "tp_group_2": [8, 9, 10, 11, 12, 13, 14, 15]
+          }
+        },
+        "pipeline_parallel": {
+          "type": "point_to_point",
+          "stages": [
+            {"from": "tp_group_1", "to": "tp_group_2"}
+          ]
+        }
+      }
+    }
+  },
+  "common_parameters": {
+    "precision": "FP16",
+    "batch_size": 1024,
+    "sequence_length": 2048,
+    "vocabulary_size": 32000,
+    "model_dimension": 8192,
+    "feedforward_dimension": 32768,
+    "attention_heads": 16,
+    "attention_head_dimension": 512
+  },
+  "hardware_requirements": {
+    "total_gpus": 16,
+    "gpu_type": "NVIDIA H100",
+    "memory_per_gpu": "80GB",
+    "interconnect": "NVLink"
+  }
+}

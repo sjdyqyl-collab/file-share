@@ -1,0 +1,1009 @@
+// Baseline: Tensor Parallelism + Pipeline Parallelism DAG
+digraph baseline_tensor_pipeline_parallelism {
+	node [shape=rectangle]
+	fontname=Arial rankdir=TB size="20,30"
+	input [label="Input Tensor
+X: [1024, L, 8192]
+GPU: all" fillcolor=lightblue shape=parallelogram style=filled]
+	stage1 [label="Pipeline Stage 1
+Layers 1
+GPUs: 0-7" fillcolor=lightyellow shape=ellipse style=filled]
+	stage2 [label="Pipeline Stage 2
+Layers 2
+GPUs: 8-15" fillcolor=lightyellow shape=ellipse style=filled]
+	stage1_input [label="Stage 1 Input
+[1024, L, 8192] → [1024, L, 1024]
+GPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgreen shape=parallelogram style=filled]
+	stage1_q_0 [label="Stage 1 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 0" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_k_0 [label="Stage 1 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 0" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_v_0 [label="Stage 1 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 0" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_attn_0 [label="Stage 1 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 0" fillcolor=lightpink shape=rectangle style=filled]
+	stage1_ffn1_0 [label="Stage 1 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_ffn2_0 [label="Stage 1 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_allreduce_attn_0 [label="Stage 1 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 0" fillcolor=orange shape=ellipse style=filled]
+	stage1_allreduce_ffn_0 [label="Stage 1 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 0" fillcolor=orange shape=ellipse style=filled]
+	stage1_residual1_0 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 0" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_residual2_0 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 0" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_q_1 [label="Stage 1 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 1" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_k_1 [label="Stage 1 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 1" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_v_1 [label="Stage 1 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 1" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_attn_1 [label="Stage 1 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 1" fillcolor=lightpink shape=rectangle style=filled]
+	stage1_ffn1_1 [label="Stage 1 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_ffn2_1 [label="Stage 1 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_allreduce_attn_1 [label="Stage 1 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 1" fillcolor=orange shape=ellipse style=filled]
+	stage1_allreduce_ffn_1 [label="Stage 1 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 1" fillcolor=orange shape=ellipse style=filled]
+	stage1_residual1_1 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 1" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_residual2_1 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 1" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_q_2 [label="Stage 1 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 2" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_k_2 [label="Stage 1 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 2" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_v_2 [label="Stage 1 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 2" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_attn_2 [label="Stage 1 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 2" fillcolor=lightpink shape=rectangle style=filled]
+	stage1_ffn1_2 [label="Stage 1 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_ffn2_2 [label="Stage 1 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_allreduce_attn_2 [label="Stage 1 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 2" fillcolor=orange shape=ellipse style=filled]
+	stage1_allreduce_ffn_2 [label="Stage 1 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 2" fillcolor=orange shape=ellipse style=filled]
+	stage1_residual1_2 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 2" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_residual2_2 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 2" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_q_3 [label="Stage 1 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_k_3 [label="Stage 1 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_v_3 [label="Stage 1 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_attn_3 [label="Stage 1 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 3" fillcolor=lightpink shape=rectangle style=filled]
+	stage1_ffn1_3 [label="Stage 1 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_ffn2_3 [label="Stage 1 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_allreduce_attn_3 [label="Stage 1 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 3" fillcolor=orange shape=ellipse style=filled]
+	stage1_allreduce_ffn_3 [label="Stage 1 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 3" fillcolor=orange shape=ellipse style=filled]
+	stage1_residual1_3 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 3" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_residual2_3 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 3" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_q_4 [label="Stage 1 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 4" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_k_4 [label="Stage 1 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 4" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_v_4 [label="Stage 1 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 4" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_attn_4 [label="Stage 1 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	stage1_ffn1_4 [label="Stage 1 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_ffn2_4 [label="Stage 1 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_allreduce_attn_4 [label="Stage 1 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 4" fillcolor=orange shape=ellipse style=filled]
+	stage1_allreduce_ffn_4 [label="Stage 1 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 4" fillcolor=orange shape=ellipse style=filled]
+	stage1_residual1_4 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 4" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_residual2_4 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 4" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_q_5 [label="Stage 1 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 5" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_k_5 [label="Stage 1 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 5" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_v_5 [label="Stage 1 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 5" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_attn_5 [label="Stage 1 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 5" fillcolor=lightpink shape=rectangle style=filled]
+	stage1_ffn1_5 [label="Stage 1 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_ffn2_5 [label="Stage 1 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_allreduce_attn_5 [label="Stage 1 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 5" fillcolor=orange shape=ellipse style=filled]
+	stage1_allreduce_ffn_5 [label="Stage 1 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 5" fillcolor=orange shape=ellipse style=filled]
+	stage1_residual1_5 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 5" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_residual2_5 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 5" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_q_6 [label="Stage 1 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 6" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_k_6 [label="Stage 1 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 6" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_v_6 [label="Stage 1 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 6" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_attn_6 [label="Stage 1 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 6" fillcolor=lightpink shape=rectangle style=filled]
+	stage1_ffn1_6 [label="Stage 1 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_ffn2_6 [label="Stage 1 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_allreduce_attn_6 [label="Stage 1 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 6" fillcolor=orange shape=ellipse style=filled]
+	stage1_allreduce_ffn_6 [label="Stage 1 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 6" fillcolor=orange shape=ellipse style=filled]
+	stage1_residual1_6 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 6" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_residual2_6 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 6" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_q_7 [label="Stage 1 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 7" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_k_7 [label="Stage 1 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 7" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_v_7 [label="Stage 1 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 7" fillcolor=lightcoral shape=rectangle style=filled]
+	stage1_attn_7 [label="Stage 1 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 7" fillcolor=lightpink shape=rectangle style=filled]
+	stage1_ffn1_7 [label="Stage 1 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_ffn2_7 [label="Stage 1 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	stage1_allreduce_attn_7 [label="Stage 1 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 7" fillcolor=orange shape=ellipse style=filled]
+	stage1_allreduce_ffn_7 [label="Stage 1 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 7" fillcolor=orange shape=ellipse style=filled]
+	stage1_residual1_7 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 7" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage1_residual2_7 [label="Stage 1 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 7" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_input [label="Stage 2 Input
+[1024, L, 8192] → [1024, L, 1024]
+GPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgreen shape=parallelogram style=filled]
+	stage2_q_0 [label="Stage 2 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 8" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_k_0 [label="Stage 2 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 8" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_v_0 [label="Stage 2 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 8" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_attn_0 [label="Stage 2 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 8" fillcolor=lightpink shape=rectangle style=filled]
+	stage2_ffn1_0 [label="Stage 2 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_ffn2_0 [label="Stage 2 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_allreduce_attn_0 [label="Stage 2 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 8" fillcolor=orange shape=ellipse style=filled]
+	stage2_allreduce_ffn_0 [label="Stage 2 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 8" fillcolor=orange shape=ellipse style=filled]
+	stage2_residual1_0 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 8" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_residual2_0 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 8" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_q_1 [label="Stage 2 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 9" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_k_1 [label="Stage 2 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 9" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_v_1 [label="Stage 2 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 9" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_attn_1 [label="Stage 2 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 9" fillcolor=lightpink shape=rectangle style=filled]
+	stage2_ffn1_1 [label="Stage 2 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_ffn2_1 [label="Stage 2 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_allreduce_attn_1 [label="Stage 2 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 9" fillcolor=orange shape=ellipse style=filled]
+	stage2_allreduce_ffn_1 [label="Stage 2 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 9" fillcolor=orange shape=ellipse style=filled]
+	stage2_residual1_1 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 9" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_residual2_1 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 9" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_q_2 [label="Stage 2 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 10" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_k_2 [label="Stage 2 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 10" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_v_2 [label="Stage 2 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 10" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_attn_2 [label="Stage 2 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 10" fillcolor=lightpink shape=rectangle style=filled]
+	stage2_ffn1_2 [label="Stage 2 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_ffn2_2 [label="Stage 2 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_allreduce_attn_2 [label="Stage 2 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 10" fillcolor=orange shape=ellipse style=filled]
+	stage2_allreduce_ffn_2 [label="Stage 2 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 10" fillcolor=orange shape=ellipse style=filled]
+	stage2_residual1_2 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 10" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_residual2_2 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 10" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_q_3 [label="Stage 2 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_k_3 [label="Stage 2 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_v_3 [label="Stage 2 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_attn_3 [label="Stage 2 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 11" fillcolor=lightpink shape=rectangle style=filled]
+	stage2_ffn1_3 [label="Stage 2 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_ffn2_3 [label="Stage 2 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_allreduce_attn_3 [label="Stage 2 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 11" fillcolor=orange shape=ellipse style=filled]
+	stage2_allreduce_ffn_3 [label="Stage 2 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 11" fillcolor=orange shape=ellipse style=filled]
+	stage2_residual1_3 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 11" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_residual2_3 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 11" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_q_4 [label="Stage 2 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 12" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_k_4 [label="Stage 2 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 12" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_v_4 [label="Stage 2 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 12" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_attn_4 [label="Stage 2 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	stage2_ffn1_4 [label="Stage 2 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_ffn2_4 [label="Stage 2 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_allreduce_attn_4 [label="Stage 2 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 12" fillcolor=orange shape=ellipse style=filled]
+	stage2_allreduce_ffn_4 [label="Stage 2 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 12" fillcolor=orange shape=ellipse style=filled]
+	stage2_residual1_4 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 12" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_residual2_4 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 12" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_q_5 [label="Stage 2 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 13" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_k_5 [label="Stage 2 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 13" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_v_5 [label="Stage 2 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 13" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_attn_5 [label="Stage 2 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 13" fillcolor=lightpink shape=rectangle style=filled]
+	stage2_ffn1_5 [label="Stage 2 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_ffn2_5 [label="Stage 2 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_allreduce_attn_5 [label="Stage 2 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 13" fillcolor=orange shape=ellipse style=filled]
+	stage2_allreduce_ffn_5 [label="Stage 2 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 13" fillcolor=orange shape=ellipse style=filled]
+	stage2_residual1_5 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 13" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_residual2_5 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 13" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_q_6 [label="Stage 2 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 14" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_k_6 [label="Stage 2 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 14" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_v_6 [label="Stage 2 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 14" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_attn_6 [label="Stage 2 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 14" fillcolor=lightpink shape=rectangle style=filled]
+	stage2_ffn1_6 [label="Stage 2 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_ffn2_6 [label="Stage 2 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_allreduce_attn_6 [label="Stage 2 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 14" fillcolor=orange shape=ellipse style=filled]
+	stage2_allreduce_ffn_6 [label="Stage 2 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 14" fillcolor=orange shape=ellipse style=filled]
+	stage2_residual1_6 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 14" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_residual2_6 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 14" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_q_7 [label="Stage 2 Q Projection
+W_Q: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 15" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_k_7 [label="Stage 2 K Projection
+W_K: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 15" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_v_7 [label="Stage 2 V Projection
+W_V: [1024, 1024]
+Input: [1024, L, 1024]
+Output: [1024, L, 128]
+GPU: 15" fillcolor=lightcoral shape=rectangle style=filled]
+	stage2_attn_7 [label="Stage 2 Attention
+Q,K,V: [1024, L, 128]
+Output: [1024, L, 128]
+GPU: 15" fillcolor=lightpink shape=rectangle style=filled]
+	stage2_ffn1_7 [label="Stage 2 FFN Layer1
+W1: [1024, 4096]
+Input: [1024, L, 1024]
+Output: [1024, L, 4096]
+GPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_ffn2_7 [label="Stage 2 FFN Layer2
+W2: [4096, 1024]
+Input: [1024, L, 4096]
+Output: [1024, L, 1024]
+GPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	stage2_allreduce_attn_7 [label="Stage 2 All-Reduce Attention
+Input: [1024, L, 128]
+Output: [1024, L, 1024]
+GPU: 15" fillcolor=orange shape=ellipse style=filled]
+	stage2_allreduce_ffn_7 [label="Stage 2 All-Reduce FFN
+Input: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 15" fillcolor=orange shape=ellipse style=filled]
+	stage2_residual1_7 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 15" fillcolor=lightsteelblue shape=diamond style=filled]
+	stage2_residual2_7 [label="Stage 2 Residual Add
+Input1: [1024, L, 1024]
+Input2: [1024, L, 1024]
+Output: [1024, L, 1024]
+GPU: 15" fillcolor=lightsteelblue shape=diamond style=filled]
+	pipeline_comm [label="Pipeline Communication
+Stage1 → Stage2
+[1024, L, 8192]
+GPU: 7→8" fillcolor=gold shape=ellipse style=filled]
+	output [label="Output Tensor
+[1024, L, 8192]
+GPU: all" fillcolor=lightblue shape=parallelogram style=filled]
+	input -> stage1
+	stage1 -> stage1_input
+	stage1_input -> stage1_q_0
+	stage1_input -> stage1_k_0
+	stage1_input -> stage1_v_0
+	stage1_q_0 -> stage1_attn_0
+	stage1_k_0 -> stage1_attn_0
+	stage1_v_0 -> stage1_attn_0
+	stage1_attn_0 -> stage1_allreduce_attn_0
+	stage1_allreduce_attn_0 -> stage1_residual1_0
+	stage1_input -> stage1_residual1_0
+	stage1_residual1_0 -> stage1_ffn1_0
+	stage1_ffn1_0 -> stage1_ffn2_0
+	stage1_ffn2_0 -> stage1_allreduce_ffn_0
+	stage1_allreduce_ffn_0 -> stage1_residual2_0
+	stage1_residual1_0 -> stage1_residual2_0
+	stage1_input -> stage1_q_1
+	stage1_input -> stage1_k_1
+	stage1_input -> stage1_v_1
+	stage1_q_1 -> stage1_attn_1
+	stage1_k_1 -> stage1_attn_1
+	stage1_v_1 -> stage1_attn_1
+	stage1_attn_1 -> stage1_allreduce_attn_1
+	stage1_allreduce_attn_1 -> stage1_residual1_1
+	stage1_input -> stage1_residual1_1
+	stage1_residual1_1 -> stage1_ffn1_1
+	stage1_ffn1_1 -> stage1_ffn2_1
+	stage1_ffn2_1 -> stage1_allreduce_ffn_1
+	stage1_allreduce_ffn_1 -> stage1_residual2_1
+	stage1_residual1_1 -> stage1_residual2_1
+	stage1_input -> stage1_q_2
+	stage1_input -> stage1_k_2
+	stage1_input -> stage1_v_2
+	stage1_q_2 -> stage1_attn_2
+	stage1_k_2 -> stage1_attn_2
+	stage1_v_2 -> stage1_attn_2
+	stage1_attn_2 -> stage1_allreduce_attn_2
+	stage1_allreduce_attn_2 -> stage1_residual1_2
+	stage1_input -> stage1_residual1_2
+	stage1_residual1_2 -> stage1_ffn1_2
+	stage1_ffn1_2 -> stage1_ffn2_2
+	stage1_ffn2_2 -> stage1_allreduce_ffn_2
+	stage1_allreduce_ffn_2 -> stage1_residual2_2
+	stage1_residual1_2 -> stage1_residual2_2
+	stage1_input -> stage1_q_3
+	stage1_input -> stage1_k_3
+	stage1_input -> stage1_v_3
+	stage1_q_3 -> stage1_attn_3
+	stage1_k_3 -> stage1_attn_3
+	stage1_v_3 -> stage1_attn_3
+	stage1_attn_3 -> stage1_allreduce_attn_3
+	stage1_allreduce_attn_3 -> stage1_residual1_3
+	stage1_input -> stage1_residual1_3
+	stage1_residual1_3 -> stage1_ffn1_3
+	stage1_ffn1_3 -> stage1_ffn2_3
+	stage1_ffn2_3 -> stage1_allreduce_ffn_3
+	stage1_allreduce_ffn_3 -> stage1_residual2_3
+	stage1_residual1_3 -> stage1_residual2_3
+	stage1_input -> stage1_q_4
+	stage1_input -> stage1_k_4
+	stage1_input -> stage1_v_4
+	stage1_q_4 -> stage1_attn_4
+	stage1_k_4 -> stage1_attn_4
+	stage1_v_4 -> stage1_attn_4
+	stage1_attn_4 -> stage1_allreduce_attn_4
+	stage1_allreduce_attn_4 -> stage1_residual1_4
+	stage1_input -> stage1_residual1_4
+	stage1_residual1_4 -> stage1_ffn1_4
+	stage1_ffn1_4 -> stage1_ffn2_4
+	stage1_ffn2_4 -> stage1_allreduce_ffn_4
+	stage1_allreduce_ffn_4 -> stage1_residual2_4
+	stage1_residual1_4 -> stage1_residual2_4
+	stage1_input -> stage1_q_5
+	stage1_input -> stage1_k_5
+	stage1_input -> stage1_v_5
+	stage1_q_5 -> stage1_attn_5
+	stage1_k_5 -> stage1_attn_5
+	stage1_v_5 -> stage1_attn_5
+	stage1_attn_5 -> stage1_allreduce_attn_5
+	stage1_allreduce_attn_5 -> stage1_residual1_5
+	stage1_input -> stage1_residual1_5
+	stage1_residual1_5 -> stage1_ffn1_5
+	stage1_ffn1_5 -> stage1_ffn2_5
+	stage1_ffn2_5 -> stage1_allreduce_ffn_5
+	stage1_allreduce_ffn_5 -> stage1_residual2_5
+	stage1_residual1_5 -> stage1_residual2_5
+	stage1_input -> stage1_q_6
+	stage1_input -> stage1_k_6
+	stage1_input -> stage1_v_6
+	stage1_q_6 -> stage1_attn_6
+	stage1_k_6 -> stage1_attn_6
+	stage1_v_6 -> stage1_attn_6
+	stage1_attn_6 -> stage1_allreduce_attn_6
+	stage1_allreduce_attn_6 -> stage1_residual1_6
+	stage1_input -> stage1_residual1_6
+	stage1_residual1_6 -> stage1_ffn1_6
+	stage1_ffn1_6 -> stage1_ffn2_6
+	stage1_ffn2_6 -> stage1_allreduce_ffn_6
+	stage1_allreduce_ffn_6 -> stage1_residual2_6
+	stage1_residual1_6 -> stage1_residual2_6
+	stage1_input -> stage1_q_7
+	stage1_input -> stage1_k_7
+	stage1_input -> stage1_v_7
+	stage1_q_7 -> stage1_attn_7
+	stage1_k_7 -> stage1_attn_7
+	stage1_v_7 -> stage1_attn_7
+	stage1_attn_7 -> stage1_allreduce_attn_7
+	stage1_allreduce_attn_7 -> stage1_residual1_7
+	stage1_input -> stage1_residual1_7
+	stage1_residual1_7 -> stage1_ffn1_7
+	stage1_ffn1_7 -> stage1_ffn2_7
+	stage1_ffn2_7 -> stage1_allreduce_ffn_7
+	stage1_allreduce_ffn_7 -> stage1_residual2_7
+	stage1_residual1_7 -> stage1_residual2_7
+	stage1_residual2_7 -> pipeline_comm
+	pipeline_comm -> stage2
+	stage2 -> stage2_input
+	stage2_input -> stage2_q_0
+	stage2_input -> stage2_k_0
+	stage2_input -> stage2_v_0
+	stage2_q_0 -> stage2_attn_0
+	stage2_k_0 -> stage2_attn_0
+	stage2_v_0 -> stage2_attn_0
+	stage2_attn_0 -> stage2_allreduce_attn_0
+	stage2_allreduce_attn_0 -> stage2_residual1_0
+	stage2_input -> stage2_residual1_0
+	stage2_residual1_0 -> stage2_ffn1_0
+	stage2_ffn1_0 -> stage2_ffn2_0
+	stage2_ffn2_0 -> stage2_allreduce_ffn_0
+	stage2_allreduce_ffn_0 -> stage2_residual2_0
+	stage2_residual1_0 -> stage2_residual2_0
+	stage2_input -> stage2_q_1
+	stage2_input -> stage2_k_1
+	stage2_input -> stage2_v_1
+	stage2_q_1 -> stage2_attn_1
+	stage2_k_1 -> stage2_attn_1
+	stage2_v_1 -> stage2_attn_1
+	stage2_attn_1 -> stage2_allreduce_attn_1
+	stage2_allreduce_attn_1 -> stage2_residual1_1
+	stage2_input -> stage2_residual1_1
+	stage2_residual1_1 -> stage2_ffn1_1
+	stage2_ffn1_1 -> stage2_ffn2_1
+	stage2_ffn2_1 -> stage2_allreduce_ffn_1
+	stage2_allreduce_ffn_1 -> stage2_residual2_1
+	stage2_residual1_1 -> stage2_residual2_1
+	stage2_input -> stage2_q_2
+	stage2_input -> stage2_k_2
+	stage2_input -> stage2_v_2
+	stage2_q_2 -> stage2_attn_2
+	stage2_k_2 -> stage2_attn_2
+	stage2_v_2 -> stage2_attn_2
+	stage2_attn_2 -> stage2_allreduce_attn_2
+	stage2_allreduce_attn_2 -> stage2_residual1_2
+	stage2_input -> stage2_residual1_2
+	stage2_residual1_2 -> stage2_ffn1_2
+	stage2_ffn1_2 -> stage2_ffn2_2
+	stage2_ffn2_2 -> stage2_allreduce_ffn_2
+	stage2_allreduce_ffn_2 -> stage2_residual2_2
+	stage2_residual1_2 -> stage2_residual2_2
+	stage2_input -> stage2_q_3
+	stage2_input -> stage2_k_3
+	stage2_input -> stage2_v_3
+	stage2_q_3 -> stage2_attn_3
+	stage2_k_3 -> stage2_attn_3
+	stage2_v_3 -> stage2_attn_3
+	stage2_attn_3 -> stage2_allreduce_attn_3
+	stage2_allreduce_attn_3 -> stage2_residual1_3
+	stage2_input -> stage2_residual1_3
+	stage2_residual1_3 -> stage2_ffn1_3
+	stage2_ffn1_3 -> stage2_ffn2_3
+	stage2_ffn2_3 -> stage2_allreduce_ffn_3
+	stage2_allreduce_ffn_3 -> stage2_residual2_3
+	stage2_residual1_3 -> stage2_residual2_3
+	stage2_input -> stage2_q_4
+	stage2_input -> stage2_k_4
+	stage2_input -> stage2_v_4
+	stage2_q_4 -> stage2_attn_4
+	stage2_k_4 -> stage2_attn_4
+	stage2_v_4 -> stage2_attn_4
+	stage2_attn_4 -> stage2_allreduce_attn_4
+	stage2_allreduce_attn_4 -> stage2_residual1_4
+	stage2_input -> stage2_residual1_4
+	stage2_residual1_4 -> stage2_ffn1_4
+	stage2_ffn1_4 -> stage2_ffn2_4
+	stage2_ffn2_4 -> stage2_allreduce_ffn_4
+	stage2_allreduce_ffn_4 -> stage2_residual2_4
+	stage2_residual1_4 -> stage2_residual2_4
+	stage2_input -> stage2_q_5
+	stage2_input -> stage2_k_5
+	stage2_input -> stage2_v_5
+	stage2_q_5 -> stage2_attn_5
+	stage2_k_5 -> stage2_attn_5
+	stage2_v_5 -> stage2_attn_5
+	stage2_attn_5 -> stage2_allreduce_attn_5
+	stage2_allreduce_attn_5 -> stage2_residual1_5
+	stage2_input -> stage2_residual1_5
+	stage2_residual1_5 -> stage2_ffn1_5
+	stage2_ffn1_5 -> stage2_ffn2_5
+	stage2_ffn2_5 -> stage2_allreduce_ffn_5
+	stage2_allreduce_ffn_5 -> stage2_residual2_5
+	stage2_residual1_5 -> stage2_residual2_5
+	stage2_input -> stage2_q_6
+	stage2_input -> stage2_k_6
+	stage2_input -> stage2_v_6
+	stage2_q_6 -> stage2_attn_6
+	stage2_k_6 -> stage2_attn_6
+	stage2_v_6 -> stage2_attn_6
+	stage2_attn_6 -> stage2_allreduce_attn_6
+	stage2_allreduce_attn_6 -> stage2_residual1_6
+	stage2_input -> stage2_residual1_6
+	stage2_residual1_6 -> stage2_ffn1_6
+	stage2_ffn1_6 -> stage2_ffn2_6
+	stage2_ffn2_6 -> stage2_allreduce_ffn_6
+	stage2_allreduce_ffn_6 -> stage2_residual2_6
+	stage2_residual1_6 -> stage2_residual2_6
+	stage2_input -> stage2_q_7
+	stage2_input -> stage2_k_7
+	stage2_input -> stage2_v_7
+	stage2_q_7 -> stage2_attn_7
+	stage2_k_7 -> stage2_attn_7
+	stage2_v_7 -> stage2_attn_7
+	stage2_attn_7 -> stage2_allreduce_attn_7
+	stage2_allreduce_attn_7 -> stage2_residual1_7
+	stage2_input -> stage2_residual1_7
+	stage2_residual1_7 -> stage2_ffn1_7
+	stage2_ffn1_7 -> stage2_ffn2_7
+	stage2_ffn2_7 -> stage2_allreduce_ffn_7
+	stage2_allreduce_ffn_7 -> stage2_residual2_7
+	stage2_residual1_7 -> stage2_residual2_7
+	stage2_residual2_15 -> output
+}

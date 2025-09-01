@@ -1,0 +1,185 @@
+{
+  "deployment_configurations": {
+    "baseline": {
+      "name": "Baseline MoE Deployment (TP=8, PP=2)",
+      "model_config": {
+        "layers": 4,
+        "experts_per_layer": 16,
+        "total_experts": 64,
+        "expert_type": "MLP",
+        "mlp_hidden_size": 32768,
+        "precision": "FP16",
+        "batch_size": 1024,
+        "mha_heads": 16,
+        "mha_head_dim": 512
+      },
+      "parallelism": {
+        "tensor_parallelism": {
+          "degree": 8,
+          "implementation": "Megatron-LM style tensor parallelism",
+          "parameters": {
+            "row_parallel_linear": true,
+            "column_parallel_linear": true,
+            "sequence_parallel": true
+          }
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2,
+          "micro_batches": 4,
+          "schedule": "1F1B (one forward one backward)"
+        },
+        "expert_parallelism": {
+          "degree": 1,
+          "experts_per_gpu": 4,
+          "placement_strategy": "colocated_on_gpu"
+        }
+      },
+      "hardware": {
+        "gpus": 16,
+        "gpu_type": "H100",
+        "gpus_per_node": 8,
+        "nodes": 2,
+        "interconnect": "NVLink + InfiniBand",
+        "bandwidth": "400 Gbps InfiniBand"
+      },
+      "memory_layout": {
+        "per_gpu_experts": 4,
+        "per_gpu_tensor_shard": "1/8 of model",
+        "activation_memory": "shared across 4 experts"
+      },
+      "communication": {
+        "tensor_parallel_comm": "all-reduce for gradients",
+        "pipeline_parallel_comm": "send/recv between stages",
+        "expert_comm": "none (experts colocated)"
+      },
+      "performance": {
+        "throughput_tps": 120000,
+        "latency_tpot_ms": 8.3
+      }
+    },
+    "proposed": {
+      "name": "Cross-Node Expert Parallelism (EP=64)",
+      "model_config": {
+        "layers": 4,
+        "experts_per_layer": 16,
+        "total_experts": 64,
+        "expert_type": "MLP",
+        "mlp_hidden_size": 32768,
+        "precision": "FP16",
+        "batch_size": 1024,
+        "mha_heads": 16,
+        "mha_head_dim": 512
+      },
+      "parallelism": {
+        "tensor_parallelism": {
+          "degree": 1,
+          "fallback_degree": 2,
+          "trigger_condition": "expert_exceeds_gpu_memory",
+          "implementation": "intra-expert tensor parallelism"
+        },
+        "pipeline_parallelism": {
+          "degree": 4,
+          "stages": 4,
+          "micro_batches": 8,
+          "schedule": "layer-wise pipeline",
+          "overlap": "token_routing_with_computation"
+        },
+        "expert_parallelism": {
+          "degree": 64,
+          "experts_per_gpu": 1,
+          "placement_strategy": "one_expert_per_gpu",
+          "topology_aware": true
+        }
+      },
+      "hardware": {
+        "gpus": 64,
+        "gpu_type": "H100",
+        "gpus_per_node": 8,
+        "nodes": 8,
+        "interconnect": "NVLink + InfiniBand",
+        "bandwidth": "400 Gbps InfiniBand"
+      },
+      "memory_layout": {
+        "per_gpu_experts": 1,
+        "per_gpu_tensor_shard": "full expert",
+        "activation_memory": "dedicated to single expert"
+      },
+      "communication": {
+        "expert_parallel_comm": {
+          "type": "all_to_all",
+          "implementation": "NCCL",
+          "async": true,
+          "cuda_streams": 4
+        },
+        "token_routing": {
+          "strategy": "asynchronous_batching",
+          "batch_size": 128,
+          "overlap": "compute_communication",
+          "load_balancing": "dynamic_gating"
+        }
+      },
+      "placement_strategy": {
+        "algorithm": "topology_aware_placement",
+        "constraints": [
+          "max_one_expert_per_gpu",
+          "minimize_inter_node_traffic",
+          "balance_memory_usage"
+        ],
+        "objective": "minimize_max_link_utilization"
+      },
+      "scheduling": {
+        "computation_overlap": {
+          "enabled": true,
+          "method": "cuda_streams_async",
+          "streams_per_gpu": 4
+        },
+        "pipeline_scheduling": {
+          "type": "fine_grained",
+          "start_on_partial": true,
+          "layer_pipeline": true
+        }
+      },
+      "performance": {
+        "throughput_tps": 450000,
+        "latency_tpot_ms": 2.2,
+        "scaling_efficiency": "near_linear"
+      }
+    }
+  },
+  "implementation_details": {
+    "communication_libraries": ["NCCL", "MPI"],
+    "cuda_features": ["CUDA streams", "Async memory copy"],
+    "load_balancing": {
+      "monitoring": "per_expert_load",
+      "adjustment": "gating_probability",
+      "frequency": "per_batch"
+    },
+    "memory_optimization": {
+      "activation_checkpointing": true,
+      "sequence_parallel": false,
+      "expert_memory_isolation": true
+    }
+  },
+  "deployment_commands": {
+    "baseline": {
+      "launcher": "torchrun",
+      "command": "torchrun --nproc_per_node=8 --nnodes=2 --node_rank=$RANK --master_addr=$MASTER_ADDR --master_port=$MASTER_PORT train.py --tp 8 --pp 2 --ep 1 --experts_per_gpu 4",
+      "environment": {
+        "NCCL_IB_HCA": "mlx5",
+        "NCCL_SOCKET_IFNAME": "ib0",
+        "CUDA_VISIBLE_DEVICES": "0,1,2,3,4,5,6,7"
+      }
+    },
+    "proposed": {
+      "launcher": "torchrun",
+      "command": "torchrun --nproc_per_node=8 --nnodes=8 --node_rank=$RANK --master_addr=$MASTER_ADDR --master_port=$MASTER_PORT train.py --tp 1 --pp 4 --ep 64 --experts_per_gpu 1 --topology_aware_placement",
+      "environment": {
+        "NCCL_IB_HCA": "mlx5",
+        "NCCL_SOCKET_IFNAME": "ib0",
+        "NCCL_ASYNC_ERROR_HANDLING": 1,
+        "CUDA_VISIBLE_DEVICES": "0,1,2,3,4,5,6,7"
+      }
+    }
+  }
+}
