@@ -1,0 +1,60 @@
+digraph Layer15_baseline {
+	rankdir=LR size="15,10"
+	input [label="Layer 15 Input
+[1024, 8192]" fillcolor=lightgreen shape=ellipse]
+	layernorm1 [label="LayerNorm
+[1024, 8192] → [1024, 8192]
+GPU 8" fillcolor=lightblue]
+	q_proj [label="Q Projection
+[1024, 8192] → [1024, 8192]
+GPU 8" fillcolor=lightcoral]
+	k_proj [label="K Projection
+[1024, 8192] → [1024, 8192]
+GPU 8" fillcolor=lightcoral]
+	v_proj [label="V Projection
+[1024, 8192] → [1024, 8192]
+GPU 8" fillcolor=lightcoral]
+	attention [label="Multi-Head Attention
+[1024, 8192] → [1024, 8192]
+GPU 8" fillcolor=lightyellow]
+	out_proj [label="Output Projection
+[1024, 8192] → [1024, 8192]
+GPU 8" fillcolor=lightcoral]
+	residual1 [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 8" fillcolor=lightgray]
+	layernorm2 [label="LayerNorm
+[1024, 8192] → [1024, 8192]
+GPU 8" fillcolor=lightblue]
+	mlp_up [label="MLP Up
+[1024, 8192] → [1024, 32768]
+GPU 8" fillcolor=lightpink]
+	activation [label="GELU Activation
+[1024, 32768] → [1024, 32768]
+GPU 8" fillcolor=lightgreen]
+	mlp_down [label="MLP Down
+[1024, 32768] → [1024, 8192]
+GPU 8" fillcolor=lightpink]
+	residual2 [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 8" fillcolor=lightgray]
+	output [label="Layer 15 Output
+[1024, 8192]" fillcolor=lightgreen shape=ellipse]
+	input -> layernorm1
+	layernorm1 -> q_proj
+	layernorm1 -> k_proj
+	layernorm1 -> v_proj
+	q_proj -> attention
+	k_proj -> attention
+	v_proj -> attention
+	attention -> out_proj
+	out_proj -> residual1
+	input -> residual1
+	residual1 -> layernorm2
+	layernorm2 -> mlp_up
+	mlp_up -> activation
+	activation -> mlp_down
+	mlp_down -> residual2
+	residual1 -> residual2
+	residual2 -> output
+}

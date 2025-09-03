@@ -1,0 +1,305 @@
+{
+  "deployment_configurations": {
+    "baseline": {
+      "name": "Tensor Parallelism + Pipeline Parallelism",
+      "parallel_strategy": {
+        "type": "hybrid",
+        "tensor_parallelism": {
+          "degree": 8,
+          "strategy": "row-wise",
+          "communication_backend": "nccl",
+          "all_reduce_algorithm": "ring"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2,
+          "micro_batch_size": 512,
+          "schedule": "1F1B"
+        }
+      },
+      "model_mapping": {
+        "total_layers": 16,
+        "layers_per_stage": 8,
+        "device_mapping": {
+          "stage_0": {
+            "layers": [0, 1, 2, 3, 4, 5, 6, 7],
+            "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+            "memory_location": "hbm"
+          },
+          "stage_1": {
+            "layers": [8, 9, 10, 11, 12, 13, 14, 15],
+            "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+            "memory_location": "hbm"
+          }
+        }
+      },
+      "memory_parameters": {
+        "weight_precision": "fp16",
+        "activation_precision": "fp16",
+        "buffer_precision": "fp16",
+        "memory_hierarchy": "hbm_primary"
+      },
+      "communication_parameters": {
+        "tensor_parallel_comm": {
+          "bandwidth": "900GB/s",
+          "latency": "5us",
+          "protocol": "nvlink_4.0"
+        },
+        "pipeline_parallel_comm": {
+          "bandwidth": "900GB/s",
+          "latency": "10us",
+          "protocol": "nvlink_4.0"
+        }
+      }
+    },
+    "proposed": {
+      "name": "Layer-wise Cache-aware Deployment",
+      "parallel_strategy": {
+        "type": "layer_parallelism",
+        "partitioning_strategy": "greedy_layer_aggregation",
+        "cache_constraint": "l2_cache",
+        "cache_capacity_mb": 50,
+        "max_partition_size_mb": 45
+      },
+      "model_mapping": {
+        "total_layers": 16,
+        "partitions": 16,
+        "layers_per_partition": 1,
+        "device_mapping": {
+          "partition_0": {
+            "layer": 0,
+            "device": 0,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_1": {
+            "layer": 1,
+            "device": 1,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_2": {
+            "layer": 2,
+            "device": 2,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_3": {
+            "layer": 3,
+            "device": 3,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_4": {
+            "layer": 4,
+            "device": 4,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_5": {
+            "layer": 5,
+            "device": 5,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_6": {
+            "layer": 6,
+            "device": 6,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_7": {
+            "layer": 7,
+            "device": 7,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_8": {
+            "layer": 8,
+            "device": 8,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_9": {
+            "layer": 9,
+            "device": 9,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_10": {
+            "layer": 10,
+            "device": 10,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_11": {
+            "layer": 11,
+            "device": 11,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_12": {
+            "layer": 12,
+            "device": 12,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_13": {
+            "layer": 13,
+            "device": 13,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_14": {
+            "layer": 14,
+            "device": 14,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          },
+          "partition_15": {
+            "layer": 15,
+            "device": 15,
+            "memory_location": "l2_cache",
+            "memory_allocation": {
+              "weights_mb": 32,
+              "activations_mb": 10,
+              "buffers_mb": 3,
+              "total_mb": 45
+            }
+          }
+        }
+      },
+      "memory_parameters": {
+        "weight_precision": "fp16",
+        "activation_precision": "fp16",
+        "buffer_precision": "fp16",
+        "memory_hierarchy": "l2_cache_primary",
+        "cache_line_size": "128B",
+        "cache_associativity": 12
+      },
+      "communication_parameters": {
+        "layer_to_layer_comm": {
+          "type": "activation_transfer",
+          "bandwidth": "900GB/s",
+          "latency": "2us",
+          "protocol": "nvlink_4.0",
+          "message_size_mb": 10,
+          "transfer_pattern": "sequential_pipeline"
+        },
+        "synchronization": {
+          "type": "barrier",
+          "mechanism": "cuda_events"
+        }
+      },
+      "execution_parameters": {
+        "batch_size": 1024,
+        "sequence_length": 2048,
+        "micro_batching": false,
+        "pipeline_flush": false,
+        "overlapping": "none"
+      }
+    }
+  },
+  "hardware_specifications": {
+    "gpu_type": "NVIDIA_H100",
+    "total_gpus": 16,
+    "gpu_memory": {
+      "hbm_size_gb": 80,
+      "hbm_bandwidth_tb_s": 3.0,
+      "l2_cache_size_mb": 50,
+      "l2_cache_bandwidth_tb_s": 12.0
+    },
+    "interconnect": {
+      "type": "nvlink_4.0",
+      "bandwidth_gb_s": 900,
+      "latency_us": 2
+    }
+  },
+  "model_specifications": {
+    "architecture": "dense_network",
+    "total_layers": 16,
+    "total_parameters_b": 67,
+    "precision": "fp16",
+    "layer_dimensions": {
+      "hidden_size": 32768,
+      "num_heads": 16,
+      "head_dim": 512,
+      "intermediate_size": 32768
+    }
+  }
+}

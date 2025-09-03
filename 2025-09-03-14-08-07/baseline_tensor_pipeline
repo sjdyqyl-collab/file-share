@@ -1,0 +1,733 @@
+digraph BaselineTensorPipeline {
+	rankdir=TB size="30,40"
+	input [label="Input
+[1024, 8192]
+All GPUs" fillcolor=lightgreen shape=ellipse]
+	subgraph cluster_stage0 {
+		color=blue label="Pipeline Stage 0
+GPUs 0-7 (TP=8)" style=dashed
+		s0_l0_gpu0 [label="Layer 0
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 0" fillcolor=lightblue]
+		s0_l0_gpu1 [label="Layer 0
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 1" fillcolor=lightcoral]
+		s0_l0_gpu2 [label="Layer 0
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 2" fillcolor=lightgreen]
+		s0_l0_gpu3 [label="Layer 0
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 3" fillcolor=lightyellow]
+		s0_l0_gpu4 [label="Layer 0
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 4" fillcolor=lightpink]
+		s0_l0_gpu5 [label="Layer 0
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 5" fillcolor=lightsalmon]
+		s0_l0_gpu6 [label="Layer 0
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 6" fillcolor=lightseagreen]
+		s0_l0_gpu7 [label="Layer 0
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 7" fillcolor=lightskyblue]
+		s0_l1_gpu0 [label="Layer 1
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 0" fillcolor=lightblue]
+		s0_l1_gpu1 [label="Layer 1
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 1" fillcolor=lightcoral]
+		s0_l1_gpu2 [label="Layer 1
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 2" fillcolor=lightgreen]
+		s0_l1_gpu3 [label="Layer 1
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 3" fillcolor=lightyellow]
+		s0_l1_gpu4 [label="Layer 1
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 4" fillcolor=lightpink]
+		s0_l1_gpu5 [label="Layer 1
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 5" fillcolor=lightsalmon]
+		s0_l1_gpu6 [label="Layer 1
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 6" fillcolor=lightseagreen]
+		s0_l1_gpu7 [label="Layer 1
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 7" fillcolor=lightskyblue]
+		s0_l2_gpu0 [label="Layer 2
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 0" fillcolor=lightblue]
+		s0_l2_gpu1 [label="Layer 2
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 1" fillcolor=lightcoral]
+		s0_l2_gpu2 [label="Layer 2
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 2" fillcolor=lightgreen]
+		s0_l2_gpu3 [label="Layer 2
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 3" fillcolor=lightyellow]
+		s0_l2_gpu4 [label="Layer 2
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 4" fillcolor=lightpink]
+		s0_l2_gpu5 [label="Layer 2
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 5" fillcolor=lightsalmon]
+		s0_l2_gpu6 [label="Layer 2
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 6" fillcolor=lightseagreen]
+		s0_l2_gpu7 [label="Layer 2
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 7" fillcolor=lightskyblue]
+		s0_l3_gpu0 [label="Layer 3
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 0" fillcolor=lightblue]
+		s0_l3_gpu1 [label="Layer 3
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 1" fillcolor=lightcoral]
+		s0_l3_gpu2 [label="Layer 3
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 2" fillcolor=lightgreen]
+		s0_l3_gpu3 [label="Layer 3
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 3" fillcolor=lightyellow]
+		s0_l3_gpu4 [label="Layer 3
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 4" fillcolor=lightpink]
+		s0_l3_gpu5 [label="Layer 3
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 5" fillcolor=lightsalmon]
+		s0_l3_gpu6 [label="Layer 3
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 6" fillcolor=lightseagreen]
+		s0_l3_gpu7 [label="Layer 3
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 7" fillcolor=lightskyblue]
+		s0_l4_gpu0 [label="Layer 4
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 0" fillcolor=lightblue]
+		s0_l4_gpu1 [label="Layer 4
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 1" fillcolor=lightcoral]
+		s0_l4_gpu2 [label="Layer 4
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 2" fillcolor=lightgreen]
+		s0_l4_gpu3 [label="Layer 4
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 3" fillcolor=lightyellow]
+		s0_l4_gpu4 [label="Layer 4
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 4" fillcolor=lightpink]
+		s0_l4_gpu5 [label="Layer 4
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 5" fillcolor=lightsalmon]
+		s0_l4_gpu6 [label="Layer 4
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 6" fillcolor=lightseagreen]
+		s0_l4_gpu7 [label="Layer 4
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 7" fillcolor=lightskyblue]
+		s0_l5_gpu0 [label="Layer 5
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 0" fillcolor=lightblue]
+		s0_l5_gpu1 [label="Layer 5
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 1" fillcolor=lightcoral]
+		s0_l5_gpu2 [label="Layer 5
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 2" fillcolor=lightgreen]
+		s0_l5_gpu3 [label="Layer 5
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 3" fillcolor=lightyellow]
+		s0_l5_gpu4 [label="Layer 5
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 4" fillcolor=lightpink]
+		s0_l5_gpu5 [label="Layer 5
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 5" fillcolor=lightsalmon]
+		s0_l5_gpu6 [label="Layer 5
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 6" fillcolor=lightseagreen]
+		s0_l5_gpu7 [label="Layer 5
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 7" fillcolor=lightskyblue]
+		s0_l6_gpu0 [label="Layer 6
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 0" fillcolor=lightblue]
+		s0_l6_gpu1 [label="Layer 6
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 1" fillcolor=lightcoral]
+		s0_l6_gpu2 [label="Layer 6
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 2" fillcolor=lightgreen]
+		s0_l6_gpu3 [label="Layer 6
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 3" fillcolor=lightyellow]
+		s0_l6_gpu4 [label="Layer 6
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 4" fillcolor=lightpink]
+		s0_l6_gpu5 [label="Layer 6
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 5" fillcolor=lightsalmon]
+		s0_l6_gpu6 [label="Layer 6
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 6" fillcolor=lightseagreen]
+		s0_l6_gpu7 [label="Layer 6
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 7" fillcolor=lightskyblue]
+		s0_l7_gpu0 [label="Layer 7
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 0" fillcolor=lightblue]
+		s0_l7_gpu1 [label="Layer 7
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 1" fillcolor=lightcoral]
+		s0_l7_gpu2 [label="Layer 7
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 2" fillcolor=lightgreen]
+		s0_l7_gpu3 [label="Layer 7
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 3" fillcolor=lightyellow]
+		s0_l7_gpu4 [label="Layer 7
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 4" fillcolor=lightpink]
+		s0_l7_gpu5 [label="Layer 7
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 5" fillcolor=lightsalmon]
+		s0_l7_gpu6 [label="Layer 7
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 6" fillcolor=lightseagreen]
+		s0_l7_gpu7 [label="Layer 7
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 7" fillcolor=lightskyblue]
+	}
+	subgraph cluster_stage1 {
+		color=red label="Pipeline Stage 1
+GPUs 8-15 (TP=8)" style=dashed
+		s1_l8_gpu8 [label="Layer 8
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 8" fillcolor=lightblue]
+		s1_l8_gpu9 [label="Layer 8
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 9" fillcolor=lightcoral]
+		s1_l8_gpu10 [label="Layer 8
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 10" fillcolor=lightgreen]
+		s1_l8_gpu11 [label="Layer 8
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 11" fillcolor=lightyellow]
+		s1_l8_gpu12 [label="Layer 8
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 12" fillcolor=lightpink]
+		s1_l8_gpu13 [label="Layer 8
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 13" fillcolor=lightsalmon]
+		s1_l8_gpu14 [label="Layer 8
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 14" fillcolor=lightseagreen]
+		s1_l8_gpu15 [label="Layer 8
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 15" fillcolor=lightskyblue]
+		s1_l9_gpu8 [label="Layer 9
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 8" fillcolor=lightblue]
+		s1_l9_gpu9 [label="Layer 9
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 9" fillcolor=lightcoral]
+		s1_l9_gpu10 [label="Layer 9
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 10" fillcolor=lightgreen]
+		s1_l9_gpu11 [label="Layer 9
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 11" fillcolor=lightyellow]
+		s1_l9_gpu12 [label="Layer 9
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 12" fillcolor=lightpink]
+		s1_l9_gpu13 [label="Layer 9
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 13" fillcolor=lightsalmon]
+		s1_l9_gpu14 [label="Layer 9
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 14" fillcolor=lightseagreen]
+		s1_l9_gpu15 [label="Layer 9
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 15" fillcolor=lightskyblue]
+		s1_l10_gpu8 [label="Layer 10
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 8" fillcolor=lightblue]
+		s1_l10_gpu9 [label="Layer 10
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 9" fillcolor=lightcoral]
+		s1_l10_gpu10 [label="Layer 10
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 10" fillcolor=lightgreen]
+		s1_l10_gpu11 [label="Layer 10
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 11" fillcolor=lightyellow]
+		s1_l10_gpu12 [label="Layer 10
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 12" fillcolor=lightpink]
+		s1_l10_gpu13 [label="Layer 10
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 13" fillcolor=lightsalmon]
+		s1_l10_gpu14 [label="Layer 10
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 14" fillcolor=lightseagreen]
+		s1_l10_gpu15 [label="Layer 10
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 15" fillcolor=lightskyblue]
+		s1_l11_gpu8 [label="Layer 11
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 8" fillcolor=lightblue]
+		s1_l11_gpu9 [label="Layer 11
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 9" fillcolor=lightcoral]
+		s1_l11_gpu10 [label="Layer 11
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 10" fillcolor=lightgreen]
+		s1_l11_gpu11 [label="Layer 11
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 11" fillcolor=lightyellow]
+		s1_l11_gpu12 [label="Layer 11
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 12" fillcolor=lightpink]
+		s1_l11_gpu13 [label="Layer 11
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 13" fillcolor=lightsalmon]
+		s1_l11_gpu14 [label="Layer 11
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 14" fillcolor=lightseagreen]
+		s1_l11_gpu15 [label="Layer 11
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 15" fillcolor=lightskyblue]
+		s1_l12_gpu8 [label="Layer 12
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 8" fillcolor=lightblue]
+		s1_l12_gpu9 [label="Layer 12
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 9" fillcolor=lightcoral]
+		s1_l12_gpu10 [label="Layer 12
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 10" fillcolor=lightgreen]
+		s1_l12_gpu11 [label="Layer 12
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 11" fillcolor=lightyellow]
+		s1_l12_gpu12 [label="Layer 12
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 12" fillcolor=lightpink]
+		s1_l12_gpu13 [label="Layer 12
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 13" fillcolor=lightsalmon]
+		s1_l12_gpu14 [label="Layer 12
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 14" fillcolor=lightseagreen]
+		s1_l12_gpu15 [label="Layer 12
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 15" fillcolor=lightskyblue]
+		s1_l13_gpu8 [label="Layer 13
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 8" fillcolor=lightblue]
+		s1_l13_gpu9 [label="Layer 13
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 9" fillcolor=lightcoral]
+		s1_l13_gpu10 [label="Layer 13
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 10" fillcolor=lightgreen]
+		s1_l13_gpu11 [label="Layer 13
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 11" fillcolor=lightyellow]
+		s1_l13_gpu12 [label="Layer 13
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 12" fillcolor=lightpink]
+		s1_l13_gpu13 [label="Layer 13
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 13" fillcolor=lightsalmon]
+		s1_l13_gpu14 [label="Layer 13
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 14" fillcolor=lightseagreen]
+		s1_l13_gpu15 [label="Layer 13
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 15" fillcolor=lightskyblue]
+		s1_l14_gpu8 [label="Layer 14
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 8" fillcolor=lightblue]
+		s1_l14_gpu9 [label="Layer 14
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 9" fillcolor=lightcoral]
+		s1_l14_gpu10 [label="Layer 14
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 10" fillcolor=lightgreen]
+		s1_l14_gpu11 [label="Layer 14
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 11" fillcolor=lightyellow]
+		s1_l14_gpu12 [label="Layer 14
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 12" fillcolor=lightpink]
+		s1_l14_gpu13 [label="Layer 14
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 13" fillcolor=lightsalmon]
+		s1_l14_gpu14 [label="Layer 14
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 14" fillcolor=lightseagreen]
+		s1_l14_gpu15 [label="Layer 14
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 15" fillcolor=lightskyblue]
+		s1_l15_gpu8 [label="Layer 15
+TP Rank 0
+[1024, 1024] → [1024, 1024]
+GPU 8" fillcolor=lightblue]
+		s1_l15_gpu9 [label="Layer 15
+TP Rank 1
+[1024, 1024] → [1024, 1024]
+GPU 9" fillcolor=lightcoral]
+		s1_l15_gpu10 [label="Layer 15
+TP Rank 2
+[1024, 1024] → [1024, 1024]
+GPU 10" fillcolor=lightgreen]
+		s1_l15_gpu11 [label="Layer 15
+TP Rank 3
+[1024, 1024] → [1024, 1024]
+GPU 11" fillcolor=lightyellow]
+		s1_l15_gpu12 [label="Layer 15
+TP Rank 4
+[1024, 1024] → [1024, 1024]
+GPU 12" fillcolor=lightpink]
+		s1_l15_gpu13 [label="Layer 15
+TP Rank 5
+[1024, 1024] → [1024, 1024]
+GPU 13" fillcolor=lightsalmon]
+		s1_l15_gpu14 [label="Layer 15
+TP Rank 6
+[1024, 1024] → [1024, 1024]
+GPU 14" fillcolor=lightseagreen]
+		s1_l15_gpu15 [label="Layer 15
+TP Rank 7
+[1024, 1024] → [1024, 1024]
+GPU 15" fillcolor=lightskyblue]
+	}
+	allreduce_l1 [label="All-Reduce
+[1024, 8192]
+GPUs 0-7" fillcolor=orange shape=parallelogram]
+	allreduce_l2 [label="All-Reduce
+[1024, 8192]
+GPUs 0-7" fillcolor=orange shape=parallelogram]
+	allreduce_l3 [label="All-Reduce
+[1024, 8192]
+GPUs 0-7" fillcolor=orange shape=parallelogram]
+	allreduce_l4 [label="All-Reduce
+[1024, 8192]
+GPUs 0-7" fillcolor=orange shape=parallelogram]
+	allreduce_l5 [label="All-Reduce
+[1024, 8192]
+GPUs 0-7" fillcolor=orange shape=parallelogram]
+	allreduce_l6 [label="All-Reduce
+[1024, 8192]
+GPUs 0-7" fillcolor=orange shape=parallelogram]
+	allreduce_l7 [label="All-Reduce
+[1024, 8192]
+GPUs 0-7" fillcolor=orange shape=parallelogram]
+	allreduce_l8 [label="All-Reduce
+[1024, 8192]
+GPUs 8-15" fillcolor=orange shape=parallelogram]
+	allreduce_l9 [label="All-Reduce
+[1024, 8192]
+GPUs 8-15" fillcolor=orange shape=parallelogram]
+	allreduce_l10 [label="All-Reduce
+[1024, 8192]
+GPUs 8-15" fillcolor=orange shape=parallelogram]
+	allreduce_l11 [label="All-Reduce
+[1024, 8192]
+GPUs 8-15" fillcolor=orange shape=parallelogram]
+	allreduce_l12 [label="All-Reduce
+[1024, 8192]
+GPUs 8-15" fillcolor=orange shape=parallelogram]
+	allreduce_l13 [label="All-Reduce
+[1024, 8192]
+GPUs 8-15" fillcolor=orange shape=parallelogram]
+	allreduce_l14 [label="All-Reduce
+[1024, 8192]
+GPUs 8-15" fillcolor=orange shape=parallelogram]
+	allreduce_l15 [label="All-Reduce
+[1024, 8192]
+GPUs 8-15" fillcolor=orange shape=parallelogram]
+	split_input_s0 [label="Split
+[1024, 8192] → 8×[1024, 1024]
+GPUs 0-7" fillcolor=yellow shape=parallelogram]
+	input -> split_input_s0
+	split_input_s0 -> s0_l0_gpu0
+	split_input_s0 -> s0_l0_gpu1
+	split_input_s0 -> s0_l0_gpu2
+	split_input_s0 -> s0_l0_gpu3
+	split_input_s0 -> s0_l0_gpu4
+	split_input_s0 -> s0_l0_gpu5
+	split_input_s0 -> s0_l0_gpu6
+	split_input_s0 -> s0_l0_gpu7
+	s0_l0_gpu0 -> s0_l1_gpu0
+	s0_l0_gpu1 -> s0_l1_gpu1
+	s0_l0_gpu2 -> s0_l1_gpu2
+	s0_l0_gpu3 -> s0_l1_gpu3
+	s0_l0_gpu4 -> s0_l1_gpu4
+	s0_l0_gpu5 -> s0_l1_gpu5
+	s0_l0_gpu6 -> s0_l1_gpu6
+	s0_l0_gpu7 -> s0_l1_gpu7
+	s0_l1_gpu0 -> s0_l2_gpu0
+	s0_l1_gpu1 -> s0_l2_gpu1
+	s0_l1_gpu2 -> s0_l2_gpu2
+	s0_l1_gpu3 -> s0_l2_gpu3
+	s0_l1_gpu4 -> s0_l2_gpu4
+	s0_l1_gpu5 -> s0_l2_gpu5
+	s0_l1_gpu6 -> s0_l2_gpu6
+	s0_l1_gpu7 -> s0_l2_gpu7
+	s0_l2_gpu0 -> s0_l3_gpu0
+	s0_l2_gpu1 -> s0_l3_gpu1
+	s0_l2_gpu2 -> s0_l3_gpu2
+	s0_l2_gpu3 -> s0_l3_gpu3
+	s0_l2_gpu4 -> s0_l3_gpu4
+	s0_l2_gpu5 -> s0_l3_gpu5
+	s0_l2_gpu6 -> s0_l3_gpu6
+	s0_l2_gpu7 -> s0_l3_gpu7
+	s0_l3_gpu0 -> s0_l4_gpu0
+	s0_l3_gpu1 -> s0_l4_gpu1
+	s0_l3_gpu2 -> s0_l4_gpu2
+	s0_l3_gpu3 -> s0_l4_gpu3
+	s0_l3_gpu4 -> s0_l4_gpu4
+	s0_l3_gpu5 -> s0_l4_gpu5
+	s0_l3_gpu6 -> s0_l4_gpu6
+	s0_l3_gpu7 -> s0_l4_gpu7
+	s0_l4_gpu0 -> s0_l5_gpu0
+	s0_l4_gpu1 -> s0_l5_gpu1
+	s0_l4_gpu2 -> s0_l5_gpu2
+	s0_l4_gpu3 -> s0_l5_gpu3
+	s0_l4_gpu4 -> s0_l5_gpu4
+	s0_l4_gpu5 -> s0_l5_gpu5
+	s0_l4_gpu6 -> s0_l5_gpu6
+	s0_l4_gpu7 -> s0_l5_gpu7
+	s0_l5_gpu0 -> s0_l6_gpu0
+	s0_l5_gpu1 -> s0_l6_gpu1
+	s0_l5_gpu2 -> s0_l6_gpu2
+	s0_l5_gpu3 -> s0_l6_gpu3
+	s0_l5_gpu4 -> s0_l6_gpu4
+	s0_l5_gpu5 -> s0_l6_gpu5
+	s0_l5_gpu6 -> s0_l6_gpu6
+	s0_l5_gpu7 -> s0_l6_gpu7
+	s0_l6_gpu0 -> s0_l7_gpu0
+	s0_l6_gpu1 -> s0_l7_gpu1
+	s0_l6_gpu2 -> s0_l7_gpu2
+	s0_l6_gpu3 -> s0_l7_gpu3
+	s0_l6_gpu4 -> s0_l7_gpu4
+	s0_l6_gpu5 -> s0_l7_gpu5
+	s0_l6_gpu6 -> s0_l7_gpu6
+	s0_l6_gpu7 -> s0_l7_gpu7
+	transfer_s0_s1 [label="Pipeline Transfer
+[1024, 8192]
+GPU 7 → GPU 8" fillcolor=red shape=parallelogram]
+	s0_l7_gpu0 -> transfer_s0_s1
+	s0_l7_gpu1 -> transfer_s0_s1
+	s0_l7_gpu2 -> transfer_s0_s1
+	s0_l7_gpu3 -> transfer_s0_s1
+	s0_l7_gpu4 -> transfer_s0_s1
+	s0_l7_gpu5 -> transfer_s0_s1
+	s0_l7_gpu6 -> transfer_s0_s1
+	s0_l7_gpu7 -> transfer_s0_s1
+	split_input_s1 [label="Split
+[1024, 8192] → 8×[1024, 1024]
+GPUs 8-15" fillcolor=yellow shape=parallelogram]
+	transfer_s0_s1 -> split_input_s1
+	split_input_s1 -> s1_l8_gpu8
+	split_input_s1 -> s1_l8_gpu9
+	split_input_s1 -> s1_l8_gpu10
+	split_input_s1 -> s1_l8_gpu11
+	split_input_s1 -> s1_l8_gpu12
+	split_input_s1 -> s1_l8_gpu13
+	split_input_s1 -> s1_l8_gpu14
+	split_input_s1 -> s1_l8_gpu15
+	s1_l8_gpu8 -> s1_l9_gpu8
+	s1_l8_gpu9 -> s1_l9_gpu9
+	s1_l8_gpu10 -> s1_l9_gpu10
+	s1_l8_gpu11 -> s1_l9_gpu11
+	s1_l8_gpu12 -> s1_l9_gpu12
+	s1_l8_gpu13 -> s1_l9_gpu13
+	s1_l8_gpu14 -> s1_l9_gpu14
+	s1_l8_gpu15 -> s1_l9_gpu15
+	s1_l9_gpu8 -> s1_l10_gpu8
+	s1_l9_gpu9 -> s1_l10_gpu9
+	s1_l9_gpu10 -> s1_l10_gpu10
+	s1_l9_gpu11 -> s1_l10_gpu11
+	s1_l9_gpu12 -> s1_l10_gpu12
+	s1_l9_gpu13 -> s1_l10_gpu13
+	s1_l9_gpu14 -> s1_l10_gpu14
+	s1_l9_gpu15 -> s1_l10_gpu15
+	s1_l10_gpu8 -> s1_l11_gpu8
+	s1_l10_gpu9 -> s1_l11_gpu9
+	s1_l10_gpu10 -> s1_l11_gpu10
+	s1_l10_gpu11 -> s1_l11_gpu11
+	s1_l10_gpu12 -> s1_l11_gpu12
+	s1_l10_gpu13 -> s1_l11_gpu13
+	s1_l10_gpu14 -> s1_l11_gpu14
+	s1_l10_gpu15 -> s1_l11_gpu15
+	s1_l11_gpu8 -> s1_l12_gpu8
+	s1_l11_gpu9 -> s1_l12_gpu9
+	s1_l11_gpu10 -> s1_l12_gpu10
+	s1_l11_gpu11 -> s1_l12_gpu11
+	s1_l11_gpu12 -> s1_l12_gpu12
+	s1_l11_gpu13 -> s1_l12_gpu13
+	s1_l11_gpu14 -> s1_l12_gpu14
+	s1_l11_gpu15 -> s1_l12_gpu15
+	s1_l12_gpu8 -> s1_l13_gpu8
+	s1_l12_gpu9 -> s1_l13_gpu9
+	s1_l12_gpu10 -> s1_l13_gpu10
+	s1_l12_gpu11 -> s1_l13_gpu11
+	s1_l12_gpu12 -> s1_l13_gpu12
+	s1_l12_gpu13 -> s1_l13_gpu13
+	s1_l12_gpu14 -> s1_l13_gpu14
+	s1_l12_gpu15 -> s1_l13_gpu15
+	s1_l13_gpu8 -> s1_l14_gpu8
+	s1_l13_gpu9 -> s1_l14_gpu9
+	s1_l13_gpu10 -> s1_l14_gpu10
+	s1_l13_gpu11 -> s1_l14_gpu11
+	s1_l13_gpu12 -> s1_l14_gpu12
+	s1_l13_gpu13 -> s1_l14_gpu13
+	s1_l13_gpu14 -> s1_l14_gpu14
+	s1_l13_gpu15 -> s1_l14_gpu15
+	s1_l14_gpu8 -> s1_l15_gpu8
+	s1_l14_gpu9 -> s1_l15_gpu9
+	s1_l14_gpu10 -> s1_l15_gpu10
+	s1_l14_gpu11 -> s1_l15_gpu11
+	s1_l14_gpu12 -> s1_l15_gpu12
+	s1_l14_gpu13 -> s1_l15_gpu13
+	s1_l14_gpu14 -> s1_l15_gpu14
+	s1_l14_gpu15 -> s1_l15_gpu15
+	output [label="Output
+[1024, 8192]
+GPU 15" fillcolor=lightgreen shape=ellipse]
+	gather_output [label="Gather
+8×[1024, 1024] → [1024, 8192]
+GPUs 8-15" fillcolor=yellow shape=parallelogram]
+	s1_l15_gpu8 -> gather_output
+	s1_l15_gpu9 -> gather_output
+	s1_l15_gpu10 -> gather_output
+	s1_l15_gpu11 -> gather_output
+	s1_l15_gpu12 -> gather_output
+	s1_l15_gpu13 -> gather_output
+	s1_l15_gpu14 -> gather_output
+	s1_l15_gpu15 -> gather_output
+	gather_output -> output
+}

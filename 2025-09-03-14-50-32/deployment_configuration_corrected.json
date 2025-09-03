@@ -1,0 +1,332 @@
+{
+  "deployment_configurations": {
+    "baseline": {
+      "name": "Tensor Parallel + Pipeline Parallel",
+      "parallel_strategy": {
+        "type": "hybrid",
+        "tensor_parallelism": {
+          "degree": 8,
+          "parameters": {
+            "split_dimension": "hidden",
+            "communication_backend": "nccl"
+          }
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "parameters": {
+            "num_stages": 2,
+            "micro_batch_size": 512,
+            "schedule": "1f1b"
+          }
+        }
+      },
+      "model_modules": {
+        "dense_model": {
+          "total_layers": 16,
+          "layer_distribution": {
+            "stage_0": {
+              "device_range": [0, 7],
+              "layers": [0, 1, 2, 3, 4, 5, 6, 7],
+              "parallel_mode": "tensor_parallel",
+              "parameters": {
+                "hidden_size": 32768,
+                "head_dim": 512,
+                "num_heads": 16,
+                "precision": "fp16"
+              }
+            },
+            "stage_1": {
+              "device_range": [8, 15],
+              "layers": [8, 9, 10, 11, 12, 13, 14, 15],
+              "parallel_mode": "tensor_parallel",
+              "parameters": {
+                "hidden_size": 32768,
+                "head_dim": 512,
+                "num_heads": 16,
+                "precision": "fp16"
+              }
+            }
+          }
+        }
+      },
+      "device_mapping": {
+        "gpus": 16,
+        "mapping": {
+          "gpu_0-7": "stage_0_tensor_parallel",
+          "gpu_8-15": "stage_1_tensor_parallel"
+        }
+      }
+    },
+    "proposed_layer_wise": {
+      "name": "Layer-wise Cache-Optimized Deployment",
+      "parallel_strategy": {
+        "type": "layer_wise_partitioning",
+        "parameters": {
+          "partitioning_algorithm": "greedy_layer_aggregation",
+          "cache_capacity_per_device": "40MB",
+          "memory_constraint": "SRAM_L2_cache",
+          "batch_size": 1024,
+          "precision": "fp16",
+          "layers_per_partition": 1,
+          "total_partitions": 16
+        }
+      },
+      "model_modules": {
+        "dense_model": {
+          "total_layers": 16,
+          "layer_parameters": {
+            "weight_size_per_layer": "8MB",
+            "activation_size_per_layer": "1.7MB",
+            "buffer_size_per_layer": "0.25MB",
+            "total_memory_per_layer": "9.95MB"
+          },
+          "partitions": {
+            "partition_0": {
+              "device_id": 0,
+              "layers": [0],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [0, 0],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_1": {
+              "device_id": 1,
+              "layers": [1],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [1, 1],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_2": {
+              "device_id": 2,
+              "layers": [2],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [2, 2],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_3": {
+              "device_id": 3,
+              "layers": [3],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [3, 3],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_4": {
+              "device_id": 4,
+              "layers": [4],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [4, 4],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_5": {
+              "device_id": 5,
+              "layers": [5],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [5, 5],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_6": {
+              "device_id": 6,
+              "layers": [6],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [6, 6],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_7": {
+              "device_id": 7,
+              "layers": [7],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [7, 7],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_8": {
+              "device_id": 8,
+              "layers": [8],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [8, 8],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_9": {
+              "device_id": 9,
+              "layers": [9],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [9, 9],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_10": {
+              "device_id": 10,
+              "layers": [10],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [10, 10],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_11": {
+              "device_id": 11,
+              "layers": [11],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [11, 11],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_12": {
+              "device_id": 12,
+              "layers": [12],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [12, 12],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_13": {
+              "device_id": 13,
+              "layers": [13],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [13, 13],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_14": {
+              "device_id": 14,
+              "layers": [14],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [14, 14],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            },
+            "partition_15": {
+              "device_id": 15,
+              "layers": [15],
+              "memory_footprint": "9.95MB",
+              "parameters": {
+                "layer_range": [15, 15],
+                "cache_allocation": "full_on_chip",
+                "weight_memory": "8MB",
+                "activation_memory": "1.7MB",
+                "buffer_memory": "0.25MB"
+              }
+            }
+          }
+        }
+      },
+      "device_mapping": {
+        "gpus": 16,
+        "active_gpus": 16,
+        "mapping": {
+          "gpu_0": "partition_0_layer_0",
+          "gpu_1": "partition_1_layer_1",
+          "gpu_2": "partition_2_layer_2",
+          "gpu_3": "partition_3_layer_3",
+          "gpu_4": "partition_4_layer_4",
+          "gpu_5": "partition_5_layer_5",
+          "gpu_6": "partition_6_layer_6",
+          "gpu_7": "partition_7_layer_7",
+          "gpu_8": "partition_8_layer_8",
+          "gpu_9": "partition_9_layer_9",
+          "gpu_10": "partition_10_layer_10",
+          "gpu_11": "partition_11_layer_11",
+          "gpu_12": "partition_12_layer_12",
+          "gpu_13": "partition_13_layer_13",
+          "gpu_14": "partition_14_layer_14",
+          "gpu_15": "partition_15_layer_15"
+        }
+      },
+      "communication": {
+        "inter_partition_transfer": {
+          "method": "direct_gpu_to_gpu",
+          "bandwidth": "900GB/s_NVLink",
+          "latency": "1-2_microseconds"
+        },
+        "activation_handoff": {
+          "source_partition": "current",
+          "target_partition": "next",
+          "buffer_size": "batch_1024_hidden_8192_fp16"
+        }
+      }
+    }
+  },
+  "scaling_configuration": {
+    "max_partitions": 16,
+    "min_partition_size": 1,
+    "max_partition_size": 16,
+    "cache_capacity_per_gpu": "40MB",
+    "model_memory_per_layer": {
+      "weights": "8MB",
+      "activations": "1.7MB",
+      "buffers": "0.25MB",
+      "total": "9.95MB"
+    },
+    "utilization": {
+      "total_gpus": 16,
+      "active_gpus": 16,
+      "utilization_rate": "100%"
+    }
+  }
+}

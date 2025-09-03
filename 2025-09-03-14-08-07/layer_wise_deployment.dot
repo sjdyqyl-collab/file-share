@@ -1,0 +1,135 @@
+digraph LayerWiseDeployment {
+	rankdir=TB size="20,30"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	input [label="Input
+[1024, 8192]
+All GPUs" fillcolor=lightgreen shape=ellipse]
+	layer_0 [label="Layer 0
+[1024, 8192] → [1024, 8192]
+GPU 0" fillcolor=lightblue]
+	input -> layer_0
+	layer_1 [label="Layer 1
+[1024, 8192] → [1024, 8192]
+GPU 1" fillcolor=lightblue]
+	transfer_0_1 [label="Transfer
+[1024, 8192]
+GPU 0 → GPU 1" fillcolor=yellow shape=parallelogram]
+	layer_0 -> transfer_0_1
+	transfer_0_1 -> layer_1
+	layer_2 [label="Layer 2
+[1024, 8192] → [1024, 8192]
+GPU 2" fillcolor=lightblue]
+	transfer_1_2 [label="Transfer
+[1024, 8192]
+GPU 1 → GPU 2" fillcolor=yellow shape=parallelogram]
+	layer_1 -> transfer_1_2
+	transfer_1_2 -> layer_2
+	layer_3 [label="Layer 3
+[1024, 8192] → [1024, 8192]
+GPU 3" fillcolor=lightblue]
+	transfer_2_3 [label="Transfer
+[1024, 8192]
+GPU 2 → GPU 3" fillcolor=yellow shape=parallelogram]
+	layer_2 -> transfer_2_3
+	transfer_2_3 -> layer_3
+	layer_4 [label="Layer 4
+[1024, 8192] → [1024, 8192]
+GPU 4" fillcolor=lightblue]
+	transfer_3_4 [label="Transfer
+[1024, 8192]
+GPU 3 → GPU 4" fillcolor=yellow shape=parallelogram]
+	layer_3 -> transfer_3_4
+	transfer_3_4 -> layer_4
+	layer_5 [label="Layer 5
+[1024, 8192] → [1024, 8192]
+GPU 5" fillcolor=lightblue]
+	transfer_4_5 [label="Transfer
+[1024, 8192]
+GPU 4 → GPU 5" fillcolor=yellow shape=parallelogram]
+	layer_4 -> transfer_4_5
+	transfer_4_5 -> layer_5
+	layer_6 [label="Layer 6
+[1024, 8192] → [1024, 8192]
+GPU 6" fillcolor=lightblue]
+	transfer_5_6 [label="Transfer
+[1024, 8192]
+GPU 5 → GPU 6" fillcolor=yellow shape=parallelogram]
+	layer_5 -> transfer_5_6
+	transfer_5_6 -> layer_6
+	layer_7 [label="Layer 7
+[1024, 8192] → [1024, 8192]
+GPU 7" fillcolor=lightblue]
+	transfer_6_7 [label="Transfer
+[1024, 8192]
+GPU 6 → GPU 7" fillcolor=yellow shape=parallelogram]
+	layer_6 -> transfer_6_7
+	transfer_6_7 -> layer_7
+	layer_8 [label="Layer 8
+[1024, 8192] → [1024, 8192]
+GPU 8" fillcolor=lightblue]
+	transfer_7_8 [label="Transfer
+[1024, 8192]
+GPU 7 → GPU 8" fillcolor=yellow shape=parallelogram]
+	layer_7 -> transfer_7_8
+	transfer_7_8 -> layer_8
+	layer_9 [label="Layer 9
+[1024, 8192] → [1024, 8192]
+GPU 9" fillcolor=lightblue]
+	transfer_8_9 [label="Transfer
+[1024, 8192]
+GPU 8 → GPU 9" fillcolor=yellow shape=parallelogram]
+	layer_8 -> transfer_8_9
+	transfer_8_9 -> layer_9
+	layer_10 [label="Layer 10
+[1024, 8192] → [1024, 8192]
+GPU 10" fillcolor=lightblue]
+	transfer_9_10 [label="Transfer
+[1024, 8192]
+GPU 9 → GPU 10" fillcolor=yellow shape=parallelogram]
+	layer_9 -> transfer_9_10
+	transfer_9_10 -> layer_10
+	layer_11 [label="Layer 11
+[1024, 8192] → [1024, 8192]
+GPU 11" fillcolor=lightblue]
+	transfer_10_11 [label="Transfer
+[1024, 8192]
+GPU 10 → GPU 11" fillcolor=yellow shape=parallelogram]
+	layer_10 -> transfer_10_11
+	transfer_10_11 -> layer_11
+	layer_12 [label="Layer 12
+[1024, 8192] → [1024, 8192]
+GPU 12" fillcolor=lightblue]
+	transfer_11_12 [label="Transfer
+[1024, 8192]
+GPU 11 → GPU 12" fillcolor=yellow shape=parallelogram]
+	layer_11 -> transfer_11_12
+	transfer_11_12 -> layer_12
+	layer_13 [label="Layer 13
+[1024, 8192] → [1024, 8192]
+GPU 13" fillcolor=lightblue]
+	transfer_12_13 [label="Transfer
+[1024, 8192]
+GPU 12 → GPU 13" fillcolor=yellow shape=parallelogram]
+	layer_12 -> transfer_12_13
+	transfer_12_13 -> layer_13
+	layer_14 [label="Layer 14
+[1024, 8192] → [1024, 8192]
+GPU 14" fillcolor=lightblue]
+	transfer_13_14 [label="Transfer
+[1024, 8192]
+GPU 13 → GPU 14" fillcolor=yellow shape=parallelogram]
+	layer_13 -> transfer_13_14
+	transfer_13_14 -> layer_14
+	layer_15 [label="Layer 15
+[1024, 8192] → [1024, 8192]
+GPU 15" fillcolor=lightblue]
+	transfer_14_15 [label="Transfer
+[1024, 8192]
+GPU 14 → GPU 15" fillcolor=yellow shape=parallelogram]
+	layer_14 -> transfer_14_15
+	transfer_14_15 -> layer_15
+	output [label="Output
+[1024, 8192]
+GPU 15" fillcolor=lightgreen shape=ellipse]
+	layer_15 -> output
+}
