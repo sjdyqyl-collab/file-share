@@ -1,0 +1,26 @@
+{
+  "baseline_dag": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-04-11-38-32/baseline_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-04-11-38-32/baseline_dag.svg",
+    "description": "Dense Transformer Baseline DAG with Tensor Parallel (TP=8) and Pipeline Parallel (PP=2) across 16 GPUs"
+  },
+  "ra_sp_dag": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-04-11-38-32/ra_sp_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-04-11-38-32/ra_sp_dag.svg",
+    "description": "Ring Attention with Sequence Parallelism DAG across 16 GPUs with sequence dimension split"
+  },
+  "generation_details": {
+    "total_gpus": 16,
+    "baseline_strategy": "tensor_parallel=8, pipeline_parallel=2",
+    "ra_sp_strategy": "sequence_parallel=16, ring_attention_stages=16",
+    "model_config": {
+      "layers": 4,
+      "hidden_size": 8192,
+      "num_heads": 16,
+      "head_dim": 512,
+      "mlp_hidden_size": 32768,
+      "sequence_length": 16384,
+      "batch_size": 1024
+    }
+  }
+}

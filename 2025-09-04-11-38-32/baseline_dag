@@ -1,0 +1,180 @@
+// Dense Transformer Baseline DAG
+digraph {
+	nodesep=0.8 rankdir=TB ranksep=1.2 splines=ortho
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	input [label="Input
+(B=1024, L=16384, d=8192)
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+	embed_0_7 [label="Embedding
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" fillcolor=lightyellow shape=rectangle]
+	node [fillcolor=lightcoral]
+	l0_attn_qkv_0 [label="Layer0 MHA QKV
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l0_attn_score [label="Layer0 Attention Score
+(B=1024, H=16, L=16384, L=16384)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l0_attn_out [label="Layer0 Attention Output
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l0_attn_res [label="Layer0 Residual Add
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" fillcolor=lightgreen shape=diamond]
+	l0_mlp_up [label="Layer0 MLP Up
+(B=1024, L=16384, d=32768)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l0_mlp_down [label="Layer0 MLP Down
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l0_mlp_res [label="Layer0 MLP Residual Add
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" fillcolor=lightgreen shape=diamond]
+	l1_attn_qkv [label="Layer1 MHA QKV
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l1_attn_score [label="Layer1 Attention Score
+(B=1024, H=16, L=16384, L=16384)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l1_attn_out [label="Layer1 Attention Output
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l1_attn_res [label="Layer1 Residual Add
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" fillcolor=lightgreen shape=diamond]
+	l1_mlp_up [label="Layer1 MLP Up
+(B=1024, L=16384, d=32768)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l1_mlp_down [label="Layer1 MLP Down
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" shape=rectangle]
+	l1_mlp_res [label="Layer1 MLP Residual Add
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 0-7" fillcolor=lightgreen shape=diamond]
+	pipe_send [label="Pipeline Send
+(B=1024, L=16384, d=8192)
+GPUs 0-7 → GPUs 8-15" fillcolor=orange shape=ellipse]
+	pipe_recv [label="Pipeline Receive
+(B=1024, L=16384, d=8192)
+GPUs 0-7 → GPUs 8-15" fillcolor=orange shape=ellipse]
+	node [fillcolor=lightblue]
+	l2_attn_qkv [label="Layer2 MHA QKV
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l2_attn_score [label="Layer2 Attention Score
+(B=1024, H=16, L=16384, L=16384)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l2_attn_out [label="Layer2 Attention Output
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l2_attn_res [label="Layer2 Residual Add
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" fillcolor=lightgreen shape=diamond]
+	l2_mlp_up [label="Layer2 MLP Up
+(B=1024, L=16384, d=32768)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l2_mlp_down [label="Layer2 MLP Down
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l2_mlp_res [label="Layer2 MLP Residual Add
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" fillcolor=lightgreen shape=diamond]
+	l3_attn_qkv [label="Layer3 MHA QKV
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l3_attn_score [label="Layer3 Attention Score
+(B=1024, H=16, L=16384, L=16384)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l3_attn_out [label="Layer3 Attention Output
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l3_attn_res [label="Layer3 Residual Add
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" fillcolor=lightgreen shape=diamond]
+	l3_mlp_up [label="Layer3 MLP Up
+(B=1024, L=16384, d=32768)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l3_mlp_down [label="Layer3 MLP Down
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" shape=rectangle]
+	l3_mlp_res [label="Layer3 MLP Residual Add
+(B=1024, L=16384, d=8192)
+TP=8
+GPUs 8-15" fillcolor=lightgreen shape=diamond]
+	lm_head [label="LM Head
+(B=1024, L=16384, V=32000)
+TP=8
+GPUs 8-15" fillcolor=lightyellow shape=rectangle]
+	output [label="Output
+(B=1024, L=16384, V=32000)
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+	input -> embed_0_7
+	embed_0_7 -> l0_attn_qkv_0
+	l0_attn_qkv_0 -> l0_attn_score
+	l0_attn_score -> l0_attn_out
+	embed_0_7 -> l0_attn_res
+	l0_attn_out -> l0_attn_res
+	l0_attn_res -> l0_mlp_up
+	l0_mlp_up -> l0_mlp_down
+	l0_attn_res -> l0_mlp_res
+	l0_mlp_down -> l0_mlp_res
+	l0_mlp_res -> l1_attn_qkv
+	l1_attn_qkv -> l1_attn_score
+	l1_attn_score -> l1_attn_out
+	l0_mlp_res -> l1_attn_res
+	l1_attn_out -> l1_attn_res
+	l1_attn_res -> l1_mlp_up
+	l1_mlp_up -> l1_mlp_down
+	l1_attn_res -> l1_mlp_res
+	l1_mlp_down -> l1_mlp_res
+	l1_mlp_res -> pipe_send
+	pipe_send -> pipe_recv
+	pipe_recv -> l2_attn_qkv
+	l2_attn_qkv -> l2_attn_score
+	l2_attn_score -> l2_attn_out
+	pipe_recv -> l2_attn_res
+	l2_attn_out -> l2_attn_res
+	l2_attn_res -> l2_mlp_up
+	l2_mlp_up -> l2_mlp_down
+	l2_attn_res -> l2_mlp_res
+	l2_mlp_down -> l2_mlp_res
+	l2_mlp_res -> l3_attn_qkv
+	l3_attn_qkv -> l3_attn_score
+	l3_attn_score -> l3_attn_out
+	l2_mlp_res -> l3_attn_res
+	l3_attn_out -> l3_attn_res
+	l3_attn_res -> l3_mlp_up
+	l3_mlp_up -> l3_mlp_down
+	l3_attn_res -> l3_mlp_res
+	l3_mlp_down -> l3_mlp_res
+	l3_mlp_res -> lm_head
+	lm_head -> output
+}

@@ -1,0 +1,381 @@
+{
+  "models": {
+    "baseline": {
+      "name": "Dense Transformer Baseline",
+      "architecture": "transformer",
+      "layers": 4,
+      "hidden_size": 8192,
+      "num_heads": 16,
+      "head_dim": 512,
+      "mlp_hidden_size": 32768,
+      "precision": "fp16",
+      "batch_size": 1024,
+      "sequence_length": 16384,
+      "parallel_strategy": {
+        "type": "tensor_pipeline_parallel",
+        "tensor_parallel_size": 8,
+        "pipeline_parallel_size": 2,
+        "total_devices": 16,
+        "parallel_degree": 16
+      },
+      "modules": {
+        "embedding": {
+          "type": "embedding_layer",
+          "parameters": {
+            "vocab_size": 32000,
+            "hidden_size": 8192,
+            "max_position_embeddings": 16384
+          },
+          "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7]
+        },
+        "transformer_layers": [
+          {
+            "layer_id": 0,
+            "type": "transformer_layer",
+            "submodules": {
+              "attention": {
+                "type": "multi_head_attention",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "num_heads": 16,
+                  "head_dim": 512,
+                  "attention_dropout": 0.1
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7]
+              },
+              "mlp": {
+                "type": "feed_forward",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "intermediate_size": 32768,
+                  "activation": "silu"
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7]
+              }
+            },
+            "pipeline_stage": 0
+          },
+          {
+            "layer_id": 1,
+            "type": "transformer_layer",
+            "submodules": {
+              "attention": {
+                "type": "multi_head_attention",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "num_heads": 16,
+                  "head_dim": 512,
+                  "attention_dropout": 0.1
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7]
+              },
+              "mlp": {
+                "type": "feed_forward",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "intermediate_size": 32768,
+                  "activation": "silu"
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7]
+              }
+            },
+            "pipeline_stage": 0
+          },
+          {
+            "layer_id": 2,
+            "type": "transformer_layer",
+            "submodules": {
+              "attention": {
+                "type": "multi_head_attention",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "num_heads": 16,
+                  "head_dim": 512,
+                  "attention_dropout": 0.1
+                },
+                "device_mapping": [8, 9, 10, 11, 12, 13, 14, 15]
+              },
+              "mlp": {
+                "type": "feed_forward",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "intermediate_size": 32768,
+                  "activation": "silu"
+                },
+                "device_mapping": [8, 9, 10, 11, 12, 13, 14, 15]
+              }
+            },
+            "pipeline_stage": 1
+          },
+          {
+            "layer_id": 3,
+            "type": "transformer_layer",
+            "submodules": {
+              "attention": {
+                "type": "multi_head_attention",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "num_heads": 16,
+                  "head_dim": 512,
+                  "attention_dropout": 0.1
+                },
+                "device_mapping": [8, 9, 10, 11, 12, 13, 14, 15]
+              },
+              "mlp": {
+                "type": "feed_forward",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "intermediate_size": 32768,
+                  "activation": "silu"
+                },
+                "device_mapping": [8, 9, 10, 11, 12, 13, 14, 15]
+              }
+            },
+            "pipeline_stage": 1
+          }
+        ],
+        "lm_head": {
+          "type": "linear_layer",
+          "parameters": {
+            "input_size": 8192,
+            "output_size": 32000
+          },
+          "device_mapping": [8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      }
+    },
+    "ra_sp": {
+      "name": "Dense Transformer with Ring Attention + Sequence Parallelism",
+      "architecture": "transformer",
+      "layers": 4,
+      "hidden_size": 8192,
+      "num_heads": 16,
+      "head_dim": 512,
+      "mlp_hidden_size": 32768,
+      "precision": "fp16",
+      "batch_size": 1024,
+      "sequence_length": 16384,
+      "parallel_strategy": {
+        "type": "ring_sequence_parallel",
+        "sequence_parallel_size": 16,
+        "ring_stages": 16,
+        "total_devices": 16,
+        "parallel_degree": 16,
+        "communication_pattern": "ring_topology"
+      },
+      "modules": {
+        "embedding": {
+          "type": "embedding_layer",
+          "parameters": {
+            "vocab_size": 32000,
+            "hidden_size": 8192,
+            "max_position_embeddings": 16384
+          },
+          "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "sequence_split": true,
+          "sequence_chunk_size": 1024
+        },
+        "transformer_layers": [
+          {
+            "layer_id": 0,
+            "type": "transformer_layer",
+            "submodules": {
+              "attention": {
+                "type": "ring_multi_head_attention",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "num_heads": 16,
+                  "head_dim": 512,
+                  "attention_dropout": 0.1,
+                  "sequence_parallel_size": 16,
+                  "ring_stages": 16
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                "sequence_chunk_size": 1024,
+                "communication_pattern": {
+                  "type": "ring_all_to_all",
+                  "send_recv_pattern": [
+                    {"from": 0, "to": 1}, {"from": 1, "to": 2}, {"from": 2, "to": 3},
+                    {"from": 3, "to": 4}, {"from": 4, "to": 5}, {"from": 5, "to": 6},
+                    {"from": 6, "to": 7}, {"from": 7, "to": 8}, {"from": 8, "to": 9},
+                    {"from": 9, "to": 10}, {"from": 10, "to": 11}, {"from": 11, "to": 12},
+                    {"from": 12, "to": 13}, {"from": 13, "to": 14}, {"from": 14, "to": 15},
+                    {"from": 15, "to": 0}
+                  ]
+                }
+              },
+              "mlp": {
+                "type": "feed_forward",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "intermediate_size": 32768,
+                  "activation": "silu"
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                "sequence_chunk_size": 1024
+              }
+            }
+          },
+          {
+            "layer_id": 1,
+            "type": "transformer_layer",
+            "submodules": {
+              "attention": {
+                "type": "ring_multi_head_attention",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "num_heads": 16,
+                  "head_dim": 512,
+                  "attention_dropout": 0.1,
+                  "sequence_parallel_size": 16,
+                  "ring_stages": 16
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                "sequence_chunk_size": 1024,
+                "communication_pattern": {
+                  "type": "ring_all_to_all",
+                  "send_recv_pattern": [
+                    {"from": 0, "to": 1}, {"from": 1, "to": 2}, {"from": 2, "to": 3},
+                    {"from": 3, "to": 4}, {"from": 4, "to": 5}, {"from": 5, "to": 6},
+                    {"from": 6, "to": 7}, {"from": 7, "to": 8}, {"from": 8, "to": 9},
+                    {"from": 9, "to": 10}, {"from": 10, "to": 11}, {"from": 11, "to": 12},
+                    {"from": 12, "to": 13}, {"from": 13, "to": 14}, {"from": 14, "to": 15},
+                    {"from": 15, "to": 0}
+                  ]
+                }
+              },
+              "mlp": {
+                "type": "feed_forward",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "intermediate_size": 32768,
+                  "activation": "silu"
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                "sequence_chunk_size": 1024
+              }
+            }
+          },
+          {
+            "layer_id": 2,
+            "type": "transformer_layer",
+            "submodules": {
+              "attention": {
+                "type": "ring_multi_head_attention",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "num_heads": 16,
+                  "head_dim": 512,
+                  "attention_dropout": 0.1,
+                  "sequence_parallel_size": 16,
+                  "ring_stages": 16
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                "sequence_chunk_size": 1024,
+                "communication_pattern": {
+                  "type": "ring_all_to_all",
+                  "send_recv_pattern": [
+                    {"from": 0, "to": 1}, {"from": 1, "to": 2}, {"from": 2, "to": 3},
+                    {"from": 3, "to": 4}, {"from": 4, "to": 5}, {"from": 5, "to": 6},
+                    {"from": 6, "to": 7}, {"from": 7, "to": 8}, {"from": 8, "to": 9},
+                    {"from": 9, "to": 10}, {"from": 10, "to": 11}, {"from": 11, "to": 12},
+                    {"from": 12, "to": 13}, {"from": 13, "to": 14}, {"from": 14, "to": 15},
+                    {"from": 15, "to": 0}
+                  ]
+                }
+              },
+              "mlp": {
+                "type": "feed_forward",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "intermediate_size": 32768,
+                  "activation": "silu"
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                "sequence_chunk_size": 1024
+              }
+            }
+          },
+          {
+            "layer_id": 3,
+            "type": "transformer_layer",
+            "submodules": {
+              "attention": {
+                "type": "ring_multi_head_attention",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "num_heads": 16,
+                  "head_dim": 512,
+                  "attention_dropout": 0.1,
+                  "sequence_parallel_size": 16,
+                  "ring_stages": 16
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                "sequence_chunk_size": 1024,
+                "communication_pattern": {
+                  "type": "ring_all_to_all",
+                  "send_recv_pattern": [
+                    {"from": 0, "to": 1}, {"from": 1, "to": 2}, {"from": 2, "to": 3},
+                    {"from": 3, "to": 4}, {"from": 4, "to": 5}, {"from": 5, "to": 6},
+                    {"from": 6, "to": 7}, {"from": 7, "to": 8}, {"from": 8, "to": 9},
+                    {"from": 9, "to": 10}, {"from": 10, "to": 11}, {"from": 11, "to": 12},
+                    {"from": 12, "to": 13}, {"from": 13, "to": 14}, {"from": 14, "to": 15},
+                    {"from": 15, "to": 0}
+                  ]
+                }
+              },
+              "mlp": {
+                "type": "feed_forward",
+                "parameters": {
+                  "hidden_size": 8192,
+                  "intermediate_size": 32768,
+                  "activation": "silu"
+                },
+                "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+                "sequence_chunk_size": 1024
+              }
+            }
+          }
+        ],
+        "lm_head": {
+          "type": "linear_layer",
+          "parameters": {
+            "input_size": 8192,
+            "output_size": 32000
+          },
+          "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "sequence_chunk_size": 1024
+        }
+      }
+    }
+  },
+  "deployment": {
+    "hardware": {
+      "gpu_type": "NVIDIA_H100",
+      "gpu_count": 16,
+      "interconnect": "NVLink_NVSwitch",
+      "memory_per_gpu": "80GB",
+      "cuda_version": "12.x",
+      "nccl_version": "2.x"
+    },
+    "software": {
+      "framework": "PyTorch",
+      "version": "2.x",
+      "precision": "fp16",
+      "communication_backend": "nccl",
+      "optimization": {
+        "mixed_precision": true,
+        "gradient_checkpointing": false,
+        "kernel_fusion": true,
+        "communication_overlap": true
+      }
+    },
+    "runtime": {
+      "batch_size": 1024,
+      "sequence_length": 16384,
+      "mode": "inference_only",
+      "warmup_iterations": 10,
+      "measurement_iterations": 100
+    }
+  }
+}
