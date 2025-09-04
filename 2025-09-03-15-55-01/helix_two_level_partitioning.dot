@@ -1,0 +1,1205 @@
+digraph Helix_Two_Level_Partitioning {
+	nodesep=0.5 rankdir=TB ranksep=1.0 splines=ortho
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=box style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	input [label="Input\nShape: 1024×2048×8192\nGPU: All GPUs" shape=ellipse]
+	layer0_ln1 [label="LayerNorm\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	input -> layer0_ln1
+	layer0_q_proj_0_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer0_ln1 -> layer0_q_proj_0_0
+	layer0_k_proj_0_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer0_ln1 -> layer0_k_proj_0_0
+	layer0_v_proj_0_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer0_ln1 -> layer0_v_proj_0_0
+	layer0_attn_0_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer0_q_proj_0_0 -> layer0_attn_0_0
+	layer0_k_proj_0_0 -> layer0_attn_0_0
+	layer0_v_proj_0_0 -> layer0_attn_0_0
+	layer0_q_proj_0_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer0_ln1 -> layer0_q_proj_0_1
+	layer0_k_proj_0_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer0_ln1 -> layer0_k_proj_0_1
+	layer0_v_proj_0_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer0_ln1 -> layer0_v_proj_0_1
+	layer0_attn_0_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer0_q_proj_0_1 -> layer0_attn_0_1
+	layer0_k_proj_0_1 -> layer0_attn_0_1
+	layer0_v_proj_0_1 -> layer0_attn_0_1
+	layer0_q_proj_0_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer0_ln1 -> layer0_q_proj_0_2
+	layer0_k_proj_0_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer0_ln1 -> layer0_k_proj_0_2
+	layer0_v_proj_0_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer0_ln1 -> layer0_v_proj_0_2
+	layer0_attn_0_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer0_q_proj_0_2 -> layer0_attn_0_2
+	layer0_k_proj_0_2 -> layer0_attn_0_2
+	layer0_v_proj_0_2 -> layer0_attn_0_2
+	layer0_q_proj_0_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer0_ln1 -> layer0_q_proj_0_3
+	layer0_k_proj_0_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer0_ln1 -> layer0_k_proj_0_3
+	layer0_v_proj_0_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer0_ln1 -> layer0_v_proj_0_3
+	layer0_attn_0_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer0_q_proj_0_3 -> layer0_attn_0_3
+	layer0_k_proj_0_3 -> layer0_attn_0_3
+	layer0_v_proj_0_3 -> layer0_attn_0_3
+	layer0_q_proj_1_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer0_ln1 -> layer0_q_proj_1_0
+	layer0_k_proj_1_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer0_ln1 -> layer0_k_proj_1_0
+	layer0_v_proj_1_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer0_ln1 -> layer0_v_proj_1_0
+	layer0_attn_1_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer0_q_proj_1_0 -> layer0_attn_1_0
+	layer0_k_proj_1_0 -> layer0_attn_1_0
+	layer0_v_proj_1_0 -> layer0_attn_1_0
+	layer0_q_proj_1_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer0_ln1 -> layer0_q_proj_1_1
+	layer0_k_proj_1_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer0_ln1 -> layer0_k_proj_1_1
+	layer0_v_proj_1_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer0_ln1 -> layer0_v_proj_1_1
+	layer0_attn_1_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer0_q_proj_1_1 -> layer0_attn_1_1
+	layer0_k_proj_1_1 -> layer0_attn_1_1
+	layer0_v_proj_1_1 -> layer0_attn_1_1
+	layer0_q_proj_1_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer0_ln1 -> layer0_q_proj_1_2
+	layer0_k_proj_1_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer0_ln1 -> layer0_k_proj_1_2
+	layer0_v_proj_1_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer0_ln1 -> layer0_v_proj_1_2
+	layer0_attn_1_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer0_q_proj_1_2 -> layer0_attn_1_2
+	layer0_k_proj_1_2 -> layer0_attn_1_2
+	layer0_v_proj_1_2 -> layer0_attn_1_2
+	layer0_q_proj_1_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer0_ln1 -> layer0_q_proj_1_3
+	layer0_k_proj_1_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer0_ln1 -> layer0_k_proj_1_3
+	layer0_v_proj_1_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer0_ln1 -> layer0_v_proj_1_3
+	layer0_attn_1_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer0_q_proj_1_3 -> layer0_attn_1_3
+	layer0_k_proj_1_3 -> layer0_attn_1_3
+	layer0_v_proj_1_3 -> layer0_attn_1_3
+	layer0_q_proj_2_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer0_ln1 -> layer0_q_proj_2_0
+	layer0_k_proj_2_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer0_ln1 -> layer0_k_proj_2_0
+	layer0_v_proj_2_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer0_ln1 -> layer0_v_proj_2_0
+	layer0_attn_2_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer0_q_proj_2_0 -> layer0_attn_2_0
+	layer0_k_proj_2_0 -> layer0_attn_2_0
+	layer0_v_proj_2_0 -> layer0_attn_2_0
+	layer0_q_proj_2_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer0_ln1 -> layer0_q_proj_2_1
+	layer0_k_proj_2_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer0_ln1 -> layer0_k_proj_2_1
+	layer0_v_proj_2_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer0_ln1 -> layer0_v_proj_2_1
+	layer0_attn_2_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer0_q_proj_2_1 -> layer0_attn_2_1
+	layer0_k_proj_2_1 -> layer0_attn_2_1
+	layer0_v_proj_2_1 -> layer0_attn_2_1
+	layer0_q_proj_2_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer0_ln1 -> layer0_q_proj_2_2
+	layer0_k_proj_2_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer0_ln1 -> layer0_k_proj_2_2
+	layer0_v_proj_2_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer0_ln1 -> layer0_v_proj_2_2
+	layer0_attn_2_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer0_q_proj_2_2 -> layer0_attn_2_2
+	layer0_k_proj_2_2 -> layer0_attn_2_2
+	layer0_v_proj_2_2 -> layer0_attn_2_2
+	layer0_q_proj_2_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer0_ln1 -> layer0_q_proj_2_3
+	layer0_k_proj_2_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer0_ln1 -> layer0_k_proj_2_3
+	layer0_v_proj_2_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer0_ln1 -> layer0_v_proj_2_3
+	layer0_attn_2_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer0_q_proj_2_3 -> layer0_attn_2_3
+	layer0_k_proj_2_3 -> layer0_attn_2_3
+	layer0_v_proj_2_3 -> layer0_attn_2_3
+	layer0_q_proj_3_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer0_ln1 -> layer0_q_proj_3_0
+	layer0_k_proj_3_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer0_ln1 -> layer0_k_proj_3_0
+	layer0_v_proj_3_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer0_ln1 -> layer0_v_proj_3_0
+	layer0_attn_3_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer0_q_proj_3_0 -> layer0_attn_3_0
+	layer0_k_proj_3_0 -> layer0_attn_3_0
+	layer0_v_proj_3_0 -> layer0_attn_3_0
+	layer0_q_proj_3_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer0_ln1 -> layer0_q_proj_3_1
+	layer0_k_proj_3_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer0_ln1 -> layer0_k_proj_3_1
+	layer0_v_proj_3_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer0_ln1 -> layer0_v_proj_3_1
+	layer0_attn_3_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer0_q_proj_3_1 -> layer0_attn_3_1
+	layer0_k_proj_3_1 -> layer0_attn_3_1
+	layer0_v_proj_3_1 -> layer0_attn_3_1
+	layer0_q_proj_3_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer0_ln1 -> layer0_q_proj_3_2
+	layer0_k_proj_3_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer0_ln1 -> layer0_k_proj_3_2
+	layer0_v_proj_3_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer0_ln1 -> layer0_v_proj_3_2
+	layer0_attn_3_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer0_q_proj_3_2 -> layer0_attn_3_2
+	layer0_k_proj_3_2 -> layer0_attn_3_2
+	layer0_v_proj_3_2 -> layer0_attn_3_2
+	layer0_q_proj_3_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer0_ln1 -> layer0_q_proj_3_3
+	layer0_k_proj_3_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer0_ln1 -> layer0_k_proj_3_3
+	layer0_v_proj_3_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer0_ln1 -> layer0_v_proj_3_3
+	layer0_attn_3_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer0_q_proj_3_3 -> layer0_attn_3_3
+	layer0_k_proj_3_3 -> layer0_attn_3_3
+	layer0_v_proj_3_3 -> layer0_attn_3_3
+	layer0_intra_group_agg_0 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 0-3" shape=parallelogram]
+	layer0_attn_0_0 -> layer0_intra_group_agg_0
+	layer0_attn_0_1 -> layer0_intra_group_agg_0
+	layer0_attn_0_2 -> layer0_intra_group_agg_0
+	layer0_attn_0_3 -> layer0_intra_group_agg_0
+	layer0_intra_group_agg_1 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 4-7" shape=parallelogram]
+	layer0_attn_1_0 -> layer0_intra_group_agg_1
+	layer0_attn_1_1 -> layer0_intra_group_agg_1
+	layer0_attn_1_2 -> layer0_intra_group_agg_1
+	layer0_attn_1_3 -> layer0_intra_group_agg_1
+	layer0_intra_group_agg_2 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 8-11" shape=parallelogram]
+	layer0_attn_2_0 -> layer0_intra_group_agg_2
+	layer0_attn_2_1 -> layer0_intra_group_agg_2
+	layer0_attn_2_2 -> layer0_intra_group_agg_2
+	layer0_attn_2_3 -> layer0_intra_group_agg_2
+	layer0_intra_group_agg_3 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 12-15" shape=parallelogram]
+	layer0_attn_3_0 -> layer0_intra_group_agg_3
+	layer0_attn_3_1 -> layer0_intra_group_agg_3
+	layer0_attn_3_2 -> layer0_intra_group_agg_3
+	layer0_attn_3_3 -> layer0_intra_group_agg_3
+	layer0_inter_group_agg [label="Inter-Group Concat\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer0_intra_group_agg_0 -> layer0_inter_group_agg
+	layer0_intra_group_agg_1 -> layer0_inter_group_agg
+	layer0_intra_group_agg_2 -> layer0_inter_group_agg
+	layer0_intra_group_agg_3 -> layer0_inter_group_agg
+	layer0_out_proj [label="Output Projection\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer0_inter_group_agg -> layer0_out_proj
+	layer0_residual1 [label="Residual Add\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	input -> layer0_residual1
+	layer0_out_proj -> layer0_residual1
+	layer0_ln2 [label="LayerNorm\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer0_residual1 -> layer0_ln2
+	layer0_mlp_linear1_0 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 0" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_0
+	layer0_mlp_linear1_1 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 1" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_1
+	layer0_mlp_linear1_2 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 2" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_2
+	layer0_mlp_linear1_3 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 3" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_3
+	layer0_mlp_linear1_4 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 4" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_4
+	layer0_mlp_linear1_5 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 5" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_5
+	layer0_mlp_linear1_6 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 6" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_6
+	layer0_mlp_linear1_7 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 7" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_7
+	layer0_mlp_linear1_8 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 8" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_8
+	layer0_mlp_linear1_9 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 9" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_9
+	layer0_mlp_linear1_10 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 10" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_10
+	layer0_mlp_linear1_11 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 11" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_11
+	layer0_mlp_linear1_12 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 12" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_12
+	layer0_mlp_linear1_13 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 13" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_13
+	layer0_mlp_linear1_14 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 14" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_14
+	layer0_mlp_linear1_15 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 15" shape=box]
+	layer0_ln2 -> layer0_mlp_linear1_15
+	layer0_mlp_gather [label="MLP Gather\nShape: 1024×2048×32768\nGPU: All GPUs" shape=parallelogram]
+	layer0_mlp_linear1_0 -> layer0_mlp_gather
+	layer0_mlp_linear1_1 -> layer0_mlp_gather
+	layer0_mlp_linear1_2 -> layer0_mlp_gather
+	layer0_mlp_linear1_3 -> layer0_mlp_gather
+	layer0_mlp_linear1_4 -> layer0_mlp_gather
+	layer0_mlp_linear1_5 -> layer0_mlp_gather
+	layer0_mlp_linear1_6 -> layer0_mlp_gather
+	layer0_mlp_linear1_7 -> layer0_mlp_gather
+	layer0_mlp_linear1_8 -> layer0_mlp_gather
+	layer0_mlp_linear1_9 -> layer0_mlp_gather
+	layer0_mlp_linear1_10 -> layer0_mlp_gather
+	layer0_mlp_linear1_11 -> layer0_mlp_gather
+	layer0_mlp_linear1_12 -> layer0_mlp_gather
+	layer0_mlp_linear1_13 -> layer0_mlp_gather
+	layer0_mlp_linear1_14 -> layer0_mlp_gather
+	layer0_mlp_linear1_15 -> layer0_mlp_gather
+	layer0_gelu [label="GELU\nShape: 1024×2048×32768\nGPU: All GPUs" shape=box]
+	layer0_mlp_gather -> layer0_gelu
+	layer0_mlp_linear2_0 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 0" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_0
+	layer0_mlp_linear2_1 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 1" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_1
+	layer0_mlp_linear2_2 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 2" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_2
+	layer0_mlp_linear2_3 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 3" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_3
+	layer0_mlp_linear2_4 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 4" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_4
+	layer0_mlp_linear2_5 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 5" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_5
+	layer0_mlp_linear2_6 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 6" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_6
+	layer0_mlp_linear2_7 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 7" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_7
+	layer0_mlp_linear2_8 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 8" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_8
+	layer0_mlp_linear2_9 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 9" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_9
+	layer0_mlp_linear2_10 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 10" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_10
+	layer0_mlp_linear2_11 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 11" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_11
+	layer0_mlp_linear2_12 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 12" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_12
+	layer0_mlp_linear2_13 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 13" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_13
+	layer0_mlp_linear2_14 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 14" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_14
+	layer0_mlp_linear2_15 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 15" shape=box]
+	layer0_gelu -> layer0_mlp_linear2_15
+	layer0_mlp_allreduce [label="MLP All-Reduce\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer0_mlp_linear2_0 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_1 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_2 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_3 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_4 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_5 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_6 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_7 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_8 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_9 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_10 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_11 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_12 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_13 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_14 -> layer0_mlp_allreduce
+	layer0_mlp_linear2_15 -> layer0_mlp_allreduce
+	layer0_residual2 [label="Residual Add\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer0_residual1 -> layer0_residual2
+	layer0_mlp_allreduce -> layer0_residual2
+	layer0_output [label="Layer 0 Output\nShape: 1024×2048×8192\nGPU: All GPUs" shape=ellipse]
+	layer0_residual2 -> layer0_output
+	layer1_ln1 [label="LayerNorm\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer0_output -> layer1_ln1
+	layer1_q_proj_0_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer1_ln1 -> layer1_q_proj_0_0
+	layer1_k_proj_0_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer1_ln1 -> layer1_k_proj_0_0
+	layer1_v_proj_0_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer1_ln1 -> layer1_v_proj_0_0
+	layer1_attn_0_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer1_q_proj_0_0 -> layer1_attn_0_0
+	layer1_k_proj_0_0 -> layer1_attn_0_0
+	layer1_v_proj_0_0 -> layer1_attn_0_0
+	layer1_q_proj_0_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer1_ln1 -> layer1_q_proj_0_1
+	layer1_k_proj_0_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer1_ln1 -> layer1_k_proj_0_1
+	layer1_v_proj_0_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer1_ln1 -> layer1_v_proj_0_1
+	layer1_attn_0_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer1_q_proj_0_1 -> layer1_attn_0_1
+	layer1_k_proj_0_1 -> layer1_attn_0_1
+	layer1_v_proj_0_1 -> layer1_attn_0_1
+	layer1_q_proj_0_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer1_ln1 -> layer1_q_proj_0_2
+	layer1_k_proj_0_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer1_ln1 -> layer1_k_proj_0_2
+	layer1_v_proj_0_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer1_ln1 -> layer1_v_proj_0_2
+	layer1_attn_0_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer1_q_proj_0_2 -> layer1_attn_0_2
+	layer1_k_proj_0_2 -> layer1_attn_0_2
+	layer1_v_proj_0_2 -> layer1_attn_0_2
+	layer1_q_proj_0_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer1_ln1 -> layer1_q_proj_0_3
+	layer1_k_proj_0_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer1_ln1 -> layer1_k_proj_0_3
+	layer1_v_proj_0_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer1_ln1 -> layer1_v_proj_0_3
+	layer1_attn_0_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer1_q_proj_0_3 -> layer1_attn_0_3
+	layer1_k_proj_0_3 -> layer1_attn_0_3
+	layer1_v_proj_0_3 -> layer1_attn_0_3
+	layer1_q_proj_1_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer1_ln1 -> layer1_q_proj_1_0
+	layer1_k_proj_1_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer1_ln1 -> layer1_k_proj_1_0
+	layer1_v_proj_1_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer1_ln1 -> layer1_v_proj_1_0
+	layer1_attn_1_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer1_q_proj_1_0 -> layer1_attn_1_0
+	layer1_k_proj_1_0 -> layer1_attn_1_0
+	layer1_v_proj_1_0 -> layer1_attn_1_0
+	layer1_q_proj_1_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer1_ln1 -> layer1_q_proj_1_1
+	layer1_k_proj_1_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer1_ln1 -> layer1_k_proj_1_1
+	layer1_v_proj_1_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer1_ln1 -> layer1_v_proj_1_1
+	layer1_attn_1_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer1_q_proj_1_1 -> layer1_attn_1_1
+	layer1_k_proj_1_1 -> layer1_attn_1_1
+	layer1_v_proj_1_1 -> layer1_attn_1_1
+	layer1_q_proj_1_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer1_ln1 -> layer1_q_proj_1_2
+	layer1_k_proj_1_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer1_ln1 -> layer1_k_proj_1_2
+	layer1_v_proj_1_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer1_ln1 -> layer1_v_proj_1_2
+	layer1_attn_1_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer1_q_proj_1_2 -> layer1_attn_1_2
+	layer1_k_proj_1_2 -> layer1_attn_1_2
+	layer1_v_proj_1_2 -> layer1_attn_1_2
+	layer1_q_proj_1_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer1_ln1 -> layer1_q_proj_1_3
+	layer1_k_proj_1_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer1_ln1 -> layer1_k_proj_1_3
+	layer1_v_proj_1_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer1_ln1 -> layer1_v_proj_1_3
+	layer1_attn_1_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer1_q_proj_1_3 -> layer1_attn_1_3
+	layer1_k_proj_1_3 -> layer1_attn_1_3
+	layer1_v_proj_1_3 -> layer1_attn_1_3
+	layer1_q_proj_2_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer1_ln1 -> layer1_q_proj_2_0
+	layer1_k_proj_2_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer1_ln1 -> layer1_k_proj_2_0
+	layer1_v_proj_2_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer1_ln1 -> layer1_v_proj_2_0
+	layer1_attn_2_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer1_q_proj_2_0 -> layer1_attn_2_0
+	layer1_k_proj_2_0 -> layer1_attn_2_0
+	layer1_v_proj_2_0 -> layer1_attn_2_0
+	layer1_q_proj_2_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer1_ln1 -> layer1_q_proj_2_1
+	layer1_k_proj_2_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer1_ln1 -> layer1_k_proj_2_1
+	layer1_v_proj_2_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer1_ln1 -> layer1_v_proj_2_1
+	layer1_attn_2_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer1_q_proj_2_1 -> layer1_attn_2_1
+	layer1_k_proj_2_1 -> layer1_attn_2_1
+	layer1_v_proj_2_1 -> layer1_attn_2_1
+	layer1_q_proj_2_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer1_ln1 -> layer1_q_proj_2_2
+	layer1_k_proj_2_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer1_ln1 -> layer1_k_proj_2_2
+	layer1_v_proj_2_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer1_ln1 -> layer1_v_proj_2_2
+	layer1_attn_2_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer1_q_proj_2_2 -> layer1_attn_2_2
+	layer1_k_proj_2_2 -> layer1_attn_2_2
+	layer1_v_proj_2_2 -> layer1_attn_2_2
+	layer1_q_proj_2_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer1_ln1 -> layer1_q_proj_2_3
+	layer1_k_proj_2_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer1_ln1 -> layer1_k_proj_2_3
+	layer1_v_proj_2_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer1_ln1 -> layer1_v_proj_2_3
+	layer1_attn_2_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer1_q_proj_2_3 -> layer1_attn_2_3
+	layer1_k_proj_2_3 -> layer1_attn_2_3
+	layer1_v_proj_2_3 -> layer1_attn_2_3
+	layer1_q_proj_3_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer1_ln1 -> layer1_q_proj_3_0
+	layer1_k_proj_3_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer1_ln1 -> layer1_k_proj_3_0
+	layer1_v_proj_3_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer1_ln1 -> layer1_v_proj_3_0
+	layer1_attn_3_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer1_q_proj_3_0 -> layer1_attn_3_0
+	layer1_k_proj_3_0 -> layer1_attn_3_0
+	layer1_v_proj_3_0 -> layer1_attn_3_0
+	layer1_q_proj_3_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer1_ln1 -> layer1_q_proj_3_1
+	layer1_k_proj_3_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer1_ln1 -> layer1_k_proj_3_1
+	layer1_v_proj_3_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer1_ln1 -> layer1_v_proj_3_1
+	layer1_attn_3_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer1_q_proj_3_1 -> layer1_attn_3_1
+	layer1_k_proj_3_1 -> layer1_attn_3_1
+	layer1_v_proj_3_1 -> layer1_attn_3_1
+	layer1_q_proj_3_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer1_ln1 -> layer1_q_proj_3_2
+	layer1_k_proj_3_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer1_ln1 -> layer1_k_proj_3_2
+	layer1_v_proj_3_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer1_ln1 -> layer1_v_proj_3_2
+	layer1_attn_3_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer1_q_proj_3_2 -> layer1_attn_3_2
+	layer1_k_proj_3_2 -> layer1_attn_3_2
+	layer1_v_proj_3_2 -> layer1_attn_3_2
+	layer1_q_proj_3_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer1_ln1 -> layer1_q_proj_3_3
+	layer1_k_proj_3_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer1_ln1 -> layer1_k_proj_3_3
+	layer1_v_proj_3_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer1_ln1 -> layer1_v_proj_3_3
+	layer1_attn_3_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer1_q_proj_3_3 -> layer1_attn_3_3
+	layer1_k_proj_3_3 -> layer1_attn_3_3
+	layer1_v_proj_3_3 -> layer1_attn_3_3
+	layer1_intra_group_agg_0 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 0-3" shape=parallelogram]
+	layer1_attn_0_0 -> layer1_intra_group_agg_0
+	layer1_attn_0_1 -> layer1_intra_group_agg_0
+	layer1_attn_0_2 -> layer1_intra_group_agg_0
+	layer1_attn_0_3 -> layer1_intra_group_agg_0
+	layer1_intra_group_agg_1 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 4-7" shape=parallelogram]
+	layer1_attn_1_0 -> layer1_intra_group_agg_1
+	layer1_attn_1_1 -> layer1_intra_group_agg_1
+	layer1_attn_1_2 -> layer1_intra_group_agg_1
+	layer1_attn_1_3 -> layer1_intra_group_agg_1
+	layer1_intra_group_agg_2 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 8-11" shape=parallelogram]
+	layer1_attn_2_0 -> layer1_intra_group_agg_2
+	layer1_attn_2_1 -> layer1_intra_group_agg_2
+	layer1_attn_2_2 -> layer1_intra_group_agg_2
+	layer1_attn_2_3 -> layer1_intra_group_agg_2
+	layer1_intra_group_agg_3 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 12-15" shape=parallelogram]
+	layer1_attn_3_0 -> layer1_intra_group_agg_3
+	layer1_attn_3_1 -> layer1_intra_group_agg_3
+	layer1_attn_3_2 -> layer1_intra_group_agg_3
+	layer1_attn_3_3 -> layer1_intra_group_agg_3
+	layer1_inter_group_agg [label="Inter-Group Concat\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer1_intra_group_agg_0 -> layer1_inter_group_agg
+	layer1_intra_group_agg_1 -> layer1_inter_group_agg
+	layer1_intra_group_agg_2 -> layer1_inter_group_agg
+	layer1_intra_group_agg_3 -> layer1_inter_group_agg
+	layer1_out_proj [label="Output Projection\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer1_inter_group_agg -> layer1_out_proj
+	layer1_residual1 [label="Residual Add\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer0_output -> layer1_residual1
+	layer1_out_proj -> layer1_residual1
+	layer1_ln2 [label="LayerNorm\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer1_residual1 -> layer1_ln2
+	layer1_mlp_linear1_0 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 0" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_0
+	layer1_mlp_linear1_1 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 1" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_1
+	layer1_mlp_linear1_2 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 2" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_2
+	layer1_mlp_linear1_3 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 3" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_3
+	layer1_mlp_linear1_4 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 4" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_4
+	layer1_mlp_linear1_5 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 5" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_5
+	layer1_mlp_linear1_6 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 6" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_6
+	layer1_mlp_linear1_7 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 7" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_7
+	layer1_mlp_linear1_8 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 8" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_8
+	layer1_mlp_linear1_9 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 9" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_9
+	layer1_mlp_linear1_10 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 10" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_10
+	layer1_mlp_linear1_11 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 11" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_11
+	layer1_mlp_linear1_12 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 12" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_12
+	layer1_mlp_linear1_13 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 13" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_13
+	layer1_mlp_linear1_14 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 14" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_14
+	layer1_mlp_linear1_15 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 15" shape=box]
+	layer1_ln2 -> layer1_mlp_linear1_15
+	layer1_mlp_gather [label="MLP Gather\nShape: 1024×2048×32768\nGPU: All GPUs" shape=parallelogram]
+	layer1_mlp_linear1_0 -> layer1_mlp_gather
+	layer1_mlp_linear1_1 -> layer1_mlp_gather
+	layer1_mlp_linear1_2 -> layer1_mlp_gather
+	layer1_mlp_linear1_3 -> layer1_mlp_gather
+	layer1_mlp_linear1_4 -> layer1_mlp_gather
+	layer1_mlp_linear1_5 -> layer1_mlp_gather
+	layer1_mlp_linear1_6 -> layer1_mlp_gather
+	layer1_mlp_linear1_7 -> layer1_mlp_gather
+	layer1_mlp_linear1_8 -> layer1_mlp_gather
+	layer1_mlp_linear1_9 -> layer1_mlp_gather
+	layer1_mlp_linear1_10 -> layer1_mlp_gather
+	layer1_mlp_linear1_11 -> layer1_mlp_gather
+	layer1_mlp_linear1_12 -> layer1_mlp_gather
+	layer1_mlp_linear1_13 -> layer1_mlp_gather
+	layer1_mlp_linear1_14 -> layer1_mlp_gather
+	layer1_mlp_linear1_15 -> layer1_mlp_gather
+	layer1_gelu [label="GELU\nShape: 1024×2048×32768\nGPU: All GPUs" shape=box]
+	layer1_mlp_gather -> layer1_gelu
+	layer1_mlp_linear2_0 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 0" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_0
+	layer1_mlp_linear2_1 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 1" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_1
+	layer1_mlp_linear2_2 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 2" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_2
+	layer1_mlp_linear2_3 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 3" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_3
+	layer1_mlp_linear2_4 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 4" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_4
+	layer1_mlp_linear2_5 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 5" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_5
+	layer1_mlp_linear2_6 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 6" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_6
+	layer1_mlp_linear2_7 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 7" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_7
+	layer1_mlp_linear2_8 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 8" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_8
+	layer1_mlp_linear2_9 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 9" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_9
+	layer1_mlp_linear2_10 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 10" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_10
+	layer1_mlp_linear2_11 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 11" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_11
+	layer1_mlp_linear2_12 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 12" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_12
+	layer1_mlp_linear2_13 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 13" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_13
+	layer1_mlp_linear2_14 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 14" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_14
+	layer1_mlp_linear2_15 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 15" shape=box]
+	layer1_gelu -> layer1_mlp_linear2_15
+	layer1_mlp_allreduce [label="MLP All-Reduce\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer1_mlp_linear2_0 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_1 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_2 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_3 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_4 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_5 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_6 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_7 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_8 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_9 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_10 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_11 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_12 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_13 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_14 -> layer1_mlp_allreduce
+	layer1_mlp_linear2_15 -> layer1_mlp_allreduce
+	layer1_residual2 [label="Residual Add\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer1_residual1 -> layer1_residual2
+	layer1_mlp_allreduce -> layer1_residual2
+	layer1_output [label="Layer 1 Output\nShape: 1024×2048×8192\nGPU: All GPUs" shape=ellipse]
+	layer1_residual2 -> layer1_output
+	layer2_ln1 [label="LayerNorm\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer1_output -> layer2_ln1
+	layer2_q_proj_0_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer2_ln1 -> layer2_q_proj_0_0
+	layer2_k_proj_0_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer2_ln1 -> layer2_k_proj_0_0
+	layer2_v_proj_0_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer2_ln1 -> layer2_v_proj_0_0
+	layer2_attn_0_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer2_q_proj_0_0 -> layer2_attn_0_0
+	layer2_k_proj_0_0 -> layer2_attn_0_0
+	layer2_v_proj_0_0 -> layer2_attn_0_0
+	layer2_q_proj_0_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer2_ln1 -> layer2_q_proj_0_1
+	layer2_k_proj_0_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer2_ln1 -> layer2_k_proj_0_1
+	layer2_v_proj_0_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer2_ln1 -> layer2_v_proj_0_1
+	layer2_attn_0_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer2_q_proj_0_1 -> layer2_attn_0_1
+	layer2_k_proj_0_1 -> layer2_attn_0_1
+	layer2_v_proj_0_1 -> layer2_attn_0_1
+	layer2_q_proj_0_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer2_ln1 -> layer2_q_proj_0_2
+	layer2_k_proj_0_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer2_ln1 -> layer2_k_proj_0_2
+	layer2_v_proj_0_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer2_ln1 -> layer2_v_proj_0_2
+	layer2_attn_0_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer2_q_proj_0_2 -> layer2_attn_0_2
+	layer2_k_proj_0_2 -> layer2_attn_0_2
+	layer2_v_proj_0_2 -> layer2_attn_0_2
+	layer2_q_proj_0_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer2_ln1 -> layer2_q_proj_0_3
+	layer2_k_proj_0_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer2_ln1 -> layer2_k_proj_0_3
+	layer2_v_proj_0_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer2_ln1 -> layer2_v_proj_0_3
+	layer2_attn_0_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer2_q_proj_0_3 -> layer2_attn_0_3
+	layer2_k_proj_0_3 -> layer2_attn_0_3
+	layer2_v_proj_0_3 -> layer2_attn_0_3
+	layer2_q_proj_1_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer2_ln1 -> layer2_q_proj_1_0
+	layer2_k_proj_1_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer2_ln1 -> layer2_k_proj_1_0
+	layer2_v_proj_1_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer2_ln1 -> layer2_v_proj_1_0
+	layer2_attn_1_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer2_q_proj_1_0 -> layer2_attn_1_0
+	layer2_k_proj_1_0 -> layer2_attn_1_0
+	layer2_v_proj_1_0 -> layer2_attn_1_0
+	layer2_q_proj_1_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer2_ln1 -> layer2_q_proj_1_1
+	layer2_k_proj_1_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer2_ln1 -> layer2_k_proj_1_1
+	layer2_v_proj_1_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer2_ln1 -> layer2_v_proj_1_1
+	layer2_attn_1_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer2_q_proj_1_1 -> layer2_attn_1_1
+	layer2_k_proj_1_1 -> layer2_attn_1_1
+	layer2_v_proj_1_1 -> layer2_attn_1_1
+	layer2_q_proj_1_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer2_ln1 -> layer2_q_proj_1_2
+	layer2_k_proj_1_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer2_ln1 -> layer2_k_proj_1_2
+	layer2_v_proj_1_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer2_ln1 -> layer2_v_proj_1_2
+	layer2_attn_1_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer2_q_proj_1_2 -> layer2_attn_1_2
+	layer2_k_proj_1_2 -> layer2_attn_1_2
+	layer2_v_proj_1_2 -> layer2_attn_1_2
+	layer2_q_proj_1_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer2_ln1 -> layer2_q_proj_1_3
+	layer2_k_proj_1_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer2_ln1 -> layer2_k_proj_1_3
+	layer2_v_proj_1_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer2_ln1 -> layer2_v_proj_1_3
+	layer2_attn_1_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer2_q_proj_1_3 -> layer2_attn_1_3
+	layer2_k_proj_1_3 -> layer2_attn_1_3
+	layer2_v_proj_1_3 -> layer2_attn_1_3
+	layer2_q_proj_2_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer2_ln1 -> layer2_q_proj_2_0
+	layer2_k_proj_2_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer2_ln1 -> layer2_k_proj_2_0
+	layer2_v_proj_2_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer2_ln1 -> layer2_v_proj_2_0
+	layer2_attn_2_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer2_q_proj_2_0 -> layer2_attn_2_0
+	layer2_k_proj_2_0 -> layer2_attn_2_0
+	layer2_v_proj_2_0 -> layer2_attn_2_0
+	layer2_q_proj_2_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer2_ln1 -> layer2_q_proj_2_1
+	layer2_k_proj_2_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer2_ln1 -> layer2_k_proj_2_1
+	layer2_v_proj_2_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer2_ln1 -> layer2_v_proj_2_1
+	layer2_attn_2_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer2_q_proj_2_1 -> layer2_attn_2_1
+	layer2_k_proj_2_1 -> layer2_attn_2_1
+	layer2_v_proj_2_1 -> layer2_attn_2_1
+	layer2_q_proj_2_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer2_ln1 -> layer2_q_proj_2_2
+	layer2_k_proj_2_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer2_ln1 -> layer2_k_proj_2_2
+	layer2_v_proj_2_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer2_ln1 -> layer2_v_proj_2_2
+	layer2_attn_2_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer2_q_proj_2_2 -> layer2_attn_2_2
+	layer2_k_proj_2_2 -> layer2_attn_2_2
+	layer2_v_proj_2_2 -> layer2_attn_2_2
+	layer2_q_proj_2_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer2_ln1 -> layer2_q_proj_2_3
+	layer2_k_proj_2_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer2_ln1 -> layer2_k_proj_2_3
+	layer2_v_proj_2_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer2_ln1 -> layer2_v_proj_2_3
+	layer2_attn_2_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer2_q_proj_2_3 -> layer2_attn_2_3
+	layer2_k_proj_2_3 -> layer2_attn_2_3
+	layer2_v_proj_2_3 -> layer2_attn_2_3
+	layer2_q_proj_3_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer2_ln1 -> layer2_q_proj_3_0
+	layer2_k_proj_3_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer2_ln1 -> layer2_k_proj_3_0
+	layer2_v_proj_3_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer2_ln1 -> layer2_v_proj_3_0
+	layer2_attn_3_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer2_q_proj_3_0 -> layer2_attn_3_0
+	layer2_k_proj_3_0 -> layer2_attn_3_0
+	layer2_v_proj_3_0 -> layer2_attn_3_0
+	layer2_q_proj_3_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer2_ln1 -> layer2_q_proj_3_1
+	layer2_k_proj_3_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer2_ln1 -> layer2_k_proj_3_1
+	layer2_v_proj_3_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer2_ln1 -> layer2_v_proj_3_1
+	layer2_attn_3_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer2_q_proj_3_1 -> layer2_attn_3_1
+	layer2_k_proj_3_1 -> layer2_attn_3_1
+	layer2_v_proj_3_1 -> layer2_attn_3_1
+	layer2_q_proj_3_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer2_ln1 -> layer2_q_proj_3_2
+	layer2_k_proj_3_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer2_ln1 -> layer2_k_proj_3_2
+	layer2_v_proj_3_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer2_ln1 -> layer2_v_proj_3_2
+	layer2_attn_3_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer2_q_proj_3_2 -> layer2_attn_3_2
+	layer2_k_proj_3_2 -> layer2_attn_3_2
+	layer2_v_proj_3_2 -> layer2_attn_3_2
+	layer2_q_proj_3_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer2_ln1 -> layer2_q_proj_3_3
+	layer2_k_proj_3_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer2_ln1 -> layer2_k_proj_3_3
+	layer2_v_proj_3_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer2_ln1 -> layer2_v_proj_3_3
+	layer2_attn_3_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer2_q_proj_3_3 -> layer2_attn_3_3
+	layer2_k_proj_3_3 -> layer2_attn_3_3
+	layer2_v_proj_3_3 -> layer2_attn_3_3
+	layer2_intra_group_agg_0 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 0-3" shape=parallelogram]
+	layer2_attn_0_0 -> layer2_intra_group_agg_0
+	layer2_attn_0_1 -> layer2_intra_group_agg_0
+	layer2_attn_0_2 -> layer2_intra_group_agg_0
+	layer2_attn_0_3 -> layer2_intra_group_agg_0
+	layer2_intra_group_agg_1 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 4-7" shape=parallelogram]
+	layer2_attn_1_0 -> layer2_intra_group_agg_1
+	layer2_attn_1_1 -> layer2_intra_group_agg_1
+	layer2_attn_1_2 -> layer2_intra_group_agg_1
+	layer2_attn_1_3 -> layer2_intra_group_agg_1
+	layer2_intra_group_agg_2 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 8-11" shape=parallelogram]
+	layer2_attn_2_0 -> layer2_intra_group_agg_2
+	layer2_attn_2_1 -> layer2_intra_group_agg_2
+	layer2_attn_2_2 -> layer2_intra_group_agg_2
+	layer2_attn_2_3 -> layer2_intra_group_agg_2
+	layer2_intra_group_agg_3 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 12-15" shape=parallelogram]
+	layer2_attn_3_0 -> layer2_intra_group_agg_3
+	layer2_attn_3_1 -> layer2_intra_group_agg_3
+	layer2_attn_3_2 -> layer2_intra_group_agg_3
+	layer2_attn_3_3 -> layer2_intra_group_agg_3
+	layer2_inter_group_agg [label="Inter-Group Concat\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer2_intra_group_agg_0 -> layer2_inter_group_agg
+	layer2_intra_group_agg_1 -> layer2_inter_group_agg
+	layer2_intra_group_agg_2 -> layer2_inter_group_agg
+	layer2_intra_group_agg_3 -> layer2_inter_group_agg
+	layer2_out_proj [label="Output Projection\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer2_inter_group_agg -> layer2_out_proj
+	layer2_residual1 [label="Residual Add\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer1_output -> layer2_residual1
+	layer2_out_proj -> layer2_residual1
+	layer2_ln2 [label="LayerNorm\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer2_residual1 -> layer2_ln2
+	layer2_mlp_linear1_0 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 0" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_0
+	layer2_mlp_linear1_1 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 1" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_1
+	layer2_mlp_linear1_2 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 2" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_2
+	layer2_mlp_linear1_3 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 3" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_3
+	layer2_mlp_linear1_4 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 4" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_4
+	layer2_mlp_linear1_5 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 5" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_5
+	layer2_mlp_linear1_6 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 6" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_6
+	layer2_mlp_linear1_7 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 7" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_7
+	layer2_mlp_linear1_8 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 8" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_8
+	layer2_mlp_linear1_9 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 9" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_9
+	layer2_mlp_linear1_10 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 10" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_10
+	layer2_mlp_linear1_11 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 11" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_11
+	layer2_mlp_linear1_12 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 12" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_12
+	layer2_mlp_linear1_13 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 13" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_13
+	layer2_mlp_linear1_14 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 14" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_14
+	layer2_mlp_linear1_15 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 15" shape=box]
+	layer2_ln2 -> layer2_mlp_linear1_15
+	layer2_mlp_gather [label="MLP Gather\nShape: 1024×2048×32768\nGPU: All GPUs" shape=parallelogram]
+	layer2_mlp_linear1_0 -> layer2_mlp_gather
+	layer2_mlp_linear1_1 -> layer2_mlp_gather
+	layer2_mlp_linear1_2 -> layer2_mlp_gather
+	layer2_mlp_linear1_3 -> layer2_mlp_gather
+	layer2_mlp_linear1_4 -> layer2_mlp_gather
+	layer2_mlp_linear1_5 -> layer2_mlp_gather
+	layer2_mlp_linear1_6 -> layer2_mlp_gather
+	layer2_mlp_linear1_7 -> layer2_mlp_gather
+	layer2_mlp_linear1_8 -> layer2_mlp_gather
+	layer2_mlp_linear1_9 -> layer2_mlp_gather
+	layer2_mlp_linear1_10 -> layer2_mlp_gather
+	layer2_mlp_linear1_11 -> layer2_mlp_gather
+	layer2_mlp_linear1_12 -> layer2_mlp_gather
+	layer2_mlp_linear1_13 -> layer2_mlp_gather
+	layer2_mlp_linear1_14 -> layer2_mlp_gather
+	layer2_mlp_linear1_15 -> layer2_mlp_gather
+	layer2_gelu [label="GELU\nShape: 1024×2048×32768\nGPU: All GPUs" shape=box]
+	layer2_mlp_gather -> layer2_gelu
+	layer2_mlp_linear2_0 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 0" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_0
+	layer2_mlp_linear2_1 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 1" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_1
+	layer2_mlp_linear2_2 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 2" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_2
+	layer2_mlp_linear2_3 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 3" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_3
+	layer2_mlp_linear2_4 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 4" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_4
+	layer2_mlp_linear2_5 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 5" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_5
+	layer2_mlp_linear2_6 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 6" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_6
+	layer2_mlp_linear2_7 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 7" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_7
+	layer2_mlp_linear2_8 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 8" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_8
+	layer2_mlp_linear2_9 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 9" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_9
+	layer2_mlp_linear2_10 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 10" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_10
+	layer2_mlp_linear2_11 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 11" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_11
+	layer2_mlp_linear2_12 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 12" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_12
+	layer2_mlp_linear2_13 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 13" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_13
+	layer2_mlp_linear2_14 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 14" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_14
+	layer2_mlp_linear2_15 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 15" shape=box]
+	layer2_gelu -> layer2_mlp_linear2_15
+	layer2_mlp_allreduce [label="MLP All-Reduce\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer2_mlp_linear2_0 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_1 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_2 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_3 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_4 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_5 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_6 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_7 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_8 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_9 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_10 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_11 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_12 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_13 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_14 -> layer2_mlp_allreduce
+	layer2_mlp_linear2_15 -> layer2_mlp_allreduce
+	layer2_residual2 [label="Residual Add\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer2_residual1 -> layer2_residual2
+	layer2_mlp_allreduce -> layer2_residual2
+	layer2_output [label="Layer 2 Output\nShape: 1024×2048×8192\nGPU: All GPUs" shape=ellipse]
+	layer2_residual2 -> layer2_output
+	layer3_ln1 [label="LayerNorm\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer2_output -> layer3_ln1
+	layer3_q_proj_0_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer3_ln1 -> layer3_q_proj_0_0
+	layer3_k_proj_0_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer3_ln1 -> layer3_k_proj_0_0
+	layer3_v_proj_0_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer3_ln1 -> layer3_v_proj_0_0
+	layer3_attn_0_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 0" shape=box]
+	layer3_q_proj_0_0 -> layer3_attn_0_0
+	layer3_k_proj_0_0 -> layer3_attn_0_0
+	layer3_v_proj_0_0 -> layer3_attn_0_0
+	layer3_q_proj_0_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer3_ln1 -> layer3_q_proj_0_1
+	layer3_k_proj_0_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer3_ln1 -> layer3_k_proj_0_1
+	layer3_v_proj_0_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer3_ln1 -> layer3_v_proj_0_1
+	layer3_attn_0_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 1" shape=box]
+	layer3_q_proj_0_1 -> layer3_attn_0_1
+	layer3_k_proj_0_1 -> layer3_attn_0_1
+	layer3_v_proj_0_1 -> layer3_attn_0_1
+	layer3_q_proj_0_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer3_ln1 -> layer3_q_proj_0_2
+	layer3_k_proj_0_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer3_ln1 -> layer3_k_proj_0_2
+	layer3_v_proj_0_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer3_ln1 -> layer3_v_proj_0_2
+	layer3_attn_0_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 2" shape=box]
+	layer3_q_proj_0_2 -> layer3_attn_0_2
+	layer3_k_proj_0_2 -> layer3_attn_0_2
+	layer3_v_proj_0_2 -> layer3_attn_0_2
+	layer3_q_proj_0_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer3_ln1 -> layer3_q_proj_0_3
+	layer3_k_proj_0_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer3_ln1 -> layer3_k_proj_0_3
+	layer3_v_proj_0_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer3_ln1 -> layer3_v_proj_0_3
+	layer3_attn_0_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 3" shape=box]
+	layer3_q_proj_0_3 -> layer3_attn_0_3
+	layer3_k_proj_0_3 -> layer3_attn_0_3
+	layer3_v_proj_0_3 -> layer3_attn_0_3
+	layer3_q_proj_1_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer3_ln1 -> layer3_q_proj_1_0
+	layer3_k_proj_1_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer3_ln1 -> layer3_k_proj_1_0
+	layer3_v_proj_1_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer3_ln1 -> layer3_v_proj_1_0
+	layer3_attn_1_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 4" shape=box]
+	layer3_q_proj_1_0 -> layer3_attn_1_0
+	layer3_k_proj_1_0 -> layer3_attn_1_0
+	layer3_v_proj_1_0 -> layer3_attn_1_0
+	layer3_q_proj_1_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer3_ln1 -> layer3_q_proj_1_1
+	layer3_k_proj_1_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer3_ln1 -> layer3_k_proj_1_1
+	layer3_v_proj_1_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer3_ln1 -> layer3_v_proj_1_1
+	layer3_attn_1_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 5" shape=box]
+	layer3_q_proj_1_1 -> layer3_attn_1_1
+	layer3_k_proj_1_1 -> layer3_attn_1_1
+	layer3_v_proj_1_1 -> layer3_attn_1_1
+	layer3_q_proj_1_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer3_ln1 -> layer3_q_proj_1_2
+	layer3_k_proj_1_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer3_ln1 -> layer3_k_proj_1_2
+	layer3_v_proj_1_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer3_ln1 -> layer3_v_proj_1_2
+	layer3_attn_1_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 6" shape=box]
+	layer3_q_proj_1_2 -> layer3_attn_1_2
+	layer3_k_proj_1_2 -> layer3_attn_1_2
+	layer3_v_proj_1_2 -> layer3_attn_1_2
+	layer3_q_proj_1_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer3_ln1 -> layer3_q_proj_1_3
+	layer3_k_proj_1_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer3_ln1 -> layer3_k_proj_1_3
+	layer3_v_proj_1_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer3_ln1 -> layer3_v_proj_1_3
+	layer3_attn_1_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 7" shape=box]
+	layer3_q_proj_1_3 -> layer3_attn_1_3
+	layer3_k_proj_1_3 -> layer3_attn_1_3
+	layer3_v_proj_1_3 -> layer3_attn_1_3
+	layer3_q_proj_2_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer3_ln1 -> layer3_q_proj_2_0
+	layer3_k_proj_2_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer3_ln1 -> layer3_k_proj_2_0
+	layer3_v_proj_2_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer3_ln1 -> layer3_v_proj_2_0
+	layer3_attn_2_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 8" shape=box]
+	layer3_q_proj_2_0 -> layer3_attn_2_0
+	layer3_k_proj_2_0 -> layer3_attn_2_0
+	layer3_v_proj_2_0 -> layer3_attn_2_0
+	layer3_q_proj_2_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer3_ln1 -> layer3_q_proj_2_1
+	layer3_k_proj_2_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer3_ln1 -> layer3_k_proj_2_1
+	layer3_v_proj_2_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer3_ln1 -> layer3_v_proj_2_1
+	layer3_attn_2_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 9" shape=box]
+	layer3_q_proj_2_1 -> layer3_attn_2_1
+	layer3_k_proj_2_1 -> layer3_attn_2_1
+	layer3_v_proj_2_1 -> layer3_attn_2_1
+	layer3_q_proj_2_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer3_ln1 -> layer3_q_proj_2_2
+	layer3_k_proj_2_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer3_ln1 -> layer3_k_proj_2_2
+	layer3_v_proj_2_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer3_ln1 -> layer3_v_proj_2_2
+	layer3_attn_2_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 10" shape=box]
+	layer3_q_proj_2_2 -> layer3_attn_2_2
+	layer3_k_proj_2_2 -> layer3_attn_2_2
+	layer3_v_proj_2_2 -> layer3_attn_2_2
+	layer3_q_proj_2_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer3_ln1 -> layer3_q_proj_2_3
+	layer3_k_proj_2_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer3_ln1 -> layer3_k_proj_2_3
+	layer3_v_proj_2_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer3_ln1 -> layer3_v_proj_2_3
+	layer3_attn_2_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 11" shape=box]
+	layer3_q_proj_2_3 -> layer3_attn_2_3
+	layer3_k_proj_2_3 -> layer3_attn_2_3
+	layer3_v_proj_2_3 -> layer3_attn_2_3
+	layer3_q_proj_3_0 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer3_ln1 -> layer3_q_proj_3_0
+	layer3_k_proj_3_0 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer3_ln1 -> layer3_k_proj_3_0
+	layer3_v_proj_3_0 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer3_ln1 -> layer3_v_proj_3_0
+	layer3_attn_3_0 [label="Attention\nShape: 1024×2048×4×128\nGPU: 12" shape=box]
+	layer3_q_proj_3_0 -> layer3_attn_3_0
+	layer3_k_proj_3_0 -> layer3_attn_3_0
+	layer3_v_proj_3_0 -> layer3_attn_3_0
+	layer3_q_proj_3_1 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer3_ln1 -> layer3_q_proj_3_1
+	layer3_k_proj_3_1 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer3_ln1 -> layer3_k_proj_3_1
+	layer3_v_proj_3_1 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer3_ln1 -> layer3_v_proj_3_1
+	layer3_attn_3_1 [label="Attention\nShape: 1024×2048×4×128\nGPU: 13" shape=box]
+	layer3_q_proj_3_1 -> layer3_attn_3_1
+	layer3_k_proj_3_1 -> layer3_attn_3_1
+	layer3_v_proj_3_1 -> layer3_attn_3_1
+	layer3_q_proj_3_2 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer3_ln1 -> layer3_q_proj_3_2
+	layer3_k_proj_3_2 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer3_ln1 -> layer3_k_proj_3_2
+	layer3_v_proj_3_2 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer3_ln1 -> layer3_v_proj_3_2
+	layer3_attn_3_2 [label="Attention\nShape: 1024×2048×4×128\nGPU: 14" shape=box]
+	layer3_q_proj_3_2 -> layer3_attn_3_2
+	layer3_k_proj_3_2 -> layer3_attn_3_2
+	layer3_v_proj_3_2 -> layer3_attn_3_2
+	layer3_q_proj_3_3 [label="Q Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer3_ln1 -> layer3_q_proj_3_3
+	layer3_k_proj_3_3 [label="K Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer3_ln1 -> layer3_k_proj_3_3
+	layer3_v_proj_3_3 [label="V Proj\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer3_ln1 -> layer3_v_proj_3_3
+	layer3_attn_3_3 [label="Attention\nShape: 1024×2048×4×128\nGPU: 15" shape=box]
+	layer3_q_proj_3_3 -> layer3_attn_3_3
+	layer3_k_proj_3_3 -> layer3_attn_3_3
+	layer3_v_proj_3_3 -> layer3_attn_3_3
+	layer3_intra_group_agg_0 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 0-3" shape=parallelogram]
+	layer3_attn_0_0 -> layer3_intra_group_agg_0
+	layer3_attn_0_1 -> layer3_intra_group_agg_0
+	layer3_attn_0_2 -> layer3_intra_group_agg_0
+	layer3_attn_0_3 -> layer3_intra_group_agg_0
+	layer3_intra_group_agg_1 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 4-7" shape=parallelogram]
+	layer3_attn_1_0 -> layer3_intra_group_agg_1
+	layer3_attn_1_1 -> layer3_intra_group_agg_1
+	layer3_attn_1_2 -> layer3_intra_group_agg_1
+	layer3_attn_1_3 -> layer3_intra_group_agg_1
+	layer3_intra_group_agg_2 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 8-11" shape=parallelogram]
+	layer3_attn_2_0 -> layer3_intra_group_agg_2
+	layer3_attn_2_1 -> layer3_intra_group_agg_2
+	layer3_attn_2_2 -> layer3_intra_group_agg_2
+	layer3_attn_2_3 -> layer3_intra_group_agg_2
+	layer3_intra_group_agg_3 [label="Intra-Group Concat\nShape: 1024×2048×4×512\nGPU: 12-15" shape=parallelogram]
+	layer3_attn_3_0 -> layer3_intra_group_agg_3
+	layer3_attn_3_1 -> layer3_intra_group_agg_3
+	layer3_attn_3_2 -> layer3_intra_group_agg_3
+	layer3_attn_3_3 -> layer3_intra_group_agg_3
+	layer3_inter_group_agg [label="Inter-Group Concat\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer3_intra_group_agg_0 -> layer3_inter_group_agg
+	layer3_intra_group_agg_1 -> layer3_inter_group_agg
+	layer3_intra_group_agg_2 -> layer3_inter_group_agg
+	layer3_intra_group_agg_3 -> layer3_inter_group_agg
+	layer3_out_proj [label="Output Projection\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer3_inter_group_agg -> layer3_out_proj
+	layer3_residual1 [label="Residual Add\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer2_output -> layer3_residual1
+	layer3_out_proj -> layer3_residual1
+	layer3_ln2 [label="LayerNorm\nShape: 1024×2048×8192\nGPU: All GPUs" shape=box]
+	layer3_residual1 -> layer3_ln2
+	layer3_mlp_linear1_0 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 0" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_0
+	layer3_mlp_linear1_1 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 1" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_1
+	layer3_mlp_linear1_2 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 2" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_2
+	layer3_mlp_linear1_3 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 3" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_3
+	layer3_mlp_linear1_4 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 4" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_4
+	layer3_mlp_linear1_5 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 5" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_5
+	layer3_mlp_linear1_6 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 6" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_6
+	layer3_mlp_linear1_7 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 7" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_7
+	layer3_mlp_linear1_8 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 8" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_8
+	layer3_mlp_linear1_9 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 9" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_9
+	layer3_mlp_linear1_10 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 10" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_10
+	layer3_mlp_linear1_11 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 11" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_11
+	layer3_mlp_linear1_12 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 12" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_12
+	layer3_mlp_linear1_13 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 13" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_13
+	layer3_mlp_linear1_14 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 14" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_14
+	layer3_mlp_linear1_15 [label="MLP Linear1\nShape: 1024×2048×2048\nGPU: 15" shape=box]
+	layer3_ln2 -> layer3_mlp_linear1_15
+	layer3_mlp_gather [label="MLP Gather\nShape: 1024×2048×32768\nGPU: All GPUs" shape=parallelogram]
+	layer3_mlp_linear1_0 -> layer3_mlp_gather
+	layer3_mlp_linear1_1 -> layer3_mlp_gather
+	layer3_mlp_linear1_2 -> layer3_mlp_gather
+	layer3_mlp_linear1_3 -> layer3_mlp_gather
+	layer3_mlp_linear1_4 -> layer3_mlp_gather
+	layer3_mlp_linear1_5 -> layer3_mlp_gather
+	layer3_mlp_linear1_6 -> layer3_mlp_gather
+	layer3_mlp_linear1_7 -> layer3_mlp_gather
+	layer3_mlp_linear1_8 -> layer3_mlp_gather
+	layer3_mlp_linear1_9 -> layer3_mlp_gather
+	layer3_mlp_linear1_10 -> layer3_mlp_gather
+	layer3_mlp_linear1_11 -> layer3_mlp_gather
+	layer3_mlp_linear1_12 -> layer3_mlp_gather
+	layer3_mlp_linear1_13 -> layer3_mlp_gather
+	layer3_mlp_linear1_14 -> layer3_mlp_gather
+	layer3_mlp_linear1_15 -> layer3_mlp_gather
+	layer3_gelu [label="GELU\nShape: 1024×2048×32768\nGPU: All GPUs" shape=box]
+	layer3_mlp_gather -> layer3_gelu
+	layer3_mlp_linear2_0 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 0" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_0
+	layer3_mlp_linear2_1 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 1" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_1
+	layer3_mlp_linear2_2 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 2" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_2
+	layer3_mlp_linear2_3 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 3" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_3
+	layer3_mlp_linear2_4 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 4" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_4
+	layer3_mlp_linear2_5 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 5" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_5
+	layer3_mlp_linear2_6 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 6" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_6
+	layer3_mlp_linear2_7 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 7" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_7
+	layer3_mlp_linear2_8 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 8" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_8
+	layer3_mlp_linear2_9 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 9" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_9
+	layer3_mlp_linear2_10 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 10" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_10
+	layer3_mlp_linear2_11 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 11" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_11
+	layer3_mlp_linear2_12 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 12" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_12
+	layer3_mlp_linear2_13 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 13" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_13
+	layer3_mlp_linear2_14 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 14" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_14
+	layer3_mlp_linear2_15 [label="MLP Linear2\nShape: 1024×2048×512\nGPU: 15" shape=box]
+	layer3_gelu -> layer3_mlp_linear2_15
+	layer3_mlp_allreduce [label="MLP All-Reduce\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer3_mlp_linear2_0 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_1 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_2 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_3 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_4 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_5 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_6 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_7 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_8 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_9 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_10 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_11 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_12 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_13 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_14 -> layer3_mlp_allreduce
+	layer3_mlp_linear2_15 -> layer3_mlp_allreduce
+	layer3_residual2 [label="Residual Add\nShape: 1024×2048×8192\nGPU: All GPUs" shape=parallelogram]
+	layer3_residual1 -> layer3_residual2
+	layer3_mlp_allreduce -> layer3_residual2
+	layer3_output [label="Layer 3 Output\nShape: 1024×2048×8192\nGPU: All GPUs" shape=ellipse]
+	layer3_residual2 -> layer3_output
+	output [label="Final Output\nShape: 1024×2048×8192\nGPU: All GPUs" shape=ellipse]
+	layer3_output -> output
+}

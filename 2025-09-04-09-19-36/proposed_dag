@@ -1,0 +1,680 @@
+// Proposed DAG: Layer-wise Deployment
+digraph {
+	rankdir=TB size="20,30"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	input [label="Input
+[1024, 8192]
+GPU 0" fillcolor=lightgreen shape=ellipse]
+	subgraph cluster_layer1 {
+		color=purple label="Layer 1 (GPU 0)" style=dashed
+		l1_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 0" fillcolor=lightcoral shape=rectangle]
+		l1_attn_add [label="Residual Add
+[1024, 8192]
+GPU 0" fillcolor=lightyellow shape=parallelogram]
+		l1_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 0" fillcolor=lightpink shape=rectangle]
+		l1_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 0" fillcolor=lightgreen shape=rectangle]
+		l1_gelu [label="GELU Activation
+[1024, 32768]
+GPU 0" fillcolor=lightblue shape=rectangle]
+		l1_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 0" fillcolor=lightgreen shape=rectangle]
+		l1_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 0" fillcolor=lightyellow shape=parallelogram]
+		l1_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 0" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer2 {
+		color=purple label="Layer 2 (GPU 1)" style=dashed
+		l2_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 1" fillcolor=lightcoral shape=rectangle]
+		l2_attn_add [label="Residual Add
+[1024, 8192]
+GPU 1" fillcolor=lightyellow shape=parallelogram]
+		l2_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 1" fillcolor=lightpink shape=rectangle]
+		l2_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 1" fillcolor=lightgreen shape=rectangle]
+		l2_gelu [label="GELU Activation
+[1024, 32768]
+GPU 1" fillcolor=lightblue shape=rectangle]
+		l2_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 1" fillcolor=lightgreen shape=rectangle]
+		l2_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 1" fillcolor=lightyellow shape=parallelogram]
+		l2_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 1" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer3 {
+		color=purple label="Layer 3 (GPU 2)" style=dashed
+		l3_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 2" fillcolor=lightcoral shape=rectangle]
+		l3_attn_add [label="Residual Add
+[1024, 8192]
+GPU 2" fillcolor=lightyellow shape=parallelogram]
+		l3_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 2" fillcolor=lightpink shape=rectangle]
+		l3_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 2" fillcolor=lightgreen shape=rectangle]
+		l3_gelu [label="GELU Activation
+[1024, 32768]
+GPU 2" fillcolor=lightblue shape=rectangle]
+		l3_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 2" fillcolor=lightgreen shape=rectangle]
+		l3_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 2" fillcolor=lightyellow shape=parallelogram]
+		l3_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 2" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer4 {
+		color=purple label="Layer 4 (GPU 3)" style=dashed
+		l4_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 3" fillcolor=lightcoral shape=rectangle]
+		l4_attn_add [label="Residual Add
+[1024, 8192]
+GPU 3" fillcolor=lightyellow shape=parallelogram]
+		l4_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 3" fillcolor=lightpink shape=rectangle]
+		l4_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 3" fillcolor=lightgreen shape=rectangle]
+		l4_gelu [label="GELU Activation
+[1024, 32768]
+GPU 3" fillcolor=lightblue shape=rectangle]
+		l4_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 3" fillcolor=lightgreen shape=rectangle]
+		l4_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 3" fillcolor=lightyellow shape=parallelogram]
+		l4_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 3" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer5 {
+		color=purple label="Layer 5 (GPU 4)" style=dashed
+		l5_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 4" fillcolor=lightcoral shape=rectangle]
+		l5_attn_add [label="Residual Add
+[1024, 8192]
+GPU 4" fillcolor=lightyellow shape=parallelogram]
+		l5_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 4" fillcolor=lightpink shape=rectangle]
+		l5_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 4" fillcolor=lightgreen shape=rectangle]
+		l5_gelu [label="GELU Activation
+[1024, 32768]
+GPU 4" fillcolor=lightblue shape=rectangle]
+		l5_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 4" fillcolor=lightgreen shape=rectangle]
+		l5_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 4" fillcolor=lightyellow shape=parallelogram]
+		l5_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 4" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer6 {
+		color=purple label="Layer 6 (GPU 5)" style=dashed
+		l6_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 5" fillcolor=lightcoral shape=rectangle]
+		l6_attn_add [label="Residual Add
+[1024, 8192]
+GPU 5" fillcolor=lightyellow shape=parallelogram]
+		l6_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 5" fillcolor=lightpink shape=rectangle]
+		l6_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 5" fillcolor=lightgreen shape=rectangle]
+		l6_gelu [label="GELU Activation
+[1024, 32768]
+GPU 5" fillcolor=lightblue shape=rectangle]
+		l6_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 5" fillcolor=lightgreen shape=rectangle]
+		l6_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 5" fillcolor=lightyellow shape=parallelogram]
+		l6_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 5" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer7 {
+		color=purple label="Layer 7 (GPU 6)" style=dashed
+		l7_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 6" fillcolor=lightcoral shape=rectangle]
+		l7_attn_add [label="Residual Add
+[1024, 8192]
+GPU 6" fillcolor=lightyellow shape=parallelogram]
+		l7_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 6" fillcolor=lightpink shape=rectangle]
+		l7_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 6" fillcolor=lightgreen shape=rectangle]
+		l7_gelu [label="GELU Activation
+[1024, 32768]
+GPU 6" fillcolor=lightblue shape=rectangle]
+		l7_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 6" fillcolor=lightgreen shape=rectangle]
+		l7_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 6" fillcolor=lightyellow shape=parallelogram]
+		l7_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 6" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer8 {
+		color=purple label="Layer 8 (GPU 7)" style=dashed
+		l8_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 7" fillcolor=lightcoral shape=rectangle]
+		l8_attn_add [label="Residual Add
+[1024, 8192]
+GPU 7" fillcolor=lightyellow shape=parallelogram]
+		l8_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 7" fillcolor=lightpink shape=rectangle]
+		l8_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 7" fillcolor=lightgreen shape=rectangle]
+		l8_gelu [label="GELU Activation
+[1024, 32768]
+GPU 7" fillcolor=lightblue shape=rectangle]
+		l8_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 7" fillcolor=lightgreen shape=rectangle]
+		l8_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 7" fillcolor=lightyellow shape=parallelogram]
+		l8_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 7" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer9 {
+		color=purple label="Layer 9 (GPU 8)" style=dashed
+		l9_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 8" fillcolor=lightcoral shape=rectangle]
+		l9_attn_add [label="Residual Add
+[1024, 8192]
+GPU 8" fillcolor=lightyellow shape=parallelogram]
+		l9_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 8" fillcolor=lightpink shape=rectangle]
+		l9_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 8" fillcolor=lightgreen shape=rectangle]
+		l9_gelu [label="GELU Activation
+[1024, 32768]
+GPU 8" fillcolor=lightblue shape=rectangle]
+		l9_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 8" fillcolor=lightgreen shape=rectangle]
+		l9_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 8" fillcolor=lightyellow shape=parallelogram]
+		l9_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 8" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer10 {
+		color=purple label="Layer 10 (GPU 9)" style=dashed
+		l10_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 9" fillcolor=lightcoral shape=rectangle]
+		l10_attn_add [label="Residual Add
+[1024, 8192]
+GPU 9" fillcolor=lightyellow shape=parallelogram]
+		l10_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 9" fillcolor=lightpink shape=rectangle]
+		l10_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 9" fillcolor=lightgreen shape=rectangle]
+		l10_gelu [label="GELU Activation
+[1024, 32768]
+GPU 9" fillcolor=lightblue shape=rectangle]
+		l10_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 9" fillcolor=lightgreen shape=rectangle]
+		l10_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 9" fillcolor=lightyellow shape=parallelogram]
+		l10_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 9" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer11 {
+		color=purple label="Layer 11 (GPU 10)" style=dashed
+		l11_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 10" fillcolor=lightcoral shape=rectangle]
+		l11_attn_add [label="Residual Add
+[1024, 8192]
+GPU 10" fillcolor=lightyellow shape=parallelogram]
+		l11_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 10" fillcolor=lightpink shape=rectangle]
+		l11_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 10" fillcolor=lightgreen shape=rectangle]
+		l11_gelu [label="GELU Activation
+[1024, 32768]
+GPU 10" fillcolor=lightblue shape=rectangle]
+		l11_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 10" fillcolor=lightgreen shape=rectangle]
+		l11_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 10" fillcolor=lightyellow shape=parallelogram]
+		l11_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 10" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer12 {
+		color=purple label="Layer 12 (GPU 11)" style=dashed
+		l12_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 11" fillcolor=lightcoral shape=rectangle]
+		l12_attn_add [label="Residual Add
+[1024, 8192]
+GPU 11" fillcolor=lightyellow shape=parallelogram]
+		l12_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 11" fillcolor=lightpink shape=rectangle]
+		l12_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 11" fillcolor=lightgreen shape=rectangle]
+		l12_gelu [label="GELU Activation
+[1024, 32768]
+GPU 11" fillcolor=lightblue shape=rectangle]
+		l12_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 11" fillcolor=lightgreen shape=rectangle]
+		l12_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 11" fillcolor=lightyellow shape=parallelogram]
+		l12_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 11" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer13 {
+		color=purple label="Layer 13 (GPU 12)" style=dashed
+		l13_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 12" fillcolor=lightcoral shape=rectangle]
+		l13_attn_add [label="Residual Add
+[1024, 8192]
+GPU 12" fillcolor=lightyellow shape=parallelogram]
+		l13_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 12" fillcolor=lightpink shape=rectangle]
+		l13_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 12" fillcolor=lightgreen shape=rectangle]
+		l13_gelu [label="GELU Activation
+[1024, 32768]
+GPU 12" fillcolor=lightblue shape=rectangle]
+		l13_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 12" fillcolor=lightgreen shape=rectangle]
+		l13_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 12" fillcolor=lightyellow shape=parallelogram]
+		l13_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 12" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer14 {
+		color=purple label="Layer 14 (GPU 13)" style=dashed
+		l14_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 13" fillcolor=lightcoral shape=rectangle]
+		l14_attn_add [label="Residual Add
+[1024, 8192]
+GPU 13" fillcolor=lightyellow shape=parallelogram]
+		l14_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 13" fillcolor=lightpink shape=rectangle]
+		l14_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 13" fillcolor=lightgreen shape=rectangle]
+		l14_gelu [label="GELU Activation
+[1024, 32768]
+GPU 13" fillcolor=lightblue shape=rectangle]
+		l14_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 13" fillcolor=lightgreen shape=rectangle]
+		l14_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 13" fillcolor=lightyellow shape=parallelogram]
+		l14_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 13" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer15 {
+		color=purple label="Layer 15 (GPU 14)" style=dashed
+		l15_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 14" fillcolor=lightcoral shape=rectangle]
+		l15_attn_add [label="Residual Add
+[1024, 8192]
+GPU 14" fillcolor=lightyellow shape=parallelogram]
+		l15_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 14" fillcolor=lightpink shape=rectangle]
+		l15_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 14" fillcolor=lightgreen shape=rectangle]
+		l15_gelu [label="GELU Activation
+[1024, 32768]
+GPU 14" fillcolor=lightblue shape=rectangle]
+		l15_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 14" fillcolor=lightgreen shape=rectangle]
+		l15_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 14" fillcolor=lightyellow shape=parallelogram]
+		l15_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 14" fillcolor=lightpink shape=rectangle]
+	}
+	subgraph cluster_layer16 {
+		color=purple label="Layer 16 (GPU 15)" style=dashed
+		l16_attn [label="Multi-Head Attention
+16 heads × 512 dim
+[1024, 8192] -> [1024, 8192]
+GPU 15" fillcolor=lightcoral shape=rectangle]
+		l16_attn_add [label="Residual Add
+[1024, 8192]
+GPU 15" fillcolor=lightyellow shape=parallelogram]
+		l16_attn_norm [label="Layer Norm
+[1024, 8192]
+GPU 15" fillcolor=lightpink shape=rectangle]
+		l16_ffn1 [label="FFN Linear 1
+[1024, 8192] -> [1024, 32768]
+GPU 15" fillcolor=lightgreen shape=rectangle]
+		l16_gelu [label="GELU Activation
+[1024, 32768]
+GPU 15" fillcolor=lightblue shape=rectangle]
+		l16_ffn2 [label="FFN Linear 2
+[1024, 32768] -> [1024, 8192]
+GPU 15" fillcolor=lightgreen shape=rectangle]
+		l16_ffn_add [label="Residual Add
+[1024, 8192]
+GPU 15" fillcolor=lightyellow shape=parallelogram]
+		l16_ffn_norm [label="Layer Norm
+[1024, 8192]
+GPU 15" fillcolor=lightpink shape=rectangle]
+	}
+	comm_1_2 [label="Layer Transfer
+[1024, 8192]
+GPU 0 -> GPU 1" fillcolor=orange shape=ellipse]
+	comm_2_3 [label="Layer Transfer
+[1024, 8192]
+GPU 1 -> GPU 2" fillcolor=orange shape=ellipse]
+	comm_3_4 [label="Layer Transfer
+[1024, 8192]
+GPU 2 -> GPU 3" fillcolor=orange shape=ellipse]
+	comm_4_5 [label="Layer Transfer
+[1024, 8192]
+GPU 3 -> GPU 4" fillcolor=orange shape=ellipse]
+	comm_5_6 [label="Layer Transfer
+[1024, 8192]
+GPU 4 -> GPU 5" fillcolor=orange shape=ellipse]
+	comm_6_7 [label="Layer Transfer
+[1024, 8192]
+GPU 5 -> GPU 6" fillcolor=orange shape=ellipse]
+	comm_7_8 [label="Layer Transfer
+[1024, 8192]
+GPU 6 -> GPU 7" fillcolor=orange shape=ellipse]
+	comm_8_9 [label="Layer Transfer
+[1024, 8192]
+GPU 7 -> GPU 8" fillcolor=orange shape=ellipse]
+	comm_9_10 [label="Layer Transfer
+[1024, 8192]
+GPU 8 -> GPU 9" fillcolor=orange shape=ellipse]
+	comm_10_11 [label="Layer Transfer
+[1024, 8192]
+GPU 9 -> GPU 10" fillcolor=orange shape=ellipse]
+	comm_11_12 [label="Layer Transfer
+[1024, 8192]
+GPU 10 -> GPU 11" fillcolor=orange shape=ellipse]
+	comm_12_13 [label="Layer Transfer
+[1024, 8192]
+GPU 11 -> GPU 12" fillcolor=orange shape=ellipse]
+	comm_13_14 [label="Layer Transfer
+[1024, 8192]
+GPU 12 -> GPU 13" fillcolor=orange shape=ellipse]
+	comm_14_15 [label="Layer Transfer
+[1024, 8192]
+GPU 13 -> GPU 14" fillcolor=orange shape=ellipse]
+	comm_15_16 [label="Layer Transfer
+[1024, 8192]
+GPU 14 -> GPU 15" fillcolor=orange shape=ellipse]
+	output [label="Output
+[1024, 8192]
+GPU 15" fillcolor=lightgreen shape=ellipse]
+	input -> l1_attn
+	l1_attn -> l1_attn_add
+	input -> l1_attn_add
+	l1_attn_add -> l1_attn_norm
+	l1_attn_norm -> l1_ffn1
+	l1_ffn1 -> l1_gelu
+	l1_gelu -> l1_ffn2
+	l1_ffn2 -> l1_ffn_add
+	l1_attn_norm -> l1_ffn_add
+	l1_ffn_add -> l1_ffn_norm
+	l1_ffn_norm -> comm_1_2
+	comm_1_2 -> l2_attn
+	l2_ffn_norm -> comm_2_3
+	comm_2_3 -> l3_attn
+	l3_ffn_norm -> comm_3_4
+	comm_3_4 -> l4_attn
+	l4_ffn_norm -> comm_4_5
+	comm_4_5 -> l5_attn
+	l5_ffn_norm -> comm_5_6
+	comm_5_6 -> l6_attn
+	l6_ffn_norm -> comm_6_7
+	comm_6_7 -> l7_attn
+	l7_ffn_norm -> comm_7_8
+	comm_7_8 -> l8_attn
+	l8_ffn_norm -> comm_8_9
+	comm_8_9 -> l9_attn
+	l9_ffn_norm -> comm_9_10
+	comm_9_10 -> l10_attn
+	l10_ffn_norm -> comm_10_11
+	comm_10_11 -> l11_attn
+	l11_ffn_norm -> comm_11_12
+	comm_11_12 -> l12_attn
+	l12_ffn_norm -> comm_12_13
+	comm_12_13 -> l13_attn
+	l13_ffn_norm -> comm_13_14
+	comm_13_14 -> l14_attn
+	l14_ffn_norm -> comm_14_15
+	comm_14_15 -> l15_attn
+	l15_ffn_norm -> comm_15_16
+	comm_15_16 -> l16_attn
+	l2_attn -> l2_attn_add
+	l1_ffn_norm -> l2_attn_add
+	l2_attn_add -> l2_attn_norm
+	l2_attn_norm -> l2_ffn1
+	l2_ffn1 -> l2_gelu
+	l2_gelu -> l2_ffn2
+	l2_ffn2 -> l2_ffn_add
+	l2_attn_norm -> l2_ffn_add
+	l2_ffn_add -> l2_ffn_norm
+	l3_attn -> l3_attn_add
+	l2_ffn_norm -> l3_attn_add
+	l3_attn_add -> l3_attn_norm
+	l3_attn_norm -> l3_ffn1
+	l3_ffn1 -> l3_gelu
+	l3_gelu -> l3_ffn2
+	l3_ffn2 -> l3_ffn_add
+	l3_attn_norm -> l3_ffn_add
+	l3_ffn_add -> l3_ffn_norm
+	l4_attn -> l4_attn_add
+	l3_ffn_norm -> l4_attn_add
+	l4_attn_add -> l4_attn_norm
+	l4_attn_norm -> l4_ffn1
+	l4_ffn1 -> l4_gelu
+	l4_gelu -> l4_ffn2
+	l4_ffn2 -> l4_ffn_add
+	l4_attn_norm -> l4_ffn_add
+	l4_ffn_add -> l4_ffn_norm
+	l5_attn -> l5_attn_add
+	l4_ffn_norm -> l5_attn_add
+	l5_attn_add -> l5_attn_norm
+	l5_attn_norm -> l5_ffn1
+	l5_ffn1 -> l5_gelu
+	l5_gelu -> l5_ffn2
+	l5_ffn2 -> l5_ffn_add
+	l5_attn_norm -> l5_ffn_add
+	l5_ffn_add -> l5_ffn_norm
+	l6_attn -> l6_attn_add
+	l5_ffn_norm -> l6_attn_add
+	l6_attn_add -> l6_attn_norm
+	l6_attn_norm -> l6_ffn1
+	l6_ffn1 -> l6_gelu
+	l6_gelu -> l6_ffn2
+	l6_ffn2 -> l6_ffn_add
+	l6_attn_norm -> l6_ffn_add
+	l6_ffn_add -> l6_ffn_norm
+	l7_attn -> l7_attn_add
+	l6_ffn_norm -> l7_attn_add
+	l7_attn_add -> l7_attn_norm
+	l7_attn_norm -> l7_ffn1
+	l7_ffn1 -> l7_gelu
+	l7_gelu -> l7_ffn2
+	l7_ffn2 -> l7_ffn_add
+	l7_attn_norm -> l7_ffn_add
+	l7_ffn_add -> l7_ffn_norm
+	l8_attn -> l8_attn_add
+	l7_ffn_norm -> l8_attn_add
+	l8_attn_add -> l8_attn_norm
+	l8_attn_norm -> l8_ffn1
+	l8_ffn1 -> l8_gelu
+	l8_gelu -> l8_ffn2
+	l8_ffn2 -> l8_ffn_add
+	l8_attn_norm -> l8_ffn_add
+	l8_ffn_add -> l8_ffn_norm
+	l9_attn -> l9_attn_add
+	l8_ffn_norm -> l9_attn_add
+	l9_attn_add -> l9_attn_norm
+	l9_attn_norm -> l9_ffn1
+	l9_ffn1 -> l9_gelu
+	l9_gelu -> l9_ffn2
+	l9_ffn2 -> l9_ffn_add
+	l9_attn_norm -> l9_ffn_add
+	l9_ffn_add -> l9_ffn_norm
+	l10_attn -> l10_attn_add
+	l9_ffn_norm -> l10_attn_add
+	l10_attn_add -> l10_attn_norm
+	l10_attn_norm -> l10_ffn1
+	l10_ffn1 -> l10_gelu
+	l10_gelu -> l10_ffn2
+	l10_ffn2 -> l10_ffn_add
+	l10_attn_norm -> l10_ffn_add
+	l10_ffn_add -> l10_ffn_norm
+	l11_attn -> l11_attn_add
+	l10_ffn_norm -> l11_attn_add
+	l11_attn_add -> l11_attn_norm
+	l11_attn_norm -> l11_ffn1
+	l11_ffn1 -> l11_gelu
+	l11_gelu -> l11_ffn2
+	l11_ffn2 -> l11_ffn_add
+	l11_attn_norm -> l11_ffn_add
+	l11_ffn_add -> l11_ffn_norm
+	l12_attn -> l12_attn_add
+	l11_ffn_norm -> l12_attn_add
+	l12_attn_add -> l12_attn_norm
+	l12_attn_norm -> l12_ffn1
+	l12_ffn1 -> l12_gelu
+	l12_gelu -> l12_ffn2
+	l12_ffn2 -> l12_ffn_add
+	l12_attn_norm -> l12_ffn_add
+	l12_ffn_add -> l12_ffn_norm
+	l13_attn -> l13_attn_add
+	l12_ffn_norm -> l13_attn_add
+	l13_attn_add -> l13_attn_norm
+	l13_attn_norm -> l13_ffn1
+	l13_ffn1 -> l13_gelu
+	l13_gelu -> l13_ffn2
+	l13_ffn2 -> l13_ffn_add
+	l13_attn_norm -> l13_ffn_add
+	l13_ffn_add -> l13_ffn_norm
+	l14_attn -> l14_attn_add
+	l13_ffn_norm -> l14_attn_add
+	l14_attn_add -> l14_attn_norm
+	l14_attn_norm -> l14_ffn1
+	l14_ffn1 -> l14_gelu
+	l14_gelu -> l14_ffn2
+	l14_ffn2 -> l14_ffn_add
+	l14_attn_norm -> l14_ffn_add
+	l14_ffn_add -> l14_ffn_norm
+	l15_attn -> l15_attn_add
+	l14_ffn_norm -> l15_attn_add
+	l15_attn_add -> l15_attn_norm
+	l15_attn_norm -> l15_ffn1
+	l15_ffn1 -> l15_gelu
+	l15_gelu -> l15_ffn2
+	l15_ffn2 -> l15_ffn_add
+	l15_attn_norm -> l15_ffn_add
+	l15_ffn_add -> l15_ffn_norm
+	l16_attn -> l16_attn_add
+	l15_ffn_norm -> l16_attn_add
+	l16_attn_add -> l16_attn_norm
+	l16_attn_norm -> l16_ffn1
+	l16_ffn1 -> l16_gelu
+	l16_gelu -> l16_ffn2
+	l16_ffn2 -> l16_ffn_add
+	l16_attn_norm -> l16_ffn_add
+	l16_ffn_add -> l16_ffn_norm
+	l16_ffn_norm -> output
+}

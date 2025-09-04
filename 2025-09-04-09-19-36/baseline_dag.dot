@@ -1,0 +1,1700 @@
+// Baseline DAG: TP=8, PP=2
+digraph {
+	rankdir=TB size="20,30"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	input [label="Input
+[1024, 8192]
+All GPUs" fillcolor=lightgreen shape=ellipse]
+	subgraph cluster_stage0 {
+		color=red label="Pipeline Stage 0
+(GPUs 0-7)" style=dashed
+		subgraph cluster_tp0 {
+			color=blue label="Tensor Parallel Group 0" style=dotted
+			l1_attn_0 [label="Layer 1
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+			l1_ffn_0 [label="Layer 1
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 0" shape=rectangle]
+			l1_add_0 [label="Layer 1
+Residual Add
+[1024, 8192]
+GPU 0" shape=parallelogram]
+			l1_attn_1 [label="Layer 1
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+			l1_ffn_1 [label="Layer 1
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 1" shape=rectangle]
+			l1_add_1 [label="Layer 1
+Residual Add
+[1024, 8192]
+GPU 1" shape=parallelogram]
+			l1_attn_2 [label="Layer 1
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+			l1_ffn_2 [label="Layer 1
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 2" shape=rectangle]
+			l1_add_2 [label="Layer 1
+Residual Add
+[1024, 8192]
+GPU 2" shape=parallelogram]
+			l1_attn_3 [label="Layer 1
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+			l1_ffn_3 [label="Layer 1
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 3" shape=rectangle]
+			l1_add_3 [label="Layer 1
+Residual Add
+[1024, 8192]
+GPU 3" shape=parallelogram]
+			l1_attn_4 [label="Layer 1
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+			l1_ffn_4 [label="Layer 1
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 4" shape=rectangle]
+			l1_add_4 [label="Layer 1
+Residual Add
+[1024, 8192]
+GPU 4" shape=parallelogram]
+			l1_attn_5 [label="Layer 1
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+			l1_ffn_5 [label="Layer 1
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 5" shape=rectangle]
+			l1_add_5 [label="Layer 1
+Residual Add
+[1024, 8192]
+GPU 5" shape=parallelogram]
+			l1_attn_6 [label="Layer 1
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+			l1_ffn_6 [label="Layer 1
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 6" shape=rectangle]
+			l1_add_6 [label="Layer 1
+Residual Add
+[1024, 8192]
+GPU 6" shape=parallelogram]
+			l1_attn_7 [label="Layer 1
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+			l1_ffn_7 [label="Layer 1
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 7" shape=rectangle]
+			l1_add_7 [label="Layer 1
+Residual Add
+[1024, 8192]
+GPU 7" shape=parallelogram]
+			l1_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 0-7" fillcolor=yellow shape=ellipse]
+			l1_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 0-7" fillcolor=yellow shape=ellipse]
+		}
+	}
+	subgraph cluster_stage1 {
+		color=red label="Pipeline Stage 1
+(GPUs 8-15)" style=dashed
+		subgraph cluster_tp8 {
+			color=blue label="Tensor Parallel Group 8" style=dotted
+			l9_attn_8 [label="Layer 9
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l9_ffn_8 [label="Layer 9
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l9_add_8 [label="Layer 9
+Residual Add
+[1024, 8192]
+GPU 8" shape=parallelogram]
+			l9_attn_9 [label="Layer 9
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l9_ffn_9 [label="Layer 9
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l9_add_9 [label="Layer 9
+Residual Add
+[1024, 8192]
+GPU 9" shape=parallelogram]
+			l9_attn_10 [label="Layer 9
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l9_ffn_10 [label="Layer 9
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l9_add_10 [label="Layer 9
+Residual Add
+[1024, 8192]
+GPU 10" shape=parallelogram]
+			l9_attn_11 [label="Layer 9
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l9_ffn_11 [label="Layer 9
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l9_add_11 [label="Layer 9
+Residual Add
+[1024, 8192]
+GPU 11" shape=parallelogram]
+			l9_attn_12 [label="Layer 9
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l9_ffn_12 [label="Layer 9
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l9_add_12 [label="Layer 9
+Residual Add
+[1024, 8192]
+GPU 12" shape=parallelogram]
+			l9_attn_13 [label="Layer 9
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l9_ffn_13 [label="Layer 9
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l9_add_13 [label="Layer 9
+Residual Add
+[1024, 8192]
+GPU 13" shape=parallelogram]
+			l9_attn_14 [label="Layer 9
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l9_ffn_14 [label="Layer 9
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l9_add_14 [label="Layer 9
+Residual Add
+[1024, 8192]
+GPU 14" shape=parallelogram]
+			l9_attn_15 [label="Layer 9
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l9_ffn_15 [label="Layer 9
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l9_add_15 [label="Layer 9
+Residual Add
+[1024, 8192]
+GPU 15" shape=parallelogram]
+			l9_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+			l9_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+		}
+		subgraph cluster_tp9 {
+			color=blue label="Tensor Parallel Group 9" style=dotted
+			l10_attn_8 [label="Layer 10
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l10_ffn_8 [label="Layer 10
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l10_add_8 [label="Layer 10
+Residual Add
+[1024, 8192]
+GPU 8" shape=parallelogram]
+			l10_attn_9 [label="Layer 10
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l10_ffn_9 [label="Layer 10
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l10_add_9 [label="Layer 10
+Residual Add
+[1024, 8192]
+GPU 9" shape=parallelogram]
+			l10_attn_10 [label="Layer 10
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l10_ffn_10 [label="Layer 10
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l10_add_10 [label="Layer 10
+Residual Add
+[1024, 8192]
+GPU 10" shape=parallelogram]
+			l10_attn_11 [label="Layer 10
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l10_ffn_11 [label="Layer 10
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l10_add_11 [label="Layer 10
+Residual Add
+[1024, 8192]
+GPU 11" shape=parallelogram]
+			l10_attn_12 [label="Layer 10
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l10_ffn_12 [label="Layer 10
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l10_add_12 [label="Layer 10
+Residual Add
+[1024, 8192]
+GPU 12" shape=parallelogram]
+			l10_attn_13 [label="Layer 10
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l10_ffn_13 [label="Layer 10
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l10_add_13 [label="Layer 10
+Residual Add
+[1024, 8192]
+GPU 13" shape=parallelogram]
+			l10_attn_14 [label="Layer 10
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l10_ffn_14 [label="Layer 10
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l10_add_14 [label="Layer 10
+Residual Add
+[1024, 8192]
+GPU 14" shape=parallelogram]
+			l10_attn_15 [label="Layer 10
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l10_ffn_15 [label="Layer 10
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l10_add_15 [label="Layer 10
+Residual Add
+[1024, 8192]
+GPU 15" shape=parallelogram]
+			l10_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+			l10_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+		}
+		subgraph cluster_tp10 {
+			color=blue label="Tensor Parallel Group 10" style=dotted
+			l11_attn_8 [label="Layer 11
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l11_ffn_8 [label="Layer 11
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l11_add_8 [label="Layer 11
+Residual Add
+[1024, 8192]
+GPU 8" shape=parallelogram]
+			l11_attn_9 [label="Layer 11
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l11_ffn_9 [label="Layer 11
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l11_add_9 [label="Layer 11
+Residual Add
+[1024, 8192]
+GPU 9" shape=parallelogram]
+			l11_attn_10 [label="Layer 11
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l11_ffn_10 [label="Layer 11
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l11_add_10 [label="Layer 11
+Residual Add
+[1024, 8192]
+GPU 10" shape=parallelogram]
+			l11_attn_11 [label="Layer 11
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l11_ffn_11 [label="Layer 11
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l11_add_11 [label="Layer 11
+Residual Add
+[1024, 8192]
+GPU 11" shape=parallelogram]
+			l11_attn_12 [label="Layer 11
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l11_ffn_12 [label="Layer 11
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l11_add_12 [label="Layer 11
+Residual Add
+[1024, 8192]
+GPU 12" shape=parallelogram]
+			l11_attn_13 [label="Layer 11
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l11_ffn_13 [label="Layer 11
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l11_add_13 [label="Layer 11
+Residual Add
+[1024, 8192]
+GPU 13" shape=parallelogram]
+			l11_attn_14 [label="Layer 11
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l11_ffn_14 [label="Layer 11
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l11_add_14 [label="Layer 11
+Residual Add
+[1024, 8192]
+GPU 14" shape=parallelogram]
+			l11_attn_15 [label="Layer 11
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l11_ffn_15 [label="Layer 11
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l11_add_15 [label="Layer 11
+Residual Add
+[1024, 8192]
+GPU 15" shape=parallelogram]
+			l11_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+			l11_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+		}
+		subgraph cluster_tp11 {
+			color=blue label="Tensor Parallel Group 11" style=dotted
+			l12_attn_8 [label="Layer 12
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l12_ffn_8 [label="Layer 12
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l12_add_8 [label="Layer 12
+Residual Add
+[1024, 8192]
+GPU 8" shape=parallelogram]
+			l12_attn_9 [label="Layer 12
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l12_ffn_9 [label="Layer 12
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l12_add_9 [label="Layer 12
+Residual Add
+[1024, 8192]
+GPU 9" shape=parallelogram]
+			l12_attn_10 [label="Layer 12
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l12_ffn_10 [label="Layer 12
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l12_add_10 [label="Layer 12
+Residual Add
+[1024, 8192]
+GPU 10" shape=parallelogram]
+			l12_attn_11 [label="Layer 12
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l12_ffn_11 [label="Layer 12
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l12_add_11 [label="Layer 12
+Residual Add
+[1024, 8192]
+GPU 11" shape=parallelogram]
+			l12_attn_12 [label="Layer 12
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l12_ffn_12 [label="Layer 12
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l12_add_12 [label="Layer 12
+Residual Add
+[1024, 8192]
+GPU 12" shape=parallelogram]
+			l12_attn_13 [label="Layer 12
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l12_ffn_13 [label="Layer 12
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l12_add_13 [label="Layer 12
+Residual Add
+[1024, 8192]
+GPU 13" shape=parallelogram]
+			l12_attn_14 [label="Layer 12
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l12_ffn_14 [label="Layer 12
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l12_add_14 [label="Layer 12
+Residual Add
+[1024, 8192]
+GPU 14" shape=parallelogram]
+			l12_attn_15 [label="Layer 12
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l12_ffn_15 [label="Layer 12
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l12_add_15 [label="Layer 12
+Residual Add
+[1024, 8192]
+GPU 15" shape=parallelogram]
+			l12_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+			l12_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+		}
+		subgraph cluster_tp12 {
+			color=blue label="Tensor Parallel Group 12" style=dotted
+			l13_attn_8 [label="Layer 13
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l13_ffn_8 [label="Layer 13
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l13_add_8 [label="Layer 13
+Residual Add
+[1024, 8192]
+GPU 8" shape=parallelogram]
+			l13_attn_9 [label="Layer 13
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l13_ffn_9 [label="Layer 13
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l13_add_9 [label="Layer 13
+Residual Add
+[1024, 8192]
+GPU 9" shape=parallelogram]
+			l13_attn_10 [label="Layer 13
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l13_ffn_10 [label="Layer 13
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l13_add_10 [label="Layer 13
+Residual Add
+[1024, 8192]
+GPU 10" shape=parallelogram]
+			l13_attn_11 [label="Layer 13
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l13_ffn_11 [label="Layer 13
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l13_add_11 [label="Layer 13
+Residual Add
+[1024, 8192]
+GPU 11" shape=parallelogram]
+			l13_attn_12 [label="Layer 13
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l13_ffn_12 [label="Layer 13
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l13_add_12 [label="Layer 13
+Residual Add
+[1024, 8192]
+GPU 12" shape=parallelogram]
+			l13_attn_13 [label="Layer 13
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l13_ffn_13 [label="Layer 13
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l13_add_13 [label="Layer 13
+Residual Add
+[1024, 8192]
+GPU 13" shape=parallelogram]
+			l13_attn_14 [label="Layer 13
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l13_ffn_14 [label="Layer 13
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l13_add_14 [label="Layer 13
+Residual Add
+[1024, 8192]
+GPU 14" shape=parallelogram]
+			l13_attn_15 [label="Layer 13
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l13_ffn_15 [label="Layer 13
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l13_add_15 [label="Layer 13
+Residual Add
+[1024, 8192]
+GPU 15" shape=parallelogram]
+			l13_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+			l13_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+		}
+		subgraph cluster_tp13 {
+			color=blue label="Tensor Parallel Group 13" style=dotted
+			l14_attn_8 [label="Layer 14
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l14_ffn_8 [label="Layer 14
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l14_add_8 [label="Layer 14
+Residual Add
+[1024, 8192]
+GPU 8" shape=parallelogram]
+			l14_attn_9 [label="Layer 14
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l14_ffn_9 [label="Layer 14
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l14_add_9 [label="Layer 14
+Residual Add
+[1024, 8192]
+GPU 9" shape=parallelogram]
+			l14_attn_10 [label="Layer 14
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l14_ffn_10 [label="Layer 14
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l14_add_10 [label="Layer 14
+Residual Add
+[1024, 8192]
+GPU 10" shape=parallelogram]
+			l14_attn_11 [label="Layer 14
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l14_ffn_11 [label="Layer 14
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l14_add_11 [label="Layer 14
+Residual Add
+[1024, 8192]
+GPU 11" shape=parallelogram]
+			l14_attn_12 [label="Layer 14
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l14_ffn_12 [label="Layer 14
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l14_add_12 [label="Layer 14
+Residual Add
+[1024, 8192]
+GPU 12" shape=parallelogram]
+			l14_attn_13 [label="Layer 14
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l14_ffn_13 [label="Layer 14
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l14_add_13 [label="Layer 14
+Residual Add
+[1024, 8192]
+GPU 13" shape=parallelogram]
+			l14_attn_14 [label="Layer 14
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l14_ffn_14 [label="Layer 14
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l14_add_14 [label="Layer 14
+Residual Add
+[1024, 8192]
+GPU 14" shape=parallelogram]
+			l14_attn_15 [label="Layer 14
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l14_ffn_15 [label="Layer 14
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l14_add_15 [label="Layer 14
+Residual Add
+[1024, 8192]
+GPU 15" shape=parallelogram]
+			l14_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+			l14_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+		}
+		subgraph cluster_tp14 {
+			color=blue label="Tensor Parallel Group 14" style=dotted
+			l15_attn_8 [label="Layer 15
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l15_ffn_8 [label="Layer 15
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l15_add_8 [label="Layer 15
+Residual Add
+[1024, 8192]
+GPU 8" shape=parallelogram]
+			l15_attn_9 [label="Layer 15
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l15_ffn_9 [label="Layer 15
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l15_add_9 [label="Layer 15
+Residual Add
+[1024, 8192]
+GPU 9" shape=parallelogram]
+			l15_attn_10 [label="Layer 15
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l15_ffn_10 [label="Layer 15
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l15_add_10 [label="Layer 15
+Residual Add
+[1024, 8192]
+GPU 10" shape=parallelogram]
+			l15_attn_11 [label="Layer 15
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l15_ffn_11 [label="Layer 15
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l15_add_11 [label="Layer 15
+Residual Add
+[1024, 8192]
+GPU 11" shape=parallelogram]
+			l15_attn_12 [label="Layer 15
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l15_ffn_12 [label="Layer 15
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l15_add_12 [label="Layer 15
+Residual Add
+[1024, 8192]
+GPU 12" shape=parallelogram]
+			l15_attn_13 [label="Layer 15
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l15_ffn_13 [label="Layer 15
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l15_add_13 [label="Layer 15
+Residual Add
+[1024, 8192]
+GPU 13" shape=parallelogram]
+			l15_attn_14 [label="Layer 15
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l15_ffn_14 [label="Layer 15
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l15_add_14 [label="Layer 15
+Residual Add
+[1024, 8192]
+GPU 14" shape=parallelogram]
+			l15_attn_15 [label="Layer 15
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l15_ffn_15 [label="Layer 15
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l15_add_15 [label="Layer 15
+Residual Add
+[1024, 8192]
+GPU 15" shape=parallelogram]
+			l15_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+			l15_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+		}
+		subgraph cluster_tp15 {
+			color=blue label="Tensor Parallel Group 15" style=dotted
+			l16_attn_8 [label="Layer 16
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l16_ffn_8 [label="Layer 16
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+			l16_add_8 [label="Layer 16
+Residual Add
+[1024, 8192]
+GPU 8" shape=parallelogram]
+			l16_attn_9 [label="Layer 16
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l16_ffn_9 [label="Layer 16
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+			l16_add_9 [label="Layer 16
+Residual Add
+[1024, 8192]
+GPU 9" shape=parallelogram]
+			l16_attn_10 [label="Layer 16
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l16_ffn_10 [label="Layer 16
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 10" shape=rectangle]
+			l16_add_10 [label="Layer 16
+Residual Add
+[1024, 8192]
+GPU 10" shape=parallelogram]
+			l16_attn_11 [label="Layer 16
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l16_ffn_11 [label="Layer 16
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 11" shape=rectangle]
+			l16_add_11 [label="Layer 16
+Residual Add
+[1024, 8192]
+GPU 11" shape=parallelogram]
+			l16_attn_12 [label="Layer 16
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l16_ffn_12 [label="Layer 16
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 12" shape=rectangle]
+			l16_add_12 [label="Layer 16
+Residual Add
+[1024, 8192]
+GPU 12" shape=parallelogram]
+			l16_attn_13 [label="Layer 16
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l16_ffn_13 [label="Layer 16
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 13" shape=rectangle]
+			l16_add_13 [label="Layer 16
+Residual Add
+[1024, 8192]
+GPU 13" shape=parallelogram]
+			l16_attn_14 [label="Layer 16
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l16_ffn_14 [label="Layer 16
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 14" shape=rectangle]
+			l16_add_14 [label="Layer 16
+Residual Add
+[1024, 8192]
+GPU 14" shape=parallelogram]
+			l16_attn_15 [label="Layer 16
+Multi-Head Attention
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l16_ffn_15 [label="Layer 16
+FFN
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+GPU 15" shape=rectangle]
+			l16_add_15 [label="Layer 16
+Residual Add
+[1024, 8192]
+GPU 15" shape=parallelogram]
+			l16_attn_agg [label="Attention
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+			l16_ffn_agg [label="FFN
+All-Reduce
+[1024, 8192]
+All GPUs 8-15" fillcolor=yellow shape=ellipse]
+		}
+	}
+	pipe_comm [label="Pipeline
+Communication
+[1024, 8192]
+Stage 0 -> Stage 1" fillcolor=orange shape=ellipse]
+	output [label="Output
+[1024, 8192]
+All GPUs" fillcolor=lightgreen shape=ellipse]
+	input -> l1_attn_0
+	input -> l1_attn_1
+	input -> l1_attn_2
+	input -> l1_attn_3
+	input -> l1_attn_4
+	input -> l1_attn_5
+	input -> l1_attn_6
+	input -> l1_attn_7
+	l1_attn_0 -> l1_ffn_0
+	l1_ffn_0 -> l1_add_0
+	l1_attn_0 -> l1_add_0
+	l1_attn_1 -> l1_ffn_1
+	l1_ffn_1 -> l1_add_1
+	l1_attn_1 -> l1_add_1
+	l1_attn_2 -> l1_ffn_2
+	l1_ffn_2 -> l1_add_2
+	l1_attn_2 -> l1_add_2
+	l1_attn_3 -> l1_ffn_3
+	l1_ffn_3 -> l1_add_3
+	l1_attn_3 -> l1_add_3
+	l1_attn_4 -> l1_ffn_4
+	l1_ffn_4 -> l1_add_4
+	l1_attn_4 -> l1_add_4
+	l1_attn_5 -> l1_ffn_5
+	l1_ffn_5 -> l1_add_5
+	l1_attn_5 -> l1_add_5
+	l1_attn_6 -> l1_ffn_6
+	l1_ffn_6 -> l1_add_6
+	l1_attn_6 -> l1_add_6
+	l1_attn_7 -> l1_ffn_7
+	l1_ffn_7 -> l1_add_7
+	l1_attn_7 -> l1_add_7
+	l1_add_0 -> l1_attn_agg
+	l1_attn_agg -> l1_ffn_agg
+	l1_add_1 -> l1_attn_agg
+	l1_attn_agg -> l1_ffn_agg
+	l1_add_2 -> l1_attn_agg
+	l1_attn_agg -> l1_ffn_agg
+	l1_add_3 -> l1_attn_agg
+	l1_attn_agg -> l1_ffn_agg
+	l1_add_4 -> l1_attn_agg
+	l1_attn_agg -> l1_ffn_agg
+	l1_add_5 -> l1_attn_agg
+	l1_attn_agg -> l1_ffn_agg
+	l1_add_6 -> l1_attn_agg
+	l1_attn_agg -> l1_ffn_agg
+	l1_add_7 -> l1_attn_agg
+	l1_attn_agg -> l1_ffn_agg
+	l1_ffn_agg -> l2_attn_0
+	l2_attn_0 -> l2_ffn_0
+	l2_ffn_0 -> l2_add_0
+	l2_attn_0 -> l2_add_0
+	l2_add_0 -> l2_attn_agg
+	l2_attn_agg -> l2_ffn_agg
+	l1_ffn_agg -> l2_attn_1
+	l2_attn_1 -> l2_ffn_1
+	l2_ffn_1 -> l2_add_1
+	l2_attn_1 -> l2_add_1
+	l2_add_1 -> l2_attn_agg
+	l2_attn_agg -> l2_ffn_agg
+	l1_ffn_agg -> l2_attn_2
+	l2_attn_2 -> l2_ffn_2
+	l2_ffn_2 -> l2_add_2
+	l2_attn_2 -> l2_add_2
+	l2_add_2 -> l2_attn_agg
+	l2_attn_agg -> l2_ffn_agg
+	l1_ffn_agg -> l2_attn_3
+	l2_attn_3 -> l2_ffn_3
+	l2_ffn_3 -> l2_add_3
+	l2_attn_3 -> l2_add_3
+	l2_add_3 -> l2_attn_agg
+	l2_attn_agg -> l2_ffn_agg
+	l1_ffn_agg -> l2_attn_4
+	l2_attn_4 -> l2_ffn_4
+	l2_ffn_4 -> l2_add_4
+	l2_attn_4 -> l2_add_4
+	l2_add_4 -> l2_attn_agg
+	l2_attn_agg -> l2_ffn_agg
+	l1_ffn_agg -> l2_attn_5
+	l2_attn_5 -> l2_ffn_5
+	l2_ffn_5 -> l2_add_5
+	l2_attn_5 -> l2_add_5
+	l2_add_5 -> l2_attn_agg
+	l2_attn_agg -> l2_ffn_agg
+	l1_ffn_agg -> l2_attn_6
+	l2_attn_6 -> l2_ffn_6
+	l2_ffn_6 -> l2_add_6
+	l2_attn_6 -> l2_add_6
+	l2_add_6 -> l2_attn_agg
+	l2_attn_agg -> l2_ffn_agg
+	l1_ffn_agg -> l2_attn_7
+	l2_attn_7 -> l2_ffn_7
+	l2_ffn_7 -> l2_add_7
+	l2_attn_7 -> l2_add_7
+	l2_add_7 -> l2_attn_agg
+	l2_attn_agg -> l2_ffn_agg
+	l2_ffn_agg -> l3_attn_0
+	l3_attn_0 -> l3_ffn_0
+	l3_ffn_0 -> l3_add_0
+	l3_attn_0 -> l3_add_0
+	l3_add_0 -> l3_attn_agg
+	l3_attn_agg -> l3_ffn_agg
+	l2_ffn_agg -> l3_attn_1
+	l3_attn_1 -> l3_ffn_1
+	l3_ffn_1 -> l3_add_1
+	l3_attn_1 -> l3_add_1
+	l3_add_1 -> l3_attn_agg
+	l3_attn_agg -> l3_ffn_agg
+	l2_ffn_agg -> l3_attn_2
+	l3_attn_2 -> l3_ffn_2
+	l3_ffn_2 -> l3_add_2
+	l3_attn_2 -> l3_add_2
+	l3_add_2 -> l3_attn_agg
+	l3_attn_agg -> l3_ffn_agg
+	l2_ffn_agg -> l3_attn_3
+	l3_attn_3 -> l3_ffn_3
+	l3_ffn_3 -> l3_add_3
+	l3_attn_3 -> l3_add_3
+	l3_add_3 -> l3_attn_agg
+	l3_attn_agg -> l3_ffn_agg
+	l2_ffn_agg -> l3_attn_4
+	l3_attn_4 -> l3_ffn_4
+	l3_ffn_4 -> l3_add_4
+	l3_attn_4 -> l3_add_4
+	l3_add_4 -> l3_attn_agg
+	l3_attn_agg -> l3_ffn_agg
+	l2_ffn_agg -> l3_attn_5
+	l3_attn_5 -> l3_ffn_5
+	l3_ffn_5 -> l3_add_5
+	l3_attn_5 -> l3_add_5
+	l3_add_5 -> l3_attn_agg
+	l3_attn_agg -> l3_ffn_agg
+	l2_ffn_agg -> l3_attn_6
+	l3_attn_6 -> l3_ffn_6
+	l3_ffn_6 -> l3_add_6
+	l3_attn_6 -> l3_add_6
+	l3_add_6 -> l3_attn_agg
+	l3_attn_agg -> l3_ffn_agg
+	l2_ffn_agg -> l3_attn_7
+	l3_attn_7 -> l3_ffn_7
+	l3_ffn_7 -> l3_add_7
+	l3_attn_7 -> l3_add_7
+	l3_add_7 -> l3_attn_agg
+	l3_attn_agg -> l3_ffn_agg
+	l3_ffn_agg -> l4_attn_0
+	l4_attn_0 -> l4_ffn_0
+	l4_ffn_0 -> l4_add_0
+	l4_attn_0 -> l4_add_0
+	l4_add_0 -> l4_attn_agg
+	l4_attn_agg -> l4_ffn_agg
+	l3_ffn_agg -> l4_attn_1
+	l4_attn_1 -> l4_ffn_1
+	l4_ffn_1 -> l4_add_1
+	l4_attn_1 -> l4_add_1
+	l4_add_1 -> l4_attn_agg
+	l4_attn_agg -> l4_ffn_agg
+	l3_ffn_agg -> l4_attn_2
+	l4_attn_2 -> l4_ffn_2
+	l4_ffn_2 -> l4_add_2
+	l4_attn_2 -> l4_add_2
+	l4_add_2 -> l4_attn_agg
+	l4_attn_agg -> l4_ffn_agg
+	l3_ffn_agg -> l4_attn_3
+	l4_attn_3 -> l4_ffn_3
+	l4_ffn_3 -> l4_add_3
+	l4_attn_3 -> l4_add_3
+	l4_add_3 -> l4_attn_agg
+	l4_attn_agg -> l4_ffn_agg
+	l3_ffn_agg -> l4_attn_4
+	l4_attn_4 -> l4_ffn_4
+	l4_ffn_4 -> l4_add_4
+	l4_attn_4 -> l4_add_4
+	l4_add_4 -> l4_attn_agg
+	l4_attn_agg -> l4_ffn_agg
+	l3_ffn_agg -> l4_attn_5
+	l4_attn_5 -> l4_ffn_5
+	l4_ffn_5 -> l4_add_5
+	l4_attn_5 -> l4_add_5
+	l4_add_5 -> l4_attn_agg
+	l4_attn_agg -> l4_ffn_agg
+	l3_ffn_agg -> l4_attn_6
+	l4_attn_6 -> l4_ffn_6
+	l4_ffn_6 -> l4_add_6
+	l4_attn_6 -> l4_add_6
+	l4_add_6 -> l4_attn_agg
+	l4_attn_agg -> l4_ffn_agg
+	l3_ffn_agg -> l4_attn_7
+	l4_attn_7 -> l4_ffn_7
+	l4_ffn_7 -> l4_add_7
+	l4_attn_7 -> l4_add_7
+	l4_add_7 -> l4_attn_agg
+	l4_attn_agg -> l4_ffn_agg
+	l4_ffn_agg -> l5_attn_0
+	l5_attn_0 -> l5_ffn_0
+	l5_ffn_0 -> l5_add_0
+	l5_attn_0 -> l5_add_0
+	l5_add_0 -> l5_attn_agg
+	l5_attn_agg -> l5_ffn_agg
+	l4_ffn_agg -> l5_attn_1
+	l5_attn_1 -> l5_ffn_1
+	l5_ffn_1 -> l5_add_1
+	l5_attn_1 -> l5_add_1
+	l5_add_1 -> l5_attn_agg
+	l5_attn_agg -> l5_ffn_agg
+	l4_ffn_agg -> l5_attn_2
+	l5_attn_2 -> l5_ffn_2
+	l5_ffn_2 -> l5_add_2
+	l5_attn_2 -> l5_add_2
+	l5_add_2 -> l5_attn_agg
+	l5_attn_agg -> l5_ffn_agg
+	l4_ffn_agg -> l5_attn_3
+	l5_attn_3 -> l5_ffn_3
+	l5_ffn_3 -> l5_add_3
+	l5_attn_3 -> l5_add_3
+	l5_add_3 -> l5_attn_agg
+	l5_attn_agg -> l5_ffn_agg
+	l4_ffn_agg -> l5_attn_4
+	l5_attn_4 -> l5_ffn_4
+	l5_ffn_4 -> l5_add_4
+	l5_attn_4 -> l5_add_4
+	l5_add_4 -> l5_attn_agg
+	l5_attn_agg -> l5_ffn_agg
+	l4_ffn_agg -> l5_attn_5
+	l5_attn_5 -> l5_ffn_5
+	l5_ffn_5 -> l5_add_5
+	l5_attn_5 -> l5_add_5
+	l5_add_5 -> l5_attn_agg
+	l5_attn_agg -> l5_ffn_agg
+	l4_ffn_agg -> l5_attn_6
+	l5_attn_6 -> l5_ffn_6
+	l5_ffn_6 -> l5_add_6
+	l5_attn_6 -> l5_add_6
+	l5_add_6 -> l5_attn_agg
+	l5_attn_agg -> l5_ffn_agg
+	l4_ffn_agg -> l5_attn_7
+	l5_attn_7 -> l5_ffn_7
+	l5_ffn_7 -> l5_add_7
+	l5_attn_7 -> l5_add_7
+	l5_add_7 -> l5_attn_agg
+	l5_attn_agg -> l5_ffn_agg
+	l5_ffn_agg -> l6_attn_0
+	l6_attn_0 -> l6_ffn_0
+	l6_ffn_0 -> l6_add_0
+	l6_attn_0 -> l6_add_0
+	l6_add_0 -> l6_attn_agg
+	l6_attn_agg -> l6_ffn_agg
+	l5_ffn_agg -> l6_attn_1
+	l6_attn_1 -> l6_ffn_1
+	l6_ffn_1 -> l6_add_1
+	l6_attn_1 -> l6_add_1
+	l6_add_1 -> l6_attn_agg
+	l6_attn_agg -> l6_ffn_agg
+	l5_ffn_agg -> l6_attn_2
+	l6_attn_2 -> l6_ffn_2
+	l6_ffn_2 -> l6_add_2
+	l6_attn_2 -> l6_add_2
+	l6_add_2 -> l6_attn_agg
+	l6_attn_agg -> l6_ffn_agg
+	l5_ffn_agg -> l6_attn_3
+	l6_attn_3 -> l6_ffn_3
+	l6_ffn_3 -> l6_add_3
+	l6_attn_3 -> l6_add_3
+	l6_add_3 -> l6_attn_agg
+	l6_attn_agg -> l6_ffn_agg
+	l5_ffn_agg -> l6_attn_4
+	l6_attn_4 -> l6_ffn_4
+	l6_ffn_4 -> l6_add_4
+	l6_attn_4 -> l6_add_4
+	l6_add_4 -> l6_attn_agg
+	l6_attn_agg -> l6_ffn_agg
+	l5_ffn_agg -> l6_attn_5
+	l6_attn_5 -> l6_ffn_5
+	l6_ffn_5 -> l6_add_5
+	l6_attn_5 -> l6_add_5
+	l6_add_5 -> l6_attn_agg
+	l6_attn_agg -> l6_ffn_agg
+	l5_ffn_agg -> l6_attn_6
+	l6_attn_6 -> l6_ffn_6
+	l6_ffn_6 -> l6_add_6
+	l6_attn_6 -> l6_add_6
+	l6_add_6 -> l6_attn_agg
+	l6_attn_agg -> l6_ffn_agg
+	l5_ffn_agg -> l6_attn_7
+	l6_attn_7 -> l6_ffn_7
+	l6_ffn_7 -> l6_add_7
+	l6_attn_7 -> l6_add_7
+	l6_add_7 -> l6_attn_agg
+	l6_attn_agg -> l6_ffn_agg
+	l6_ffn_agg -> l7_attn_0
+	l7_attn_0 -> l7_ffn_0
+	l7_ffn_0 -> l7_add_0
+	l7_attn_0 -> l7_add_0
+	l7_add_0 -> l7_attn_agg
+	l7_attn_agg -> l7_ffn_agg
+	l6_ffn_agg -> l7_attn_1
+	l7_attn_1 -> l7_ffn_1
+	l7_ffn_1 -> l7_add_1
+	l7_attn_1 -> l7_add_1
+	l7_add_1 -> l7_attn_agg
+	l7_attn_agg -> l7_ffn_agg
+	l6_ffn_agg -> l7_attn_2
+	l7_attn_2 -> l7_ffn_2
+	l7_ffn_2 -> l7_add_2
+	l7_attn_2 -> l7_add_2
+	l7_add_2 -> l7_attn_agg
+	l7_attn_agg -> l7_ffn_agg
+	l6_ffn_agg -> l7_attn_3
+	l7_attn_3 -> l7_ffn_3
+	l7_ffn_3 -> l7_add_3
+	l7_attn_3 -> l7_add_3
+	l7_add_3 -> l7_attn_agg
+	l7_attn_agg -> l7_ffn_agg
+	l6_ffn_agg -> l7_attn_4
+	l7_attn_4 -> l7_ffn_4
+	l7_ffn_4 -> l7_add_4
+	l7_attn_4 -> l7_add_4
+	l7_add_4 -> l7_attn_agg
+	l7_attn_agg -> l7_ffn_agg
+	l6_ffn_agg -> l7_attn_5
+	l7_attn_5 -> l7_ffn_5
+	l7_ffn_5 -> l7_add_5
+	l7_attn_5 -> l7_add_5
+	l7_add_5 -> l7_attn_agg
+	l7_attn_agg -> l7_ffn_agg
+	l6_ffn_agg -> l7_attn_6
+	l7_attn_6 -> l7_ffn_6
+	l7_ffn_6 -> l7_add_6
+	l7_attn_6 -> l7_add_6
+	l7_add_6 -> l7_attn_agg
+	l7_attn_agg -> l7_ffn_agg
+	l6_ffn_agg -> l7_attn_7
+	l7_attn_7 -> l7_ffn_7
+	l7_ffn_7 -> l7_add_7
+	l7_attn_7 -> l7_add_7
+	l7_add_7 -> l7_attn_agg
+	l7_attn_agg -> l7_ffn_agg
+	l7_ffn_agg -> l8_attn_0
+	l8_attn_0 -> l8_ffn_0
+	l8_ffn_0 -> l8_add_0
+	l8_attn_0 -> l8_add_0
+	l8_add_0 -> l8_attn_agg
+	l8_attn_agg -> l8_ffn_agg
+	l7_ffn_agg -> l8_attn_1
+	l8_attn_1 -> l8_ffn_1
+	l8_ffn_1 -> l8_add_1
+	l8_attn_1 -> l8_add_1
+	l8_add_1 -> l8_attn_agg
+	l8_attn_agg -> l8_ffn_agg
+	l7_ffn_agg -> l8_attn_2
+	l8_attn_2 -> l8_ffn_2
+	l8_ffn_2 -> l8_add_2
+	l8_attn_2 -> l8_add_2
+	l8_add_2 -> l8_attn_agg
+	l8_attn_agg -> l8_ffn_agg
+	l7_ffn_agg -> l8_attn_3
+	l8_attn_3 -> l8_ffn_3
+	l8_ffn_3 -> l8_add_3
+	l8_attn_3 -> l8_add_3
+	l8_add_3 -> l8_attn_agg
+	l8_attn_agg -> l8_ffn_agg
+	l7_ffn_agg -> l8_attn_4
+	l8_attn_4 -> l8_ffn_4
+	l8_ffn_4 -> l8_add_4
+	l8_attn_4 -> l8_add_4
+	l8_add_4 -> l8_attn_agg
+	l8_attn_agg -> l8_ffn_agg
+	l7_ffn_agg -> l8_attn_5
+	l8_attn_5 -> l8_ffn_5
+	l8_ffn_5 -> l8_add_5
+	l8_attn_5 -> l8_add_5
+	l8_add_5 -> l8_attn_agg
+	l8_attn_agg -> l8_ffn_agg
+	l7_ffn_agg -> l8_attn_6
+	l8_attn_6 -> l8_ffn_6
+	l8_ffn_6 -> l8_add_6
+	l8_attn_6 -> l8_add_6
+	l8_add_6 -> l8_attn_agg
+	l8_attn_agg -> l8_ffn_agg
+	l7_ffn_agg -> l8_attn_7
+	l8_attn_7 -> l8_ffn_7
+	l8_ffn_7 -> l8_add_7
+	l8_attn_7 -> l8_add_7
+	l8_add_7 -> l8_attn_agg
+	l8_attn_agg -> l8_ffn_agg
+	l8_ffn_agg -> pipe_comm
+	pipe_comm -> l9_attn_8
+	pipe_comm -> l9_attn_9
+	pipe_comm -> l9_attn_10
+	pipe_comm -> l9_attn_11
+	pipe_comm -> l9_attn_12
+	pipe_comm -> l9_attn_13
+	pipe_comm -> l9_attn_14
+	pipe_comm -> l9_attn_15
+	l9_attn_8 -> l9_ffn_8
+	l9_ffn_8 -> l9_add_8
+	l9_attn_8 -> l9_add_8
+	l9_add_8 -> l9_attn_agg
+	l9_attn_agg -> l9_ffn_agg
+	l9_attn_9 -> l9_ffn_9
+	l9_ffn_9 -> l9_add_9
+	l9_attn_9 -> l9_add_9
+	l9_add_9 -> l9_attn_agg
+	l9_attn_agg -> l9_ffn_agg
+	l9_attn_10 -> l9_ffn_10
+	l9_ffn_10 -> l9_add_10
+	l9_attn_10 -> l9_add_10
+	l9_add_10 -> l9_attn_agg
+	l9_attn_agg -> l9_ffn_agg
+	l9_attn_11 -> l9_ffn_11
+	l9_ffn_11 -> l9_add_11
+	l9_attn_11 -> l9_add_11
+	l9_add_11 -> l9_attn_agg
+	l9_attn_agg -> l9_ffn_agg
+	l9_attn_12 -> l9_ffn_12
+	l9_ffn_12 -> l9_add_12
+	l9_attn_12 -> l9_add_12
+	l9_add_12 -> l9_attn_agg
+	l9_attn_agg -> l9_ffn_agg
+	l9_attn_13 -> l9_ffn_13
+	l9_ffn_13 -> l9_add_13
+	l9_attn_13 -> l9_add_13
+	l9_add_13 -> l9_attn_agg
+	l9_attn_agg -> l9_ffn_agg
+	l9_attn_14 -> l9_ffn_14
+	l9_ffn_14 -> l9_add_14
+	l9_attn_14 -> l9_add_14
+	l9_add_14 -> l9_attn_agg
+	l9_attn_agg -> l9_ffn_agg
+	l9_attn_15 -> l9_ffn_15
+	l9_ffn_15 -> l9_add_15
+	l9_attn_15 -> l9_add_15
+	l9_add_15 -> l9_attn_agg
+	l9_attn_agg -> l9_ffn_agg
+	l10_attn_8 -> l10_ffn_8
+	l10_ffn_8 -> l10_add_8
+	l10_attn_8 -> l10_add_8
+	l10_add_8 -> l10_attn_agg
+	l10_attn_agg -> l10_ffn_agg
+	l10_attn_9 -> l10_ffn_9
+	l10_ffn_9 -> l10_add_9
+	l10_attn_9 -> l10_add_9
+	l10_add_9 -> l10_attn_agg
+	l10_attn_agg -> l10_ffn_agg
+	l10_attn_10 -> l10_ffn_10
+	l10_ffn_10 -> l10_add_10
+	l10_attn_10 -> l10_add_10
+	l10_add_10 -> l10_attn_agg
+	l10_attn_agg -> l10_ffn_agg
+	l10_attn_11 -> l10_ffn_11
+	l10_ffn_11 -> l10_add_11
+	l10_attn_11 -> l10_add_11
+	l10_add_11 -> l10_attn_agg
+	l10_attn_agg -> l10_ffn_agg
+	l10_attn_12 -> l10_ffn_12
+	l10_ffn_12 -> l10_add_12
+	l10_attn_12 -> l10_add_12
+	l10_add_12 -> l10_attn_agg
+	l10_attn_agg -> l10_ffn_agg
+	l10_attn_13 -> l10_ffn_13
+	l10_ffn_13 -> l10_add_13
+	l10_attn_13 -> l10_add_13
+	l10_add_13 -> l10_attn_agg
+	l10_attn_agg -> l10_ffn_agg
+	l10_attn_14 -> l10_ffn_14
+	l10_ffn_14 -> l10_add_14
+	l10_attn_14 -> l10_add_14
+	l10_add_14 -> l10_attn_agg
+	l10_attn_agg -> l10_ffn_agg
+	l10_attn_15 -> l10_ffn_15
+	l10_ffn_15 -> l10_add_15
+	l10_attn_15 -> l10_add_15
+	l10_add_15 -> l10_attn_agg
+	l10_attn_agg -> l10_ffn_agg
+	l11_attn_8 -> l11_ffn_8
+	l11_ffn_8 -> l11_add_8
+	l11_attn_8 -> l11_add_8
+	l11_add_8 -> l11_attn_agg
+	l11_attn_agg -> l11_ffn_agg
+	l11_attn_9 -> l11_ffn_9
+	l11_ffn_9 -> l11_add_9
+	l11_attn_9 -> l11_add_9
+	l11_add_9 -> l11_attn_agg
+	l11_attn_agg -> l11_ffn_agg
+	l11_attn_10 -> l11_ffn_10
+	l11_ffn_10 -> l11_add_10
+	l11_attn_10 -> l11_add_10
+	l11_add_10 -> l11_attn_agg
+	l11_attn_agg -> l11_ffn_agg
+	l11_attn_11 -> l11_ffn_11
+	l11_ffn_11 -> l11_add_11
+	l11_attn_11 -> l11_add_11
+	l11_add_11 -> l11_attn_agg
+	l11_attn_agg -> l11_ffn_agg
+	l11_attn_12 -> l11_ffn_12
+	l11_ffn_12 -> l11_add_12
+	l11_attn_12 -> l11_add_12
+	l11_add_12 -> l11_attn_agg
+	l11_attn_agg -> l11_ffn_agg
+	l11_attn_13 -> l11_ffn_13
+	l11_ffn_13 -> l11_add_13
+	l11_attn_13 -> l11_add_13
+	l11_add_13 -> l11_attn_agg
+	l11_attn_agg -> l11_ffn_agg
+	l11_attn_14 -> l11_ffn_14
+	l11_ffn_14 -> l11_add_14
+	l11_attn_14 -> l11_add_14
+	l11_add_14 -> l11_attn_agg
+	l11_attn_agg -> l11_ffn_agg
+	l11_attn_15 -> l11_ffn_15
+	l11_ffn_15 -> l11_add_15
+	l11_attn_15 -> l11_add_15
+	l11_add_15 -> l11_attn_agg
+	l11_attn_agg -> l11_ffn_agg
+	l12_attn_8 -> l12_ffn_8
+	l12_ffn_8 -> l12_add_8
+	l12_attn_8 -> l12_add_8
+	l12_add_8 -> l12_attn_agg
+	l12_attn_agg -> l12_ffn_agg
+	l12_attn_9 -> l12_ffn_9
+	l12_ffn_9 -> l12_add_9
+	l12_attn_9 -> l12_add_9
+	l12_add_9 -> l12_attn_agg
+	l12_attn_agg -> l12_ffn_agg
+	l12_attn_10 -> l12_ffn_10
+	l12_ffn_10 -> l12_add_10
+	l12_attn_10 -> l12_add_10
+	l12_add_10 -> l12_attn_agg
+	l12_attn_agg -> l12_ffn_agg
+	l12_attn_11 -> l12_ffn_11
+	l12_ffn_11 -> l12_add_11
+	l12_attn_11 -> l12_add_11
+	l12_add_11 -> l12_attn_agg
+	l12_attn_agg -> l12_ffn_agg
+	l12_attn_12 -> l12_ffn_12
+	l12_ffn_12 -> l12_add_12
+	l12_attn_12 -> l12_add_12
+	l12_add_12 -> l12_attn_agg
+	l12_attn_agg -> l12_ffn_agg
+	l12_attn_13 -> l12_ffn_13
+	l12_ffn_13 -> l12_add_13
+	l12_attn_13 -> l12_add_13
+	l12_add_13 -> l12_attn_agg
+	l12_attn_agg -> l12_ffn_agg
+	l12_attn_14 -> l12_ffn_14
+	l12_ffn_14 -> l12_add_14
+	l12_attn_14 -> l12_add_14
+	l12_add_14 -> l12_attn_agg
+	l12_attn_agg -> l12_ffn_agg
+	l12_attn_15 -> l12_ffn_15
+	l12_ffn_15 -> l12_add_15
+	l12_attn_15 -> l12_add_15
+	l12_add_15 -> l12_attn_agg
+	l12_attn_agg -> l12_ffn_agg
+	l13_attn_8 -> l13_ffn_8
+	l13_ffn_8 -> l13_add_8
+	l13_attn_8 -> l13_add_8
+	l13_add_8 -> l13_attn_agg
+	l13_attn_agg -> l13_ffn_agg
+	l13_attn_9 -> l13_ffn_9
+	l13_ffn_9 -> l13_add_9
+	l13_attn_9 -> l13_add_9
+	l13_add_9 -> l13_attn_agg
+	l13_attn_agg -> l13_ffn_agg
+	l13_attn_10 -> l13_ffn_10
+	l13_ffn_10 -> l13_add_10
+	l13_attn_10 -> l13_add_10
+	l13_add_10 -> l13_attn_agg
+	l13_attn_agg -> l13_ffn_agg
+	l13_attn_11 -> l13_ffn_11
+	l13_ffn_11 -> l13_add_11
+	l13_attn_11 -> l13_add_11
+	l13_add_11 -> l13_attn_agg
+	l13_attn_agg -> l13_ffn_agg
+	l13_attn_12 -> l13_ffn_12
+	l13_ffn_12 -> l13_add_12
+	l13_attn_12 -> l13_add_12
+	l13_add_12 -> l13_attn_agg
+	l13_attn_agg -> l13_ffn_agg
+	l13_attn_13 -> l13_ffn_13
+	l13_ffn_13 -> l13_add_13
+	l13_attn_13 -> l13_add_13
+	l13_add_13 -> l13_attn_agg
+	l13_attn_agg -> l13_ffn_agg
+	l13_attn_14 -> l13_ffn_14
+	l13_ffn_14 -> l13_add_14
+	l13_attn_14 -> l13_add_14
+	l13_add_14 -> l13_attn_agg
+	l13_attn_agg -> l13_ffn_agg
+	l13_attn_15 -> l13_ffn_15
+	l13_ffn_15 -> l13_add_15
+	l13_attn_15 -> l13_add_15
+	l13_add_15 -> l13_attn_agg
+	l13_attn_agg -> l13_ffn_agg
+	l14_attn_8 -> l14_ffn_8
+	l14_ffn_8 -> l14_add_8
+	l14_attn_8 -> l14_add_8
+	l14_add_8 -> l14_attn_agg
+	l14_attn_agg -> l14_ffn_agg
+	l14_attn_9 -> l14_ffn_9
+	l14_ffn_9 -> l14_add_9
+	l14_attn_9 -> l14_add_9
+	l14_add_9 -> l14_attn_agg
+	l14_attn_agg -> l14_ffn_agg
+	l14_attn_10 -> l14_ffn_10
+	l14_ffn_10 -> l14_add_10
+	l14_attn_10 -> l14_add_10
+	l14_add_10 -> l14_attn_agg
+	l14_attn_agg -> l14_ffn_agg
+	l14_attn_11 -> l14_ffn_11
+	l14_ffn_11 -> l14_add_11
+	l14_attn_11 -> l14_add_11
+	l14_add_11 -> l14_attn_agg
+	l14_attn_agg -> l14_ffn_agg
+	l14_attn_12 -> l14_ffn_12
+	l14_ffn_12 -> l14_add_12
+	l14_attn_12 -> l14_add_12
+	l14_add_12 -> l14_attn_agg
+	l14_attn_agg -> l14_ffn_agg
+	l14_attn_13 -> l14_ffn_13
+	l14_ffn_13 -> l14_add_13
+	l14_attn_13 -> l14_add_13
+	l14_add_13 -> l14_attn_agg
+	l14_attn_agg -> l14_ffn_agg
+	l14_attn_14 -> l14_ffn_14
+	l14_ffn_14 -> l14_add_14
+	l14_attn_14 -> l14_add_14
+	l14_add_14 -> l14_attn_agg
+	l14_attn_agg -> l14_ffn_agg
+	l14_attn_15 -> l14_ffn_15
+	l14_ffn_15 -> l14_add_15
+	l14_attn_15 -> l14_add_15
+	l14_add_15 -> l14_attn_agg
+	l14_attn_agg -> l14_ffn_agg
+	l15_attn_8 -> l15_ffn_8
+	l15_ffn_8 -> l15_add_8
+	l15_attn_8 -> l15_add_8
+	l15_add_8 -> l15_attn_agg
+	l15_attn_agg -> l15_ffn_agg
+	l15_attn_9 -> l15_ffn_9
+	l15_ffn_9 -> l15_add_9
+	l15_attn_9 -> l15_add_9
+	l15_add_9 -> l15_attn_agg
+	l15_attn_agg -> l15_ffn_agg
+	l15_attn_10 -> l15_ffn_10
+	l15_ffn_10 -> l15_add_10
+	l15_attn_10 -> l15_add_10
+	l15_add_10 -> l15_attn_agg
+	l15_attn_agg -> l15_ffn_agg
+	l15_attn_11 -> l15_ffn_11
+	l15_ffn_11 -> l15_add_11
+	l15_attn_11 -> l15_add_11
+	l15_add_11 -> l15_attn_agg
+	l15_attn_agg -> l15_ffn_agg
+	l15_attn_12 -> l15_ffn_12
+	l15_ffn_12 -> l15_add_12
+	l15_attn_12 -> l15_add_12
+	l15_add_12 -> l15_attn_agg
+	l15_attn_agg -> l15_ffn_agg
+	l15_attn_13 -> l15_ffn_13
+	l15_ffn_13 -> l15_add_13
+	l15_attn_13 -> l15_add_13
+	l15_add_13 -> l15_attn_agg
+	l15_attn_agg -> l15_ffn_agg
+	l15_attn_14 -> l15_ffn_14
+	l15_ffn_14 -> l15_add_14
+	l15_attn_14 -> l15_add_14
+	l15_add_14 -> l15_attn_agg
+	l15_attn_agg -> l15_ffn_agg
+	l15_attn_15 -> l15_ffn_15
+	l15_ffn_15 -> l15_add_15
+	l15_attn_15 -> l15_add_15
+	l15_add_15 -> l15_attn_agg
+	l15_attn_agg -> l15_ffn_agg
+	l16_attn_8 -> l16_ffn_8
+	l16_ffn_8 -> l16_add_8
+	l16_attn_8 -> l16_add_8
+	l16_add_8 -> l16_attn_agg
+	l16_attn_agg -> l16_ffn_agg
+	l16_attn_9 -> l16_ffn_9
+	l16_ffn_9 -> l16_add_9
+	l16_attn_9 -> l16_add_9
+	l16_add_9 -> l16_attn_agg
+	l16_attn_agg -> l16_ffn_agg
+	l16_attn_10 -> l16_ffn_10
+	l16_ffn_10 -> l16_add_10
+	l16_attn_10 -> l16_add_10
+	l16_add_10 -> l16_attn_agg
+	l16_attn_agg -> l16_ffn_agg
+	l16_attn_11 -> l16_ffn_11
+	l16_ffn_11 -> l16_add_11
+	l16_attn_11 -> l16_add_11
+	l16_add_11 -> l16_attn_agg
+	l16_attn_agg -> l16_ffn_agg
+	l16_attn_12 -> l16_ffn_12
+	l16_ffn_12 -> l16_add_12
+	l16_attn_12 -> l16_add_12
+	l16_add_12 -> l16_attn_agg
+	l16_attn_agg -> l16_ffn_agg
+	l16_attn_13 -> l16_ffn_13
+	l16_ffn_13 -> l16_add_13
+	l16_attn_13 -> l16_add_13
+	l16_add_13 -> l16_attn_agg
+	l16_attn_agg -> l16_ffn_agg
+	l16_attn_14 -> l16_ffn_14
+	l16_ffn_14 -> l16_add_14
+	l16_attn_14 -> l16_add_14
+	l16_add_14 -> l16_attn_agg
+	l16_attn_agg -> l16_ffn_agg
+	l16_attn_15 -> l16_ffn_15
+	l16_ffn_15 -> l16_add_15
+	l16_attn_15 -> l16_add_15
+	l16_add_15 -> l16_attn_agg
+	l16_attn_agg -> l16_ffn_agg
+	l16_ffn_agg -> output
+}

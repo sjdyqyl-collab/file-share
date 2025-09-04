@@ -1,0 +1,250 @@
+{
+  "models": {
+    "baseline": {
+      "name": "Dense Transformer Baseline",
+      "layers": 4,
+      "hidden_size": 8192,
+      "attention_heads": 16,
+      "head_dimension": 512,
+      "mlp_hidden_size": 32768,
+      "precision": "fp16",
+      "batch_size": 1024,
+      "sequence_length": 16384
+    },
+    "ra_sp": {
+      "name": "Dense Transformer RA+SP",
+      "layers": 4,
+      "hidden_size": 8192,
+      "attention_heads": 16,
+      "head_dimension": 512,
+      "mlp_hidden_size": 32768,
+      "precision": "fp16",
+      "batch_size": 1024,
+      "sequence_length": 16384
+    }
+  },
+  "parallel_strategies": {
+    "baseline": {
+      "strategy": "tensor_pipeline_parallel",
+      "tensor_parallel_size": 8,
+      "pipeline_parallel_size": 2,
+      "total_devices": 16,
+      "sequence_parallel": false,
+      "ring_attention": false
+    },
+    "ra_sp": {
+      "strategy": "ring_sequence_parallel",
+      "sequence_parallel_size": 16,
+      "total_devices": 16,
+      "sequence_parallel": true,
+      "ring_attention": true,
+      "tensor_parallel": 1,
+      "pipeline_parallel": 1
+    }
+  },
+  "module_divisions": {
+    "baseline": {
+      "tensor_parallel_modules": [
+        "attention.query_key_value",
+        "attention.dense",
+        "mlp.dense_h_to_4h",
+        "mlp.dense_4h_to_h"
+      ],
+      "pipeline_parallel_stages": [
+        {
+          "stage_id": 0,
+          "layers": [0, 1],
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+        },
+        {
+          "stage_id": 1,
+          "layers": [2, 3],
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      ]
+    },
+    "ra_sp": {
+      "sequence_parallel_modules": [
+        "attention.query_key_value",
+        "attention.dense",
+        "mlp.dense_h_to_4h",
+        "mlp.dense_4h_to_h"
+      ],
+      "ring_attention_modules": [
+        "attention.scaled_dot_product_attention"
+      ],
+      "sequence_splits": {
+        "sequence_length": 16384,
+        "sequence_parallel_size": 16,
+        "per_device_sequence_length": 1024
+      }
+    }
+  },
+  "device_mapping": {
+    "baseline": {
+      "devices": [
+        {
+          "device_id": 0,
+          "gpu_id": "H100:0",
+          "pipeline_stage": 0,
+          "tensor_parallel_rank": 0,
+          "modules": ["layer_0_attention_qkv_slice_0", "layer_0_attention_dense_slice_0", "layer_0_mlp_h2_4h_slice_0", "layer_0_mlp_4h2_h_slice_0"]
+        },
+        {
+          "device_id": 1,
+          "gpu_id": "H100:1",
+          "pipeline_stage": 0,
+          "tensor_parallel_rank": 1,
+          "modules": ["layer_0_attention_qkv_slice_1", "layer_0_attention_dense_slice_1", "layer_0_mlp_h2_4h_slice_1", "layer_0_mlp_4h2_h_slice_1"]
+        },
+        {
+          "device_id": 8,
+          "gpu_id": "H100:8",
+          "pipeline_stage": 1,
+          "tensor_parallel_rank": 0,
+          "modules": ["layer_2_attention_qkv_slice_0", "layer_2_attention_dense_slice_0", "layer_2_mlp_h2_4h_slice_0", "layer_2_mlp_4h2_h_slice_0"]
+        },
+        {
+          "device_id": 15,
+          "gpu_id": "H100:15",
+          "pipeline_stage": 1,
+          "tensor_parallel_rank": 7,
+          "modules": ["layer_3_mlp_4h2_h_slice_7"]
+        }
+      ]
+    },
+    "ra_sp": {
+      "devices": [
+        {
+          "device_id": 0,
+          "gpu_id": "H100:0",
+          "sequence_parallel_rank": 0,
+          "sequence_slice": [0, 1024],
+          "modules": [
+            "layer_0_attention_qkv_seq_0_1024",
+            "layer_0_attention_dense_seq_0_1024",
+            "layer_0_mlp_h2_4h_seq_0_1024",
+            "layer_0_mlp_4h2_h_seq_0_1024",
+            "layer_1_attention_qkv_seq_0_1024",
+            "layer_1_attention_dense_seq_0_1024",
+            "layer_1_mlp_h2_4h_seq_0_1024",
+            "layer_1_mlp_4h2_h_seq_0_1024",
+            "layer_2_attention_qkv_seq_0_1024",
+            "layer_2_attention_dense_seq_0_1024",
+            "layer_2_mlp_h2_4h_seq_0_1024",
+            "layer_2_mlp_4h2_h_seq_0_1024",
+            "layer_3_attention_qkv_seq_0_1024",
+            "layer_3_attention_dense_seq_0_1024",
+            "layer_3_mlp_h2_4h_seq_0_1024",
+            "layer_3_mlp_4h2_h_seq_0_1024"
+          ],
+          "ring_neighbors": {
+            "previous": 15,
+            "next": 1
+          }
+        },
+        {
+          "device_id": 1,
+          "gpu_id": "H100:1",
+          "sequence_parallel_rank": 1,
+          "sequence_slice": [1024, 2048],
+          "modules": [
+            "layer_0_attention_qkv_seq_1024_2048",
+            "layer_0_attention_dense_seq_1024_2048",
+            "layer_0_mlp_h2_4h_seq_1024_2048",
+            "layer_0_mlp_4h2_h_seq_1024_2048",
+            "layer_1_attention_qkv_seq_1024_2048",
+            "layer_1_attention_dense_seq_1024_2048",
+            "layer_1_mlp_h2_4h_seq_1024_2048",
+            "layer_1_mlp_4h2_h_seq_1024_2048",
+            "layer_2_attention_qkv_seq_1024_2048",
+            "layer_2_attention_dense_seq_1024_2048",
+            "layer_2_mlp_h2_4h_seq_1024_2048",
+            "layer_2_mlp_4h2_h_seq_1024_2048",
+            "layer_3_attention_qkv_seq_1024_2048",
+            "layer_3_attention_dense_seq_1024_2048",
+            "layer_3_mlp_h2_4h_seq_1024_2048",
+            "layer_3_mlp_4h2_h_seq_1024_2048"
+          ],
+          "ring_neighbors": {
+            "previous": 0,
+            "next": 2
+          }
+        },
+        {
+          "device_id": 15,
+          "gpu_id": "H100:15",
+          "sequence_parallel_rank": 15,
+          "sequence_slice": [15360, 16384],
+          "modules": [
+            "layer_0_attention_qkv_seq_15360_16384",
+            "layer_0_attention_dense_seq_15360_16384",
+            "layer_0_mlp_h2_4h_seq_15360_16384",
+            "layer_0_mlp_4h2_h_seq_15360_16384",
+            "layer_1_attention_qkv_seq_15360_16384",
+            "layer_1_attention_dense_seq_15360_16384",
+            "layer_1_mlp_h2_4h_seq_15360_16384",
+            "layer_1_mlp_4h2_h_seq_15360_16384",
+            "layer_2_attention_qkv_seq_15360_16384",
+            "layer_2_attention_dense_seq_15360_16384",
+            "layer_2_mlp_h2_4h_seq_15360_16384",
+            "layer_2_mlp_4h2_h_seq_15360_16384",
+            "layer_3_attention_qkv_seq_15360_16384",
+            "layer_3_attention_dense_seq_15360_16384",
+            "layer_3_mlp_h2_4h_seq_15360_16384",
+            "layer_3_mlp_4h2_h_seq_15360_16384"
+          ],
+          "ring_neighbors": {
+            "previous": 14,
+            "next": 0
+          }
+        }
+      ]
+    }
+  },
+  "communication_parameters": {
+    "baseline": {
+      "tensor_parallel_communication": {
+        "type": "all_reduce",
+        "backend": "nccl",
+        "bandwidth": "nvlink_600gbps"
+      },
+      "pipeline_parallel_communication": {
+        "type": "send_recv",
+        "backend": "nccl",
+        "bandwidth": "nvlink_600gbps"
+      }
+    },
+    "ra_sp": {
+      "ring_attention_communication": {
+        "type": "send_recv_ring",
+        "backend": "nccl",
+        "bandwidth": "nvlink_600gbps",
+        "stages": 16,
+        "message_size": "2097152_bytes",  # 1024 * 512 * 4 bytes
+        "overlap": true
+      },
+      "sequence_parallel_communication": {
+        "type": "all_reduce",
+        "backend": "nccl",
+        "bandwidth": "nvlink_600gbps"
+      }
+    }
+  },
+  "runtime_parameters": {
+    "precision": "fp16",
+    "batch_size": 1024,
+    "sequence_length": 16384,
+    "attention_heads": 16,
+    "head_dimension": 512,
+    "hidden_size": 8192,
+    "mlp_hidden_size": 32768,
+    "num_layers": 4,
+    "optimization": {
+      "fused_kernels": true,
+      "mixed_precision": true,
+      "communication_overlap": true,
+      "kernel_fusion": true
+    }
+  }
+}

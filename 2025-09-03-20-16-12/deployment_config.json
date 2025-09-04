@@ -1,0 +1,160 @@
+{
+  "models": {
+    "baseline": {
+      "name": "Dense Transformer Baseline",
+      "layers": 4,
+      "hidden_size": 8192,
+      "num_heads": 16,
+      "head_dim": 512,
+      "mlp_hidden_size": 32768,
+      "precision": "fp16",
+      "batch_size": 1024,
+      "parallel_strategy": {
+        "type": "hybrid",
+        "tensor_parallelism": {
+          "degree": 8,
+          "partition_dim": "hidden"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2,
+          "layers_per_stage": [2, 2]
+        }
+      },
+      "module_mapping": {
+        "layer_0": {
+          "type": "transformer_layer",
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+          "pipeline_stage": 0
+        },
+        "layer_1": {
+          "type": "transformer_layer",
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+          "pipeline_stage": 0
+        },
+        "layer_2": {
+          "type": "transformer_layer",
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+          "pipeline_stage": 1
+        },
+        "layer_3": {
+          "type": "transformer_layer",
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+          "pipeline_stage": 1
+        }
+      },
+      "communication": {
+        "intra_stage": "all_reduce",
+        "inter_stage": "send_recv"
+      }
+    },
+    "proposed": {
+      "name": "Dense Transformer RA+SP",
+      "layers": 4,
+      "hidden_size": 8192,
+      "num_heads": 16,
+      "head_dim": 512,
+      "mlp_hidden_size": 32768,
+      "precision": "fp16",
+      "batch_size": 1024,
+      "sequence_length_per_device": 64,
+      "parallel_strategy": {
+        "type": "ring_attention_sequence_parallelism",
+        "sequence_parallelism": {
+          "degree": 16,
+          "partition_dim": "sequence"
+        },
+        "ring_attention": {
+          "topology": "ring",
+          "stages": 16,
+          "communication_pattern": "peer_to_peer"
+        }
+      },
+      "module_mapping": {
+        "layer_0": {
+          "type": "transformer_layer",
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "sequence_partition": {
+            "device_0": {"start": 0, "end": 63},
+            "device_1": {"start": 64, "end": 127},
+            "device_2": {"start": 128, "end": 191},
+            "device_3": {"start": 192, "end": 255},
+            "device_4": {"start": 256, "end": 319},
+            "device_5": {"start": 320, "end": 383},
+            "device_6": {"start": 384, "end": 447},
+            "device_7": {"start": 448, "end": 511},
+            "device_8": {"start": 512, "end": 575},
+            "device_9": {"start": 576, "end": 639},
+            "device_10": {"start": 640, "end": 703},
+            "device_11": {"start": 704, "end": 767},
+            "device_12": {"start": 768, "end": 831},
+            "device_13": {"start": 832, "end": 895},
+            "device_14": {"start": 896, "end": 959},
+            "device_15": {"start": 960, "end": 1023}
+          }
+        },
+        "layer_1": {
+          "type": "transformer_layer",
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "sequence_partition": "same_as_layer_0"
+        },
+        "layer_2": {
+          "type": "transformer_layer",
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "sequence_partition": "same_as_layer_0"
+        },
+        "layer_3": {
+          "type": "transformer_layer",
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "sequence_partition": "same_as_layer_0"
+        }
+      },
+      "attention_computation": {
+        "ring_stages": 16,
+        "communication_pattern": {
+          "type": "ring",
+          "send_to": "next_device",
+          "recv_from": "previous_device",
+          "device_order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        },
+        "memory_requirements": {
+          "activation_memory_per_device": "L/P * d_model",
+          "communication_buffer": "L/P * d_model",
+          "total_memory_reduction_factor": 16
+        }
+      },
+      "communication": {
+        "primitives": ["nccl_send", "nccl_recv"],
+        "overlap": true,
+        "precision": "fp16",
+        "bandwidth_utilization": "lower_peak_vs_all_to_all"
+      }
+    }
+  },
+  "system_configuration": {
+    "hardware": {
+      "gpus": 16,
+      "type": "NVIDIA_H100",
+      "interconnect": "NVLink_and_NVSwitch",
+      "memory_per_gpu": "80GB_HBM3"
+    },
+    "software": {
+      "framework": "PyTorch",
+      "communication_library": "NCCL",
+      "precision": "fp16",
+      "kernels": ["fused_projection", "fused_softmax"]
+    }
+  },
+  "deployment_parameters": {
+    "sequence_length": 1024,
+    "batch_size": 1024,
+    "micro_batch_size": 64,
+    "gradient_accumulation_steps": 1,
+    "activation_checkpointing": false,
+    "mixed_precision": {
+      "enabled": true,
+      "dtype": "fp16",
+      "master_weights": true
+    }
+  }
+}

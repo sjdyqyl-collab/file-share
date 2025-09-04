@@ -1,0 +1,121 @@
+{
+  "deployment_config": {
+    "model_name": "dense_16_layer",
+    "model_architecture": {
+      "total_layers": 16,
+      "layer_types": ["dense"],
+      "precision": "FP16",
+      "batch_size": 1024,
+      "hidden_size": 32768,
+      "num_heads": 16,
+      "head_dim": 512
+    },
+    "hardware_setup": {
+      "num_gpus": 16,
+      "gpu_type": "NVIDIA_H100",
+      "cache_capacity_per_gpu_bytes": 50331648,
+      "memory_capacity_per_gpu_bytes": 8589934592,
+      "interconnect": "NVLink"
+    },
+    "parallel_strategy": {
+      "strategy_type": "layer_wise_partitioning",
+      "partitions": [
+        {
+          "partition_id": 0,
+          "layer_range": [0, 3],
+          "assigned_device": 0,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true
+        },
+        {
+          "partition_id": 1,
+          "layer_range": [4, 7],
+          "assigned_device": 1,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true
+        },
+        {
+          "partition_id": 2,
+          "layer_range": [8, 11],
+          "assigned_device": 2,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true
+        },
+        {
+          "partition_id": 3,
+          "layer_range": [12, 15],
+          "assigned_device": 3,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true
+        }
+      ],
+      "replication_factor": 4,
+      "total_partitions": 4
+    },
+    "communication_strategy": {
+      "inter_partition_transfer": {
+        "protocol": "NCCL",
+        "transfer_type": "p2p",
+        "buffer_size_bytes": 8388608,
+        "overlap_communication": true,
+        "compression": "none"
+      },
+      "intra_partition_transfer": {
+        "protocol": "shared_memory",
+        "transfer_type": "zero_copy",
+        "buffer_size_bytes": 16777216
+      }
+    },
+    "module_splitting": {
+      "dense_layers": {
+        "splitting_strategy": "no_split",
+        "weight_partitioning": false,
+        "activation_partitioning": false
+      },
+      "attention_modules": {
+        "mha_splitting": {
+          "enabled": false,
+          "num_splits": 1,
+          "head_parallelism": false
+        },
+        "ffn_splitting": {
+          "enabled": false,
+          "num_splits": 1,
+          "intermediate_parallelism": false
+        }
+      }
+    },
+    "memory_optimization": {
+      "cache_fitting_parameters": {
+        "max_partition_size_bytes": 50331648,
+        "greedy_partitioning": true,
+        "dynamic_programming_fallback": false,
+        "buffer_overhead_factor": 1.1
+      },
+      "activation_checkpointing": {
+        "enabled": false,
+        "checkpoint_layers": []
+      },
+      "memory_allocation": {
+        "pre_allocate_weights": true,
+        "pre_allocate_activations": true,
+        "memory_pool_size_bytes": 50331648
+      }
+    },
+    "baseline_comparison": {
+      "tensor_parallelism": {
+        "tp_degree": 8,
+        "pp_degree": 2,
+        "num_microbatches": 1,
+        "virtual_pipeline_stages": 1
+      },
+      "performance_metrics": {
+        "baseline_tps": 12800,
+        "baseline_tpot_ms": 0.078,
+        "proposed_tps": 15360,
+        "proposed_tpot_ms": 0.065,
+        "improvement_percentage": 20
+      }
+    }
+  }
+}

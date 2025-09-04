@@ -1,0 +1,258 @@
+{
+  "models": {
+    "baseline": {
+      "name": "Dense Transformer Baseline",
+      "architecture": {
+        "layers": 4,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "hidden_size": 8192,
+        "mlp_hidden_size": 32768,
+        "precision": "fp16"
+      },
+      "parallel_strategy": {
+        "type": "tensor_pipeline_parallelism",
+        "tensor_parallelism": 8,
+        "pipeline_parallelism": 2,
+        "sequence_parallelism": false,
+        "ring_attention": false
+      },
+      "modules": {
+        "embedding": {
+          "type": "embedding_layer",
+          "parameters": {"vocab_size": 32000, "hidden_size": 8192},
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+        },
+        "transformer_layers": [
+          {
+            "layer_id": 0,
+            "attention": {
+              "type": "multi_head_attention",
+              "parameters": {"heads": 16, "head_dim": 512, "hidden_size": 8192},
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "parameters": {"hidden_size": 8192, "mlp_hidden_size": 32768},
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+            }
+          },
+          {
+            "layer_id": 1,
+            "attention": {
+              "type": "multi_head_attention",
+              "parameters": {"heads": 16, "head_dim": 512, "hidden_size": 8192},
+              "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "parameters": {"hidden_size": 8192, "mlp_hidden_size": 32768},
+              "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          },
+          {
+            "layer_id": 2,
+            "attention": {
+              "type": "multi_head_attention",
+              "parameters": {"heads": 16, "head_dim": 512, "hidden_size": 8192},
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "parameters": {"hidden_size": 8192, "mlp_hidden_size": 32768},
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+            }
+          },
+          {
+            "layer_id": 3,
+            "attention": {
+              "type": "multi_head_attention",
+              "parameters": {"heads": 16, "head_dim": 512, "hidden_size": 8192},
+              "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "parameters": {"hidden_size": 8192, "mlp_hidden_size": 32768},
+              "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          }
+        ],
+        "output_layer": {
+          "type": "linear_output",
+          "parameters": {"hidden_size": 8192, "vocab_size": 32000},
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+        }
+      },
+      "communication": {
+        "attention": "all_reduce",
+        "mlp": "all_reduce",
+        "pipeline": "send_recv"
+      }
+    },
+    "ring_attention_sequence_parallelism": {
+      "name": "Dense Transformer RA+SP",
+      "architecture": {
+        "layers": 4,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "hidden_size": 8192,
+        "mlp_hidden_size": 32768,
+        "precision": "fp16"
+      },
+      "parallel_strategy": {
+        "type": "ring_attention_sequence_parallelism",
+        "tensor_parallelism": 1,
+        "pipeline_parallelism": 1,
+        "sequence_parallelism": true,
+        "ring_attention": true,
+        "sequence_parallel_size": 16
+      },
+      "modules": {
+        "embedding": {
+          "type": "embedding_layer",
+          "parameters": {"vocab_size": 32000, "hidden_size": 8192},
+          "sequence_split": true,
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        },
+        "transformer_layers": [
+          {
+            "layer_id": 0,
+            "attention": {
+              "type": "ring_multi_head_attention",
+              "parameters": {
+                "heads": 16,
+                "head_dim": 512,
+                "hidden_size": 8192,
+                "sequence_length_per_device": 64,
+                "total_sequence_length": 1024
+              },
+              "ring_size": 16,
+              "sequence_parallel": true,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "parameters": {"hidden_size": 8192, "mlp_hidden_size": 32768},
+              "sequence_parallel": true,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          },
+          {
+            "layer_id": 1,
+            "attention": {
+              "type": "ring_multi_head_attention",
+              "parameters": {
+                "heads": 16,
+                "head_dim": 512,
+                "hidden_size": 8192,
+                "sequence_length_per_device": 64,
+                "total_sequence_length": 1024
+              },
+              "ring_size": 16,
+              "sequence_parallel": true,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "parameters": {"hidden_size": 8192, "mlp_hidden_size": 32768},
+              "sequence_parallel": true,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          },
+          {
+            "layer_id": 2,
+            "attention": {
+              "type": "ring_multi_head_attention",
+              "parameters": {
+                "heads": 16,
+                "head_dim": 512,
+                "hidden_size": 8192,
+                "sequence_length_per_device": 64,
+                "total_sequence_length": 1024
+              },
+              "ring_size": 16,
+              "sequence_parallel": true,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "parameters": {"hidden_size": 8192, "mlp_hidden_size": 32768},
+              "sequence_parallel": true,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          },
+          {
+            "layer_id": 3,
+            "attention": {
+              "type": "ring_multi_head_attention",
+              "parameters": {
+                "heads": 16,
+                "head_dim": 512,
+                "hidden_size": 8192,
+                "sequence_length_per_device": 64,
+                "total_sequence_length": 1024
+              },
+              "ring_size": 16,
+              "sequence_parallel": true,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "parameters": {"hidden_size": 8192, "mlp_hidden_size": 32768},
+              "sequence_parallel": true,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          }
+        ],
+        "output_layer": {
+          "type": "linear_output",
+          "parameters": {"hidden_size": 8192, "vocab_size": 32000},
+          "sequence_gather": true,
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      },
+      "communication": {
+        "attention": {
+          "type": "ring_all_to_all",
+          "ring_size": 16,
+          "stages": 16,
+          "buffer_size": "L/P×d_model",
+          "overlap": true
+        },
+        "sequence_parallel": {
+          "type": "sequence_all_gather",
+          "gather_size": 16,
+          "buffer_size": "L/P×d_model"
+        }
+      },
+      "ring_topology": {
+        "device_order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        "communication_pattern": "bidirectional_ring",
+        "next_device_mapping": {
+          "0": 1, "1": 2, "2": 3, "3": 4, "4": 5, "5": 6, "6": 7, "7": 8,
+          "8": 9, "9": 10, "10": 11, "11": 12, "12": 13, "13": 14, "14": 15, "15": 0
+        },
+        "prev_device_mapping": {
+          "0": 15, "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, "7": 6,
+          "8": 7, "9": 8, "10": 9, "11": 10, "12": 11, "13": 12, "14": 13, "15": 14
+        }
+      }
+    }
+  },
+  "deployment_parameters": {
+    "batch_size": 1024,
+    "sequence_length": 1024,
+    "precision": "fp16",
+    "hardware": {
+      "gpu_count": 16,
+      "gpu_type": "NVIDIA H100",
+      "interconnect": "NVLink + NVSwitch"
+    },
+    "optimization": {
+      "mixed_precision": true,
+      "kernel_fusion": true,
+      "communication_overlap": true,
+      "async_operations": true
+    }
+  }
+}

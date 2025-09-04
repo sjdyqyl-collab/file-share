@@ -1,0 +1,226 @@
+{
+  "deployment_config": {
+    "model_name": "dense_16_layer",
+    "model_architecture": {
+      "total_layers": 16,
+      "layer_types": ["dense"],
+      "precision": "FP16",
+      "batch_size": 1024,
+      "hidden_size": 32768,
+      "num_heads": 16,
+      "head_dim": 512,
+      "memory_footprint_per_layer_bytes": 50331648
+    },
+    "hardware_setup": {
+      "num_gpus": 16,
+      "gpu_type": "NVIDIA_H100",
+      "cache_capacity_per_gpu_bytes": 50331648,
+      "memory_capacity_per_gpu_bytes": 8589934592,
+      "interconnect": "NVLink"
+    },
+    "parallel_strategy": {
+      "strategy_type": "layer_wise_partitioning",
+      "partitions": [
+        {
+          "partition_id": 0,
+          "layer_range": [0, 0],
+          "assigned_device": 0,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 1,
+          "layer_range": [1, 1],
+          "assigned_device": 1,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 2,
+          "layer_range": [2, 2],
+          "assigned_device": 2,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 3,
+          "layer_range": [3, 3],
+          "assigned_device": 3,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 4,
+          "layer_range": [4, 4],
+          "assigned_device": 4,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 5,
+          "layer_range": [5, 5],
+          "assigned_device": 5,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 6,
+          "layer_range": [6, 6],
+          "assigned_device": 6,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 7,
+          "layer_range": [7, 7],
+          "assigned_device": 7,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 8,
+          "layer_range": [8, 8],
+          "assigned_device": 8,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 9,
+          "layer_range": [9, 9],
+          "assigned_device": 9,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 10,
+          "layer_range": [10, 10],
+          "assigned_device": 10,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 11,
+          "layer_range": [11, 11],
+          "assigned_device": 11,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 12,
+          "layer_range": [12, 12],
+          "assigned_device": 12,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 13,
+          "layer_range": [13, 13],
+          "assigned_device": 13,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 14,
+          "layer_range": [14, 14],
+          "assigned_device": 14,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        },
+        {
+          "partition_id": 15,
+          "layer_range": [15, 15],
+          "assigned_device": 15,
+          "memory_footprint_bytes": 50331648,
+          "cache_fitting": true,
+          "layer_type": "dense"
+        }
+      ],
+      "total_partitions": 16,
+      "partitioning_strategy": "one_layer_per_device"
+    },
+    "communication_strategy": {
+      "inter_partition_transfer": {
+        "protocol": "NCCL",
+        "transfer_type": "p2p",
+        "buffer_size_bytes": 8388608,
+        "overlap_communication": true,
+        "compression": "none"
+      },
+      "pipeline_execution": {
+        "execution_order": "sequential",
+        "forward_pass": true,
+        "backward_pass": false,
+        "activation_storing": false
+      }
+    },
+    "module_splitting": {
+      "dense_layers": {
+        "splitting_strategy": "no_split",
+        "weight_partitioning": false,
+        "activation_partitioning": false
+      },
+      "layer_distribution": {
+        "type": "one_to_one_mapping",
+        "layers_per_gpu": 1,
+        "total_layers": 16,
+        "total_gpus": 16
+      }
+    },
+    "memory_optimization": {
+      "cache_fitting_parameters": {
+        "max_layer_size_bytes": 50331648,
+        "cache_capacity_bytes": 50331648,
+        "fitting_strategy": "exact_fit",
+        "edge_case_handling": {
+          "single_layer_oversized": {
+            "enabled": true,
+            "fallback_strategies": ["quantization", "pruning", "batch_size_reduction"]
+          }
+        }
+      },
+      "activation_checkpointing": {
+        "enabled": false,
+        "checkpoint_layers": []
+      },
+      "memory_allocation": {
+        "pre_allocate_weights": true,
+        "pre_allocate_activations": true,
+        "memory_pool_size_bytes": 50331648,
+        "allocation_strategy": "static_preallocation"
+      }
+    },
+    "baseline_comparison": {
+      "tensor_parallelism": {
+        "tp_degree": 8,
+        "pp_degree": 2,
+        "num_microbatches": 1,
+        "virtual_pipeline_stages": 1,
+        "total_gpus": 16,
+        "layers_per_gpu": 8
+      },
+      "performance_metrics": {
+        "baseline_tps": 12800,
+        "baseline_tpot_ms": 0.078,
+        "proposed_tps": 15360,
+        "proposed_tpot_ms": 0.065,
+        "improvement_percentage": 20,
+        "improvement_type": "throughput_increase"
+      }
+    }
+  }
+}

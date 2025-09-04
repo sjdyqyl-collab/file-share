@@ -1,0 +1,1606 @@
+// Baseline MoE with TP=8, PP=2, 16 GPUs
+digraph baseline_moe_dag {
+	rankdir=TB size="20,30"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	edge [fontsize=10]
+	input [label="Input
+[1024, hidden_size]
+All GPUs" fillcolor=lightgreen shape=ellipse]
+	subgraph cluster_stage_0 {
+		label="Pipeline Stage 0" style=dashed
+		subgraph cluster_layer_0 {
+			label="Layer 0" style=rounded
+			subgraph cluster_mha_0 {
+				label="Multi-Head Attention (TP=8)" style=dotted
+				qkv_0_0 [label="QKV Proj
+[1024, 768]
+GPU 0" fillcolor=lightyellow]
+				qkv_0_1 [label="QKV Proj
+[1024, 768]
+GPU 1" fillcolor=lightyellow]
+				qkv_0_2 [label="QKV Proj
+[1024, 768]
+GPU 2" fillcolor=lightyellow]
+				qkv_0_3 [label="QKV Proj
+[1024, 768]
+GPU 3" fillcolor=lightyellow]
+				qkv_0_4 [label="QKV Proj
+[1024, 768]
+GPU 4" fillcolor=lightyellow]
+				qkv_0_5 [label="QKV Proj
+[1024, 768]
+GPU 5" fillcolor=lightyellow]
+				qkv_0_6 [label="QKV Proj
+[1024, 768]
+GPU 6" fillcolor=lightyellow]
+				qkv_0_7 [label="QKV Proj
+[1024, 768]
+GPU 7" fillcolor=lightyellow]
+				attn_0_0 [label="Attention
+[1024, 512]
+GPU 0" fillcolor=lightcoral]
+				attn_0_1 [label="Attention
+[1024, 512]
+GPU 1" fillcolor=lightcoral]
+				attn_0_2 [label="Attention
+[1024, 512]
+GPU 2" fillcolor=lightcoral]
+				attn_0_3 [label="Attention
+[1024, 512]
+GPU 3" fillcolor=lightcoral]
+				attn_0_4 [label="Attention
+[1024, 512]
+GPU 4" fillcolor=lightcoral]
+				attn_0_5 [label="Attention
+[1024, 512]
+GPU 5" fillcolor=lightcoral]
+				attn_0_6 [label="Attention
+[1024, 512]
+GPU 6" fillcolor=lightcoral]
+				attn_0_7 [label="Attention
+[1024, 512]
+GPU 7" fillcolor=lightcoral]
+				out_proj_0_0 [label="Output Proj
+[1024, 4096]
+GPU 0" fillcolor=lightyellow]
+				out_proj_0_1 [label="Output Proj
+[1024, 4096]
+GPU 1" fillcolor=lightyellow]
+				out_proj_0_2 [label="Output Proj
+[1024, 4096]
+GPU 2" fillcolor=lightyellow]
+				out_proj_0_3 [label="Output Proj
+[1024, 4096]
+GPU 3" fillcolor=lightyellow]
+				out_proj_0_4 [label="Output Proj
+[1024, 4096]
+GPU 4" fillcolor=lightyellow]
+				out_proj_0_5 [label="Output Proj
+[1024, 4096]
+GPU 5" fillcolor=lightyellow]
+				out_proj_0_6 [label="Output Proj
+[1024, 4096]
+GPU 6" fillcolor=lightyellow]
+				out_proj_0_7 [label="Output Proj
+[1024, 4096]
+GPU 7" fillcolor=lightyellow]
+			}
+			residual1_0 [label="Residual Add
+[1024, 4096]
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+			subgraph cluster_moe_0 {
+				label="MoE Layer - 4 Experts per GPU" style=dotted
+				gate_0_0 [label="Gate
+[1024, 16]
+GPU 0" fillcolor=orange shape=parallelogram]
+				gate_0_1 [label="Gate
+[1024, 16]
+GPU 1" fillcolor=orange shape=parallelogram]
+				gate_0_2 [label="Gate
+[1024, 16]
+GPU 2" fillcolor=orange shape=parallelogram]
+				gate_0_3 [label="Gate
+[1024, 16]
+GPU 3" fillcolor=orange shape=parallelogram]
+				gate_0_4 [label="Gate
+[1024, 16]
+GPU 4" fillcolor=orange shape=parallelogram]
+				gate_0_5 [label="Gate
+[1024, 16]
+GPU 5" fillcolor=orange shape=parallelogram]
+				gate_0_6 [label="Gate
+[1024, 16]
+GPU 6" fillcolor=orange shape=parallelogram]
+				gate_0_7 [label="Gate
+[1024, 16]
+GPU 7" fillcolor=orange shape=parallelogram]
+				expert_0_0_0 [label="Expert 0
+[256, 32768, 256]
+GPU 0" fillcolor=lightpink]
+				expert_0_0_1 [label="Expert 1
+[256, 32768, 256]
+GPU 0" fillcolor=lightpink]
+				expert_0_0_2 [label="Expert 2
+[256, 32768, 256]
+GPU 0" fillcolor=lightpink]
+				expert_0_0_3 [label="Expert 3
+[256, 32768, 256]
+GPU 0" fillcolor=lightpink]
+				expert_0_1_0 [label="Expert 4
+[256, 32768, 256]
+GPU 1" fillcolor=lightpink]
+				expert_0_1_1 [label="Expert 5
+[256, 32768, 256]
+GPU 1" fillcolor=lightpink]
+				expert_0_1_2 [label="Expert 6
+[256, 32768, 256]
+GPU 1" fillcolor=lightpink]
+				expert_0_1_3 [label="Expert 7
+[256, 32768, 256]
+GPU 1" fillcolor=lightpink]
+				expert_0_2_0 [label="Expert 8
+[256, 32768, 256]
+GPU 2" fillcolor=lightpink]
+				expert_0_2_1 [label="Expert 9
+[256, 32768, 256]
+GPU 2" fillcolor=lightpink]
+				expert_0_2_2 [label="Expert 10
+[256, 32768, 256]
+GPU 2" fillcolor=lightpink]
+				expert_0_2_3 [label="Expert 11
+[256, 32768, 256]
+GPU 2" fillcolor=lightpink]
+				expert_0_3_0 [label="Expert 12
+[256, 32768, 256]
+GPU 3" fillcolor=lightpink]
+				expert_0_3_1 [label="Expert 13
+[256, 32768, 256]
+GPU 3" fillcolor=lightpink]
+				expert_0_3_2 [label="Expert 14
+[256, 32768, 256]
+GPU 3" fillcolor=lightpink]
+				expert_0_3_3 [label="Expert 15
+[256, 32768, 256]
+GPU 3" fillcolor=lightpink]
+				expert_0_4_0 [label="Expert 16
+[256, 32768, 256]
+GPU 4" fillcolor=lightpink]
+				expert_0_4_1 [label="Expert 17
+[256, 32768, 256]
+GPU 4" fillcolor=lightpink]
+				expert_0_4_2 [label="Expert 18
+[256, 32768, 256]
+GPU 4" fillcolor=lightpink]
+				expert_0_4_3 [label="Expert 19
+[256, 32768, 256]
+GPU 4" fillcolor=lightpink]
+				expert_0_5_0 [label="Expert 20
+[256, 32768, 256]
+GPU 5" fillcolor=lightpink]
+				expert_0_5_1 [label="Expert 21
+[256, 32768, 256]
+GPU 5" fillcolor=lightpink]
+				expert_0_5_2 [label="Expert 22
+[256, 32768, 256]
+GPU 5" fillcolor=lightpink]
+				expert_0_5_3 [label="Expert 23
+[256, 32768, 256]
+GPU 5" fillcolor=lightpink]
+				expert_0_6_0 [label="Expert 24
+[256, 32768, 256]
+GPU 6" fillcolor=lightpink]
+				expert_0_6_1 [label="Expert 25
+[256, 32768, 256]
+GPU 6" fillcolor=lightpink]
+				expert_0_6_2 [label="Expert 26
+[256, 32768, 256]
+GPU 6" fillcolor=lightpink]
+				expert_0_6_3 [label="Expert 27
+[256, 32768, 256]
+GPU 6" fillcolor=lightpink]
+				expert_0_7_0 [label="Expert 28
+[256, 32768, 256]
+GPU 7" fillcolor=lightpink]
+				expert_0_7_1 [label="Expert 29
+[256, 32768, 256]
+GPU 7" fillcolor=lightpink]
+				expert_0_7_2 [label="Expert 30
+[256, 32768, 256]
+GPU 7" fillcolor=lightpink]
+				expert_0_7_3 [label="Expert 31
+[256, 32768, 256]
+GPU 7" fillcolor=lightpink]
+				agg_0_0 [label="Expert Agg
+[1024, 4096]
+GPU 0" fillcolor=lightgreen shape=parallelogram]
+				agg_0_1 [label="Expert Agg
+[1024, 4096]
+GPU 1" fillcolor=lightgreen shape=parallelogram]
+				agg_0_2 [label="Expert Agg
+[1024, 4096]
+GPU 2" fillcolor=lightgreen shape=parallelogram]
+				agg_0_3 [label="Expert Agg
+[1024, 4096]
+GPU 3" fillcolor=lightgreen shape=parallelogram]
+				agg_0_4 [label="Expert Agg
+[1024, 4096]
+GPU 4" fillcolor=lightgreen shape=parallelogram]
+				agg_0_5 [label="Expert Agg
+[1024, 4096]
+GPU 5" fillcolor=lightgreen shape=parallelogram]
+				agg_0_6 [label="Expert Agg
+[1024, 4096]
+GPU 6" fillcolor=lightgreen shape=parallelogram]
+				agg_0_7 [label="Expert Agg
+[1024, 4096]
+GPU 7" fillcolor=lightgreen shape=parallelogram]
+			}
+			residual2_0 [label="Residual Add
+[1024, 4096]
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+		}
+		subgraph cluster_layer_1 {
+			label="Layer 1" style=rounded
+			subgraph cluster_mha_1 {
+				label="Multi-Head Attention (TP=8)" style=dotted
+				qkv_1_0 [label="QKV Proj
+[1024, 768]
+GPU 0" fillcolor=lightyellow]
+				qkv_1_1 [label="QKV Proj
+[1024, 768]
+GPU 1" fillcolor=lightyellow]
+				qkv_1_2 [label="QKV Proj
+[1024, 768]
+GPU 2" fillcolor=lightyellow]
+				qkv_1_3 [label="QKV Proj
+[1024, 768]
+GPU 3" fillcolor=lightyellow]
+				qkv_1_4 [label="QKV Proj
+[1024, 768]
+GPU 4" fillcolor=lightyellow]
+				qkv_1_5 [label="QKV Proj
+[1024, 768]
+GPU 5" fillcolor=lightyellow]
+				qkv_1_6 [label="QKV Proj
+[1024, 768]
+GPU 6" fillcolor=lightyellow]
+				qkv_1_7 [label="QKV Proj
+[1024, 768]
+GPU 7" fillcolor=lightyellow]
+				attn_1_0 [label="Attention
+[1024, 512]
+GPU 0" fillcolor=lightcoral]
+				attn_1_1 [label="Attention
+[1024, 512]
+GPU 1" fillcolor=lightcoral]
+				attn_1_2 [label="Attention
+[1024, 512]
+GPU 2" fillcolor=lightcoral]
+				attn_1_3 [label="Attention
+[1024, 512]
+GPU 3" fillcolor=lightcoral]
+				attn_1_4 [label="Attention
+[1024, 512]
+GPU 4" fillcolor=lightcoral]
+				attn_1_5 [label="Attention
+[1024, 512]
+GPU 5" fillcolor=lightcoral]
+				attn_1_6 [label="Attention
+[1024, 512]
+GPU 6" fillcolor=lightcoral]
+				attn_1_7 [label="Attention
+[1024, 512]
+GPU 7" fillcolor=lightcoral]
+				out_proj_1_0 [label="Output Proj
+[1024, 4096]
+GPU 0" fillcolor=lightyellow]
+				out_proj_1_1 [label="Output Proj
+[1024, 4096]
+GPU 1" fillcolor=lightyellow]
+				out_proj_1_2 [label="Output Proj
+[1024, 4096]
+GPU 2" fillcolor=lightyellow]
+				out_proj_1_3 [label="Output Proj
+[1024, 4096]
+GPU 3" fillcolor=lightyellow]
+				out_proj_1_4 [label="Output Proj
+[1024, 4096]
+GPU 4" fillcolor=lightyellow]
+				out_proj_1_5 [label="Output Proj
+[1024, 4096]
+GPU 5" fillcolor=lightyellow]
+				out_proj_1_6 [label="Output Proj
+[1024, 4096]
+GPU 6" fillcolor=lightyellow]
+				out_proj_1_7 [label="Output Proj
+[1024, 4096]
+GPU 7" fillcolor=lightyellow]
+			}
+			residual1_1 [label="Residual Add
+[1024, 4096]
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+			subgraph cluster_moe_1 {
+				label="MoE Layer - 4 Experts per GPU" style=dotted
+				gate_1_0 [label="Gate
+[1024, 16]
+GPU 0" fillcolor=orange shape=parallelogram]
+				gate_1_1 [label="Gate
+[1024, 16]
+GPU 1" fillcolor=orange shape=parallelogram]
+				gate_1_2 [label="Gate
+[1024, 16]
+GPU 2" fillcolor=orange shape=parallelogram]
+				gate_1_3 [label="Gate
+[1024, 16]
+GPU 3" fillcolor=orange shape=parallelogram]
+				gate_1_4 [label="Gate
+[1024, 16]
+GPU 4" fillcolor=orange shape=parallelogram]
+				gate_1_5 [label="Gate
+[1024, 16]
+GPU 5" fillcolor=orange shape=parallelogram]
+				gate_1_6 [label="Gate
+[1024, 16]
+GPU 6" fillcolor=orange shape=parallelogram]
+				gate_1_7 [label="Gate
+[1024, 16]
+GPU 7" fillcolor=orange shape=parallelogram]
+				expert_1_0_0 [label="Expert 32
+[256, 32768, 256]
+GPU 0" fillcolor=lightpink]
+				expert_1_0_1 [label="Expert 33
+[256, 32768, 256]
+GPU 0" fillcolor=lightpink]
+				expert_1_0_2 [label="Expert 34
+[256, 32768, 256]
+GPU 0" fillcolor=lightpink]
+				expert_1_0_3 [label="Expert 35
+[256, 32768, 256]
+GPU 0" fillcolor=lightpink]
+				expert_1_1_0 [label="Expert 36
+[256, 32768, 256]
+GPU 1" fillcolor=lightpink]
+				expert_1_1_1 [label="Expert 37
+[256, 32768, 256]
+GPU 1" fillcolor=lightpink]
+				expert_1_1_2 [label="Expert 38
+[256, 32768, 256]
+GPU 1" fillcolor=lightpink]
+				expert_1_1_3 [label="Expert 39
+[256, 32768, 256]
+GPU 1" fillcolor=lightpink]
+				expert_1_2_0 [label="Expert 40
+[256, 32768, 256]
+GPU 2" fillcolor=lightpink]
+				expert_1_2_1 [label="Expert 41
+[256, 32768, 256]
+GPU 2" fillcolor=lightpink]
+				expert_1_2_2 [label="Expert 42
+[256, 32768, 256]
+GPU 2" fillcolor=lightpink]
+				expert_1_2_3 [label="Expert 43
+[256, 32768, 256]
+GPU 2" fillcolor=lightpink]
+				expert_1_3_0 [label="Expert 44
+[256, 32768, 256]
+GPU 3" fillcolor=lightpink]
+				expert_1_3_1 [label="Expert 45
+[256, 32768, 256]
+GPU 3" fillcolor=lightpink]
+				expert_1_3_2 [label="Expert 46
+[256, 32768, 256]
+GPU 3" fillcolor=lightpink]
+				expert_1_3_3 [label="Expert 47
+[256, 32768, 256]
+GPU 3" fillcolor=lightpink]
+				expert_1_4_0 [label="Expert 48
+[256, 32768, 256]
+GPU 4" fillcolor=lightpink]
+				expert_1_4_1 [label="Expert 49
+[256, 32768, 256]
+GPU 4" fillcolor=lightpink]
+				expert_1_4_2 [label="Expert 50
+[256, 32768, 256]
+GPU 4" fillcolor=lightpink]
+				expert_1_4_3 [label="Expert 51
+[256, 32768, 256]
+GPU 4" fillcolor=lightpink]
+				expert_1_5_0 [label="Expert 52
+[256, 32768, 256]
+GPU 5" fillcolor=lightpink]
+				expert_1_5_1 [label="Expert 53
+[256, 32768, 256]
+GPU 5" fillcolor=lightpink]
+				expert_1_5_2 [label="Expert 54
+[256, 32768, 256]
+GPU 5" fillcolor=lightpink]
+				expert_1_5_3 [label="Expert 55
+[256, 32768, 256]
+GPU 5" fillcolor=lightpink]
+				expert_1_6_0 [label="Expert 56
+[256, 32768, 256]
+GPU 6" fillcolor=lightpink]
+				expert_1_6_1 [label="Expert 57
+[256, 32768, 256]
+GPU 6" fillcolor=lightpink]
+				expert_1_6_2 [label="Expert 58
+[256, 32768, 256]
+GPU 6" fillcolor=lightpink]
+				expert_1_6_3 [label="Expert 59
+[256, 32768, 256]
+GPU 6" fillcolor=lightpink]
+				expert_1_7_0 [label="Expert 60
+[256, 32768, 256]
+GPU 7" fillcolor=lightpink]
+				expert_1_7_1 [label="Expert 61
+[256, 32768, 256]
+GPU 7" fillcolor=lightpink]
+				expert_1_7_2 [label="Expert 62
+[256, 32768, 256]
+GPU 7" fillcolor=lightpink]
+				expert_1_7_3 [label="Expert 63
+[256, 32768, 256]
+GPU 7" fillcolor=lightpink]
+				agg_1_0 [label="Expert Agg
+[1024, 4096]
+GPU 0" fillcolor=lightgreen shape=parallelogram]
+				agg_1_1 [label="Expert Agg
+[1024, 4096]
+GPU 1" fillcolor=lightgreen shape=parallelogram]
+				agg_1_2 [label="Expert Agg
+[1024, 4096]
+GPU 2" fillcolor=lightgreen shape=parallelogram]
+				agg_1_3 [label="Expert Agg
+[1024, 4096]
+GPU 3" fillcolor=lightgreen shape=parallelogram]
+				agg_1_4 [label="Expert Agg
+[1024, 4096]
+GPU 4" fillcolor=lightgreen shape=parallelogram]
+				agg_1_5 [label="Expert Agg
+[1024, 4096]
+GPU 5" fillcolor=lightgreen shape=parallelogram]
+				agg_1_6 [label="Expert Agg
+[1024, 4096]
+GPU 6" fillcolor=lightgreen shape=parallelogram]
+				agg_1_7 [label="Expert Agg
+[1024, 4096]
+GPU 7" fillcolor=lightgreen shape=parallelogram]
+			}
+			residual2_1 [label="Residual Add
+[1024, 4096]
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+		}
+	}
+	subgraph cluster_stage_1 {
+		label="Pipeline Stage 1" style=dashed
+		subgraph cluster_layer_2 {
+			label="Layer 2" style=rounded
+			subgraph cluster_mha_2 {
+				label="Multi-Head Attention (TP=8)" style=dotted
+				qkv_2_0 [label="QKV Proj
+[1024, 768]
+GPU 8" fillcolor=lightyellow]
+				qkv_2_1 [label="QKV Proj
+[1024, 768]
+GPU 9" fillcolor=lightyellow]
+				qkv_2_2 [label="QKV Proj
+[1024, 768]
+GPU 10" fillcolor=lightyellow]
+				qkv_2_3 [label="QKV Proj
+[1024, 768]
+GPU 11" fillcolor=lightyellow]
+				qkv_2_4 [label="QKV Proj
+[1024, 768]
+GPU 12" fillcolor=lightyellow]
+				qkv_2_5 [label="QKV Proj
+[1024, 768]
+GPU 13" fillcolor=lightyellow]
+				qkv_2_6 [label="QKV Proj
+[1024, 768]
+GPU 14" fillcolor=lightyellow]
+				qkv_2_7 [label="QKV Proj
+[1024, 768]
+GPU 15" fillcolor=lightyellow]
+				attn_2_0 [label="Attention
+[1024, 512]
+GPU 8" fillcolor=lightcoral]
+				attn_2_1 [label="Attention
+[1024, 512]
+GPU 9" fillcolor=lightcoral]
+				attn_2_2 [label="Attention
+[1024, 512]
+GPU 10" fillcolor=lightcoral]
+				attn_2_3 [label="Attention
+[1024, 512]
+GPU 11" fillcolor=lightcoral]
+				attn_2_4 [label="Attention
+[1024, 512]
+GPU 12" fillcolor=lightcoral]
+				attn_2_5 [label="Attention
+[1024, 512]
+GPU 13" fillcolor=lightcoral]
+				attn_2_6 [label="Attention
+[1024, 512]
+GPU 14" fillcolor=lightcoral]
+				attn_2_7 [label="Attention
+[1024, 512]
+GPU 15" fillcolor=lightcoral]
+				out_proj_2_0 [label="Output Proj
+[1024, 4096]
+GPU 8" fillcolor=lightyellow]
+				out_proj_2_1 [label="Output Proj
+[1024, 4096]
+GPU 9" fillcolor=lightyellow]
+				out_proj_2_2 [label="Output Proj
+[1024, 4096]
+GPU 10" fillcolor=lightyellow]
+				out_proj_2_3 [label="Output Proj
+[1024, 4096]
+GPU 11" fillcolor=lightyellow]
+				out_proj_2_4 [label="Output Proj
+[1024, 4096]
+GPU 12" fillcolor=lightyellow]
+				out_proj_2_5 [label="Output Proj
+[1024, 4096]
+GPU 13" fillcolor=lightyellow]
+				out_proj_2_6 [label="Output Proj
+[1024, 4096]
+GPU 14" fillcolor=lightyellow]
+				out_proj_2_7 [label="Output Proj
+[1024, 4096]
+GPU 15" fillcolor=lightyellow]
+			}
+			residual1_2 [label="Residual Add
+[1024, 4096]
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+			subgraph cluster_moe_2 {
+				label="MoE Layer - 4 Experts per GPU" style=dotted
+				gate_2_0 [label="Gate
+[1024, 16]
+GPU 8" fillcolor=orange shape=parallelogram]
+				gate_2_1 [label="Gate
+[1024, 16]
+GPU 9" fillcolor=orange shape=parallelogram]
+				gate_2_2 [label="Gate
+[1024, 16]
+GPU 10" fillcolor=orange shape=parallelogram]
+				gate_2_3 [label="Gate
+[1024, 16]
+GPU 11" fillcolor=orange shape=parallelogram]
+				gate_2_4 [label="Gate
+[1024, 16]
+GPU 12" fillcolor=orange shape=parallelogram]
+				gate_2_5 [label="Gate
+[1024, 16]
+GPU 13" fillcolor=orange shape=parallelogram]
+				gate_2_6 [label="Gate
+[1024, 16]
+GPU 14" fillcolor=orange shape=parallelogram]
+				gate_2_7 [label="Gate
+[1024, 16]
+GPU 15" fillcolor=orange shape=parallelogram]
+				expert_2_0_0 [label="Expert 64
+[256, 32768, 256]
+GPU 8" fillcolor=lightpink]
+				expert_2_0_1 [label="Expert 65
+[256, 32768, 256]
+GPU 8" fillcolor=lightpink]
+				expert_2_0_2 [label="Expert 66
+[256, 32768, 256]
+GPU 8" fillcolor=lightpink]
+				expert_2_0_3 [label="Expert 67
+[256, 32768, 256]
+GPU 8" fillcolor=lightpink]
+				expert_2_1_0 [label="Expert 68
+[256, 32768, 256]
+GPU 9" fillcolor=lightpink]
+				expert_2_1_1 [label="Expert 69
+[256, 32768, 256]
+GPU 9" fillcolor=lightpink]
+				expert_2_1_2 [label="Expert 70
+[256, 32768, 256]
+GPU 9" fillcolor=lightpink]
+				expert_2_1_3 [label="Expert 71
+[256, 32768, 256]
+GPU 9" fillcolor=lightpink]
+				expert_2_2_0 [label="Expert 72
+[256, 32768, 256]
+GPU 10" fillcolor=lightpink]
+				expert_2_2_1 [label="Expert 73
+[256, 32768, 256]
+GPU 10" fillcolor=lightpink]
+				expert_2_2_2 [label="Expert 74
+[256, 32768, 256]
+GPU 10" fillcolor=lightpink]
+				expert_2_2_3 [label="Expert 75
+[256, 32768, 256]
+GPU 10" fillcolor=lightpink]
+				expert_2_3_0 [label="Expert 76
+[256, 32768, 256]
+GPU 11" fillcolor=lightpink]
+				expert_2_3_1 [label="Expert 77
+[256, 32768, 256]
+GPU 11" fillcolor=lightpink]
+				expert_2_3_2 [label="Expert 78
+[256, 32768, 256]
+GPU 11" fillcolor=lightpink]
+				expert_2_3_3 [label="Expert 79
+[256, 32768, 256]
+GPU 11" fillcolor=lightpink]
+				expert_2_4_0 [label="Expert 80
+[256, 32768, 256]
+GPU 12" fillcolor=lightpink]
+				expert_2_4_1 [label="Expert 81
+[256, 32768, 256]
+GPU 12" fillcolor=lightpink]
+				expert_2_4_2 [label="Expert 82
+[256, 32768, 256]
+GPU 12" fillcolor=lightpink]
+				expert_2_4_3 [label="Expert 83
+[256, 32768, 256]
+GPU 12" fillcolor=lightpink]
+				expert_2_5_0 [label="Expert 84
+[256, 32768, 256]
+GPU 13" fillcolor=lightpink]
+				expert_2_5_1 [label="Expert 85
+[256, 32768, 256]
+GPU 13" fillcolor=lightpink]
+				expert_2_5_2 [label="Expert 86
+[256, 32768, 256]
+GPU 13" fillcolor=lightpink]
+				expert_2_5_3 [label="Expert 87
+[256, 32768, 256]
+GPU 13" fillcolor=lightpink]
+				expert_2_6_0 [label="Expert 88
+[256, 32768, 256]
+GPU 14" fillcolor=lightpink]
+				expert_2_6_1 [label="Expert 89
+[256, 32768, 256]
+GPU 14" fillcolor=lightpink]
+				expert_2_6_2 [label="Expert 90
+[256, 32768, 256]
+GPU 14" fillcolor=lightpink]
+				expert_2_6_3 [label="Expert 91
+[256, 32768, 256]
+GPU 14" fillcolor=lightpink]
+				expert_2_7_0 [label="Expert 92
+[256, 32768, 256]
+GPU 15" fillcolor=lightpink]
+				expert_2_7_1 [label="Expert 93
+[256, 32768, 256]
+GPU 15" fillcolor=lightpink]
+				expert_2_7_2 [label="Expert 94
+[256, 32768, 256]
+GPU 15" fillcolor=lightpink]
+				expert_2_7_3 [label="Expert 95
+[256, 32768, 256]
+GPU 15" fillcolor=lightpink]
+				agg_2_0 [label="Expert Agg
+[1024, 4096]
+GPU 8" fillcolor=lightgreen shape=parallelogram]
+				agg_2_1 [label="Expert Agg
+[1024, 4096]
+GPU 9" fillcolor=lightgreen shape=parallelogram]
+				agg_2_2 [label="Expert Agg
+[1024, 4096]
+GPU 10" fillcolor=lightgreen shape=parallelogram]
+				agg_2_3 [label="Expert Agg
+[1024, 4096]
+GPU 11" fillcolor=lightgreen shape=parallelogram]
+				agg_2_4 [label="Expert Agg
+[1024, 4096]
+GPU 12" fillcolor=lightgreen shape=parallelogram]
+				agg_2_5 [label="Expert Agg
+[1024, 4096]
+GPU 13" fillcolor=lightgreen shape=parallelogram]
+				agg_2_6 [label="Expert Agg
+[1024, 4096]
+GPU 14" fillcolor=lightgreen shape=parallelogram]
+				agg_2_7 [label="Expert Agg
+[1024, 4096]
+GPU 15" fillcolor=lightgreen shape=parallelogram]
+			}
+			residual2_2 [label="Residual Add
+[1024, 4096]
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+		}
+		subgraph cluster_layer_3 {
+			label="Layer 3" style=rounded
+			subgraph cluster_mha_3 {
+				label="Multi-Head Attention (TP=8)" style=dotted
+				qkv_3_0 [label="QKV Proj
+[1024, 768]
+GPU 8" fillcolor=lightyellow]
+				qkv_3_1 [label="QKV Proj
+[1024, 768]
+GPU 9" fillcolor=lightyellow]
+				qkv_3_2 [label="QKV Proj
+[1024, 768]
+GPU 10" fillcolor=lightyellow]
+				qkv_3_3 [label="QKV Proj
+[1024, 768]
+GPU 11" fillcolor=lightyellow]
+				qkv_3_4 [label="QKV Proj
+[1024, 768]
+GPU 12" fillcolor=lightyellow]
+				qkv_3_5 [label="QKV Proj
+[1024, 768]
+GPU 13" fillcolor=lightyellow]
+				qkv_3_6 [label="QKV Proj
+[1024, 768]
+GPU 14" fillcolor=lightyellow]
+				qkv_3_7 [label="QKV Proj
+[1024, 768]
+GPU 15" fillcolor=lightyellow]
+				attn_3_0 [label="Attention
+[1024, 512]
+GPU 8" fillcolor=lightcoral]
+				attn_3_1 [label="Attention
+[1024, 512]
+GPU 9" fillcolor=lightcoral]
+				attn_3_2 [label="Attention
+[1024, 512]
+GPU 10" fillcolor=lightcoral]
+				attn_3_3 [label="Attention
+[1024, 512]
+GPU 11" fillcolor=lightcoral]
+				attn_3_4 [label="Attention
+[1024, 512]
+GPU 12" fillcolor=lightcoral]
+				attn_3_5 [label="Attention
+[1024, 512]
+GPU 13" fillcolor=lightcoral]
+				attn_3_6 [label="Attention
+[1024, 512]
+GPU 14" fillcolor=lightcoral]
+				attn_3_7 [label="Attention
+[1024, 512]
+GPU 15" fillcolor=lightcoral]
+				out_proj_3_0 [label="Output Proj
+[1024, 4096]
+GPU 8" fillcolor=lightyellow]
+				out_proj_3_1 [label="Output Proj
+[1024, 4096]
+GPU 9" fillcolor=lightyellow]
+				out_proj_3_2 [label="Output Proj
+[1024, 4096]
+GPU 10" fillcolor=lightyellow]
+				out_proj_3_3 [label="Output Proj
+[1024, 4096]
+GPU 11" fillcolor=lightyellow]
+				out_proj_3_4 [label="Output Proj
+[1024, 4096]
+GPU 12" fillcolor=lightyellow]
+				out_proj_3_5 [label="Output Proj
+[1024, 4096]
+GPU 13" fillcolor=lightyellow]
+				out_proj_3_6 [label="Output Proj
+[1024, 4096]
+GPU 14" fillcolor=lightyellow]
+				out_proj_3_7 [label="Output Proj
+[1024, 4096]
+GPU 15" fillcolor=lightyellow]
+			}
+			residual1_3 [label="Residual Add
+[1024, 4096]
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+			subgraph cluster_moe_3 {
+				label="MoE Layer - 4 Experts per GPU" style=dotted
+				gate_3_0 [label="Gate
+[1024, 16]
+GPU 8" fillcolor=orange shape=parallelogram]
+				gate_3_1 [label="Gate
+[1024, 16]
+GPU 9" fillcolor=orange shape=parallelogram]
+				gate_3_2 [label="Gate
+[1024, 16]
+GPU 10" fillcolor=orange shape=parallelogram]
+				gate_3_3 [label="Gate
+[1024, 16]
+GPU 11" fillcolor=orange shape=parallelogram]
+				gate_3_4 [label="Gate
+[1024, 16]
+GPU 12" fillcolor=orange shape=parallelogram]
+				gate_3_5 [label="Gate
+[1024, 16]
+GPU 13" fillcolor=orange shape=parallelogram]
+				gate_3_6 [label="Gate
+[1024, 16]
+GPU 14" fillcolor=orange shape=parallelogram]
+				gate_3_7 [label="Gate
+[1024, 16]
+GPU 15" fillcolor=orange shape=parallelogram]
+				expert_3_0_0 [label="Expert 96
+[256, 32768, 256]
+GPU 8" fillcolor=lightpink]
+				expert_3_0_1 [label="Expert 97
+[256, 32768, 256]
+GPU 8" fillcolor=lightpink]
+				expert_3_0_2 [label="Expert 98
+[256, 32768, 256]
+GPU 8" fillcolor=lightpink]
+				expert_3_0_3 [label="Expert 99
+[256, 32768, 256]
+GPU 8" fillcolor=lightpink]
+				expert_3_1_0 [label="Expert 100
+[256, 32768, 256]
+GPU 9" fillcolor=lightpink]
+				expert_3_1_1 [label="Expert 101
+[256, 32768, 256]
+GPU 9" fillcolor=lightpink]
+				expert_3_1_2 [label="Expert 102
+[256, 32768, 256]
+GPU 9" fillcolor=lightpink]
+				expert_3_1_3 [label="Expert 103
+[256, 32768, 256]
+GPU 9" fillcolor=lightpink]
+				expert_3_2_0 [label="Expert 104
+[256, 32768, 256]
+GPU 10" fillcolor=lightpink]
+				expert_3_2_1 [label="Expert 105
+[256, 32768, 256]
+GPU 10" fillcolor=lightpink]
+				expert_3_2_2 [label="Expert 106
+[256, 32768, 256]
+GPU 10" fillcolor=lightpink]
+				expert_3_2_3 [label="Expert 107
+[256, 32768, 256]
+GPU 10" fillcolor=lightpink]
+				expert_3_3_0 [label="Expert 108
+[256, 32768, 256]
+GPU 11" fillcolor=lightpink]
+				expert_3_3_1 [label="Expert 109
+[256, 32768, 256]
+GPU 11" fillcolor=lightpink]
+				expert_3_3_2 [label="Expert 110
+[256, 32768, 256]
+GPU 11" fillcolor=lightpink]
+				expert_3_3_3 [label="Expert 111
+[256, 32768, 256]
+GPU 11" fillcolor=lightpink]
+				expert_3_4_0 [label="Expert 112
+[256, 32768, 256]
+GPU 12" fillcolor=lightpink]
+				expert_3_4_1 [label="Expert 113
+[256, 32768, 256]
+GPU 12" fillcolor=lightpink]
+				expert_3_4_2 [label="Expert 114
+[256, 32768, 256]
+GPU 12" fillcolor=lightpink]
+				expert_3_4_3 [label="Expert 115
+[256, 32768, 256]
+GPU 12" fillcolor=lightpink]
+				expert_3_5_0 [label="Expert 116
+[256, 32768, 256]
+GPU 13" fillcolor=lightpink]
+				expert_3_5_1 [label="Expert 117
+[256, 32768, 256]
+GPU 13" fillcolor=lightpink]
+				expert_3_5_2 [label="Expert 118
+[256, 32768, 256]
+GPU 13" fillcolor=lightpink]
+				expert_3_5_3 [label="Expert 119
+[256, 32768, 256]
+GPU 13" fillcolor=lightpink]
+				expert_3_6_0 [label="Expert 120
+[256, 32768, 256]
+GPU 14" fillcolor=lightpink]
+				expert_3_6_1 [label="Expert 121
+[256, 32768, 256]
+GPU 14" fillcolor=lightpink]
+				expert_3_6_2 [label="Expert 122
+[256, 32768, 256]
+GPU 14" fillcolor=lightpink]
+				expert_3_6_3 [label="Expert 123
+[256, 32768, 256]
+GPU 14" fillcolor=lightpink]
+				expert_3_7_0 [label="Expert 124
+[256, 32768, 256]
+GPU 15" fillcolor=lightpink]
+				expert_3_7_1 [label="Expert 125
+[256, 32768, 256]
+GPU 15" fillcolor=lightpink]
+				expert_3_7_2 [label="Expert 126
+[256, 32768, 256]
+GPU 15" fillcolor=lightpink]
+				expert_3_7_3 [label="Expert 127
+[256, 32768, 256]
+GPU 15" fillcolor=lightpink]
+				agg_3_0 [label="Expert Agg
+[1024, 4096]
+GPU 8" fillcolor=lightgreen shape=parallelogram]
+				agg_3_1 [label="Expert Agg
+[1024, 4096]
+GPU 9" fillcolor=lightgreen shape=parallelogram]
+				agg_3_2 [label="Expert Agg
+[1024, 4096]
+GPU 10" fillcolor=lightgreen shape=parallelogram]
+				agg_3_3 [label="Expert Agg
+[1024, 4096]
+GPU 11" fillcolor=lightgreen shape=parallelogram]
+				agg_3_4 [label="Expert Agg
+[1024, 4096]
+GPU 12" fillcolor=lightgreen shape=parallelogram]
+				agg_3_5 [label="Expert Agg
+[1024, 4096]
+GPU 13" fillcolor=lightgreen shape=parallelogram]
+				agg_3_6 [label="Expert Agg
+[1024, 4096]
+GPU 14" fillcolor=lightgreen shape=parallelogram]
+				agg_3_7 [label="Expert Agg
+[1024, 4096]
+GPU 15" fillcolor=lightgreen shape=parallelogram]
+			}
+			residual2_3 [label="Residual Add
+[1024, 4096]
+All GPUs" fillcolor=lightgreen shape=parallelogram]
+		}
+	}
+	output [label="Output
+[1024, hidden_size]
+All GPUs" fillcolor=lightgreen shape=ellipse]
+	input -> qkv_0_0
+	input -> qkv_0_1
+	input -> qkv_0_2
+	input -> qkv_0_3
+	input -> qkv_0_4
+	input -> qkv_0_5
+	input -> qkv_0_6
+	input -> qkv_0_7
+	qkv_0_0 -> attn_0_0
+	attn_0_0 -> out_proj_0_0
+	input -> residual1_0
+	out_proj_0_0 -> residual1_0
+	residual1_0 -> gate_0_0
+	gate_0_0 -> expert_0_0_0 [label=route style=dashed]
+	expert_0_0_0 -> agg_0_0
+	gate_0_0 -> expert_0_0_1 [label=route style=dashed]
+	expert_0_0_1 -> agg_0_0
+	gate_0_0 -> expert_0_0_2 [label=route style=dashed]
+	expert_0_0_2 -> agg_0_0
+	gate_0_0 -> expert_0_0_3 [label=route style=dashed]
+	expert_0_0_3 -> agg_0_0
+	agg_0_0 -> residual2_0
+	residual1_0 -> residual2_0
+	qkv_0_1 -> attn_0_1
+	attn_0_1 -> out_proj_0_1
+	input -> residual1_0
+	out_proj_0_1 -> residual1_0
+	residual1_0 -> gate_0_1
+	gate_0_1 -> expert_0_1_0 [label=route style=dashed]
+	expert_0_1_0 -> agg_0_1
+	gate_0_1 -> expert_0_1_1 [label=route style=dashed]
+	expert_0_1_1 -> agg_0_1
+	gate_0_1 -> expert_0_1_2 [label=route style=dashed]
+	expert_0_1_2 -> agg_0_1
+	gate_0_1 -> expert_0_1_3 [label=route style=dashed]
+	expert_0_1_3 -> agg_0_1
+	agg_0_1 -> residual2_0
+	residual1_0 -> residual2_0
+	qkv_0_2 -> attn_0_2
+	attn_0_2 -> out_proj_0_2
+	input -> residual1_0
+	out_proj_0_2 -> residual1_0
+	residual1_0 -> gate_0_2
+	gate_0_2 -> expert_0_2_0 [label=route style=dashed]
+	expert_0_2_0 -> agg_0_2
+	gate_0_2 -> expert_0_2_1 [label=route style=dashed]
+	expert_0_2_1 -> agg_0_2
+	gate_0_2 -> expert_0_2_2 [label=route style=dashed]
+	expert_0_2_2 -> agg_0_2
+	gate_0_2 -> expert_0_2_3 [label=route style=dashed]
+	expert_0_2_3 -> agg_0_2
+	agg_0_2 -> residual2_0
+	residual1_0 -> residual2_0
+	qkv_0_3 -> attn_0_3
+	attn_0_3 -> out_proj_0_3
+	input -> residual1_0
+	out_proj_0_3 -> residual1_0
+	residual1_0 -> gate_0_3
+	gate_0_3 -> expert_0_3_0 [label=route style=dashed]
+	expert_0_3_0 -> agg_0_3
+	gate_0_3 -> expert_0_3_1 [label=route style=dashed]
+	expert_0_3_1 -> agg_0_3
+	gate_0_3 -> expert_0_3_2 [label=route style=dashed]
+	expert_0_3_2 -> agg_0_3
+	gate_0_3 -> expert_0_3_3 [label=route style=dashed]
+	expert_0_3_3 -> agg_0_3
+	agg_0_3 -> residual2_0
+	residual1_0 -> residual2_0
+	qkv_0_4 -> attn_0_4
+	attn_0_4 -> out_proj_0_4
+	input -> residual1_0
+	out_proj_0_4 -> residual1_0
+	residual1_0 -> gate_0_4
+	gate_0_4 -> expert_0_4_0 [label=route style=dashed]
+	expert_0_4_0 -> agg_0_4
+	gate_0_4 -> expert_0_4_1 [label=route style=dashed]
+	expert_0_4_1 -> agg_0_4
+	gate_0_4 -> expert_0_4_2 [label=route style=dashed]
+	expert_0_4_2 -> agg_0_4
+	gate_0_4 -> expert_0_4_3 [label=route style=dashed]
+	expert_0_4_3 -> agg_0_4
+	agg_0_4 -> residual2_0
+	residual1_0 -> residual2_0
+	qkv_0_5 -> attn_0_5
+	attn_0_5 -> out_proj_0_5
+	input -> residual1_0
+	out_proj_0_5 -> residual1_0
+	residual1_0 -> gate_0_5
+	gate_0_5 -> expert_0_5_0 [label=route style=dashed]
+	expert_0_5_0 -> agg_0_5
+	gate_0_5 -> expert_0_5_1 [label=route style=dashed]
+	expert_0_5_1 -> agg_0_5
+	gate_0_5 -> expert_0_5_2 [label=route style=dashed]
+	expert_0_5_2 -> agg_0_5
+	gate_0_5 -> expert_0_5_3 [label=route style=dashed]
+	expert_0_5_3 -> agg_0_5
+	agg_0_5 -> residual2_0
+	residual1_0 -> residual2_0
+	qkv_0_6 -> attn_0_6
+	attn_0_6 -> out_proj_0_6
+	input -> residual1_0
+	out_proj_0_6 -> residual1_0
+	residual1_0 -> gate_0_6
+	gate_0_6 -> expert_0_6_0 [label=route style=dashed]
+	expert_0_6_0 -> agg_0_6
+	gate_0_6 -> expert_0_6_1 [label=route style=dashed]
+	expert_0_6_1 -> agg_0_6
+	gate_0_6 -> expert_0_6_2 [label=route style=dashed]
+	expert_0_6_2 -> agg_0_6
+	gate_0_6 -> expert_0_6_3 [label=route style=dashed]
+	expert_0_6_3 -> agg_0_6
+	agg_0_6 -> residual2_0
+	residual1_0 -> residual2_0
+	qkv_0_7 -> attn_0_7
+	attn_0_7 -> out_proj_0_7
+	input -> residual1_0
+	out_proj_0_7 -> residual1_0
+	residual1_0 -> gate_0_7
+	gate_0_7 -> expert_0_7_0 [label=route style=dashed]
+	expert_0_7_0 -> agg_0_7
+	gate_0_7 -> expert_0_7_1 [label=route style=dashed]
+	expert_0_7_1 -> agg_0_7
+	gate_0_7 -> expert_0_7_2 [label=route style=dashed]
+	expert_0_7_2 -> agg_0_7
+	gate_0_7 -> expert_0_7_3 [label=route style=dashed]
+	expert_0_7_3 -> agg_0_7
+	agg_0_7 -> residual2_0
+	residual1_0 -> residual2_0
+	qkv_1_0 -> attn_1_0
+	attn_1_0 -> out_proj_1_0
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	out_proj_1_0 -> residual1_1
+	residual1_1 -> gate_1_0
+	gate_1_0 -> expert_1_0_0 [label=route style=dashed]
+	expert_1_0_0 -> agg_1_0
+	gate_1_0 -> expert_1_0_1 [label=route style=dashed]
+	expert_1_0_1 -> agg_1_0
+	gate_1_0 -> expert_1_0_2 [label=route style=dashed]
+	expert_1_0_2 -> agg_1_0
+	gate_1_0 -> expert_1_0_3 [label=route style=dashed]
+	expert_1_0_3 -> agg_1_0
+	agg_1_0 -> residual2_1
+	residual1_1 -> residual2_1
+	qkv_1_1 -> attn_1_1
+	attn_1_1 -> out_proj_1_1
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	out_proj_1_1 -> residual1_1
+	residual1_1 -> gate_1_1
+	gate_1_1 -> expert_1_1_0 [label=route style=dashed]
+	expert_1_1_0 -> agg_1_1
+	gate_1_1 -> expert_1_1_1 [label=route style=dashed]
+	expert_1_1_1 -> agg_1_1
+	gate_1_1 -> expert_1_1_2 [label=route style=dashed]
+	expert_1_1_2 -> agg_1_1
+	gate_1_1 -> expert_1_1_3 [label=route style=dashed]
+	expert_1_1_3 -> agg_1_1
+	agg_1_1 -> residual2_1
+	residual1_1 -> residual2_1
+	qkv_1_2 -> attn_1_2
+	attn_1_2 -> out_proj_1_2
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	out_proj_1_2 -> residual1_1
+	residual1_1 -> gate_1_2
+	gate_1_2 -> expert_1_2_0 [label=route style=dashed]
+	expert_1_2_0 -> agg_1_2
+	gate_1_2 -> expert_1_2_1 [label=route style=dashed]
+	expert_1_2_1 -> agg_1_2
+	gate_1_2 -> expert_1_2_2 [label=route style=dashed]
+	expert_1_2_2 -> agg_1_2
+	gate_1_2 -> expert_1_2_3 [label=route style=dashed]
+	expert_1_2_3 -> agg_1_2
+	agg_1_2 -> residual2_1
+	residual1_1 -> residual2_1
+	qkv_1_3 -> attn_1_3
+	attn_1_3 -> out_proj_1_3
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	out_proj_1_3 -> residual1_1
+	residual1_1 -> gate_1_3
+	gate_1_3 -> expert_1_3_0 [label=route style=dashed]
+	expert_1_3_0 -> agg_1_3
+	gate_1_3 -> expert_1_3_1 [label=route style=dashed]
+	expert_1_3_1 -> agg_1_3
+	gate_1_3 -> expert_1_3_2 [label=route style=dashed]
+	expert_1_3_2 -> agg_1_3
+	gate_1_3 -> expert_1_3_3 [label=route style=dashed]
+	expert_1_3_3 -> agg_1_3
+	agg_1_3 -> residual2_1
+	residual1_1 -> residual2_1
+	qkv_1_4 -> attn_1_4
+	attn_1_4 -> out_proj_1_4
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	out_proj_1_4 -> residual1_1
+	residual1_1 -> gate_1_4
+	gate_1_4 -> expert_1_4_0 [label=route style=dashed]
+	expert_1_4_0 -> agg_1_4
+	gate_1_4 -> expert_1_4_1 [label=route style=dashed]
+	expert_1_4_1 -> agg_1_4
+	gate_1_4 -> expert_1_4_2 [label=route style=dashed]
+	expert_1_4_2 -> agg_1_4
+	gate_1_4 -> expert_1_4_3 [label=route style=dashed]
+	expert_1_4_3 -> agg_1_4
+	agg_1_4 -> residual2_1
+	residual1_1 -> residual2_1
+	qkv_1_5 -> attn_1_5
+	attn_1_5 -> out_proj_1_5
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	out_proj_1_5 -> residual1_1
+	residual1_1 -> gate_1_5
+	gate_1_5 -> expert_1_5_0 [label=route style=dashed]
+	expert_1_5_0 -> agg_1_5
+	gate_1_5 -> expert_1_5_1 [label=route style=dashed]
+	expert_1_5_1 -> agg_1_5
+	gate_1_5 -> expert_1_5_2 [label=route style=dashed]
+	expert_1_5_2 -> agg_1_5
+	gate_1_5 -> expert_1_5_3 [label=route style=dashed]
+	expert_1_5_3 -> agg_1_5
+	agg_1_5 -> residual2_1
+	residual1_1 -> residual2_1
+	qkv_1_6 -> attn_1_6
+	attn_1_6 -> out_proj_1_6
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	out_proj_1_6 -> residual1_1
+	residual1_1 -> gate_1_6
+	gate_1_6 -> expert_1_6_0 [label=route style=dashed]
+	expert_1_6_0 -> agg_1_6
+	gate_1_6 -> expert_1_6_1 [label=route style=dashed]
+	expert_1_6_1 -> agg_1_6
+	gate_1_6 -> expert_1_6_2 [label=route style=dashed]
+	expert_1_6_2 -> agg_1_6
+	gate_1_6 -> expert_1_6_3 [label=route style=dashed]
+	expert_1_6_3 -> agg_1_6
+	agg_1_6 -> residual2_1
+	residual1_1 -> residual2_1
+	qkv_1_7 -> attn_1_7
+	attn_1_7 -> out_proj_1_7
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	residual2_0 -> residual1_1 [label="pipeline transfer" style=dashed]
+	out_proj_1_7 -> residual1_1
+	residual1_1 -> gate_1_7
+	gate_1_7 -> expert_1_7_0 [label=route style=dashed]
+	expert_1_7_0 -> agg_1_7
+	gate_1_7 -> expert_1_7_1 [label=route style=dashed]
+	expert_1_7_1 -> agg_1_7
+	gate_1_7 -> expert_1_7_2 [label=route style=dashed]
+	expert_1_7_2 -> agg_1_7
+	gate_1_7 -> expert_1_7_3 [label=route style=dashed]
+	expert_1_7_3 -> agg_1_7
+	agg_1_7 -> residual2_1
+	residual1_1 -> residual2_1
+	qkv_2_0 -> attn_2_0
+	attn_2_0 -> out_proj_2_0
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	out_proj_2_0 -> residual1_2
+	residual1_2 -> gate_2_0
+	gate_2_0 -> expert_2_0_0 [label=route style=dashed]
+	expert_2_0_0 -> agg_2_0
+	gate_2_0 -> expert_2_0_1 [label=route style=dashed]
+	expert_2_0_1 -> agg_2_0
+	gate_2_0 -> expert_2_0_2 [label=route style=dashed]
+	expert_2_0_2 -> agg_2_0
+	gate_2_0 -> expert_2_0_3 [label=route style=dashed]
+	expert_2_0_3 -> agg_2_0
+	agg_2_0 -> residual2_2
+	residual1_2 -> residual2_2
+	qkv_2_1 -> attn_2_1
+	attn_2_1 -> out_proj_2_1
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	out_proj_2_1 -> residual1_2
+	residual1_2 -> gate_2_1
+	gate_2_1 -> expert_2_1_0 [label=route style=dashed]
+	expert_2_1_0 -> agg_2_1
+	gate_2_1 -> expert_2_1_1 [label=route style=dashed]
+	expert_2_1_1 -> agg_2_1
+	gate_2_1 -> expert_2_1_2 [label=route style=dashed]
+	expert_2_1_2 -> agg_2_1
+	gate_2_1 -> expert_2_1_3 [label=route style=dashed]
+	expert_2_1_3 -> agg_2_1
+	agg_2_1 -> residual2_2
+	residual1_2 -> residual2_2
+	qkv_2_2 -> attn_2_2
+	attn_2_2 -> out_proj_2_2
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	out_proj_2_2 -> residual1_2
+	residual1_2 -> gate_2_2
+	gate_2_2 -> expert_2_2_0 [label=route style=dashed]
+	expert_2_2_0 -> agg_2_2
+	gate_2_2 -> expert_2_2_1 [label=route style=dashed]
+	expert_2_2_1 -> agg_2_2
+	gate_2_2 -> expert_2_2_2 [label=route style=dashed]
+	expert_2_2_2 -> agg_2_2
+	gate_2_2 -> expert_2_2_3 [label=route style=dashed]
+	expert_2_2_3 -> agg_2_2
+	agg_2_2 -> residual2_2
+	residual1_2 -> residual2_2
+	qkv_2_3 -> attn_2_3
+	attn_2_3 -> out_proj_2_3
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	out_proj_2_3 -> residual1_2
+	residual1_2 -> gate_2_3
+	gate_2_3 -> expert_2_3_0 [label=route style=dashed]
+	expert_2_3_0 -> agg_2_3
+	gate_2_3 -> expert_2_3_1 [label=route style=dashed]
+	expert_2_3_1 -> agg_2_3
+	gate_2_3 -> expert_2_3_2 [label=route style=dashed]
+	expert_2_3_2 -> agg_2_3
+	gate_2_3 -> expert_2_3_3 [label=route style=dashed]
+	expert_2_3_3 -> agg_2_3
+	agg_2_3 -> residual2_2
+	residual1_2 -> residual2_2
+	qkv_2_4 -> attn_2_4
+	attn_2_4 -> out_proj_2_4
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	out_proj_2_4 -> residual1_2
+	residual1_2 -> gate_2_4
+	gate_2_4 -> expert_2_4_0 [label=route style=dashed]
+	expert_2_4_0 -> agg_2_4
+	gate_2_4 -> expert_2_4_1 [label=route style=dashed]
+	expert_2_4_1 -> agg_2_4
+	gate_2_4 -> expert_2_4_2 [label=route style=dashed]
+	expert_2_4_2 -> agg_2_4
+	gate_2_4 -> expert_2_4_3 [label=route style=dashed]
+	expert_2_4_3 -> agg_2_4
+	agg_2_4 -> residual2_2
+	residual1_2 -> residual2_2
+	qkv_2_5 -> attn_2_5
+	attn_2_5 -> out_proj_2_5
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	out_proj_2_5 -> residual1_2
+	residual1_2 -> gate_2_5
+	gate_2_5 -> expert_2_5_0 [label=route style=dashed]
+	expert_2_5_0 -> agg_2_5
+	gate_2_5 -> expert_2_5_1 [label=route style=dashed]
+	expert_2_5_1 -> agg_2_5
+	gate_2_5 -> expert_2_5_2 [label=route style=dashed]
+	expert_2_5_2 -> agg_2_5
+	gate_2_5 -> expert_2_5_3 [label=route style=dashed]
+	expert_2_5_3 -> agg_2_5
+	agg_2_5 -> residual2_2
+	residual1_2 -> residual2_2
+	qkv_2_6 -> attn_2_6
+	attn_2_6 -> out_proj_2_6
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	out_proj_2_6 -> residual1_2
+	residual1_2 -> gate_2_6
+	gate_2_6 -> expert_2_6_0 [label=route style=dashed]
+	expert_2_6_0 -> agg_2_6
+	gate_2_6 -> expert_2_6_1 [label=route style=dashed]
+	expert_2_6_1 -> agg_2_6
+	gate_2_6 -> expert_2_6_2 [label=route style=dashed]
+	expert_2_6_2 -> agg_2_6
+	gate_2_6 -> expert_2_6_3 [label=route style=dashed]
+	expert_2_6_3 -> agg_2_6
+	agg_2_6 -> residual2_2
+	residual1_2 -> residual2_2
+	qkv_2_7 -> attn_2_7
+	attn_2_7 -> out_proj_2_7
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	residual2_1 -> residual1_2 [label="pipeline transfer" style=dashed]
+	out_proj_2_7 -> residual1_2
+	residual1_2 -> gate_2_7
+	gate_2_7 -> expert_2_7_0 [label=route style=dashed]
+	expert_2_7_0 -> agg_2_7
+	gate_2_7 -> expert_2_7_1 [label=route style=dashed]
+	expert_2_7_1 -> agg_2_7
+	gate_2_7 -> expert_2_7_2 [label=route style=dashed]
+	expert_2_7_2 -> agg_2_7
+	gate_2_7 -> expert_2_7_3 [label=route style=dashed]
+	expert_2_7_3 -> agg_2_7
+	agg_2_7 -> residual2_2
+	residual1_2 -> residual2_2
+	qkv_3_0 -> attn_3_0
+	attn_3_0 -> out_proj_3_0
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	out_proj_3_0 -> residual1_3
+	residual1_3 -> gate_3_0
+	gate_3_0 -> expert_3_0_0 [label=route style=dashed]
+	expert_3_0_0 -> agg_3_0
+	gate_3_0 -> expert_3_0_1 [label=route style=dashed]
+	expert_3_0_1 -> agg_3_0
+	gate_3_0 -> expert_3_0_2 [label=route style=dashed]
+	expert_3_0_2 -> agg_3_0
+	gate_3_0 -> expert_3_0_3 [label=route style=dashed]
+	expert_3_0_3 -> agg_3_0
+	agg_3_0 -> residual2_3
+	residual1_3 -> residual2_3
+	qkv_3_1 -> attn_3_1
+	attn_3_1 -> out_proj_3_1
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	out_proj_3_1 -> residual1_3
+	residual1_3 -> gate_3_1
+	gate_3_1 -> expert_3_1_0 [label=route style=dashed]
+	expert_3_1_0 -> agg_3_1
+	gate_3_1 -> expert_3_1_1 [label=route style=dashed]
+	expert_3_1_1 -> agg_3_1
+	gate_3_1 -> expert_3_1_2 [label=route style=dashed]
+	expert_3_1_2 -> agg_3_1
+	gate_3_1 -> expert_3_1_3 [label=route style=dashed]
+	expert_3_1_3 -> agg_3_1
+	agg_3_1 -> residual2_3
+	residual1_3 -> residual2_3
+	qkv_3_2 -> attn_3_2
+	attn_3_2 -> out_proj_3_2
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	out_proj_3_2 -> residual1_3
+	residual1_3 -> gate_3_2
+	gate_3_2 -> expert_3_2_0 [label=route style=dashed]
+	expert_3_2_0 -> agg_3_2
+	gate_3_2 -> expert_3_2_1 [label=route style=dashed]
+	expert_3_2_1 -> agg_3_2
+	gate_3_2 -> expert_3_2_2 [label=route style=dashed]
+	expert_3_2_2 -> agg_3_2
+	gate_3_2 -> expert_3_2_3 [label=route style=dashed]
+	expert_3_2_3 -> agg_3_2
+	agg_3_2 -> residual2_3
+	residual1_3 -> residual2_3
+	qkv_3_3 -> attn_3_3
+	attn_3_3 -> out_proj_3_3
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	out_proj_3_3 -> residual1_3
+	residual1_3 -> gate_3_3
+	gate_3_3 -> expert_3_3_0 [label=route style=dashed]
+	expert_3_3_0 -> agg_3_3
+	gate_3_3 -> expert_3_3_1 [label=route style=dashed]
+	expert_3_3_1 -> agg_3_3
+	gate_3_3 -> expert_3_3_2 [label=route style=dashed]
+	expert_3_3_2 -> agg_3_3
+	gate_3_3 -> expert_3_3_3 [label=route style=dashed]
+	expert_3_3_3 -> agg_3_3
+	agg_3_3 -> residual2_3
+	residual1_3 -> residual2_3
+	qkv_3_4 -> attn_3_4
+	attn_3_4 -> out_proj_3_4
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	out_proj_3_4 -> residual1_3
+	residual1_3 -> gate_3_4
+	gate_3_4 -> expert_3_4_0 [label=route style=dashed]
+	expert_3_4_0 -> agg_3_4
+	gate_3_4 -> expert_3_4_1 [label=route style=dashed]
+	expert_3_4_1 -> agg_3_4
+	gate_3_4 -> expert_3_4_2 [label=route style=dashed]
+	expert_3_4_2 -> agg_3_4
+	gate_3_4 -> expert_3_4_3 [label=route style=dashed]
+	expert_3_4_3 -> agg_3_4
+	agg_3_4 -> residual2_3
+	residual1_3 -> residual2_3
+	qkv_3_5 -> attn_3_5
+	attn_3_5 -> out_proj_3_5
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	out_proj_3_5 -> residual1_3
+	residual1_3 -> gate_3_5
+	gate_3_5 -> expert_3_5_0 [label=route style=dashed]
+	expert_3_5_0 -> agg_3_5
+	gate_3_5 -> expert_3_5_1 [label=route style=dashed]
+	expert_3_5_1 -> agg_3_5
+	gate_3_5 -> expert_3_5_2 [label=route style=dashed]
+	expert_3_5_2 -> agg_3_5
+	gate_3_5 -> expert_3_5_3 [label=route style=dashed]
+	expert_3_5_3 -> agg_3_5
+	agg_3_5 -> residual2_3
+	residual1_3 -> residual2_3
+	qkv_3_6 -> attn_3_6
+	attn_3_6 -> out_proj_3_6
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	out_proj_3_6 -> residual1_3
+	residual1_3 -> gate_3_6
+	gate_3_6 -> expert_3_6_0 [label=route style=dashed]
+	expert_3_6_0 -> agg_3_6
+	gate_3_6 -> expert_3_6_1 [label=route style=dashed]
+	expert_3_6_1 -> agg_3_6
+	gate_3_6 -> expert_3_6_2 [label=route style=dashed]
+	expert_3_6_2 -> agg_3_6
+	gate_3_6 -> expert_3_6_3 [label=route style=dashed]
+	expert_3_6_3 -> agg_3_6
+	agg_3_6 -> residual2_3
+	residual1_3 -> residual2_3
+	qkv_3_7 -> attn_3_7
+	attn_3_7 -> out_proj_3_7
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	residual2_2 -> residual1_3 [label="pipeline transfer" style=dashed]
+	out_proj_3_7 -> residual1_3
+	residual1_3 -> gate_3_7
+	gate_3_7 -> expert_3_7_0 [label=route style=dashed]
+	expert_3_7_0 -> agg_3_7
+	gate_3_7 -> expert_3_7_1 [label=route style=dashed]
+	expert_3_7_1 -> agg_3_7
+	gate_3_7 -> expert_3_7_2 [label=route style=dashed]
+	expert_3_7_2 -> agg_3_7
+	gate_3_7 -> expert_3_7_3 [label=route style=dashed]
+	expert_3_7_3 -> agg_3_7
+	agg_3_7 -> residual2_3
+	residual1_3 -> residual2_3
+	residual2_3 -> output
+	residual2_3 -> output
+	residual2_3 -> output
+	residual2_3 -> output
+	residual2_3 -> output
+	residual2_3 -> output
+	residual2_3 -> output
+	residual2_3 -> output
+}
