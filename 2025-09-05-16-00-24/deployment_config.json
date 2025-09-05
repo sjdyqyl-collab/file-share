@@ -1,0 +1,282 @@
+{
+  "deployment_configurations": {
+    "baseline": {
+      "name": "Baseline_TP8_PP2",
+      "description": "Traditional MoE deployment with tensor and pipeline parallelism",
+      "parallel_strategy": {
+        "type": "hybrid",
+        "tensor_parallelism": {
+          "degree": 8,
+          "method": "row_parallel"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2,
+          "micro_batch_size": 512
+        },
+        "expert_parallelism": {
+          "degree": 1,
+          "experts_per_gpu": 4
+        }
+      },
+      "resources": {
+        "total_gpus": 16,
+        "gpu_type": "H100",
+        "gpu_memory_gb": 80,
+        "interconnect": "NVLink_InfiniBand"
+      },
+      "model_placement": {
+        "layer_distribution": [
+          {
+            "stage_id": 0,
+            "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+            "layers": [0, 1],
+            "experts_per_gpu": 4,
+            "tensor_shard_size": 4096
+          },
+          {
+            "stage_id": 1,
+            "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+            "layers": [2, 3],
+            "experts_per_gpu": 4,
+            "tensor_shard_size": 4096
+          }
+        ]
+      },
+      "modules": {
+        "attention_module": {
+          "type": "multi_head_attention",
+          "heads": 16,
+          "head_dim": 512,
+          "tensor_parallel": true,
+          "parameters": {
+            "qkv_weight": [8192, 8192],
+            "output_weight": [8192, 8192]
+          }
+        },
+        "expert_modules": {
+          "type": "mlp_expert",
+          "count": 16,
+          "hidden_size": 32768,
+          "tensor_parallel": true,
+          "parameters": {
+            "w1": [32768, 8192],
+            "w2": [8192, 32768]
+          }
+        }
+      },
+      "communication": {
+        "tensor_parallel_comm": {
+          "type": "all_reduce",
+          "bandwidth_gbps": 600,
+          "latency_us": 3
+        },
+        "pipeline_parallel_comm": {
+          "type": "send_recv",
+          "bandwidth_gbps": 50,
+          "latency_us": 10
+        }
+      }
+    },
+    "proposed": {
+      "name": "Cross_Node_Expert_Parallelism_EP64",
+      "description": "Large-scale cross-node expert parallelism with one expert per GPU",
+      "parallel_strategy": {
+        "type": "expert_parallelism",
+        "expert_parallelism": {
+          "degree": 64,
+          "experts_per_gpu": 1,
+          "large_ep_threshold": 16
+        },
+        "optional_tensor_parallelism": {
+          "degree": 1,
+          "condition": "if_expert_exceeds_memory"
+        },
+        "micro_pipeline": {
+          "stages": 4,
+          "type": "layer_wise"
+        }
+      },
+      "resources": {
+        "total_gpus": 64,
+        "gpu_type": "H100",
+        "gpu_memory_gb": 80,
+        "interconnect": "NVLink_InfiniBand_NVSwitch"
+      },
+      "model_placement": {
+        "expert_distribution": [
+          {
+            "layer": 0,
+            "experts": [
+              {"expert_id": 0, "gpu_id": 0, "node_id": 0},
+              {"expert_id": 1, "gpu_id": 1, "node_id": 0},
+              {"expert_id": 2, "gpu_id": 2, "node_id": 0},
+              {"expert_id": 3, "gpu_id": 3, "node_id": 0},
+              {"expert_id": 4, "gpu_id": 4, "node_id": 1},
+              {"expert_id": 5, "gpu_id": 5, "node_id": 1},
+              {"expert_id": 6, "gpu_id": 6, "node_id": 1},
+              {"expert_id": 7, "gpu_id": 7, "node_id": 1},
+              {"expert_id": 8, "gpu_id": 8, "node_id": 2},
+              {"expert_id": 9, "gpu_id": 9, "node_id": 2},
+              {"expert_id": 10, "gpu_id": 10, "node_id": 2},
+              {"expert_id": 11, "gpu_id": 11, "node_id": 2},
+              {"expert_id": 12, "gpu_id": 12, "node_id": 3},
+              {"expert_id": 13, "gpu_id": 13, "node_id": 3},
+              {"expert_id": 14, "gpu_id": 14, "node_id": 3},
+              {"expert_id": 15, "gpu_id": 15, "node_id": 3}
+            ]
+          },
+          {
+            "layer": 1,
+            "experts": [
+              {"expert_id": 16, "gpu_id": 16, "node_id": 4},
+              {"expert_id": 17, "gpu_id": 17, "node_id": 4},
+              {"expert_id": 18, "gpu_id": 18, "node_id": 4},
+              {"expert_id": 19, "gpu_id": 19, "node_id": 4},
+              {"expert_id": 20, "gpu_id": 20, "node_id": 5},
+              {"expert_id": 21, "gpu_id": 21, "node_id": 5},
+              {"expert_id": 22, "gpu_id": 22, "node_id": 5},
+              {"expert_id": 23, "gpu_id": 23, "node_id": 5},
+              {"expert_id": 24, "gpu_id": 24, "node_id": 6},
+              {"expert_id": 25, "gpu_id": 25, "node_id": 6},
+              {"expert_id": 26, "gpu_id": 26, "node_id": 6},
+              {"expert_id": 27, "gpu_id": 27, "node_id": 6},
+              {"expert_id": 28, "gpu_id": 28, "node_id": 7},
+              {"expert_id": 29, "gpu_id": 29, "node_id": 7},
+              {"expert_id": 30, "gpu_id": 30, "node_id": 7},
+              {"expert_id": 31, "gpu_id": 31, "node_id": 7}
+            ]
+          },
+          {
+            "layer": 2,
+            "experts": [
+              {"expert_id": 32, "gpu_id": 32, "node_id": 8},
+              {"expert_id": 33, "gpu_id": 33, "node_id": 8},
+              {"expert_id": 34, "gpu_id": 34, "node_id": 8},
+              {"expert_id": 35, "gpu_id": 35, "node_id": 8},
+              {"expert_id": 36, "gpu_id": 36, "node_id": 9},
+              {"expert_id": 37, "gpu_id": 37, "node_id": 9},
+              {"expert_id": 38, "gpu_id": 38, "node_id": 9},
+              {"expert_id": 39, "gpu_id": 39, "node_id": 9},
+              {"expert_id": 40, "gpu_id": 40, "node_id": 10},
+              {"expert_id": 41, "gpu_id": 41, "node_id": 10},
+              {"expert_id": 42, "gpu_id": 42, "node_id": 10},
+              {"expert_id": 43, "gpu_id": 43, "node_id": 10},
+              {"expert_id": 44, "gpu_id": 44, "node_id": 11},
+              {"expert_id": 45, "gpu_id": 45, "node_id": 11},
+              {"expert_id": 46, "gpu_id": 46, "node_id": 11},
+              {"expert_id": 47, "gpu_id": 47, "node_id": 11}
+            ]
+          },
+          {
+            "layer": 3,
+            "experts": [
+              {"expert_id": 48, "gpu_id": 48, "node_id": 12},
+              {"expert_id": 49, "gpu_id": 49, "node_id": 12},
+              {"expert_id": 50, "gpu_id": 50, "node_id": 12},
+              {"expert_id": 51, "gpu_id": 51, "node_id": 12},
+              {"expert_id": 52, "gpu_id": 52, "node_id": 13},
+              {"expert_id": 53, "gpu_id": 53, "node_id": 13},
+              {"expert_id": 54, "gpu_id": 54, "node_id": 13},
+              {"expert_id": 55, "gpu_id": 55, "node_id": 13},
+              {"expert_id": 56, "gpu_id": 56, "node_id": 14},
+              {"expert_id": 57, "gpu_id": 57, "node_id": 14},
+              {"expert_id": 58, "gpu_id": 58, "node_id": 14},
+              {"expert_id": 59, "gpu_id": 59, "node_id": 14},
+              {"expert_id": 60, "gpu_id": 60, "node_id": 15},
+              {"expert_id": 61, "gpu_id": 61, "node_id": 15},
+              {"expert_id": 62, "gpu_id": 62, "node_id": 15},
+              {"expert_id": 63, "gpu_id": 63, "node_id": 15}
+            ]
+          }
+        ]
+      },
+      "modules": {
+        "attention_module": {
+          "type": "multi_head_attention",
+          "heads": 16,
+          "head_dim": 512,
+          "tensor_parallel": false,
+          "parameters": {
+            "qkv_weight": [8192, 8192],
+            "output_weight": [8192, 8192]
+          }
+        },
+        "expert_modules": {
+          "type": "mlp_expert",
+          "count": 64,
+          "hidden_size": 32768,
+          "tensor_parallel": false,
+          "parameters": {
+            "w1": [32768, 8192],
+            "w2": [8192, 32768]
+          },
+          "memory_per_expert_gb": 2.1
+        }
+      },
+      "communication": {
+        "expert_routing": {
+          "type": "async_token_routing",
+          "bandwidth_gbps": 50,
+          "latency_us": 10,
+          "batching": {
+            "min_batch_size": 128,
+            "max_batch_size": 1024,
+            "group_by_destination": true
+          }
+        },
+        "cuda_streams": {
+          "compute_stream": 0,
+          "communication_stream": 1,
+          "synchronization_stream": 2
+        },
+        "overlap_strategy": {
+          "type": "compute_communication_overlap",
+          "pipeline_depth": 4,
+          "micro_batch_size": 128
+        }
+      },
+      "load_balancing": {
+        "type": "dynamic",
+        "monitoring_interval": 100,
+        "imbalance_threshold": 1.5,
+        "gating_adjustment": {
+          "temperature_scaling": true,
+          "noise_injection": 0.1
+        }
+      }
+    }
+  },
+  "hardware_mapping": {
+    "nodes": 16,
+    "gpus_per_node": 4,
+    "total_gpus": 64,
+    "topology": {
+      "type": "fat_tree",
+      "node_bandwidth_gbps": 400,
+      "inter_node_bandwidth_gbps": 50,
+      "latency_us": 10
+    },
+    "memory_mapping": {
+      "per_gpu": {
+        "expert_parameters": "2.1GB",
+        "token_buffer": "10.5GB",
+        "communication_buffer": "256MB",
+        "total_usage": "13GB"
+      }
+    }
+  },
+  "performance_targets": {
+    "baseline": {
+      "tps": 120000,
+      "tpot_ms": 8.3,
+      "gpu_utilization": 0.75
+    },
+    "proposed": {
+      "tps": 450000,
+      "tpot_ms": 2.2,
+      "gpu_utilization": 0.95,
+      "scaling_efficiency": 1.17
+    }
+  }
+}

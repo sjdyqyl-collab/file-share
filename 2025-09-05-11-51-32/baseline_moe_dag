@@ -1,0 +1,867 @@
+// Baseline MoE Deployment
+digraph baseline_moe_dag {
+	rankdir=TB size="20,30"
+	input [label="Total Input\nBatch: 1024×10000\nHidden: 8192" fillcolor=white shape=ellipse style=filled]
+	input -> layer_0_input
+	layer_0_ln [label="Layer Norm\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_input -> layer_0_ln
+	layer_0_qkv_gpu_0 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_gpu_0
+	layer_0_qkv_gpu_1 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_gpu_1
+	layer_0_qkv_gpu_2 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_gpu_2
+	layer_0_qkv_gpu_3 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_gpu_3
+	layer_0_qkv_gpu_4 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_gpu_4
+	layer_0_qkv_gpu_5 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_gpu_5
+	layer_0_qkv_gpu_6 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_gpu_6
+	layer_0_qkv_gpu_7 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_gpu_7
+	layer_0_attn_gpu_0 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_qkv_gpu_0 -> layer_0_attn_gpu_0
+	layer_0_attn_gpu_1 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_gpu_1 -> layer_0_attn_gpu_1
+	layer_0_attn_gpu_2 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_qkv_gpu_2 -> layer_0_attn_gpu_2
+	layer_0_attn_gpu_3 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_qkv_gpu_3 -> layer_0_attn_gpu_3
+	layer_0_attn_gpu_4 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_qkv_gpu_4 -> layer_0_attn_gpu_4
+	layer_0_attn_gpu_5 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_qkv_gpu_5 -> layer_0_attn_gpu_5
+	layer_0_attn_gpu_6 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_qkv_gpu_6 -> layer_0_attn_gpu_6
+	layer_0_attn_gpu_7 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_0_qkv_gpu_7 -> layer_0_attn_gpu_7
+	layer_0_attn_out_gpu_0 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_attn_gpu_0 -> layer_0_attn_out_gpu_0
+	layer_0_attn_out_gpu_1 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_gpu_1 -> layer_0_attn_out_gpu_1
+	layer_0_attn_out_gpu_2 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_attn_gpu_2 -> layer_0_attn_out_gpu_2
+	layer_0_attn_out_gpu_3 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_attn_gpu_3 -> layer_0_attn_out_gpu_3
+	layer_0_attn_out_gpu_4 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_attn_gpu_4 -> layer_0_attn_out_gpu_4
+	layer_0_attn_out_gpu_5 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_attn_gpu_5 -> layer_0_attn_out_gpu_5
+	layer_0_attn_out_gpu_6 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_attn_gpu_6 -> layer_0_attn_out_gpu_6
+	layer_0_attn_out_gpu_7 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_0_attn_gpu_7 -> layer_0_attn_out_gpu_7
+	layer_0_attn_reduce [label="All-Reduce Sum\nIn: 8×(1024, 10000, 1024)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_0_attn_out_gpu_0 -> layer_0_attn_reduce
+	layer_0_attn_out_gpu_1 -> layer_0_attn_reduce
+	layer_0_attn_out_gpu_2 -> layer_0_attn_reduce
+	layer_0_attn_out_gpu_3 -> layer_0_attn_reduce
+	layer_0_attn_out_gpu_4 -> layer_0_attn_reduce
+	layer_0_attn_out_gpu_5 -> layer_0_attn_reduce
+	layer_0_attn_out_gpu_6 -> layer_0_attn_reduce
+	layer_0_attn_out_gpu_7 -> layer_0_attn_reduce
+	layer_0_attn_residual [label="Residual Add\nIn: (1024, 10000, 8192) + (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_0_attn_reduce -> layer_0_attn_residual
+	layer_0_ln -> layer_0_attn_residual
+	layer_0_post_ln [label="Post-Attention LN\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_attn_residual -> layer_0_post_ln
+	layer_0_gate_gpu_0 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 0" fillcolor=lightblue shape=parallelogram style=filled]
+	layer_0_post_ln -> layer_0_gate_gpu_0
+	layer_0_gate_gpu_1 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 1" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_0_post_ln -> layer_0_gate_gpu_1
+	layer_0_gate_gpu_2 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 2" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_0_post_ln -> layer_0_gate_gpu_2
+	layer_0_gate_gpu_3 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 3" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_0_post_ln -> layer_0_gate_gpu_3
+	layer_0_gate_gpu_4 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 4" fillcolor=lightpink shape=parallelogram style=filled]
+	layer_0_post_ln -> layer_0_gate_gpu_4
+	layer_0_gate_gpu_5 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 5" fillcolor=lightgray shape=parallelogram style=filled]
+	layer_0_post_ln -> layer_0_gate_gpu_5
+	layer_0_gate_gpu_6 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 6" fillcolor=lightcyan shape=parallelogram style=filled]
+	layer_0_post_ln -> layer_0_gate_gpu_6
+	layer_0_gate_gpu_7 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 7" fillcolor=lightsteelblue shape=parallelogram style=filled]
+	layer_0_post_ln -> layer_0_gate_gpu_7
+	layer_0_expert_0_gpu_0 [label="Expert 0\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_gpu_0 -> layer_0_expert_0_gpu_0 [label=route_0 style=dashed]
+	layer_0_post_ln -> layer_0_expert_0_gpu_0
+	layer_0_expert_1_gpu_0 [label="Expert 1\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_gpu_0 -> layer_0_expert_1_gpu_0 [label=route_1 style=dashed]
+	layer_0_post_ln -> layer_0_expert_1_gpu_0
+	layer_0_expert_2_gpu_0 [label="Expert 2\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_gpu_0 -> layer_0_expert_2_gpu_0 [label=route_2 style=dashed]
+	layer_0_post_ln -> layer_0_expert_2_gpu_0
+	layer_0_expert_3_gpu_0 [label="Expert 3\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_gpu_0 -> layer_0_expert_3_gpu_0 [label=route_3 style=dashed]
+	layer_0_post_ln -> layer_0_expert_3_gpu_0
+	layer_0_expert_4_gpu_1 [label="Expert 4\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_gate_gpu_1 -> layer_0_expert_4_gpu_1 [label=route_4 style=dashed]
+	layer_0_post_ln -> layer_0_expert_4_gpu_1
+	layer_0_expert_5_gpu_1 [label="Expert 5\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_gate_gpu_1 -> layer_0_expert_5_gpu_1 [label=route_5 style=dashed]
+	layer_0_post_ln -> layer_0_expert_5_gpu_1
+	layer_0_expert_6_gpu_1 [label="Expert 6\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_gate_gpu_1 -> layer_0_expert_6_gpu_1 [label=route_6 style=dashed]
+	layer_0_post_ln -> layer_0_expert_6_gpu_1
+	layer_0_expert_7_gpu_1 [label="Expert 7\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_gate_gpu_1 -> layer_0_expert_7_gpu_1 [label=route_7 style=dashed]
+	layer_0_post_ln -> layer_0_expert_7_gpu_1
+	layer_0_expert_8_gpu_2 [label="Expert 8\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_gate_gpu_2 -> layer_0_expert_8_gpu_2 [label=route_8 style=dashed]
+	layer_0_post_ln -> layer_0_expert_8_gpu_2
+	layer_0_expert_9_gpu_2 [label="Expert 9\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_gate_gpu_2 -> layer_0_expert_9_gpu_2 [label=route_9 style=dashed]
+	layer_0_post_ln -> layer_0_expert_9_gpu_2
+	layer_0_expert_10_gpu_2 [label="Expert 10\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_gate_gpu_2 -> layer_0_expert_10_gpu_2 [label=route_10 style=dashed]
+	layer_0_post_ln -> layer_0_expert_10_gpu_2
+	layer_0_expert_11_gpu_2 [label="Expert 11\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_gate_gpu_2 -> layer_0_expert_11_gpu_2 [label=route_11 style=dashed]
+	layer_0_post_ln -> layer_0_expert_11_gpu_2
+	layer_0_expert_12_gpu_3 [label="Expert 12\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_gate_gpu_3 -> layer_0_expert_12_gpu_3 [label=route_12 style=dashed]
+	layer_0_post_ln -> layer_0_expert_12_gpu_3
+	layer_0_expert_13_gpu_3 [label="Expert 13\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_gate_gpu_3 -> layer_0_expert_13_gpu_3 [label=route_13 style=dashed]
+	layer_0_post_ln -> layer_0_expert_13_gpu_3
+	layer_0_expert_14_gpu_3 [label="Expert 14\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_gate_gpu_3 -> layer_0_expert_14_gpu_3 [label=route_14 style=dashed]
+	layer_0_post_ln -> layer_0_expert_14_gpu_3
+	layer_0_expert_15_gpu_3 [label="Expert 15\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_gate_gpu_3 -> layer_0_expert_15_gpu_3 [label=route_15 style=dashed]
+	layer_0_post_ln -> layer_0_expert_15_gpu_3
+	layer_0_expert_16_gpu_4 [label="Expert 16\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_gate_gpu_4 -> layer_0_expert_16_gpu_4 [label=route_16 style=dashed]
+	layer_0_post_ln -> layer_0_expert_16_gpu_4
+	layer_0_expert_17_gpu_4 [label="Expert 17\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_gate_gpu_4 -> layer_0_expert_17_gpu_4 [label=route_17 style=dashed]
+	layer_0_post_ln -> layer_0_expert_17_gpu_4
+	layer_0_expert_18_gpu_4 [label="Expert 18\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_gate_gpu_4 -> layer_0_expert_18_gpu_4 [label=route_18 style=dashed]
+	layer_0_post_ln -> layer_0_expert_18_gpu_4
+	layer_0_expert_19_gpu_4 [label="Expert 19\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_gate_gpu_4 -> layer_0_expert_19_gpu_4 [label=route_19 style=dashed]
+	layer_0_post_ln -> layer_0_expert_19_gpu_4
+	layer_0_expert_20_gpu_5 [label="Expert 20\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_gate_gpu_5 -> layer_0_expert_20_gpu_5 [label=route_20 style=dashed]
+	layer_0_post_ln -> layer_0_expert_20_gpu_5
+	layer_0_expert_21_gpu_5 [label="Expert 21\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_gate_gpu_5 -> layer_0_expert_21_gpu_5 [label=route_21 style=dashed]
+	layer_0_post_ln -> layer_0_expert_21_gpu_5
+	layer_0_expert_22_gpu_5 [label="Expert 22\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_gate_gpu_5 -> layer_0_expert_22_gpu_5 [label=route_22 style=dashed]
+	layer_0_post_ln -> layer_0_expert_22_gpu_5
+	layer_0_expert_23_gpu_5 [label="Expert 23\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_0_gate_gpu_5 -> layer_0_expert_23_gpu_5 [label=route_23 style=dashed]
+	layer_0_post_ln -> layer_0_expert_23_gpu_5
+	layer_0_expert_24_gpu_6 [label="Expert 24\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate_gpu_6 -> layer_0_expert_24_gpu_6 [label=route_24 style=dashed]
+	layer_0_post_ln -> layer_0_expert_24_gpu_6
+	layer_0_expert_25_gpu_6 [label="Expert 25\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate_gpu_6 -> layer_0_expert_25_gpu_6 [label=route_25 style=dashed]
+	layer_0_post_ln -> layer_0_expert_25_gpu_6
+	layer_0_expert_26_gpu_6 [label="Expert 26\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate_gpu_6 -> layer_0_expert_26_gpu_6 [label=route_26 style=dashed]
+	layer_0_post_ln -> layer_0_expert_26_gpu_6
+	layer_0_expert_27_gpu_6 [label="Expert 27\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate_gpu_6 -> layer_0_expert_27_gpu_6 [label=route_27 style=dashed]
+	layer_0_post_ln -> layer_0_expert_27_gpu_6
+	layer_0_expert_28_gpu_7 [label="Expert 28\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_0_gate_gpu_7 -> layer_0_expert_28_gpu_7 [label=route_28 style=dashed]
+	layer_0_post_ln -> layer_0_expert_28_gpu_7
+	layer_0_expert_29_gpu_7 [label="Expert 29\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_0_gate_gpu_7 -> layer_0_expert_29_gpu_7 [label=route_29 style=dashed]
+	layer_0_post_ln -> layer_0_expert_29_gpu_7
+	layer_0_expert_30_gpu_7 [label="Expert 30\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_0_gate_gpu_7 -> layer_0_expert_30_gpu_7 [label=route_30 style=dashed]
+	layer_0_post_ln -> layer_0_expert_30_gpu_7
+	layer_0_expert_31_gpu_7 [label="Expert 31\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_0_gate_gpu_7 -> layer_0_expert_31_gpu_7 [label=route_31 style=dashed]
+	layer_0_post_ln -> layer_0_expert_31_gpu_7
+	layer_0_expert_agg [label="Expert Aggregation\nIn: 16×(1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_0_expert_0_gpu_0 -> layer_0_expert_agg
+	layer_0_expert_1_gpu_0 -> layer_0_expert_agg
+	layer_0_expert_2_gpu_0 -> layer_0_expert_agg
+	layer_0_expert_3_gpu_0 -> layer_0_expert_agg
+	layer_0_expert_4_gpu_1 -> layer_0_expert_agg
+	layer_0_expert_5_gpu_1 -> layer_0_expert_agg
+	layer_0_expert_6_gpu_1 -> layer_0_expert_agg
+	layer_0_expert_7_gpu_1 -> layer_0_expert_agg
+	layer_0_expert_8_gpu_2 -> layer_0_expert_agg
+	layer_0_expert_9_gpu_2 -> layer_0_expert_agg
+	layer_0_expert_10_gpu_2 -> layer_0_expert_agg
+	layer_0_expert_11_gpu_2 -> layer_0_expert_agg
+	layer_0_expert_12_gpu_3 -> layer_0_expert_agg
+	layer_0_expert_13_gpu_3 -> layer_0_expert_agg
+	layer_0_expert_14_gpu_3 -> layer_0_expert_agg
+	layer_0_expert_15_gpu_3 -> layer_0_expert_agg
+	layer_0_expert_16_gpu_4 -> layer_0_expert_agg
+	layer_0_expert_17_gpu_4 -> layer_0_expert_agg
+	layer_0_expert_18_gpu_4 -> layer_0_expert_agg
+	layer_0_expert_19_gpu_4 -> layer_0_expert_agg
+	layer_0_expert_20_gpu_5 -> layer_0_expert_agg
+	layer_0_expert_21_gpu_5 -> layer_0_expert_agg
+	layer_0_expert_22_gpu_5 -> layer_0_expert_agg
+	layer_0_expert_23_gpu_5 -> layer_0_expert_agg
+	layer_0_expert_24_gpu_6 -> layer_0_expert_agg
+	layer_0_expert_25_gpu_6 -> layer_0_expert_agg
+	layer_0_expert_26_gpu_6 -> layer_0_expert_agg
+	layer_0_expert_27_gpu_6 -> layer_0_expert_agg
+	layer_0_expert_28_gpu_7 -> layer_0_expert_agg
+	layer_0_expert_29_gpu_7 -> layer_0_expert_agg
+	layer_0_expert_30_gpu_7 -> layer_0_expert_agg
+	layer_0_expert_31_gpu_7 -> layer_0_expert_agg
+	layer_0_final_residual [label="Final Residual\nIn: (1024, 10000, 8192) + (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_0_expert_agg -> layer_0_final_residual
+	layer_0_attn_residual -> layer_0_final_residual
+	layer_0_output [label="Layer 0 Output\n(1024, 10000, 8192)" fillcolor=white shape=ellipse style=filled]
+	layer_0_final_residual -> layer_0_output
+	layer_0_output -> layer_1_input
+	layer_1_ln [label="Layer Norm\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_input -> layer_1_ln
+	layer_1_qkv_gpu_0 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_gpu_0
+	layer_1_qkv_gpu_1 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_gpu_1
+	layer_1_qkv_gpu_2 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_gpu_2
+	layer_1_qkv_gpu_3 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_gpu_3
+	layer_1_qkv_gpu_4 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_gpu_4
+	layer_1_qkv_gpu_5 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_gpu_5
+	layer_1_qkv_gpu_6 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_gpu_6
+	layer_1_qkv_gpu_7 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_gpu_7
+	layer_1_attn_gpu_0 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_qkv_gpu_0 -> layer_1_attn_gpu_0
+	layer_1_attn_gpu_1 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_gpu_1 -> layer_1_attn_gpu_1
+	layer_1_attn_gpu_2 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_qkv_gpu_2 -> layer_1_attn_gpu_2
+	layer_1_attn_gpu_3 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_qkv_gpu_3 -> layer_1_attn_gpu_3
+	layer_1_attn_gpu_4 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_qkv_gpu_4 -> layer_1_attn_gpu_4
+	layer_1_attn_gpu_5 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_qkv_gpu_5 -> layer_1_attn_gpu_5
+	layer_1_attn_gpu_6 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_qkv_gpu_6 -> layer_1_attn_gpu_6
+	layer_1_attn_gpu_7 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_1_qkv_gpu_7 -> layer_1_attn_gpu_7
+	layer_1_attn_out_gpu_0 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_attn_gpu_0 -> layer_1_attn_out_gpu_0
+	layer_1_attn_out_gpu_1 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_gpu_1 -> layer_1_attn_out_gpu_1
+	layer_1_attn_out_gpu_2 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_attn_gpu_2 -> layer_1_attn_out_gpu_2
+	layer_1_attn_out_gpu_3 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_attn_gpu_3 -> layer_1_attn_out_gpu_3
+	layer_1_attn_out_gpu_4 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_attn_gpu_4 -> layer_1_attn_out_gpu_4
+	layer_1_attn_out_gpu_5 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_attn_gpu_5 -> layer_1_attn_out_gpu_5
+	layer_1_attn_out_gpu_6 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_attn_gpu_6 -> layer_1_attn_out_gpu_6
+	layer_1_attn_out_gpu_7 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_1_attn_gpu_7 -> layer_1_attn_out_gpu_7
+	layer_1_attn_reduce [label="All-Reduce Sum\nIn: 8×(1024, 10000, 1024)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_1_attn_out_gpu_0 -> layer_1_attn_reduce
+	layer_1_attn_out_gpu_1 -> layer_1_attn_reduce
+	layer_1_attn_out_gpu_2 -> layer_1_attn_reduce
+	layer_1_attn_out_gpu_3 -> layer_1_attn_reduce
+	layer_1_attn_out_gpu_4 -> layer_1_attn_reduce
+	layer_1_attn_out_gpu_5 -> layer_1_attn_reduce
+	layer_1_attn_out_gpu_6 -> layer_1_attn_reduce
+	layer_1_attn_out_gpu_7 -> layer_1_attn_reduce
+	layer_1_attn_residual [label="Residual Add\nIn: (1024, 10000, 8192) + (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_1_attn_reduce -> layer_1_attn_residual
+	layer_1_ln -> layer_1_attn_residual
+	layer_1_post_ln [label="Post-Attention LN\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_attn_residual -> layer_1_post_ln
+	layer_1_gate_gpu_0 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 0" fillcolor=lightblue shape=parallelogram style=filled]
+	layer_1_post_ln -> layer_1_gate_gpu_0
+	layer_1_gate_gpu_1 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 1" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_1_post_ln -> layer_1_gate_gpu_1
+	layer_1_gate_gpu_2 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 2" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_1_post_ln -> layer_1_gate_gpu_2
+	layer_1_gate_gpu_3 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 3" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_1_post_ln -> layer_1_gate_gpu_3
+	layer_1_gate_gpu_4 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 4" fillcolor=lightpink shape=parallelogram style=filled]
+	layer_1_post_ln -> layer_1_gate_gpu_4
+	layer_1_gate_gpu_5 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 5" fillcolor=lightgray shape=parallelogram style=filled]
+	layer_1_post_ln -> layer_1_gate_gpu_5
+	layer_1_gate_gpu_6 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 6" fillcolor=lightcyan shape=parallelogram style=filled]
+	layer_1_post_ln -> layer_1_gate_gpu_6
+	layer_1_gate_gpu_7 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 7" fillcolor=lightsteelblue shape=parallelogram style=filled]
+	layer_1_post_ln -> layer_1_gate_gpu_7
+	layer_1_expert_0_gpu_0 [label="Expert 0\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_gpu_0 -> layer_1_expert_0_gpu_0 [label=route_0 style=dashed]
+	layer_1_post_ln -> layer_1_expert_0_gpu_0
+	layer_1_expert_1_gpu_0 [label="Expert 1\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_gpu_0 -> layer_1_expert_1_gpu_0 [label=route_1 style=dashed]
+	layer_1_post_ln -> layer_1_expert_1_gpu_0
+	layer_1_expert_2_gpu_0 [label="Expert 2\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_gpu_0 -> layer_1_expert_2_gpu_0 [label=route_2 style=dashed]
+	layer_1_post_ln -> layer_1_expert_2_gpu_0
+	layer_1_expert_3_gpu_0 [label="Expert 3\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_gpu_0 -> layer_1_expert_3_gpu_0 [label=route_3 style=dashed]
+	layer_1_post_ln -> layer_1_expert_3_gpu_0
+	layer_1_expert_4_gpu_1 [label="Expert 4\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_gate_gpu_1 -> layer_1_expert_4_gpu_1 [label=route_4 style=dashed]
+	layer_1_post_ln -> layer_1_expert_4_gpu_1
+	layer_1_expert_5_gpu_1 [label="Expert 5\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_gate_gpu_1 -> layer_1_expert_5_gpu_1 [label=route_5 style=dashed]
+	layer_1_post_ln -> layer_1_expert_5_gpu_1
+	layer_1_expert_6_gpu_1 [label="Expert 6\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_gate_gpu_1 -> layer_1_expert_6_gpu_1 [label=route_6 style=dashed]
+	layer_1_post_ln -> layer_1_expert_6_gpu_1
+	layer_1_expert_7_gpu_1 [label="Expert 7\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_gate_gpu_1 -> layer_1_expert_7_gpu_1 [label=route_7 style=dashed]
+	layer_1_post_ln -> layer_1_expert_7_gpu_1
+	layer_1_expert_8_gpu_2 [label="Expert 8\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_gate_gpu_2 -> layer_1_expert_8_gpu_2 [label=route_8 style=dashed]
+	layer_1_post_ln -> layer_1_expert_8_gpu_2
+	layer_1_expert_9_gpu_2 [label="Expert 9\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_gate_gpu_2 -> layer_1_expert_9_gpu_2 [label=route_9 style=dashed]
+	layer_1_post_ln -> layer_1_expert_9_gpu_2
+	layer_1_expert_10_gpu_2 [label="Expert 10\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_gate_gpu_2 -> layer_1_expert_10_gpu_2 [label=route_10 style=dashed]
+	layer_1_post_ln -> layer_1_expert_10_gpu_2
+	layer_1_expert_11_gpu_2 [label="Expert 11\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_gate_gpu_2 -> layer_1_expert_11_gpu_2 [label=route_11 style=dashed]
+	layer_1_post_ln -> layer_1_expert_11_gpu_2
+	layer_1_expert_12_gpu_3 [label="Expert 12\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_gate_gpu_3 -> layer_1_expert_12_gpu_3 [label=route_12 style=dashed]
+	layer_1_post_ln -> layer_1_expert_12_gpu_3
+	layer_1_expert_13_gpu_3 [label="Expert 13\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_gate_gpu_3 -> layer_1_expert_13_gpu_3 [label=route_13 style=dashed]
+	layer_1_post_ln -> layer_1_expert_13_gpu_3
+	layer_1_expert_14_gpu_3 [label="Expert 14\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_gate_gpu_3 -> layer_1_expert_14_gpu_3 [label=route_14 style=dashed]
+	layer_1_post_ln -> layer_1_expert_14_gpu_3
+	layer_1_expert_15_gpu_3 [label="Expert 15\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_gate_gpu_3 -> layer_1_expert_15_gpu_3 [label=route_15 style=dashed]
+	layer_1_post_ln -> layer_1_expert_15_gpu_3
+	layer_1_expert_16_gpu_4 [label="Expert 16\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_gate_gpu_4 -> layer_1_expert_16_gpu_4 [label=route_16 style=dashed]
+	layer_1_post_ln -> layer_1_expert_16_gpu_4
+	layer_1_expert_17_gpu_4 [label="Expert 17\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_gate_gpu_4 -> layer_1_expert_17_gpu_4 [label=route_17 style=dashed]
+	layer_1_post_ln -> layer_1_expert_17_gpu_4
+	layer_1_expert_18_gpu_4 [label="Expert 18\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_gate_gpu_4 -> layer_1_expert_18_gpu_4 [label=route_18 style=dashed]
+	layer_1_post_ln -> layer_1_expert_18_gpu_4
+	layer_1_expert_19_gpu_4 [label="Expert 19\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_gate_gpu_4 -> layer_1_expert_19_gpu_4 [label=route_19 style=dashed]
+	layer_1_post_ln -> layer_1_expert_19_gpu_4
+	layer_1_expert_20_gpu_5 [label="Expert 20\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_gate_gpu_5 -> layer_1_expert_20_gpu_5 [label=route_20 style=dashed]
+	layer_1_post_ln -> layer_1_expert_20_gpu_5
+	layer_1_expert_21_gpu_5 [label="Expert 21\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_gate_gpu_5 -> layer_1_expert_21_gpu_5 [label=route_21 style=dashed]
+	layer_1_post_ln -> layer_1_expert_21_gpu_5
+	layer_1_expert_22_gpu_5 [label="Expert 22\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_gate_gpu_5 -> layer_1_expert_22_gpu_5 [label=route_22 style=dashed]
+	layer_1_post_ln -> layer_1_expert_22_gpu_5
+	layer_1_expert_23_gpu_5 [label="Expert 23\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 5" fillcolor=lightgray shape=rectangle style=filled]
+	layer_1_gate_gpu_5 -> layer_1_expert_23_gpu_5 [label=route_23 style=dashed]
+	layer_1_post_ln -> layer_1_expert_23_gpu_5
+	layer_1_expert_24_gpu_6 [label="Expert 24\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate_gpu_6 -> layer_1_expert_24_gpu_6 [label=route_24 style=dashed]
+	layer_1_post_ln -> layer_1_expert_24_gpu_6
+	layer_1_expert_25_gpu_6 [label="Expert 25\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate_gpu_6 -> layer_1_expert_25_gpu_6 [label=route_25 style=dashed]
+	layer_1_post_ln -> layer_1_expert_25_gpu_6
+	layer_1_expert_26_gpu_6 [label="Expert 26\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate_gpu_6 -> layer_1_expert_26_gpu_6 [label=route_26 style=dashed]
+	layer_1_post_ln -> layer_1_expert_26_gpu_6
+	layer_1_expert_27_gpu_6 [label="Expert 27\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 6" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate_gpu_6 -> layer_1_expert_27_gpu_6 [label=route_27 style=dashed]
+	layer_1_post_ln -> layer_1_expert_27_gpu_6
+	layer_1_expert_28_gpu_7 [label="Expert 28\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_1_gate_gpu_7 -> layer_1_expert_28_gpu_7 [label=route_28 style=dashed]
+	layer_1_post_ln -> layer_1_expert_28_gpu_7
+	layer_1_expert_29_gpu_7 [label="Expert 29\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_1_gate_gpu_7 -> layer_1_expert_29_gpu_7 [label=route_29 style=dashed]
+	layer_1_post_ln -> layer_1_expert_29_gpu_7
+	layer_1_expert_30_gpu_7 [label="Expert 30\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_1_gate_gpu_7 -> layer_1_expert_30_gpu_7 [label=route_30 style=dashed]
+	layer_1_post_ln -> layer_1_expert_30_gpu_7
+	layer_1_expert_31_gpu_7 [label="Expert 31\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 7" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_1_gate_gpu_7 -> layer_1_expert_31_gpu_7 [label=route_31 style=dashed]
+	layer_1_post_ln -> layer_1_expert_31_gpu_7
+	layer_1_expert_agg [label="Expert Aggregation\nIn: 16×(1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_1_expert_0_gpu_0 -> layer_1_expert_agg
+	layer_1_expert_1_gpu_0 -> layer_1_expert_agg
+	layer_1_expert_2_gpu_0 -> layer_1_expert_agg
+	layer_1_expert_3_gpu_0 -> layer_1_expert_agg
+	layer_1_expert_4_gpu_1 -> layer_1_expert_agg
+	layer_1_expert_5_gpu_1 -> layer_1_expert_agg
+	layer_1_expert_6_gpu_1 -> layer_1_expert_agg
+	layer_1_expert_7_gpu_1 -> layer_1_expert_agg
+	layer_1_expert_8_gpu_2 -> layer_1_expert_agg
+	layer_1_expert_9_gpu_2 -> layer_1_expert_agg
+	layer_1_expert_10_gpu_2 -> layer_1_expert_agg
+	layer_1_expert_11_gpu_2 -> layer_1_expert_agg
+	layer_1_expert_12_gpu_3 -> layer_1_expert_agg
+	layer_1_expert_13_gpu_3 -> layer_1_expert_agg
+	layer_1_expert_14_gpu_3 -> layer_1_expert_agg
+	layer_1_expert_15_gpu_3 -> layer_1_expert_agg
+	layer_1_expert_16_gpu_4 -> layer_1_expert_agg
+	layer_1_expert_17_gpu_4 -> layer_1_expert_agg
+	layer_1_expert_18_gpu_4 -> layer_1_expert_agg
+	layer_1_expert_19_gpu_4 -> layer_1_expert_agg
+	layer_1_expert_20_gpu_5 -> layer_1_expert_agg
+	layer_1_expert_21_gpu_5 -> layer_1_expert_agg
+	layer_1_expert_22_gpu_5 -> layer_1_expert_agg
+	layer_1_expert_23_gpu_5 -> layer_1_expert_agg
+	layer_1_expert_24_gpu_6 -> layer_1_expert_agg
+	layer_1_expert_25_gpu_6 -> layer_1_expert_agg
+	layer_1_expert_26_gpu_6 -> layer_1_expert_agg
+	layer_1_expert_27_gpu_6 -> layer_1_expert_agg
+	layer_1_expert_28_gpu_7 -> layer_1_expert_agg
+	layer_1_expert_29_gpu_7 -> layer_1_expert_agg
+	layer_1_expert_30_gpu_7 -> layer_1_expert_agg
+	layer_1_expert_31_gpu_7 -> layer_1_expert_agg
+	layer_1_final_residual [label="Final Residual\nIn: (1024, 10000, 8192) + (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_1_expert_agg -> layer_1_final_residual
+	layer_1_attn_residual -> layer_1_final_residual
+	layer_1_output [label="Layer 1 Output\n(1024, 10000, 8192)" fillcolor=white shape=ellipse style=filled]
+	layer_1_final_residual -> layer_1_output
+	layer_1_output -> layer_2_input
+	layer_2_ln [label="Layer Norm\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_input -> layer_2_ln
+	layer_2_qkv_gpu_8 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_gpu_8
+	layer_2_qkv_gpu_9 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_gpu_9
+	layer_2_qkv_gpu_10 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_gpu_10
+	layer_2_qkv_gpu_11 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_gpu_11
+	layer_2_qkv_gpu_12 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_gpu_12
+	layer_2_qkv_gpu_13 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_gpu_13
+	layer_2_qkv_gpu_14 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_gpu_14
+	layer_2_qkv_gpu_15 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_gpu_15
+	layer_2_attn_gpu_8 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_qkv_gpu_8 -> layer_2_attn_gpu_8
+	layer_2_attn_gpu_9 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_gpu_9 -> layer_2_attn_gpu_9
+	layer_2_attn_gpu_10 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_qkv_gpu_10 -> layer_2_attn_gpu_10
+	layer_2_attn_gpu_11 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_qkv_gpu_11 -> layer_2_attn_gpu_11
+	layer_2_attn_gpu_12 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_qkv_gpu_12 -> layer_2_attn_gpu_12
+	layer_2_attn_gpu_13 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_qkv_gpu_13 -> layer_2_attn_gpu_13
+	layer_2_attn_gpu_14 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_qkv_gpu_14 -> layer_2_attn_gpu_14
+	layer_2_attn_gpu_15 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_2_qkv_gpu_15 -> layer_2_attn_gpu_15
+	layer_2_attn_out_gpu_8 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_attn_gpu_8 -> layer_2_attn_out_gpu_8
+	layer_2_attn_out_gpu_9 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_gpu_9 -> layer_2_attn_out_gpu_9
+	layer_2_attn_out_gpu_10 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_attn_gpu_10 -> layer_2_attn_out_gpu_10
+	layer_2_attn_out_gpu_11 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_attn_gpu_11 -> layer_2_attn_out_gpu_11
+	layer_2_attn_out_gpu_12 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_attn_gpu_12 -> layer_2_attn_out_gpu_12
+	layer_2_attn_out_gpu_13 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_attn_gpu_13 -> layer_2_attn_out_gpu_13
+	layer_2_attn_out_gpu_14 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_attn_gpu_14 -> layer_2_attn_out_gpu_14
+	layer_2_attn_out_gpu_15 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_2_attn_gpu_15 -> layer_2_attn_out_gpu_15
+	layer_2_attn_reduce [label="All-Reduce Sum\nIn: 8×(1024, 10000, 1024)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_2_attn_out_gpu_8 -> layer_2_attn_reduce
+	layer_2_attn_out_gpu_9 -> layer_2_attn_reduce
+	layer_2_attn_out_gpu_10 -> layer_2_attn_reduce
+	layer_2_attn_out_gpu_11 -> layer_2_attn_reduce
+	layer_2_attn_out_gpu_12 -> layer_2_attn_reduce
+	layer_2_attn_out_gpu_13 -> layer_2_attn_reduce
+	layer_2_attn_out_gpu_14 -> layer_2_attn_reduce
+	layer_2_attn_out_gpu_15 -> layer_2_attn_reduce
+	layer_2_attn_residual [label="Residual Add\nIn: (1024, 10000, 8192) + (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_2_attn_reduce -> layer_2_attn_residual
+	layer_2_ln -> layer_2_attn_residual
+	layer_2_post_ln [label="Post-Attention LN\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_attn_residual -> layer_2_post_ln
+	layer_2_gate_gpu_8 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 8" fillcolor=lightblue shape=parallelogram style=filled]
+	layer_2_post_ln -> layer_2_gate_gpu_8
+	layer_2_gate_gpu_9 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 9" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_2_post_ln -> layer_2_gate_gpu_9
+	layer_2_gate_gpu_10 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 10" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_2_post_ln -> layer_2_gate_gpu_10
+	layer_2_gate_gpu_11 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 11" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_2_post_ln -> layer_2_gate_gpu_11
+	layer_2_gate_gpu_12 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 12" fillcolor=lightpink shape=parallelogram style=filled]
+	layer_2_post_ln -> layer_2_gate_gpu_12
+	layer_2_gate_gpu_13 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 13" fillcolor=lightgray shape=parallelogram style=filled]
+	layer_2_post_ln -> layer_2_gate_gpu_13
+	layer_2_gate_gpu_14 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 14" fillcolor=lightcyan shape=parallelogram style=filled]
+	layer_2_post_ln -> layer_2_gate_gpu_14
+	layer_2_gate_gpu_15 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 15" fillcolor=lightsteelblue shape=parallelogram style=filled]
+	layer_2_post_ln -> layer_2_gate_gpu_15
+	layer_2_expert_0_gpu_8 [label="Expert 0\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_gpu_8 -> layer_2_expert_0_gpu_8 [label=route_0 style=dashed]
+	layer_2_post_ln -> layer_2_expert_0_gpu_8
+	layer_2_expert_1_gpu_8 [label="Expert 1\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_gpu_8 -> layer_2_expert_1_gpu_8 [label=route_1 style=dashed]
+	layer_2_post_ln -> layer_2_expert_1_gpu_8
+	layer_2_expert_2_gpu_8 [label="Expert 2\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_gpu_8 -> layer_2_expert_2_gpu_8 [label=route_2 style=dashed]
+	layer_2_post_ln -> layer_2_expert_2_gpu_8
+	layer_2_expert_3_gpu_8 [label="Expert 3\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_gpu_8 -> layer_2_expert_3_gpu_8 [label=route_3 style=dashed]
+	layer_2_post_ln -> layer_2_expert_3_gpu_8
+	layer_2_expert_4_gpu_9 [label="Expert 4\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_gate_gpu_9 -> layer_2_expert_4_gpu_9 [label=route_4 style=dashed]
+	layer_2_post_ln -> layer_2_expert_4_gpu_9
+	layer_2_expert_5_gpu_9 [label="Expert 5\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_gate_gpu_9 -> layer_2_expert_5_gpu_9 [label=route_5 style=dashed]
+	layer_2_post_ln -> layer_2_expert_5_gpu_9
+	layer_2_expert_6_gpu_9 [label="Expert 6\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_gate_gpu_9 -> layer_2_expert_6_gpu_9 [label=route_6 style=dashed]
+	layer_2_post_ln -> layer_2_expert_6_gpu_9
+	layer_2_expert_7_gpu_9 [label="Expert 7\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_gate_gpu_9 -> layer_2_expert_7_gpu_9 [label=route_7 style=dashed]
+	layer_2_post_ln -> layer_2_expert_7_gpu_9
+	layer_2_expert_8_gpu_10 [label="Expert 8\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_gate_gpu_10 -> layer_2_expert_8_gpu_10 [label=route_8 style=dashed]
+	layer_2_post_ln -> layer_2_expert_8_gpu_10
+	layer_2_expert_9_gpu_10 [label="Expert 9\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_gate_gpu_10 -> layer_2_expert_9_gpu_10 [label=route_9 style=dashed]
+	layer_2_post_ln -> layer_2_expert_9_gpu_10
+	layer_2_expert_10_gpu_10 [label="Expert 10\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_gate_gpu_10 -> layer_2_expert_10_gpu_10 [label=route_10 style=dashed]
+	layer_2_post_ln -> layer_2_expert_10_gpu_10
+	layer_2_expert_11_gpu_10 [label="Expert 11\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_gate_gpu_10 -> layer_2_expert_11_gpu_10 [label=route_11 style=dashed]
+	layer_2_post_ln -> layer_2_expert_11_gpu_10
+	layer_2_expert_12_gpu_11 [label="Expert 12\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_gate_gpu_11 -> layer_2_expert_12_gpu_11 [label=route_12 style=dashed]
+	layer_2_post_ln -> layer_2_expert_12_gpu_11
+	layer_2_expert_13_gpu_11 [label="Expert 13\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_gate_gpu_11 -> layer_2_expert_13_gpu_11 [label=route_13 style=dashed]
+	layer_2_post_ln -> layer_2_expert_13_gpu_11
+	layer_2_expert_14_gpu_11 [label="Expert 14\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_gate_gpu_11 -> layer_2_expert_14_gpu_11 [label=route_14 style=dashed]
+	layer_2_post_ln -> layer_2_expert_14_gpu_11
+	layer_2_expert_15_gpu_11 [label="Expert 15\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_gate_gpu_11 -> layer_2_expert_15_gpu_11 [label=route_15 style=dashed]
+	layer_2_post_ln -> layer_2_expert_15_gpu_11
+	layer_2_expert_16_gpu_12 [label="Expert 16\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_gate_gpu_12 -> layer_2_expert_16_gpu_12 [label=route_16 style=dashed]
+	layer_2_post_ln -> layer_2_expert_16_gpu_12
+	layer_2_expert_17_gpu_12 [label="Expert 17\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_gate_gpu_12 -> layer_2_expert_17_gpu_12 [label=route_17 style=dashed]
+	layer_2_post_ln -> layer_2_expert_17_gpu_12
+	layer_2_expert_18_gpu_12 [label="Expert 18\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_gate_gpu_12 -> layer_2_expert_18_gpu_12 [label=route_18 style=dashed]
+	layer_2_post_ln -> layer_2_expert_18_gpu_12
+	layer_2_expert_19_gpu_12 [label="Expert 19\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_gate_gpu_12 -> layer_2_expert_19_gpu_12 [label=route_19 style=dashed]
+	layer_2_post_ln -> layer_2_expert_19_gpu_12
+	layer_2_expert_20_gpu_13 [label="Expert 20\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_gate_gpu_13 -> layer_2_expert_20_gpu_13 [label=route_20 style=dashed]
+	layer_2_post_ln -> layer_2_expert_20_gpu_13
+	layer_2_expert_21_gpu_13 [label="Expert 21\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_gate_gpu_13 -> layer_2_expert_21_gpu_13 [label=route_21 style=dashed]
+	layer_2_post_ln -> layer_2_expert_21_gpu_13
+	layer_2_expert_22_gpu_13 [label="Expert 22\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_gate_gpu_13 -> layer_2_expert_22_gpu_13 [label=route_22 style=dashed]
+	layer_2_post_ln -> layer_2_expert_22_gpu_13
+	layer_2_expert_23_gpu_13 [label="Expert 23\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_2_gate_gpu_13 -> layer_2_expert_23_gpu_13 [label=route_23 style=dashed]
+	layer_2_post_ln -> layer_2_expert_23_gpu_13
+	layer_2_expert_24_gpu_14 [label="Expert 24\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate_gpu_14 -> layer_2_expert_24_gpu_14 [label=route_24 style=dashed]
+	layer_2_post_ln -> layer_2_expert_24_gpu_14
+	layer_2_expert_25_gpu_14 [label="Expert 25\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate_gpu_14 -> layer_2_expert_25_gpu_14 [label=route_25 style=dashed]
+	layer_2_post_ln -> layer_2_expert_25_gpu_14
+	layer_2_expert_26_gpu_14 [label="Expert 26\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate_gpu_14 -> layer_2_expert_26_gpu_14 [label=route_26 style=dashed]
+	layer_2_post_ln -> layer_2_expert_26_gpu_14
+	layer_2_expert_27_gpu_14 [label="Expert 27\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate_gpu_14 -> layer_2_expert_27_gpu_14 [label=route_27 style=dashed]
+	layer_2_post_ln -> layer_2_expert_27_gpu_14
+	layer_2_expert_28_gpu_15 [label="Expert 28\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_2_gate_gpu_15 -> layer_2_expert_28_gpu_15 [label=route_28 style=dashed]
+	layer_2_post_ln -> layer_2_expert_28_gpu_15
+	layer_2_expert_29_gpu_15 [label="Expert 29\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_2_gate_gpu_15 -> layer_2_expert_29_gpu_15 [label=route_29 style=dashed]
+	layer_2_post_ln -> layer_2_expert_29_gpu_15
+	layer_2_expert_30_gpu_15 [label="Expert 30\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_2_gate_gpu_15 -> layer_2_expert_30_gpu_15 [label=route_30 style=dashed]
+	layer_2_post_ln -> layer_2_expert_30_gpu_15
+	layer_2_expert_31_gpu_15 [label="Expert 31\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_2_gate_gpu_15 -> layer_2_expert_31_gpu_15 [label=route_31 style=dashed]
+	layer_2_post_ln -> layer_2_expert_31_gpu_15
+	layer_2_expert_agg [label="Expert Aggregation\nIn: 16×(1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_2_expert_0_gpu_8 -> layer_2_expert_agg
+	layer_2_expert_1_gpu_8 -> layer_2_expert_agg
+	layer_2_expert_2_gpu_8 -> layer_2_expert_agg
+	layer_2_expert_3_gpu_8 -> layer_2_expert_agg
+	layer_2_expert_4_gpu_9 -> layer_2_expert_agg
+	layer_2_expert_5_gpu_9 -> layer_2_expert_agg
+	layer_2_expert_6_gpu_9 -> layer_2_expert_agg
+	layer_2_expert_7_gpu_9 -> layer_2_expert_agg
+	layer_2_expert_8_gpu_10 -> layer_2_expert_agg
+	layer_2_expert_9_gpu_10 -> layer_2_expert_agg
+	layer_2_expert_10_gpu_10 -> layer_2_expert_agg
+	layer_2_expert_11_gpu_10 -> layer_2_expert_agg
+	layer_2_expert_12_gpu_11 -> layer_2_expert_agg
+	layer_2_expert_13_gpu_11 -> layer_2_expert_agg
+	layer_2_expert_14_gpu_11 -> layer_2_expert_agg
+	layer_2_expert_15_gpu_11 -> layer_2_expert_agg
+	layer_2_expert_16_gpu_12 -> layer_2_expert_agg
+	layer_2_expert_17_gpu_12 -> layer_2_expert_agg
+	layer_2_expert_18_gpu_12 -> layer_2_expert_agg
+	layer_2_expert_19_gpu_12 -> layer_2_expert_agg
+	layer_2_expert_20_gpu_13 -> layer_2_expert_agg
+	layer_2_expert_21_gpu_13 -> layer_2_expert_agg
+	layer_2_expert_22_gpu_13 -> layer_2_expert_agg
+	layer_2_expert_23_gpu_13 -> layer_2_expert_agg
+	layer_2_expert_24_gpu_14 -> layer_2_expert_agg
+	layer_2_expert_25_gpu_14 -> layer_2_expert_agg
+	layer_2_expert_26_gpu_14 -> layer_2_expert_agg
+	layer_2_expert_27_gpu_14 -> layer_2_expert_agg
+	layer_2_expert_28_gpu_15 -> layer_2_expert_agg
+	layer_2_expert_29_gpu_15 -> layer_2_expert_agg
+	layer_2_expert_30_gpu_15 -> layer_2_expert_agg
+	layer_2_expert_31_gpu_15 -> layer_2_expert_agg
+	layer_2_final_residual [label="Final Residual\nIn: (1024, 10000, 8192) + (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_2_expert_agg -> layer_2_final_residual
+	layer_2_attn_residual -> layer_2_final_residual
+	layer_2_output [label="Layer 2 Output\n(1024, 10000, 8192)" fillcolor=white shape=ellipse style=filled]
+	layer_2_final_residual -> layer_2_output
+	layer_2_output -> layer_3_input
+	layer_3_ln [label="Layer Norm\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_input -> layer_3_ln
+	layer_3_qkv_gpu_8 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_gpu_8
+	layer_3_qkv_gpu_9 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_gpu_9
+	layer_3_qkv_gpu_10 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_gpu_10
+	layer_3_qkv_gpu_11 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_gpu_11
+	layer_3_qkv_gpu_12 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_gpu_12
+	layer_3_qkv_gpu_13 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_gpu_13
+	layer_3_qkv_gpu_14 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_gpu_14
+	layer_3_qkv_gpu_15 [label="QKV Projection\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 3072)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_gpu_15
+	layer_3_attn_gpu_8 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_qkv_gpu_8 -> layer_3_attn_gpu_8
+	layer_3_attn_gpu_9 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_gpu_9 -> layer_3_attn_gpu_9
+	layer_3_attn_gpu_10 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_qkv_gpu_10 -> layer_3_attn_gpu_10
+	layer_3_attn_gpu_11 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_qkv_gpu_11 -> layer_3_attn_gpu_11
+	layer_3_attn_gpu_12 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_qkv_gpu_12 -> layer_3_attn_gpu_12
+	layer_3_attn_gpu_13 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_qkv_gpu_13 -> layer_3_attn_gpu_13
+	layer_3_attn_gpu_14 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_qkv_gpu_14 -> layer_3_attn_gpu_14
+	layer_3_attn_gpu_15 [label="MHA\nHeads: 2\nIn: (1024, 10000, 3072)\nOut: (1024, 10000, 1024)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_3_qkv_gpu_15 -> layer_3_attn_gpu_15
+	layer_3_attn_out_gpu_8 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_attn_gpu_8 -> layer_3_attn_out_gpu_8
+	layer_3_attn_out_gpu_9 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_gpu_9 -> layer_3_attn_out_gpu_9
+	layer_3_attn_out_gpu_10 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_attn_gpu_10 -> layer_3_attn_out_gpu_10
+	layer_3_attn_out_gpu_11 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_attn_gpu_11 -> layer_3_attn_out_gpu_11
+	layer_3_attn_out_gpu_12 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_attn_gpu_12 -> layer_3_attn_out_gpu_12
+	layer_3_attn_out_gpu_13 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_attn_gpu_13 -> layer_3_attn_out_gpu_13
+	layer_3_attn_out_gpu_14 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_attn_gpu_14 -> layer_3_attn_out_gpu_14
+	layer_3_attn_out_gpu_15 [label="Attn Output\nIn: (1024, 10000, 1024)\nOut: (1024, 10000, 1024)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_3_attn_gpu_15 -> layer_3_attn_out_gpu_15
+	layer_3_attn_reduce [label="All-Reduce Sum\nIn: 8×(1024, 10000, 1024)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_3_attn_out_gpu_8 -> layer_3_attn_reduce
+	layer_3_attn_out_gpu_9 -> layer_3_attn_reduce
+	layer_3_attn_out_gpu_10 -> layer_3_attn_reduce
+	layer_3_attn_out_gpu_11 -> layer_3_attn_reduce
+	layer_3_attn_out_gpu_12 -> layer_3_attn_reduce
+	layer_3_attn_out_gpu_13 -> layer_3_attn_reduce
+	layer_3_attn_out_gpu_14 -> layer_3_attn_reduce
+	layer_3_attn_out_gpu_15 -> layer_3_attn_reduce
+	layer_3_attn_residual [label="Residual Add\nIn: (1024, 10000, 8192) + (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_3_attn_reduce -> layer_3_attn_residual
+	layer_3_ln -> layer_3_attn_residual
+	layer_3_post_ln [label="Post-Attention LN\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_attn_residual -> layer_3_post_ln
+	layer_3_gate_gpu_8 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 8" fillcolor=lightblue shape=parallelogram style=filled]
+	layer_3_post_ln -> layer_3_gate_gpu_8
+	layer_3_gate_gpu_9 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 9" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_3_post_ln -> layer_3_gate_gpu_9
+	layer_3_gate_gpu_10 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 10" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_3_post_ln -> layer_3_gate_gpu_10
+	layer_3_gate_gpu_11 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 11" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_3_post_ln -> layer_3_gate_gpu_11
+	layer_3_gate_gpu_12 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 12" fillcolor=lightpink shape=parallelogram style=filled]
+	layer_3_post_ln -> layer_3_gate_gpu_12
+	layer_3_gate_gpu_13 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 13" fillcolor=lightgray shape=parallelogram style=filled]
+	layer_3_post_ln -> layer_3_gate_gpu_13
+	layer_3_gate_gpu_14 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 14" fillcolor=lightcyan shape=parallelogram style=filled]
+	layer_3_post_ln -> layer_3_gate_gpu_14
+	layer_3_gate_gpu_15 [label="Gate\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 16)\nGPU: 15" fillcolor=lightsteelblue shape=parallelogram style=filled]
+	layer_3_post_ln -> layer_3_gate_gpu_15
+	layer_3_expert_0_gpu_8 [label="Expert 0\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_gpu_8 -> layer_3_expert_0_gpu_8 [label=route_0 style=dashed]
+	layer_3_post_ln -> layer_3_expert_0_gpu_8
+	layer_3_expert_1_gpu_8 [label="Expert 1\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_gpu_8 -> layer_3_expert_1_gpu_8 [label=route_1 style=dashed]
+	layer_3_post_ln -> layer_3_expert_1_gpu_8
+	layer_3_expert_2_gpu_8 [label="Expert 2\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_gpu_8 -> layer_3_expert_2_gpu_8 [label=route_2 style=dashed]
+	layer_3_post_ln -> layer_3_expert_2_gpu_8
+	layer_3_expert_3_gpu_8 [label="Expert 3\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_gpu_8 -> layer_3_expert_3_gpu_8 [label=route_3 style=dashed]
+	layer_3_post_ln -> layer_3_expert_3_gpu_8
+	layer_3_expert_4_gpu_9 [label="Expert 4\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_gate_gpu_9 -> layer_3_expert_4_gpu_9 [label=route_4 style=dashed]
+	layer_3_post_ln -> layer_3_expert_4_gpu_9
+	layer_3_expert_5_gpu_9 [label="Expert 5\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_gate_gpu_9 -> layer_3_expert_5_gpu_9 [label=route_5 style=dashed]
+	layer_3_post_ln -> layer_3_expert_5_gpu_9
+	layer_3_expert_6_gpu_9 [label="Expert 6\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_gate_gpu_9 -> layer_3_expert_6_gpu_9 [label=route_6 style=dashed]
+	layer_3_post_ln -> layer_3_expert_6_gpu_9
+	layer_3_expert_7_gpu_9 [label="Expert 7\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_gate_gpu_9 -> layer_3_expert_7_gpu_9 [label=route_7 style=dashed]
+	layer_3_post_ln -> layer_3_expert_7_gpu_9
+	layer_3_expert_8_gpu_10 [label="Expert 8\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_gate_gpu_10 -> layer_3_expert_8_gpu_10 [label=route_8 style=dashed]
+	layer_3_post_ln -> layer_3_expert_8_gpu_10
+	layer_3_expert_9_gpu_10 [label="Expert 9\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_gate_gpu_10 -> layer_3_expert_9_gpu_10 [label=route_9 style=dashed]
+	layer_3_post_ln -> layer_3_expert_9_gpu_10
+	layer_3_expert_10_gpu_10 [label="Expert 10\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_gate_gpu_10 -> layer_3_expert_10_gpu_10 [label=route_10 style=dashed]
+	layer_3_post_ln -> layer_3_expert_10_gpu_10
+	layer_3_expert_11_gpu_10 [label="Expert 11\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_gate_gpu_10 -> layer_3_expert_11_gpu_10 [label=route_11 style=dashed]
+	layer_3_post_ln -> layer_3_expert_11_gpu_10
+	layer_3_expert_12_gpu_11 [label="Expert 12\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_gate_gpu_11 -> layer_3_expert_12_gpu_11 [label=route_12 style=dashed]
+	layer_3_post_ln -> layer_3_expert_12_gpu_11
+	layer_3_expert_13_gpu_11 [label="Expert 13\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_gate_gpu_11 -> layer_3_expert_13_gpu_11 [label=route_13 style=dashed]
+	layer_3_post_ln -> layer_3_expert_13_gpu_11
+	layer_3_expert_14_gpu_11 [label="Expert 14\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_gate_gpu_11 -> layer_3_expert_14_gpu_11 [label=route_14 style=dashed]
+	layer_3_post_ln -> layer_3_expert_14_gpu_11
+	layer_3_expert_15_gpu_11 [label="Expert 15\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_gate_gpu_11 -> layer_3_expert_15_gpu_11 [label=route_15 style=dashed]
+	layer_3_post_ln -> layer_3_expert_15_gpu_11
+	layer_3_expert_16_gpu_12 [label="Expert 16\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_gate_gpu_12 -> layer_3_expert_16_gpu_12 [label=route_16 style=dashed]
+	layer_3_post_ln -> layer_3_expert_16_gpu_12
+	layer_3_expert_17_gpu_12 [label="Expert 17\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_gate_gpu_12 -> layer_3_expert_17_gpu_12 [label=route_17 style=dashed]
+	layer_3_post_ln -> layer_3_expert_17_gpu_12
+	layer_3_expert_18_gpu_12 [label="Expert 18\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_gate_gpu_12 -> layer_3_expert_18_gpu_12 [label=route_18 style=dashed]
+	layer_3_post_ln -> layer_3_expert_18_gpu_12
+	layer_3_expert_19_gpu_12 [label="Expert 19\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_gate_gpu_12 -> layer_3_expert_19_gpu_12 [label=route_19 style=dashed]
+	layer_3_post_ln -> layer_3_expert_19_gpu_12
+	layer_3_expert_20_gpu_13 [label="Expert 20\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_gate_gpu_13 -> layer_3_expert_20_gpu_13 [label=route_20 style=dashed]
+	layer_3_post_ln -> layer_3_expert_20_gpu_13
+	layer_3_expert_21_gpu_13 [label="Expert 21\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_gate_gpu_13 -> layer_3_expert_21_gpu_13 [label=route_21 style=dashed]
+	layer_3_post_ln -> layer_3_expert_21_gpu_13
+	layer_3_expert_22_gpu_13 [label="Expert 22\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_gate_gpu_13 -> layer_3_expert_22_gpu_13 [label=route_22 style=dashed]
+	layer_3_post_ln -> layer_3_expert_22_gpu_13
+	layer_3_expert_23_gpu_13 [label="Expert 23\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 13" fillcolor=lightgray shape=rectangle style=filled]
+	layer_3_gate_gpu_13 -> layer_3_expert_23_gpu_13 [label=route_23 style=dashed]
+	layer_3_post_ln -> layer_3_expert_23_gpu_13
+	layer_3_expert_24_gpu_14 [label="Expert 24\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate_gpu_14 -> layer_3_expert_24_gpu_14 [label=route_24 style=dashed]
+	layer_3_post_ln -> layer_3_expert_24_gpu_14
+	layer_3_expert_25_gpu_14 [label="Expert 25\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate_gpu_14 -> layer_3_expert_25_gpu_14 [label=route_25 style=dashed]
+	layer_3_post_ln -> layer_3_expert_25_gpu_14
+	layer_3_expert_26_gpu_14 [label="Expert 26\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate_gpu_14 -> layer_3_expert_26_gpu_14 [label=route_26 style=dashed]
+	layer_3_post_ln -> layer_3_expert_26_gpu_14
+	layer_3_expert_27_gpu_14 [label="Expert 27\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 14" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate_gpu_14 -> layer_3_expert_27_gpu_14 [label=route_27 style=dashed]
+	layer_3_post_ln -> layer_3_expert_27_gpu_14
+	layer_3_expert_28_gpu_15 [label="Expert 28\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_3_gate_gpu_15 -> layer_3_expert_28_gpu_15 [label=route_28 style=dashed]
+	layer_3_post_ln -> layer_3_expert_28_gpu_15
+	layer_3_expert_29_gpu_15 [label="Expert 29\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_3_gate_gpu_15 -> layer_3_expert_29_gpu_15 [label=route_29 style=dashed]
+	layer_3_post_ln -> layer_3_expert_29_gpu_15
+	layer_3_expert_30_gpu_15 [label="Expert 30\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_3_gate_gpu_15 -> layer_3_expert_30_gpu_15 [label=route_30 style=dashed]
+	layer_3_post_ln -> layer_3_expert_30_gpu_15
+	layer_3_expert_31_gpu_15 [label="Expert 31\nIn: (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPU: 15" fillcolor=lightsteelblue shape=rectangle style=filled]
+	layer_3_gate_gpu_15 -> layer_3_expert_31_gpu_15 [label=route_31 style=dashed]
+	layer_3_post_ln -> layer_3_expert_31_gpu_15
+	layer_3_expert_agg [label="Expert Aggregation\nIn: 16×(1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_3_expert_0_gpu_8 -> layer_3_expert_agg
+	layer_3_expert_1_gpu_8 -> layer_3_expert_agg
+	layer_3_expert_2_gpu_8 -> layer_3_expert_agg
+	layer_3_expert_3_gpu_8 -> layer_3_expert_agg
+	layer_3_expert_4_gpu_9 -> layer_3_expert_agg
+	layer_3_expert_5_gpu_9 -> layer_3_expert_agg
+	layer_3_expert_6_gpu_9 -> layer_3_expert_agg
+	layer_3_expert_7_gpu_9 -> layer_3_expert_agg
+	layer_3_expert_8_gpu_10 -> layer_3_expert_agg
+	layer_3_expert_9_gpu_10 -> layer_3_expert_agg
+	layer_3_expert_10_gpu_10 -> layer_3_expert_agg
+	layer_3_expert_11_gpu_10 -> layer_3_expert_agg
+	layer_3_expert_12_gpu_11 -> layer_3_expert_agg
+	layer_3_expert_13_gpu_11 -> layer_3_expert_agg
+	layer_3_expert_14_gpu_11 -> layer_3_expert_agg
+	layer_3_expert_15_gpu_11 -> layer_3_expert_agg
+	layer_3_expert_16_gpu_12 -> layer_3_expert_agg
+	layer_3_expert_17_gpu_12 -> layer_3_expert_agg
+	layer_3_expert_18_gpu_12 -> layer_3_expert_agg
+	layer_3_expert_19_gpu_12 -> layer_3_expert_agg
+	layer_3_expert_20_gpu_13 -> layer_3_expert_agg
+	layer_3_expert_21_gpu_13 -> layer_3_expert_agg
+	layer_3_expert_22_gpu_13 -> layer_3_expert_agg
+	layer_3_expert_23_gpu_13 -> layer_3_expert_agg
+	layer_3_expert_24_gpu_14 -> layer_3_expert_agg
+	layer_3_expert_25_gpu_14 -> layer_3_expert_agg
+	layer_3_expert_26_gpu_14 -> layer_3_expert_agg
+	layer_3_expert_27_gpu_14 -> layer_3_expert_agg
+	layer_3_expert_28_gpu_15 -> layer_3_expert_agg
+	layer_3_expert_29_gpu_15 -> layer_3_expert_agg
+	layer_3_expert_30_gpu_15 -> layer_3_expert_agg
+	layer_3_expert_31_gpu_15 -> layer_3_expert_agg
+	layer_3_final_residual [label="Final Residual\nIn: (1024, 10000, 8192) + (1024, 10000, 8192)\nOut: (1024, 10000, 8192)\nGPUs: [8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_3_expert_agg -> layer_3_final_residual
+	layer_3_attn_residual -> layer_3_final_residual
+	layer_3_output [label="Layer 3 Output\n(1024, 10000, 8192)" fillcolor=white shape=ellipse style=filled]
+	layer_3_final_residual -> layer_3_output
+	output [label="Total Output\nBatch: 1024×10000\nHidden: 8192" fillcolor=white shape=ellipse style=filled]
+	layer_3_output -> output
+}

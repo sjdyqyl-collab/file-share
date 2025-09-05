@@ -1,0 +1,755 @@
+// MoE Baseline Configuration
+digraph baseline_moe {
+	rankdir=TB splines=ortho
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	input [label="Input
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightblue shape=ellipse]
+	subgraph cluster_layer1_stage0 {
+		label="Layer 1 - Pipeline Stage 0
+(GPUs 0-7)" style=dashed
+		l1_attn_qkv_0 [label="QKV Linear
+[1024, 8192] -> [1024, 12288]
+GPU 0" shape=rectangle]
+		l1_attn_qkv_1 [label="QKV Linear
+[1024, 8192] -> [1024, 12288]
+GPU 1" shape=rectangle]
+		l1_attn_split [label="Split Heads
+[1024, 12288] -> [16, 1024, 768]
+GPU 0-7" shape=parallelogram]
+		l1_attn_head_0 [label="Attention Head 0
+[16, 1024, 96]
+GPU 0" shape=rectangle]
+		l1_attn_head_1 [label="Attention Head 1
+[16, 1024, 96]
+GPU 1" shape=rectangle]
+		l1_attn_head_2 [label="Attention Head 2
+[16, 1024, 96]
+GPU 2" shape=rectangle]
+		l1_attn_head_3 [label="Attention Head 3
+[16, 1024, 96]
+GPU 3" shape=rectangle]
+		l1_attn_head_4 [label="Attention Head 4
+[16, 1024, 96]
+GPU 4" shape=rectangle]
+		l1_attn_head_5 [label="Attention Head 5
+[16, 1024, 96]
+GPU 5" shape=rectangle]
+		l1_attn_head_6 [label="Attention Head 6
+[16, 1024, 96]
+GPU 6" shape=rectangle]
+		l1_attn_head_7 [label="Attention Head 7
+[16, 1024, 96]
+GPU 7" shape=rectangle]
+		l1_attn_concat [label="Concat Heads
+[16, 1024, 96] -> [1024, 768]
+GPU 0-7" shape=parallelogram]
+		l1_attn_proj_0 [label="Projection
+[1024, 768] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l1_attn_proj_1 [label="Projection
+[1024, 768] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l1_attn_add [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 0-7" shape=parallelogram]
+		l1_gate [label="Gate
+[1024, 8192] -> [1024, 16]
+GPU 0-7" shape=parallelogram]
+		l1_expert_0 [label="Expert 0
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l1_expert_1 [label="Expert 1
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l1_expert_2 [label="Expert 2
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l1_expert_3 [label="Expert 3
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l1_expert_4 [label="Expert 4
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l1_expert_5 [label="Expert 5
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l1_expert_6 [label="Expert 6
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l1_expert_7 [label="Expert 7
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l1_expert_8 [label="Expert 8
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+		l1_expert_9 [label="Expert 9
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+		l1_expert_10 [label="Expert 10
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+		l1_expert_11 [label="Expert 11
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+		l1_expert_12 [label="Expert 12
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+		l1_expert_13 [label="Expert 13
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+		l1_expert_14 [label="Expert 14
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+		l1_expert_15 [label="Expert 15
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+		l1_expert_16 [label="Expert 16
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+		l1_expert_17 [label="Expert 17
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+		l1_expert_18 [label="Expert 18
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+		l1_expert_19 [label="Expert 19
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+		l1_expert_20 [label="Expert 20
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+		l1_expert_21 [label="Expert 21
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+		l1_expert_22 [label="Expert 22
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+		l1_expert_23 [label="Expert 23
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+		l1_expert_24 [label="Expert 24
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+		l1_expert_25 [label="Expert 25
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+		l1_expert_26 [label="Expert 26
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+		l1_expert_27 [label="Expert 27
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+		l1_expert_28 [label="Expert 28
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+		l1_expert_29 [label="Expert 29
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+		l1_expert_30 [label="Expert 30
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+		l1_expert_31 [label="Expert 31
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+		l1_moe_agg [label="Expert Aggregation
+[1024, 8192]
+GPU 0-7" shape=parallelogram]
+		l1_moe_add [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 0-7" shape=parallelogram]
+	}
+	subgraph cluster_layer2_stage1 {
+		label="Layer 2 - Pipeline Stage 1
+(GPUs 8-15)" style=dashed
+		l2_attn_qkv_0 [label="QKV Linear
+[1024, 8192] -> [1024, 12288]
+GPU 8" shape=rectangle]
+		l2_attn_qkv_1 [label="QKV Linear
+[1024, 8192] -> [1024, 12288]
+GPU 9" shape=rectangle]
+		l2_attn_split [label="Split Heads
+[1024, 12288] -> [16, 1024, 768]
+GPU 8-15" shape=parallelogram]
+		l2_attn_head_0 [label="Attention Head 0
+[16, 1024, 96]
+GPU 8" shape=rectangle]
+		l2_attn_head_1 [label="Attention Head 1
+[16, 1024, 96]
+GPU 9" shape=rectangle]
+		l2_attn_head_2 [label="Attention Head 2
+[16, 1024, 96]
+GPU 10" shape=rectangle]
+		l2_attn_head_3 [label="Attention Head 3
+[16, 1024, 96]
+GPU 11" shape=rectangle]
+		l2_attn_head_4 [label="Attention Head 4
+[16, 1024, 96]
+GPU 12" shape=rectangle]
+		l2_attn_head_5 [label="Attention Head 5
+[16, 1024, 96]
+GPU 13" shape=rectangle]
+		l2_attn_head_6 [label="Attention Head 6
+[16, 1024, 96]
+GPU 14" shape=rectangle]
+		l2_attn_head_7 [label="Attention Head 7
+[16, 1024, 96]
+GPU 15" shape=rectangle]
+		l2_attn_concat [label="Concat Heads
+[16, 1024, 96] -> [1024, 768]
+GPU 8-15" shape=parallelogram]
+		l2_attn_proj_0 [label="Projection
+[1024, 768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l2_attn_proj_1 [label="Projection
+[1024, 768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l2_attn_add [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 8-15" shape=parallelogram]
+		l2_gate [label="Gate
+[1024, 8192] -> [1024, 16]
+GPU 8-15" shape=parallelogram]
+		l2_expert_0 [label="Expert 0
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l2_expert_1 [label="Expert 1
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l2_expert_2 [label="Expert 2
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l2_expert_3 [label="Expert 3
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l2_expert_4 [label="Expert 4
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l2_expert_5 [label="Expert 5
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l2_expert_6 [label="Expert 6
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l2_expert_7 [label="Expert 7
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l2_expert_8 [label="Expert 8
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+		l2_expert_9 [label="Expert 9
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+		l2_expert_10 [label="Expert 10
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+		l2_expert_11 [label="Expert 11
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+		l2_expert_12 [label="Expert 12
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+		l2_expert_13 [label="Expert 13
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+		l2_expert_14 [label="Expert 14
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+		l2_expert_15 [label="Expert 15
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+		l2_expert_16 [label="Expert 16
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+		l2_expert_17 [label="Expert 17
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+		l2_expert_18 [label="Expert 18
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+		l2_expert_19 [label="Expert 19
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+		l2_expert_20 [label="Expert 20
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+		l2_expert_21 [label="Expert 21
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+		l2_expert_22 [label="Expert 22
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+		l2_expert_23 [label="Expert 23
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+		l2_expert_24 [label="Expert 24
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+		l2_expert_25 [label="Expert 25
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+		l2_expert_26 [label="Expert 26
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+		l2_expert_27 [label="Expert 27
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+		l2_expert_28 [label="Expert 28
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+		l2_expert_29 [label="Expert 29
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+		l2_expert_30 [label="Expert 30
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+		l2_expert_31 [label="Expert 31
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+		l2_moe_agg [label="Expert Aggregation
+[1024, 8192]
+GPU 8-15" shape=parallelogram]
+		l2_moe_add [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 8-15" shape=parallelogram]
+	}
+	subgraph cluster_layer3_stage0 {
+		label="Layer 3 - Pipeline Stage 0
+(GPUs 0-7)" style=dashed
+		l3_attn_qkv_0 [label="QKV Linear
+[1024, 8192] -> [1024, 12288]
+GPU 0" shape=rectangle]
+		l3_attn_qkv_1 [label="QKV Linear
+[1024, 8192] -> [1024, 12288]
+GPU 1" shape=rectangle]
+		l3_attn_split [label="Split Heads
+[1024, 12288] -> [16, 1024, 768]
+GPU 0-7" shape=parallelogram]
+		l3_attn_head_0 [label="Attention Head 0
+[16, 1024, 96]
+GPU 0" shape=rectangle]
+		l3_attn_head_1 [label="Attention Head 1
+[16, 1024, 96]
+GPU 1" shape=rectangle]
+		l3_attn_head_2 [label="Attention Head 2
+[16, 1024, 96]
+GPU 2" shape=rectangle]
+		l3_attn_head_3 [label="Attention Head 3
+[16, 1024, 96]
+GPU 3" shape=rectangle]
+		l3_attn_head_4 [label="Attention Head 4
+[16, 1024, 96]
+GPU 4" shape=rectangle]
+		l3_attn_head_5 [label="Attention Head 5
+[16, 1024, 96]
+GPU 5" shape=rectangle]
+		l3_attn_head_6 [label="Attention Head 6
+[16, 1024, 96]
+GPU 6" shape=rectangle]
+		l3_attn_head_7 [label="Attention Head 7
+[16, 1024, 96]
+GPU 7" shape=rectangle]
+		l3_attn_concat [label="Concat Heads
+[16, 1024, 96] -> [1024, 768]
+GPU 0-7" shape=parallelogram]
+		l3_attn_proj_0 [label="Projection
+[1024, 768] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l3_attn_proj_1 [label="Projection
+[1024, 768] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l3_attn_add [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 0-7" shape=parallelogram]
+		l3_gate [label="Gate
+[1024, 8192] -> [1024, 16]
+GPU 0-7" shape=parallelogram]
+		l3_expert_32 [label="Expert 32
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l3_expert_33 [label="Expert 33
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l3_expert_34 [label="Expert 34
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l3_expert_35 [label="Expert 35
+[1024, 8192] -> [1024, 8192]
+GPU 0" shape=rectangle]
+		l3_expert_36 [label="Expert 36
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l3_expert_37 [label="Expert 37
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l3_expert_38 [label="Expert 38
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l3_expert_39 [label="Expert 39
+[1024, 8192] -> [1024, 8192]
+GPU 1" shape=rectangle]
+		l3_expert_40 [label="Expert 40
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+		l3_expert_41 [label="Expert 41
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+		l3_expert_42 [label="Expert 42
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+		l3_expert_43 [label="Expert 43
+[1024, 8192] -> [1024, 8192]
+GPU 2" shape=rectangle]
+		l3_expert_44 [label="Expert 44
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+		l3_expert_45 [label="Expert 45
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+		l3_expert_46 [label="Expert 46
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+		l3_expert_47 [label="Expert 47
+[1024, 8192] -> [1024, 8192]
+GPU 3" shape=rectangle]
+		l3_expert_48 [label="Expert 48
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+		l3_expert_49 [label="Expert 49
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+		l3_expert_50 [label="Expert 50
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+		l3_expert_51 [label="Expert 51
+[1024, 8192] -> [1024, 8192]
+GPU 4" shape=rectangle]
+		l3_expert_52 [label="Expert 52
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+		l3_expert_53 [label="Expert 53
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+		l3_expert_54 [label="Expert 54
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+		l3_expert_55 [label="Expert 55
+[1024, 8192] -> [1024, 8192]
+GPU 5" shape=rectangle]
+		l3_expert_56 [label="Expert 56
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+		l3_expert_57 [label="Expert 57
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+		l3_expert_58 [label="Expert 58
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+		l3_expert_59 [label="Expert 59
+[1024, 8192] -> [1024, 8192]
+GPU 6" shape=rectangle]
+		l3_expert_60 [label="Expert 60
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+		l3_expert_61 [label="Expert 61
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+		l3_expert_62 [label="Expert 62
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+		l3_expert_63 [label="Expert 63
+[1024, 8192] -> [1024, 8192]
+GPU 7" shape=rectangle]
+		l3_moe_agg [label="Expert Aggregation
+[1024, 8192]
+GPU 0-7" shape=parallelogram]
+		l3_moe_add [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 0-7" shape=parallelogram]
+	}
+	subgraph cluster_layer4_stage1 {
+		label="Layer 4 - Pipeline Stage 1
+(GPUs 8-15)" style=dashed
+		l4_attn_qkv_0 [label="QKV Linear
+[1024, 8192] -> [1024, 12288]
+GPU 8" shape=rectangle]
+		l4_attn_qkv_1 [label="QKV Linear
+[1024, 8192] -> [1024, 12288]
+GPU 9" shape=rectangle]
+		l4_attn_split [label="Split Heads
+[1024, 12288] -> [16, 1024, 768]
+GPU 8-15" shape=parallelogram]
+		l4_attn_head_0 [label="Attention Head 0
+[16, 1024, 96]
+GPU 8" shape=rectangle]
+		l4_attn_head_1 [label="Attention Head 1
+[16, 1024, 96]
+GPU 9" shape=rectangle]
+		l4_attn_head_2 [label="Attention Head 2
+[16, 1024, 96]
+GPU 10" shape=rectangle]
+		l4_attn_head_3 [label="Attention Head 3
+[16, 1024, 96]
+GPU 11" shape=rectangle]
+		l4_attn_head_4 [label="Attention Head 4
+[16, 1024, 96]
+GPU 12" shape=rectangle]
+		l4_attn_head_5 [label="Attention Head 5
+[16, 1024, 96]
+GPU 13" shape=rectangle]
+		l4_attn_head_6 [label="Attention Head 6
+[16, 1024, 96]
+GPU 14" shape=rectangle]
+		l4_attn_head_7 [label="Attention Head 7
+[16, 1024, 96]
+GPU 15" shape=rectangle]
+		l4_attn_concat [label="Concat Heads
+[16, 1024, 96] -> [1024, 768]
+GPU 8-15" shape=parallelogram]
+		l4_attn_proj_0 [label="Projection
+[1024, 768] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l4_attn_proj_1 [label="Projection
+[1024, 768] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l4_attn_add [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 8-15" shape=parallelogram]
+		l4_gate [label="Gate
+[1024, 8192] -> [1024, 16]
+GPU 8-15" shape=parallelogram]
+		l4_expert_32 [label="Expert 32
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l4_expert_33 [label="Expert 33
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l4_expert_34 [label="Expert 34
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l4_expert_35 [label="Expert 35
+[1024, 8192] -> [1024, 8192]
+GPU 8" shape=rectangle]
+		l4_expert_36 [label="Expert 36
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l4_expert_37 [label="Expert 37
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l4_expert_38 [label="Expert 38
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l4_expert_39 [label="Expert 39
+[1024, 8192] -> [1024, 8192]
+GPU 9" shape=rectangle]
+		l4_expert_40 [label="Expert 40
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+		l4_expert_41 [label="Expert 41
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+		l4_expert_42 [label="Expert 42
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+		l4_expert_43 [label="Expert 43
+[1024, 8192] -> [1024, 8192]
+GPU 10" shape=rectangle]
+		l4_expert_44 [label="Expert 44
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+		l4_expert_45 [label="Expert 45
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+		l4_expert_46 [label="Expert 46
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+		l4_expert_47 [label="Expert 47
+[1024, 8192] -> [1024, 8192]
+GPU 11" shape=rectangle]
+		l4_expert_48 [label="Expert 48
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+		l4_expert_49 [label="Expert 49
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+		l4_expert_50 [label="Expert 50
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+		l4_expert_51 [label="Expert 51
+[1024, 8192] -> [1024, 8192]
+GPU 12" shape=rectangle]
+		l4_expert_52 [label="Expert 52
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+		l4_expert_53 [label="Expert 53
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+		l4_expert_54 [label="Expert 54
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+		l4_expert_55 [label="Expert 55
+[1024, 8192] -> [1024, 8192]
+GPU 13" shape=rectangle]
+		l4_expert_56 [label="Expert 56
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+		l4_expert_57 [label="Expert 57
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+		l4_expert_58 [label="Expert 58
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+		l4_expert_59 [label="Expert 59
+[1024, 8192] -> [1024, 8192]
+GPU 14" shape=rectangle]
+		l4_expert_60 [label="Expert 60
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+		l4_expert_61 [label="Expert 61
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+		l4_expert_62 [label="Expert 62
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+		l4_expert_63 [label="Expert 63
+[1024, 8192] -> [1024, 8192]
+GPU 15" shape=rectangle]
+		l4_moe_agg [label="Expert Aggregation
+[1024, 8192]
+GPU 8-15" shape=parallelogram]
+		l4_moe_add [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU 8-15" shape=parallelogram]
+	}
+	output [label="Output
+[1024, 10000, 8192]
+GPU 8-15" fillcolor=lightblue shape=ellipse]
+	input -> l1_attn_qkv_0
+	input -> l1_attn_qkv_1
+	l1_attn_qkv_0 -> l1_attn_split
+	l1_attn_qkv_1 -> l1_attn_split
+	l1_attn_split -> l1_attn_head_0
+	l1_attn_head_0 -> l1_attn_concat
+	l1_attn_split -> l1_attn_head_1
+	l1_attn_head_1 -> l1_attn_concat
+	l1_attn_split -> l1_attn_head_2
+	l1_attn_head_2 -> l1_attn_concat
+	l1_attn_split -> l1_attn_head_3
+	l1_attn_head_3 -> l1_attn_concat
+	l1_attn_split -> l1_attn_head_4
+	l1_attn_head_4 -> l1_attn_concat
+	l1_attn_split -> l1_attn_head_5
+	l1_attn_head_5 -> l1_attn_concat
+	l1_attn_split -> l1_attn_head_6
+	l1_attn_head_6 -> l1_attn_concat
+	l1_attn_split -> l1_attn_head_7
+	l1_attn_head_7 -> l1_attn_concat
+	l1_attn_concat -> l1_attn_proj_0
+	l1_attn_concat -> l1_attn_proj_1
+	l1_attn_proj_0 -> l1_attn_add
+	l1_attn_proj_1 -> l1_attn_add
+	input -> l1_attn_add
+	l1_attn_add -> l1_gate
+	l1_gate -> l1_expert_0 [style=dashed]
+	l1_attn_add -> l1_expert_0
+	l1_expert_0 -> l1_moe_agg
+	l1_gate -> l1_expert_1 [style=dashed]
+	l1_attn_add -> l1_expert_1
+	l1_expert_1 -> l1_moe_agg
+	l1_gate -> l1_expert_2 [style=dashed]
+	l1_attn_add -> l1_expert_2
+	l1_expert_2 -> l1_moe_agg
+	l1_gate -> l1_expert_3 [style=dashed]
+	l1_attn_add -> l1_expert_3
+	l1_expert_3 -> l1_moe_agg
+	l1_gate -> l1_expert_4 [style=dashed]
+	l1_attn_add -> l1_expert_4
+	l1_expert_4 -> l1_moe_agg
+	l1_gate -> l1_expert_5 [style=dashed]
+	l1_attn_add -> l1_expert_5
+	l1_expert_5 -> l1_moe_agg
+	l1_gate -> l1_expert_6 [style=dashed]
+	l1_attn_add -> l1_expert_6
+	l1_expert_6 -> l1_moe_agg
+	l1_gate -> l1_expert_7 [style=dashed]
+	l1_attn_add -> l1_expert_7
+	l1_expert_7 -> l1_moe_agg
+	l1_gate -> l1_expert_8 [style=dashed]
+	l1_attn_add -> l1_expert_8
+	l1_expert_8 -> l1_moe_agg
+	l1_gate -> l1_expert_9 [style=dashed]
+	l1_attn_add -> l1_expert_9
+	l1_expert_9 -> l1_moe_agg
+	l1_gate -> l1_expert_10 [style=dashed]
+	l1_attn_add -> l1_expert_10
+	l1_expert_10 -> l1_moe_agg
+	l1_gate -> l1_expert_11 [style=dashed]
+	l1_attn_add -> l1_expert_11
+	l1_expert_11 -> l1_moe_agg
+	l1_gate -> l1_expert_12 [style=dashed]
+	l1_attn_add -> l1_expert_12
+	l1_expert_12 -> l1_moe_agg
+	l1_gate -> l1_expert_13 [style=dashed]
+	l1_attn_add -> l1_expert_13
+	l1_expert_13 -> l1_moe_agg
+	l1_gate -> l1_expert_14 [style=dashed]
+	l1_attn_add -> l1_expert_14
+	l1_expert_14 -> l1_moe_agg
+	l1_gate -> l1_expert_15 [style=dashed]
+	l1_attn_add -> l1_expert_15
+	l1_expert_15 -> l1_moe_agg
+	l1_gate -> l1_expert_16 [style=dashed]
+	l1_attn_add -> l1_expert_16
+	l1_expert_16 -> l1_moe_agg
+	l1_gate -> l1_expert_17 [style=dashed]
+	l1_attn_add -> l1_expert_17
+	l1_expert_17 -> l1_moe_agg
+	l1_gate -> l1_expert_18 [style=dashed]
+	l1_attn_add -> l1_expert_18
+	l1_expert_18 -> l1_moe_agg
+	l1_gate -> l1_expert_19 [style=dashed]
+	l1_attn_add -> l1_expert_19
+	l1_expert_19 -> l1_moe_agg
+	l1_gate -> l1_expert_20 [style=dashed]
+	l1_attn_add -> l1_expert_20
+	l1_expert_20 -> l1_moe_agg
+	l1_gate -> l1_expert_21 [style=dashed]
+	l1_attn_add -> l1_expert_21
+	l1_expert_21 -> l1_moe_agg
+	l1_gate -> l1_expert_22 [style=dashed]
+	l1_attn_add -> l1_expert_22
+	l1_expert_22 -> l1_moe_agg
+	l1_gate -> l1_expert_23 [style=dashed]
+	l1_attn_add -> l1_expert_23
+	l1_expert_23 -> l1_moe_agg
+	l1_gate -> l1_expert_24 [style=dashed]
+	l1_attn_add -> l1_expert_24
+	l1_expert_24 -> l1_moe_agg
+	l1_gate -> l1_expert_25 [style=dashed]
+	l1_attn_add -> l1_expert_25
+	l1_expert_25 -> l1_moe_agg
+	l1_gate -> l1_expert_26 [style=dashed]
+	l1_attn_add -> l1_expert_26
+	l1_expert_26 -> l1_moe_agg
+	l1_gate -> l1_expert_27 [style=dashed]
+	l1_attn_add -> l1_expert_27
+	l1_expert_27 -> l1_moe_agg
+	l1_gate -> l1_expert_28 [style=dashed]
+	l1_attn_add -> l1_expert_28
+	l1_expert_28 -> l1_moe_agg
+	l1_gate -> l1_expert_29 [style=dashed]
+	l1_attn_add -> l1_expert_29
+	l1_expert_29 -> l1_moe_agg
+	l1_gate -> l1_expert_30 [style=dashed]
+	l1_attn_add -> l1_expert_30
+	l1_expert_30 -> l1_moe_agg
+	l1_gate -> l1_expert_31 [style=dashed]
+	l1_attn_add -> l1_expert_31
+	l1_expert_31 -> l1_moe_agg
+	l1_moe_agg -> l1_moe_add
+	l1_attn_add -> l1_moe_add
+	l1_moe_add -> l2_attn_qkv_0 [label="Pipeline Send" style=dashed]
+	l1_moe_add -> l2_attn_qkv_1 [label="Pipeline Send" style=dashed]
+}

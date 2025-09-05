@@ -1,0 +1,47 @@
+{
+  "baseline_dag": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-05-11-51-32/baseline_moe_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-05-11-51-32/baseline_moe_dag.svg",
+    "description": "Baseline MoE deployment with 16 GPUs using TP=8, PP=2, and 4 experts per GPU",
+    "configuration": {
+      "total_gpus": 16,
+      "tensor_parallelism": 8,
+      "pipeline_parallelism": 2,
+      "experts_per_layer": 16,
+      "experts_per_gpu": 4,
+      "batch_size": 1024,
+      "sequence_length": 10000,
+      "hidden_dimension": 8192,
+      "ffn_hidden": 32768
+    }
+  },
+  "proposed_dag": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-05-11-51-32/proposed_moe_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-05-11-51-32/proposed_moe_dag.svg",
+    "description": "Proposed MoE deployment with 64 GPUs using EP=64, 1 expert per GPU",
+    "configuration": {
+      "total_gpus": 64,
+      "expert_parallelism": 64,
+      "experts_per_layer": 64,
+      "experts_per_gpu": 1,
+      "batch_size": 1024,
+      "sequence_length": 10000,
+      "hidden_dimension": 8192,
+      "ffn_hidden": 32768
+    }
+  },
+  "generation_info": {
+    "timestamp": "2025-09-05T12:00:00Z",
+    "paper_reference": "Large-Scale Cross-Node Expert Parallelism for Mixture-of-Experts Models",
+    "dag_type": "complete_model_deployment",
+    "includes": [
+      "card_boundary_division",
+      "multi_card_communication_path",
+      "data_aggregation_split_nodes",
+      "dimensional_information",
+      "operator_level_details",
+      "residual_connections",
+      "gate_routing_decisions"
+    ]
+  }
+}
