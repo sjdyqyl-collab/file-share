@@ -1,0 +1,3044 @@
+// Proposed Cross-Node Expert Parallelism DAG
+digraph proposed_moe_dag {
+	rankdir=TB size="30,40"
+	input [label="Input
+[1024, 8192]" fillcolor=lightblue shape=ellipse style=filled]
+	global_router [label="Global Token Router
+Route tokens to experts
+All GPUs" fillcolor=gold shape=parallelogram style=filled]
+	subgraph layer_0 {
+		label="MoE Layer 0 - Cross-Node Expert Parallelism"
+		attn0_q_0 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 0" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_0 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 0" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_0 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 0" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_0 [label="Attention Score
+[1024, 1024]
+GPU 0" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_0 [label="Attention Output
+[1024, 8192]
+GPU 0" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_0 [label="Residual Add
+[1024, 8192]
+GPU 0" fillcolor=orange shape=parallelogram style=filled]
+		expert0_0 [label="Expert 0
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_0 [label="Gate 0
+Select tokens
+GPU 0" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_0 [label="Token Aggregation
+[1024, 8192]
+GPU 0" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_0 [label="Final Residual
+[1024, 8192]
+GPU 0" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_1 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 1" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_1 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 1" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_1 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 1" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_1 [label="Attention Score
+[1024, 1024]
+GPU 1" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_1 [label="Attention Output
+[1024, 8192]
+GPU 1" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_1 [label="Residual Add
+[1024, 8192]
+GPU 1" fillcolor=orange shape=parallelogram style=filled]
+		expert0_1 [label="Expert 1
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_1 [label="Gate 1
+Select tokens
+GPU 1" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_1 [label="Token Aggregation
+[1024, 8192]
+GPU 1" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_1 [label="Final Residual
+[1024, 8192]
+GPU 1" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_2 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 2" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_2 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 2" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_2 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 2" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_2 [label="Attention Score
+[1024, 1024]
+GPU 2" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_2 [label="Attention Output
+[1024, 8192]
+GPU 2" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_2 [label="Residual Add
+[1024, 8192]
+GPU 2" fillcolor=orange shape=parallelogram style=filled]
+		expert0_2 [label="Expert 2
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_2 [label="Gate 2
+Select tokens
+GPU 2" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_2 [label="Token Aggregation
+[1024, 8192]
+GPU 2" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_2 [label="Final Residual
+[1024, 8192]
+GPU 2" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_3 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 3" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_3 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 3" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_3 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 3" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_3 [label="Attention Score
+[1024, 1024]
+GPU 3" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_3 [label="Attention Output
+[1024, 8192]
+GPU 3" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_3 [label="Residual Add
+[1024, 8192]
+GPU 3" fillcolor=orange shape=parallelogram style=filled]
+		expert0_3 [label="Expert 3
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_3 [label="Gate 3
+Select tokens
+GPU 3" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_3 [label="Token Aggregation
+[1024, 8192]
+GPU 3" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_3 [label="Final Residual
+[1024, 8192]
+GPU 3" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_4 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 4" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_4 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 4" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_4 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 4" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_4 [label="Attention Score
+[1024, 1024]
+GPU 4" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_4 [label="Attention Output
+[1024, 8192]
+GPU 4" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_4 [label="Residual Add
+[1024, 8192]
+GPU 4" fillcolor=orange shape=parallelogram style=filled]
+		expert0_4 [label="Expert 4
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_4 [label="Gate 4
+Select tokens
+GPU 4" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_4 [label="Token Aggregation
+[1024, 8192]
+GPU 4" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_4 [label="Final Residual
+[1024, 8192]
+GPU 4" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_5 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 5" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_5 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 5" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_5 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 5" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_5 [label="Attention Score
+[1024, 1024]
+GPU 5" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_5 [label="Attention Output
+[1024, 8192]
+GPU 5" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_5 [label="Residual Add
+[1024, 8192]
+GPU 5" fillcolor=orange shape=parallelogram style=filled]
+		expert0_5 [label="Expert 5
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_5 [label="Gate 5
+Select tokens
+GPU 5" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_5 [label="Token Aggregation
+[1024, 8192]
+GPU 5" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_5 [label="Final Residual
+[1024, 8192]
+GPU 5" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_6 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 6" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_6 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 6" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_6 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 6" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_6 [label="Attention Score
+[1024, 1024]
+GPU 6" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_6 [label="Attention Output
+[1024, 8192]
+GPU 6" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_6 [label="Residual Add
+[1024, 8192]
+GPU 6" fillcolor=orange shape=parallelogram style=filled]
+		expert0_6 [label="Expert 6
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_6 [label="Gate 6
+Select tokens
+GPU 6" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_6 [label="Token Aggregation
+[1024, 8192]
+GPU 6" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_6 [label="Final Residual
+[1024, 8192]
+GPU 6" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_7 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 7" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_7 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 7" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_7 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 7" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_7 [label="Attention Score
+[1024, 1024]
+GPU 7" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_7 [label="Attention Output
+[1024, 8192]
+GPU 7" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_7 [label="Residual Add
+[1024, 8192]
+GPU 7" fillcolor=orange shape=parallelogram style=filled]
+		expert0_7 [label="Expert 7
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_7 [label="Gate 7
+Select tokens
+GPU 7" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_7 [label="Token Aggregation
+[1024, 8192]
+GPU 7" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_7 [label="Final Residual
+[1024, 8192]
+GPU 7" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_8 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 8" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_8 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 8" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_8 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 8" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_8 [label="Attention Score
+[1024, 1024]
+GPU 8" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_8 [label="Attention Output
+[1024, 8192]
+GPU 8" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_8 [label="Residual Add
+[1024, 8192]
+GPU 8" fillcolor=orange shape=parallelogram style=filled]
+		expert0_8 [label="Expert 8
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_8 [label="Gate 8
+Select tokens
+GPU 8" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_8 [label="Token Aggregation
+[1024, 8192]
+GPU 8" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_8 [label="Final Residual
+[1024, 8192]
+GPU 8" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_9 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 9" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_9 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 9" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_9 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 9" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_9 [label="Attention Score
+[1024, 1024]
+GPU 9" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_9 [label="Attention Output
+[1024, 8192]
+GPU 9" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_9 [label="Residual Add
+[1024, 8192]
+GPU 9" fillcolor=orange shape=parallelogram style=filled]
+		expert0_9 [label="Expert 9
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_9 [label="Gate 9
+Select tokens
+GPU 9" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_9 [label="Token Aggregation
+[1024, 8192]
+GPU 9" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_9 [label="Final Residual
+[1024, 8192]
+GPU 9" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_10 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 10" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_10 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 10" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_10 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 10" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_10 [label="Attention Score
+[1024, 1024]
+GPU 10" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_10 [label="Attention Output
+[1024, 8192]
+GPU 10" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_10 [label="Residual Add
+[1024, 8192]
+GPU 10" fillcolor=orange shape=parallelogram style=filled]
+		expert0_10 [label="Expert 10
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_10 [label="Gate 10
+Select tokens
+GPU 10" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_10 [label="Token Aggregation
+[1024, 8192]
+GPU 10" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_10 [label="Final Residual
+[1024, 8192]
+GPU 10" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_11 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 11" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_11 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 11" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_11 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 11" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_11 [label="Attention Score
+[1024, 1024]
+GPU 11" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_11 [label="Attention Output
+[1024, 8192]
+GPU 11" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_11 [label="Residual Add
+[1024, 8192]
+GPU 11" fillcolor=orange shape=parallelogram style=filled]
+		expert0_11 [label="Expert 11
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_11 [label="Gate 11
+Select tokens
+GPU 11" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_11 [label="Token Aggregation
+[1024, 8192]
+GPU 11" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_11 [label="Final Residual
+[1024, 8192]
+GPU 11" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_12 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 12" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_12 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 12" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_12 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 12" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_12 [label="Attention Score
+[1024, 1024]
+GPU 12" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_12 [label="Attention Output
+[1024, 8192]
+GPU 12" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_12 [label="Residual Add
+[1024, 8192]
+GPU 12" fillcolor=orange shape=parallelogram style=filled]
+		expert0_12 [label="Expert 12
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_12 [label="Gate 12
+Select tokens
+GPU 12" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_12 [label="Token Aggregation
+[1024, 8192]
+GPU 12" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_12 [label="Final Residual
+[1024, 8192]
+GPU 12" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_13 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 13" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_13 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 13" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_13 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 13" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_13 [label="Attention Score
+[1024, 1024]
+GPU 13" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_13 [label="Attention Output
+[1024, 8192]
+GPU 13" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_13 [label="Residual Add
+[1024, 8192]
+GPU 13" fillcolor=orange shape=parallelogram style=filled]
+		expert0_13 [label="Expert 13
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_13 [label="Gate 13
+Select tokens
+GPU 13" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_13 [label="Token Aggregation
+[1024, 8192]
+GPU 13" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_13 [label="Final Residual
+[1024, 8192]
+GPU 13" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_14 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 14" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_14 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 14" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_14 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 14" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_14 [label="Attention Score
+[1024, 1024]
+GPU 14" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_14 [label="Attention Output
+[1024, 8192]
+GPU 14" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_14 [label="Residual Add
+[1024, 8192]
+GPU 14" fillcolor=orange shape=parallelogram style=filled]
+		expert0_14 [label="Expert 14
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_14 [label="Gate 14
+Select tokens
+GPU 14" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_14 [label="Token Aggregation
+[1024, 8192]
+GPU 14" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_14 [label="Final Residual
+[1024, 8192]
+GPU 14" fillcolor=orange shape=parallelogram style=filled]
+		attn0_q_15 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 15" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_k_15 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 15" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_v_15 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 15" fillcolor=lightgreen shape=rectangle style=filled]
+		attn0_score_15 [label="Attention Score
+[1024, 1024]
+GPU 15" fillcolor=yellow shape=rectangle style=filled]
+		attn0_out_15 [label="Attention Output
+[1024, 8192]
+GPU 15" fillcolor=lightgreen shape=rectangle style=filled]
+		residual0_15 [label="Residual Add
+[1024, 8192]
+GPU 15" fillcolor=orange shape=parallelogram style=filled]
+		expert0_15 [label="Expert 15
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+		gate0_15 [label="Gate 15
+Select tokens
+GPU 15" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg0_15 [label="Token Aggregation
+[1024, 8192]
+GPU 15" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual0_15 [label="Final Residual
+[1024, 8192]
+GPU 15" fillcolor=orange shape=parallelogram style=filled]
+	}
+	subgraph layer_1 {
+		label="MoE Layer 1 - Cross-Node Expert Parallelism"
+		attn1_q_16 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 16" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_16 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 16" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_16 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 16" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_16 [label="Attention Score
+[1024, 1024]
+GPU 16" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_16 [label="Attention Output
+[1024, 8192]
+GPU 16" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_16 [label="Residual Add
+[1024, 8192]
+GPU 16" fillcolor=orange shape=parallelogram style=filled]
+		expert1_16 [label="Expert 16
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_16 [label="Gate 16
+Select tokens
+GPU 16" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_16 [label="Token Aggregation
+[1024, 8192]
+GPU 16" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_16 [label="Final Residual
+[1024, 8192]
+GPU 16" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_17 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 17" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_17 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 17" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_17 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 17" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_17 [label="Attention Score
+[1024, 1024]
+GPU 17" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_17 [label="Attention Output
+[1024, 8192]
+GPU 17" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_17 [label="Residual Add
+[1024, 8192]
+GPU 17" fillcolor=orange shape=parallelogram style=filled]
+		expert1_17 [label="Expert 17
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_17 [label="Gate 17
+Select tokens
+GPU 17" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_17 [label="Token Aggregation
+[1024, 8192]
+GPU 17" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_17 [label="Final Residual
+[1024, 8192]
+GPU 17" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_18 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 18" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_18 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 18" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_18 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 18" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_18 [label="Attention Score
+[1024, 1024]
+GPU 18" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_18 [label="Attention Output
+[1024, 8192]
+GPU 18" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_18 [label="Residual Add
+[1024, 8192]
+GPU 18" fillcolor=orange shape=parallelogram style=filled]
+		expert1_18 [label="Expert 18
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_18 [label="Gate 18
+Select tokens
+GPU 18" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_18 [label="Token Aggregation
+[1024, 8192]
+GPU 18" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_18 [label="Final Residual
+[1024, 8192]
+GPU 18" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_19 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 19" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_19 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 19" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_19 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 19" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_19 [label="Attention Score
+[1024, 1024]
+GPU 19" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_19 [label="Attention Output
+[1024, 8192]
+GPU 19" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_19 [label="Residual Add
+[1024, 8192]
+GPU 19" fillcolor=orange shape=parallelogram style=filled]
+		expert1_19 [label="Expert 19
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_19 [label="Gate 19
+Select tokens
+GPU 19" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_19 [label="Token Aggregation
+[1024, 8192]
+GPU 19" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_19 [label="Final Residual
+[1024, 8192]
+GPU 19" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_20 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 20" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_20 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 20" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_20 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 20" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_20 [label="Attention Score
+[1024, 1024]
+GPU 20" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_20 [label="Attention Output
+[1024, 8192]
+GPU 20" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_20 [label="Residual Add
+[1024, 8192]
+GPU 20" fillcolor=orange shape=parallelogram style=filled]
+		expert1_20 [label="Expert 20
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_20 [label="Gate 20
+Select tokens
+GPU 20" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_20 [label="Token Aggregation
+[1024, 8192]
+GPU 20" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_20 [label="Final Residual
+[1024, 8192]
+GPU 20" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_21 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 21" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_21 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 21" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_21 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 21" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_21 [label="Attention Score
+[1024, 1024]
+GPU 21" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_21 [label="Attention Output
+[1024, 8192]
+GPU 21" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_21 [label="Residual Add
+[1024, 8192]
+GPU 21" fillcolor=orange shape=parallelogram style=filled]
+		expert1_21 [label="Expert 21
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_21 [label="Gate 21
+Select tokens
+GPU 21" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_21 [label="Token Aggregation
+[1024, 8192]
+GPU 21" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_21 [label="Final Residual
+[1024, 8192]
+GPU 21" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_22 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 22" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_22 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 22" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_22 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 22" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_22 [label="Attention Score
+[1024, 1024]
+GPU 22" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_22 [label="Attention Output
+[1024, 8192]
+GPU 22" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_22 [label="Residual Add
+[1024, 8192]
+GPU 22" fillcolor=orange shape=parallelogram style=filled]
+		expert1_22 [label="Expert 22
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_22 [label="Gate 22
+Select tokens
+GPU 22" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_22 [label="Token Aggregation
+[1024, 8192]
+GPU 22" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_22 [label="Final Residual
+[1024, 8192]
+GPU 22" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_23 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 23" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_23 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 23" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_23 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 23" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_23 [label="Attention Score
+[1024, 1024]
+GPU 23" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_23 [label="Attention Output
+[1024, 8192]
+GPU 23" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_23 [label="Residual Add
+[1024, 8192]
+GPU 23" fillcolor=orange shape=parallelogram style=filled]
+		expert1_23 [label="Expert 23
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_23 [label="Gate 23
+Select tokens
+GPU 23" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_23 [label="Token Aggregation
+[1024, 8192]
+GPU 23" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_23 [label="Final Residual
+[1024, 8192]
+GPU 23" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_24 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 24" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_24 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 24" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_24 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 24" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_24 [label="Attention Score
+[1024, 1024]
+GPU 24" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_24 [label="Attention Output
+[1024, 8192]
+GPU 24" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_24 [label="Residual Add
+[1024, 8192]
+GPU 24" fillcolor=orange shape=parallelogram style=filled]
+		expert1_24 [label="Expert 24
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_24 [label="Gate 24
+Select tokens
+GPU 24" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_24 [label="Token Aggregation
+[1024, 8192]
+GPU 24" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_24 [label="Final Residual
+[1024, 8192]
+GPU 24" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_25 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 25" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_25 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 25" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_25 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 25" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_25 [label="Attention Score
+[1024, 1024]
+GPU 25" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_25 [label="Attention Output
+[1024, 8192]
+GPU 25" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_25 [label="Residual Add
+[1024, 8192]
+GPU 25" fillcolor=orange shape=parallelogram style=filled]
+		expert1_25 [label="Expert 25
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_25 [label="Gate 25
+Select tokens
+GPU 25" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_25 [label="Token Aggregation
+[1024, 8192]
+GPU 25" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_25 [label="Final Residual
+[1024, 8192]
+GPU 25" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_26 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 26" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_26 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 26" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_26 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 26" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_26 [label="Attention Score
+[1024, 1024]
+GPU 26" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_26 [label="Attention Output
+[1024, 8192]
+GPU 26" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_26 [label="Residual Add
+[1024, 8192]
+GPU 26" fillcolor=orange shape=parallelogram style=filled]
+		expert1_26 [label="Expert 26
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_26 [label="Gate 26
+Select tokens
+GPU 26" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_26 [label="Token Aggregation
+[1024, 8192]
+GPU 26" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_26 [label="Final Residual
+[1024, 8192]
+GPU 26" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_27 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 27" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_27 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 27" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_27 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 27" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_27 [label="Attention Score
+[1024, 1024]
+GPU 27" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_27 [label="Attention Output
+[1024, 8192]
+GPU 27" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_27 [label="Residual Add
+[1024, 8192]
+GPU 27" fillcolor=orange shape=parallelogram style=filled]
+		expert1_27 [label="Expert 27
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_27 [label="Gate 27
+Select tokens
+GPU 27" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_27 [label="Token Aggregation
+[1024, 8192]
+GPU 27" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_27 [label="Final Residual
+[1024, 8192]
+GPU 27" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_28 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 28" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_28 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 28" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_28 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 28" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_28 [label="Attention Score
+[1024, 1024]
+GPU 28" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_28 [label="Attention Output
+[1024, 8192]
+GPU 28" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_28 [label="Residual Add
+[1024, 8192]
+GPU 28" fillcolor=orange shape=parallelogram style=filled]
+		expert1_28 [label="Expert 28
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_28 [label="Gate 28
+Select tokens
+GPU 28" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_28 [label="Token Aggregation
+[1024, 8192]
+GPU 28" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_28 [label="Final Residual
+[1024, 8192]
+GPU 28" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_29 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 29" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_29 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 29" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_29 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 29" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_29 [label="Attention Score
+[1024, 1024]
+GPU 29" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_29 [label="Attention Output
+[1024, 8192]
+GPU 29" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_29 [label="Residual Add
+[1024, 8192]
+GPU 29" fillcolor=orange shape=parallelogram style=filled]
+		expert1_29 [label="Expert 29
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_29 [label="Gate 29
+Select tokens
+GPU 29" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_29 [label="Token Aggregation
+[1024, 8192]
+GPU 29" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_29 [label="Final Residual
+[1024, 8192]
+GPU 29" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_30 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 30" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_30 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 30" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_30 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 30" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_30 [label="Attention Score
+[1024, 1024]
+GPU 30" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_30 [label="Attention Output
+[1024, 8192]
+GPU 30" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_30 [label="Residual Add
+[1024, 8192]
+GPU 30" fillcolor=orange shape=parallelogram style=filled]
+		expert1_30 [label="Expert 30
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_30 [label="Gate 30
+Select tokens
+GPU 30" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_30 [label="Token Aggregation
+[1024, 8192]
+GPU 30" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_30 [label="Final Residual
+[1024, 8192]
+GPU 30" fillcolor=orange shape=parallelogram style=filled]
+		attn1_q_31 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 31" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_k_31 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 31" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_v_31 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 31" fillcolor=lightgreen shape=rectangle style=filled]
+		attn1_score_31 [label="Attention Score
+[1024, 1024]
+GPU 31" fillcolor=yellow shape=rectangle style=filled]
+		attn1_out_31 [label="Attention Output
+[1024, 8192]
+GPU 31" fillcolor=lightgreen shape=rectangle style=filled]
+		residual1_31 [label="Residual Add
+[1024, 8192]
+GPU 31" fillcolor=orange shape=parallelogram style=filled]
+		expert1_31 [label="Expert 31
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+		gate1_31 [label="Gate 31
+Select tokens
+GPU 31" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg1_31 [label="Token Aggregation
+[1024, 8192]
+GPU 31" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual1_31 [label="Final Residual
+[1024, 8192]
+GPU 31" fillcolor=orange shape=parallelogram style=filled]
+	}
+	subgraph layer_2 {
+		label="MoE Layer 2 - Cross-Node Expert Parallelism"
+		attn2_q_32 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 32" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_32 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 32" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_32 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 32" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_32 [label="Attention Score
+[1024, 1024]
+GPU 32" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_32 [label="Attention Output
+[1024, 8192]
+GPU 32" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_32 [label="Residual Add
+[1024, 8192]
+GPU 32" fillcolor=orange shape=parallelogram style=filled]
+		expert2_32 [label="Expert 32
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_32 [label="Gate 32
+Select tokens
+GPU 32" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_32 [label="Token Aggregation
+[1024, 8192]
+GPU 32" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_32 [label="Final Residual
+[1024, 8192]
+GPU 32" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_33 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 33" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_33 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 33" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_33 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 33" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_33 [label="Attention Score
+[1024, 1024]
+GPU 33" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_33 [label="Attention Output
+[1024, 8192]
+GPU 33" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_33 [label="Residual Add
+[1024, 8192]
+GPU 33" fillcolor=orange shape=parallelogram style=filled]
+		expert2_33 [label="Expert 33
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_33 [label="Gate 33
+Select tokens
+GPU 33" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_33 [label="Token Aggregation
+[1024, 8192]
+GPU 33" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_33 [label="Final Residual
+[1024, 8192]
+GPU 33" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_34 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 34" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_34 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 34" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_34 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 34" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_34 [label="Attention Score
+[1024, 1024]
+GPU 34" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_34 [label="Attention Output
+[1024, 8192]
+GPU 34" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_34 [label="Residual Add
+[1024, 8192]
+GPU 34" fillcolor=orange shape=parallelogram style=filled]
+		expert2_34 [label="Expert 34
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_34 [label="Gate 34
+Select tokens
+GPU 34" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_34 [label="Token Aggregation
+[1024, 8192]
+GPU 34" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_34 [label="Final Residual
+[1024, 8192]
+GPU 34" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_35 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 35" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_35 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 35" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_35 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 35" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_35 [label="Attention Score
+[1024, 1024]
+GPU 35" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_35 [label="Attention Output
+[1024, 8192]
+GPU 35" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_35 [label="Residual Add
+[1024, 8192]
+GPU 35" fillcolor=orange shape=parallelogram style=filled]
+		expert2_35 [label="Expert 35
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_35 [label="Gate 35
+Select tokens
+GPU 35" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_35 [label="Token Aggregation
+[1024, 8192]
+GPU 35" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_35 [label="Final Residual
+[1024, 8192]
+GPU 35" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_36 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 36" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_36 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 36" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_36 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 36" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_36 [label="Attention Score
+[1024, 1024]
+GPU 36" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_36 [label="Attention Output
+[1024, 8192]
+GPU 36" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_36 [label="Residual Add
+[1024, 8192]
+GPU 36" fillcolor=orange shape=parallelogram style=filled]
+		expert2_36 [label="Expert 36
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_36 [label="Gate 36
+Select tokens
+GPU 36" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_36 [label="Token Aggregation
+[1024, 8192]
+GPU 36" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_36 [label="Final Residual
+[1024, 8192]
+GPU 36" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_37 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 37" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_37 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 37" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_37 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 37" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_37 [label="Attention Score
+[1024, 1024]
+GPU 37" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_37 [label="Attention Output
+[1024, 8192]
+GPU 37" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_37 [label="Residual Add
+[1024, 8192]
+GPU 37" fillcolor=orange shape=parallelogram style=filled]
+		expert2_37 [label="Expert 37
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_37 [label="Gate 37
+Select tokens
+GPU 37" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_37 [label="Token Aggregation
+[1024, 8192]
+GPU 37" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_37 [label="Final Residual
+[1024, 8192]
+GPU 37" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_38 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 38" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_38 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 38" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_38 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 38" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_38 [label="Attention Score
+[1024, 1024]
+GPU 38" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_38 [label="Attention Output
+[1024, 8192]
+GPU 38" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_38 [label="Residual Add
+[1024, 8192]
+GPU 38" fillcolor=orange shape=parallelogram style=filled]
+		expert2_38 [label="Expert 38
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_38 [label="Gate 38
+Select tokens
+GPU 38" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_38 [label="Token Aggregation
+[1024, 8192]
+GPU 38" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_38 [label="Final Residual
+[1024, 8192]
+GPU 38" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_39 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 39" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_39 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 39" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_39 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 39" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_39 [label="Attention Score
+[1024, 1024]
+GPU 39" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_39 [label="Attention Output
+[1024, 8192]
+GPU 39" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_39 [label="Residual Add
+[1024, 8192]
+GPU 39" fillcolor=orange shape=parallelogram style=filled]
+		expert2_39 [label="Expert 39
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_39 [label="Gate 39
+Select tokens
+GPU 39" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_39 [label="Token Aggregation
+[1024, 8192]
+GPU 39" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_39 [label="Final Residual
+[1024, 8192]
+GPU 39" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_40 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 40" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_40 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 40" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_40 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 40" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_40 [label="Attention Score
+[1024, 1024]
+GPU 40" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_40 [label="Attention Output
+[1024, 8192]
+GPU 40" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_40 [label="Residual Add
+[1024, 8192]
+GPU 40" fillcolor=orange shape=parallelogram style=filled]
+		expert2_40 [label="Expert 40
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_40 [label="Gate 40
+Select tokens
+GPU 40" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_40 [label="Token Aggregation
+[1024, 8192]
+GPU 40" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_40 [label="Final Residual
+[1024, 8192]
+GPU 40" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_41 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 41" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_41 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 41" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_41 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 41" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_41 [label="Attention Score
+[1024, 1024]
+GPU 41" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_41 [label="Attention Output
+[1024, 8192]
+GPU 41" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_41 [label="Residual Add
+[1024, 8192]
+GPU 41" fillcolor=orange shape=parallelogram style=filled]
+		expert2_41 [label="Expert 41
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_41 [label="Gate 41
+Select tokens
+GPU 41" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_41 [label="Token Aggregation
+[1024, 8192]
+GPU 41" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_41 [label="Final Residual
+[1024, 8192]
+GPU 41" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_42 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 42" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_42 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 42" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_42 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 42" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_42 [label="Attention Score
+[1024, 1024]
+GPU 42" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_42 [label="Attention Output
+[1024, 8192]
+GPU 42" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_42 [label="Residual Add
+[1024, 8192]
+GPU 42" fillcolor=orange shape=parallelogram style=filled]
+		expert2_42 [label="Expert 42
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_42 [label="Gate 42
+Select tokens
+GPU 42" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_42 [label="Token Aggregation
+[1024, 8192]
+GPU 42" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_42 [label="Final Residual
+[1024, 8192]
+GPU 42" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_43 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 43" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_43 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 43" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_43 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 43" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_43 [label="Attention Score
+[1024, 1024]
+GPU 43" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_43 [label="Attention Output
+[1024, 8192]
+GPU 43" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_43 [label="Residual Add
+[1024, 8192]
+GPU 43" fillcolor=orange shape=parallelogram style=filled]
+		expert2_43 [label="Expert 43
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_43 [label="Gate 43
+Select tokens
+GPU 43" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_43 [label="Token Aggregation
+[1024, 8192]
+GPU 43" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_43 [label="Final Residual
+[1024, 8192]
+GPU 43" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_44 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 44" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_44 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 44" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_44 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 44" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_44 [label="Attention Score
+[1024, 1024]
+GPU 44" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_44 [label="Attention Output
+[1024, 8192]
+GPU 44" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_44 [label="Residual Add
+[1024, 8192]
+GPU 44" fillcolor=orange shape=parallelogram style=filled]
+		expert2_44 [label="Expert 44
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_44 [label="Gate 44
+Select tokens
+GPU 44" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_44 [label="Token Aggregation
+[1024, 8192]
+GPU 44" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_44 [label="Final Residual
+[1024, 8192]
+GPU 44" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_45 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 45" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_45 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 45" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_45 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 45" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_45 [label="Attention Score
+[1024, 1024]
+GPU 45" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_45 [label="Attention Output
+[1024, 8192]
+GPU 45" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_45 [label="Residual Add
+[1024, 8192]
+GPU 45" fillcolor=orange shape=parallelogram style=filled]
+		expert2_45 [label="Expert 45
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_45 [label="Gate 45
+Select tokens
+GPU 45" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_45 [label="Token Aggregation
+[1024, 8192]
+GPU 45" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_45 [label="Final Residual
+[1024, 8192]
+GPU 45" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_46 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 46" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_46 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 46" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_46 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 46" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_46 [label="Attention Score
+[1024, 1024]
+GPU 46" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_46 [label="Attention Output
+[1024, 8192]
+GPU 46" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_46 [label="Residual Add
+[1024, 8192]
+GPU 46" fillcolor=orange shape=parallelogram style=filled]
+		expert2_46 [label="Expert 46
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_46 [label="Gate 46
+Select tokens
+GPU 46" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_46 [label="Token Aggregation
+[1024, 8192]
+GPU 46" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_46 [label="Final Residual
+[1024, 8192]
+GPU 46" fillcolor=orange shape=parallelogram style=filled]
+		attn2_q_47 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 47" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_k_47 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 47" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_v_47 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 47" fillcolor=lightgreen shape=rectangle style=filled]
+		attn2_score_47 [label="Attention Score
+[1024, 1024]
+GPU 47" fillcolor=yellow shape=rectangle style=filled]
+		attn2_out_47 [label="Attention Output
+[1024, 8192]
+GPU 47" fillcolor=lightgreen shape=rectangle style=filled]
+		residual2_47 [label="Residual Add
+[1024, 8192]
+GPU 47" fillcolor=orange shape=parallelogram style=filled]
+		expert2_47 [label="Expert 47
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+		gate2_47 [label="Gate 47
+Select tokens
+GPU 47" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg2_47 [label="Token Aggregation
+[1024, 8192]
+GPU 47" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual2_47 [label="Final Residual
+[1024, 8192]
+GPU 47" fillcolor=orange shape=parallelogram style=filled]
+	}
+	subgraph layer_3 {
+		label="MoE Layer 3 - Cross-Node Expert Parallelism"
+		attn3_q_48 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 48" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_48 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 48" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_48 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 48" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_48 [label="Attention Score
+[1024, 1024]
+GPU 48" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_48 [label="Attention Output
+[1024, 8192]
+GPU 48" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_48 [label="Residual Add
+[1024, 8192]
+GPU 48" fillcolor=orange shape=parallelogram style=filled]
+		expert3_48 [label="Expert 48
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_48 [label="Gate 48
+Select tokens
+GPU 48" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_48 [label="Token Aggregation
+[1024, 8192]
+GPU 48" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_48 [label="Final Residual
+[1024, 8192]
+GPU 48" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_49 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 49" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_49 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 49" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_49 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 49" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_49 [label="Attention Score
+[1024, 1024]
+GPU 49" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_49 [label="Attention Output
+[1024, 8192]
+GPU 49" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_49 [label="Residual Add
+[1024, 8192]
+GPU 49" fillcolor=orange shape=parallelogram style=filled]
+		expert3_49 [label="Expert 49
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_49 [label="Gate 49
+Select tokens
+GPU 49" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_49 [label="Token Aggregation
+[1024, 8192]
+GPU 49" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_49 [label="Final Residual
+[1024, 8192]
+GPU 49" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_50 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 50" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_50 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 50" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_50 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 50" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_50 [label="Attention Score
+[1024, 1024]
+GPU 50" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_50 [label="Attention Output
+[1024, 8192]
+GPU 50" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_50 [label="Residual Add
+[1024, 8192]
+GPU 50" fillcolor=orange shape=parallelogram style=filled]
+		expert3_50 [label="Expert 50
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_50 [label="Gate 50
+Select tokens
+GPU 50" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_50 [label="Token Aggregation
+[1024, 8192]
+GPU 50" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_50 [label="Final Residual
+[1024, 8192]
+GPU 50" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_51 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 51" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_51 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 51" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_51 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 51" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_51 [label="Attention Score
+[1024, 1024]
+GPU 51" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_51 [label="Attention Output
+[1024, 8192]
+GPU 51" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_51 [label="Residual Add
+[1024, 8192]
+GPU 51" fillcolor=orange shape=parallelogram style=filled]
+		expert3_51 [label="Expert 51
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_51 [label="Gate 51
+Select tokens
+GPU 51" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_51 [label="Token Aggregation
+[1024, 8192]
+GPU 51" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_51 [label="Final Residual
+[1024, 8192]
+GPU 51" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_52 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 52" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_52 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 52" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_52 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 52" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_52 [label="Attention Score
+[1024, 1024]
+GPU 52" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_52 [label="Attention Output
+[1024, 8192]
+GPU 52" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_52 [label="Residual Add
+[1024, 8192]
+GPU 52" fillcolor=orange shape=parallelogram style=filled]
+		expert3_52 [label="Expert 52
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_52 [label="Gate 52
+Select tokens
+GPU 52" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_52 [label="Token Aggregation
+[1024, 8192]
+GPU 52" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_52 [label="Final Residual
+[1024, 8192]
+GPU 52" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_53 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 53" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_53 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 53" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_53 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 53" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_53 [label="Attention Score
+[1024, 1024]
+GPU 53" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_53 [label="Attention Output
+[1024, 8192]
+GPU 53" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_53 [label="Residual Add
+[1024, 8192]
+GPU 53" fillcolor=orange shape=parallelogram style=filled]
+		expert3_53 [label="Expert 53
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_53 [label="Gate 53
+Select tokens
+GPU 53" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_53 [label="Token Aggregation
+[1024, 8192]
+GPU 53" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_53 [label="Final Residual
+[1024, 8192]
+GPU 53" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_54 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 54" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_54 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 54" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_54 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 54" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_54 [label="Attention Score
+[1024, 1024]
+GPU 54" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_54 [label="Attention Output
+[1024, 8192]
+GPU 54" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_54 [label="Residual Add
+[1024, 8192]
+GPU 54" fillcolor=orange shape=parallelogram style=filled]
+		expert3_54 [label="Expert 54
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_54 [label="Gate 54
+Select tokens
+GPU 54" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_54 [label="Token Aggregation
+[1024, 8192]
+GPU 54" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_54 [label="Final Residual
+[1024, 8192]
+GPU 54" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_55 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 55" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_55 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 55" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_55 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 55" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_55 [label="Attention Score
+[1024, 1024]
+GPU 55" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_55 [label="Attention Output
+[1024, 8192]
+GPU 55" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_55 [label="Residual Add
+[1024, 8192]
+GPU 55" fillcolor=orange shape=parallelogram style=filled]
+		expert3_55 [label="Expert 55
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_55 [label="Gate 55
+Select tokens
+GPU 55" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_55 [label="Token Aggregation
+[1024, 8192]
+GPU 55" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_55 [label="Final Residual
+[1024, 8192]
+GPU 55" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_56 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 56" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_56 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 56" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_56 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 56" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_56 [label="Attention Score
+[1024, 1024]
+GPU 56" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_56 [label="Attention Output
+[1024, 8192]
+GPU 56" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_56 [label="Residual Add
+[1024, 8192]
+GPU 56" fillcolor=orange shape=parallelogram style=filled]
+		expert3_56 [label="Expert 56
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_56 [label="Gate 56
+Select tokens
+GPU 56" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_56 [label="Token Aggregation
+[1024, 8192]
+GPU 56" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_56 [label="Final Residual
+[1024, 8192]
+GPU 56" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_57 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 57" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_57 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 57" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_57 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 57" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_57 [label="Attention Score
+[1024, 1024]
+GPU 57" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_57 [label="Attention Output
+[1024, 8192]
+GPU 57" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_57 [label="Residual Add
+[1024, 8192]
+GPU 57" fillcolor=orange shape=parallelogram style=filled]
+		expert3_57 [label="Expert 57
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_57 [label="Gate 57
+Select tokens
+GPU 57" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_57 [label="Token Aggregation
+[1024, 8192]
+GPU 57" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_57 [label="Final Residual
+[1024, 8192]
+GPU 57" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_58 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 58" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_58 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 58" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_58 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 58" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_58 [label="Attention Score
+[1024, 1024]
+GPU 58" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_58 [label="Attention Output
+[1024, 8192]
+GPU 58" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_58 [label="Residual Add
+[1024, 8192]
+GPU 58" fillcolor=orange shape=parallelogram style=filled]
+		expert3_58 [label="Expert 58
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_58 [label="Gate 58
+Select tokens
+GPU 58" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_58 [label="Token Aggregation
+[1024, 8192]
+GPU 58" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_58 [label="Final Residual
+[1024, 8192]
+GPU 58" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_59 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 59" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_59 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 59" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_59 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 59" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_59 [label="Attention Score
+[1024, 1024]
+GPU 59" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_59 [label="Attention Output
+[1024, 8192]
+GPU 59" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_59 [label="Residual Add
+[1024, 8192]
+GPU 59" fillcolor=orange shape=parallelogram style=filled]
+		expert3_59 [label="Expert 59
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_59 [label="Gate 59
+Select tokens
+GPU 59" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_59 [label="Token Aggregation
+[1024, 8192]
+GPU 59" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_59 [label="Final Residual
+[1024, 8192]
+GPU 59" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_60 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 60" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_60 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 60" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_60 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 60" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_60 [label="Attention Score
+[1024, 1024]
+GPU 60" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_60 [label="Attention Output
+[1024, 8192]
+GPU 60" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_60 [label="Residual Add
+[1024, 8192]
+GPU 60" fillcolor=orange shape=parallelogram style=filled]
+		expert3_60 [label="Expert 60
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_60 [label="Gate 60
+Select tokens
+GPU 60" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_60 [label="Token Aggregation
+[1024, 8192]
+GPU 60" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_60 [label="Final Residual
+[1024, 8192]
+GPU 60" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_61 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 61" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_61 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 61" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_61 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 61" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_61 [label="Attention Score
+[1024, 1024]
+GPU 61" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_61 [label="Attention Output
+[1024, 8192]
+GPU 61" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_61 [label="Residual Add
+[1024, 8192]
+GPU 61" fillcolor=orange shape=parallelogram style=filled]
+		expert3_61 [label="Expert 61
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_61 [label="Gate 61
+Select tokens
+GPU 61" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_61 [label="Token Aggregation
+[1024, 8192]
+GPU 61" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_61 [label="Final Residual
+[1024, 8192]
+GPU 61" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_62 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 62" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_62 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 62" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_62 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 62" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_62 [label="Attention Score
+[1024, 1024]
+GPU 62" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_62 [label="Attention Output
+[1024, 8192]
+GPU 62" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_62 [label="Residual Add
+[1024, 8192]
+GPU 62" fillcolor=orange shape=parallelogram style=filled]
+		expert3_62 [label="Expert 62
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_62 [label="Gate 62
+Select tokens
+GPU 62" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_62 [label="Token Aggregation
+[1024, 8192]
+GPU 62" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_62 [label="Final Residual
+[1024, 8192]
+GPU 62" fillcolor=orange shape=parallelogram style=filled]
+		attn3_q_63 [label="Q Linear
+[1024, 8192]→[1024, 8192]
+GPU 63" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_k_63 [label="K Linear
+[1024, 8192]→[1024, 8192]
+GPU 63" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_v_63 [label="V Linear
+[1024, 8192]→[1024, 8192]
+GPU 63" fillcolor=lightgreen shape=rectangle style=filled]
+		attn3_score_63 [label="Attention Score
+[1024, 1024]
+GPU 63" fillcolor=yellow shape=rectangle style=filled]
+		attn3_out_63 [label="Attention Output
+[1024, 8192]
+GPU 63" fillcolor=lightgreen shape=rectangle style=filled]
+		residual3_63 [label="Residual Add
+[1024, 8192]
+GPU 63" fillcolor=orange shape=parallelogram style=filled]
+		expert3_63 [label="Expert 63
+MLP
+[1024, 32768]→[1024, 8192]
+GPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+		gate3_63 [label="Gate 63
+Select tokens
+GPU 63" fillcolor=lightpink shape=parallelogram style=filled]
+		token_agg3_63 [label="Token Aggregation
+[1024, 8192]
+GPU 63" fillcolor=lightgray shape=parallelogram style=filled]
+		final_residual3_63 [label="Final Residual
+[1024, 8192]
+GPU 63" fillcolor=orange shape=parallelogram style=filled]
+	}
+	comm_layer0 [label="Cross-Node Communication
+Layer 0
+Async Token Routing" fillcolor=purple shape=ellipse style=filled]
+	comm_layer1 [label="Cross-Node Communication
+Layer 1
+Async Token Routing" fillcolor=purple shape=ellipse style=filled]
+	comm_layer2 [label="Cross-Node Communication
+Layer 2
+Async Token Routing" fillcolor=purple shape=ellipse style=filled]
+	comm_layer3 [label="Cross-Node Communication
+Layer 3
+Async Token Routing" fillcolor=purple shape=ellipse style=filled]
+	output [label="Output
+[1024, 8192]" fillcolor=lightblue shape=ellipse style=filled]
+	input -> global_router
+	global_router -> gate0_0 [style=dashed]
+	global_router -> attn0_q_0
+	global_router -> attn0_k_0
+	global_router -> attn0_v_0
+	attn0_q_0 -> attn0_score_0
+	attn0_k_0 -> attn0_score_0
+	attn0_v_0 -> attn0_out_0
+	attn0_score_0 -> attn0_out_0
+	global_router -> residual0_0
+	attn0_out_0 -> residual0_0
+	gate0_0 -> expert0_0 [style=dashed]
+	residual0_0 -> expert0_0
+	expert0_0 -> token_agg0_0
+	token_agg0_0 -> final_residual0_0
+	residual0_0 -> final_residual0_0
+	final_residual0_0 -> comm_layer0
+	global_router -> gate0_1 [style=dashed]
+	global_router -> attn0_q_1
+	global_router -> attn0_k_1
+	global_router -> attn0_v_1
+	attn0_q_1 -> attn0_score_1
+	attn0_k_1 -> attn0_score_1
+	attn0_v_1 -> attn0_out_1
+	attn0_score_1 -> attn0_out_1
+	global_router -> residual0_1
+	attn0_out_1 -> residual0_1
+	gate0_1 -> expert0_1 [style=dashed]
+	residual0_1 -> expert0_1
+	expert0_1 -> token_agg0_1
+	token_agg0_1 -> final_residual0_1
+	residual0_1 -> final_residual0_1
+	final_residual0_1 -> comm_layer0
+	global_router -> gate0_2 [style=dashed]
+	global_router -> attn0_q_2
+	global_router -> attn0_k_2
+	global_router -> attn0_v_2
+	attn0_q_2 -> attn0_score_2
+	attn0_k_2 -> attn0_score_2
+	attn0_v_2 -> attn0_out_2
+	attn0_score_2 -> attn0_out_2
+	global_router -> residual0_2
+	attn0_out_2 -> residual0_2
+	gate0_2 -> expert0_2 [style=dashed]
+	residual0_2 -> expert0_2
+	expert0_2 -> token_agg0_2
+	token_agg0_2 -> final_residual0_2
+	residual0_2 -> final_residual0_2
+	final_residual0_2 -> comm_layer0
+	global_router -> gate0_3 [style=dashed]
+	global_router -> attn0_q_3
+	global_router -> attn0_k_3
+	global_router -> attn0_v_3
+	attn0_q_3 -> attn0_score_3
+	attn0_k_3 -> attn0_score_3
+	attn0_v_3 -> attn0_out_3
+	attn0_score_3 -> attn0_out_3
+	global_router -> residual0_3
+	attn0_out_3 -> residual0_3
+	gate0_3 -> expert0_3 [style=dashed]
+	residual0_3 -> expert0_3
+	expert0_3 -> token_agg0_3
+	token_agg0_3 -> final_residual0_3
+	residual0_3 -> final_residual0_3
+	final_residual0_3 -> comm_layer0
+	global_router -> gate0_4 [style=dashed]
+	global_router -> attn0_q_4
+	global_router -> attn0_k_4
+	global_router -> attn0_v_4
+	attn0_q_4 -> attn0_score_4
+	attn0_k_4 -> attn0_score_4
+	attn0_v_4 -> attn0_out_4
+	attn0_score_4 -> attn0_out_4
+	global_router -> residual0_4
+	attn0_out_4 -> residual0_4
+	gate0_4 -> expert0_4 [style=dashed]
+	residual0_4 -> expert0_4
+	expert0_4 -> token_agg0_4
+	token_agg0_4 -> final_residual0_4
+	residual0_4 -> final_residual0_4
+	final_residual0_4 -> comm_layer0
+	global_router -> gate0_5 [style=dashed]
+	global_router -> attn0_q_5
+	global_router -> attn0_k_5
+	global_router -> attn0_v_5
+	attn0_q_5 -> attn0_score_5
+	attn0_k_5 -> attn0_score_5
+	attn0_v_5 -> attn0_out_5
+	attn0_score_5 -> attn0_out_5
+	global_router -> residual0_5
+	attn0_out_5 -> residual0_5
+	gate0_5 -> expert0_5 [style=dashed]
+	residual0_5 -> expert0_5
+	expert0_5 -> token_agg0_5
+	token_agg0_5 -> final_residual0_5
+	residual0_5 -> final_residual0_5
+	final_residual0_5 -> comm_layer0
+	global_router -> gate0_6 [style=dashed]
+	global_router -> attn0_q_6
+	global_router -> attn0_k_6
+	global_router -> attn0_v_6
+	attn0_q_6 -> attn0_score_6
+	attn0_k_6 -> attn0_score_6
+	attn0_v_6 -> attn0_out_6
+	attn0_score_6 -> attn0_out_6
+	global_router -> residual0_6
+	attn0_out_6 -> residual0_6
+	gate0_6 -> expert0_6 [style=dashed]
+	residual0_6 -> expert0_6
+	expert0_6 -> token_agg0_6
+	token_agg0_6 -> final_residual0_6
+	residual0_6 -> final_residual0_6
+	final_residual0_6 -> comm_layer0
+	global_router -> gate0_7 [style=dashed]
+	global_router -> attn0_q_7
+	global_router -> attn0_k_7
+	global_router -> attn0_v_7
+	attn0_q_7 -> attn0_score_7
+	attn0_k_7 -> attn0_score_7
+	attn0_v_7 -> attn0_out_7
+	attn0_score_7 -> attn0_out_7
+	global_router -> residual0_7
+	attn0_out_7 -> residual0_7
+	gate0_7 -> expert0_7 [style=dashed]
+	residual0_7 -> expert0_7
+	expert0_7 -> token_agg0_7
+	token_agg0_7 -> final_residual0_7
+	residual0_7 -> final_residual0_7
+	final_residual0_7 -> comm_layer0
+	global_router -> gate0_8 [style=dashed]
+	global_router -> attn0_q_8
+	global_router -> attn0_k_8
+	global_router -> attn0_v_8
+	attn0_q_8 -> attn0_score_8
+	attn0_k_8 -> attn0_score_8
+	attn0_v_8 -> attn0_out_8
+	attn0_score_8 -> attn0_out_8
+	global_router -> residual0_8
+	attn0_out_8 -> residual0_8
+	gate0_8 -> expert0_8 [style=dashed]
+	residual0_8 -> expert0_8
+	expert0_8 -> token_agg0_8
+	token_agg0_8 -> final_residual0_8
+	residual0_8 -> final_residual0_8
+	final_residual0_8 -> comm_layer0
+	global_router -> gate0_9 [style=dashed]
+	global_router -> attn0_q_9
+	global_router -> attn0_k_9
+	global_router -> attn0_v_9
+	attn0_q_9 -> attn0_score_9
+	attn0_k_9 -> attn0_score_9
+	attn0_v_9 -> attn0_out_9
+	attn0_score_9 -> attn0_out_9
+	global_router -> residual0_9
+	attn0_out_9 -> residual0_9
+	gate0_9 -> expert0_9 [style=dashed]
+	residual0_9 -> expert0_9
+	expert0_9 -> token_agg0_9
+	token_agg0_9 -> final_residual0_9
+	residual0_9 -> final_residual0_9
+	final_residual0_9 -> comm_layer0
+	global_router -> gate0_10 [style=dashed]
+	global_router -> attn0_q_10
+	global_router -> attn0_k_10
+	global_router -> attn0_v_10
+	attn0_q_10 -> attn0_score_10
+	attn0_k_10 -> attn0_score_10
+	attn0_v_10 -> attn0_out_10
+	attn0_score_10 -> attn0_out_10
+	global_router -> residual0_10
+	attn0_out_10 -> residual0_10
+	gate0_10 -> expert0_10 [style=dashed]
+	residual0_10 -> expert0_10
+	expert0_10 -> token_agg0_10
+	token_agg0_10 -> final_residual0_10
+	residual0_10 -> final_residual0_10
+	final_residual0_10 -> comm_layer0
+	global_router -> gate0_11 [style=dashed]
+	global_router -> attn0_q_11
+	global_router -> attn0_k_11
+	global_router -> attn0_v_11
+	attn0_q_11 -> attn0_score_11
+	attn0_k_11 -> attn0_score_11
+	attn0_v_11 -> attn0_out_11
+	attn0_score_11 -> attn0_out_11
+	global_router -> residual0_11
+	attn0_out_11 -> residual0_11
+	gate0_11 -> expert0_11 [style=dashed]
+	residual0_11 -> expert0_11
+	expert0_11 -> token_agg0_11
+	token_agg0_11 -> final_residual0_11
+	residual0_11 -> final_residual0_11
+	final_residual0_11 -> comm_layer0
+	global_router -> gate0_12 [style=dashed]
+	global_router -> attn0_q_12
+	global_router -> attn0_k_12
+	global_router -> attn0_v_12
+	attn0_q_12 -> attn0_score_12
+	attn0_k_12 -> attn0_score_12
+	attn0_v_12 -> attn0_out_12
+	attn0_score_12 -> attn0_out_12
+	global_router -> residual0_12
+	attn0_out_12 -> residual0_12
+	gate0_12 -> expert0_12 [style=dashed]
+	residual0_12 -> expert0_12
+	expert0_12 -> token_agg0_12
+	token_agg0_12 -> final_residual0_12
+	residual0_12 -> final_residual0_12
+	final_residual0_12 -> comm_layer0
+	global_router -> gate0_13 [style=dashed]
+	global_router -> attn0_q_13
+	global_router -> attn0_k_13
+	global_router -> attn0_v_13
+	attn0_q_13 -> attn0_score_13
+	attn0_k_13 -> attn0_score_13
+	attn0_v_13 -> attn0_out_13
+	attn0_score_13 -> attn0_out_13
+	global_router -> residual0_13
+	attn0_out_13 -> residual0_13
+	gate0_13 -> expert0_13 [style=dashed]
+	residual0_13 -> expert0_13
+	expert0_13 -> token_agg0_13
+	token_agg0_13 -> final_residual0_13
+	residual0_13 -> final_residual0_13
+	final_residual0_13 -> comm_layer0
+	global_router -> gate0_14 [style=dashed]
+	global_router -> attn0_q_14
+	global_router -> attn0_k_14
+	global_router -> attn0_v_14
+	attn0_q_14 -> attn0_score_14
+	attn0_k_14 -> attn0_score_14
+	attn0_v_14 -> attn0_out_14
+	attn0_score_14 -> attn0_out_14
+	global_router -> residual0_14
+	attn0_out_14 -> residual0_14
+	gate0_14 -> expert0_14 [style=dashed]
+	residual0_14 -> expert0_14
+	expert0_14 -> token_agg0_14
+	token_agg0_14 -> final_residual0_14
+	residual0_14 -> final_residual0_14
+	final_residual0_14 -> comm_layer0
+	global_router -> gate0_15 [style=dashed]
+	global_router -> attn0_q_15
+	global_router -> attn0_k_15
+	global_router -> attn0_v_15
+	attn0_q_15 -> attn0_score_15
+	attn0_k_15 -> attn0_score_15
+	attn0_v_15 -> attn0_out_15
+	attn0_score_15 -> attn0_out_15
+	global_router -> residual0_15
+	attn0_out_15 -> residual0_15
+	gate0_15 -> expert0_15 [style=dashed]
+	residual0_15 -> expert0_15
+	expert0_15 -> token_agg0_15
+	token_agg0_15 -> final_residual0_15
+	residual0_15 -> final_residual0_15
+	final_residual0_15 -> comm_layer0
+	comm_layer0 -> gate1_16
+	comm_layer0 -> attn1_q_16
+	comm_layer0 -> attn1_k_16
+	comm_layer0 -> attn1_v_16
+	attn1_q_16 -> attn1_score_16
+	attn1_k_16 -> attn1_score_16
+	attn1_v_16 -> attn1_out_16
+	attn1_score_16 -> attn1_out_16
+	comm_layer0 -> residual1_16
+	attn1_out_16 -> residual1_16
+	gate1_16 -> expert1_16 [style=dashed]
+	residual1_16 -> expert1_16
+	expert1_16 -> token_agg1_16
+	token_agg1_16 -> final_residual1_16
+	residual1_16 -> final_residual1_16
+	final_residual1_16 -> comm_layer1
+	comm_layer0 -> gate1_17
+	comm_layer0 -> attn1_q_17
+	comm_layer0 -> attn1_k_17
+	comm_layer0 -> attn1_v_17
+	attn1_q_17 -> attn1_score_17
+	attn1_k_17 -> attn1_score_17
+	attn1_v_17 -> attn1_out_17
+	attn1_score_17 -> attn1_out_17
+	comm_layer0 -> residual1_17
+	attn1_out_17 -> residual1_17
+	gate1_17 -> expert1_17 [style=dashed]
+	residual1_17 -> expert1_17
+	expert1_17 -> token_agg1_17
+	token_agg1_17 -> final_residual1_17
+	residual1_17 -> final_residual1_17
+	final_residual1_17 -> comm_layer1
+	comm_layer0 -> gate1_18
+	comm_layer0 -> attn1_q_18
+	comm_layer0 -> attn1_k_18
+	comm_layer0 -> attn1_v_18
+	attn1_q_18 -> attn1_score_18
+	attn1_k_18 -> attn1_score_18
+	attn1_v_18 -> attn1_out_18
+	attn1_score_18 -> attn1_out_18
+	comm_layer0 -> residual1_18
+	attn1_out_18 -> residual1_18
+	gate1_18 -> expert1_18 [style=dashed]
+	residual1_18 -> expert1_18
+	expert1_18 -> token_agg1_18
+	token_agg1_18 -> final_residual1_18
+	residual1_18 -> final_residual1_18
+	final_residual1_18 -> comm_layer1
+	comm_layer0 -> gate1_19
+	comm_layer0 -> attn1_q_19
+	comm_layer0 -> attn1_k_19
+	comm_layer0 -> attn1_v_19
+	attn1_q_19 -> attn1_score_19
+	attn1_k_19 -> attn1_score_19
+	attn1_v_19 -> attn1_out_19
+	attn1_score_19 -> attn1_out_19
+	comm_layer0 -> residual1_19
+	attn1_out_19 -> residual1_19
+	gate1_19 -> expert1_19 [style=dashed]
+	residual1_19 -> expert1_19
+	expert1_19 -> token_agg1_19
+	token_agg1_19 -> final_residual1_19
+	residual1_19 -> final_residual1_19
+	final_residual1_19 -> comm_layer1
+	comm_layer0 -> gate1_20
+	comm_layer0 -> attn1_q_20
+	comm_layer0 -> attn1_k_20
+	comm_layer0 -> attn1_v_20
+	attn1_q_20 -> attn1_score_20
+	attn1_k_20 -> attn1_score_20
+	attn1_v_20 -> attn1_out_20
+	attn1_score_20 -> attn1_out_20
+	comm_layer0 -> residual1_20
+	attn1_out_20 -> residual1_20
+	gate1_20 -> expert1_20 [style=dashed]
+	residual1_20 -> expert1_20
+	expert1_20 -> token_agg1_20
+	token_agg1_20 -> final_residual1_20
+	residual1_20 -> final_residual1_20
+	final_residual1_20 -> comm_layer1
+	comm_layer0 -> gate1_21
+	comm_layer0 -> attn1_q_21
+	comm_layer0 -> attn1_k_21
+	comm_layer0 -> attn1_v_21
+	attn1_q_21 -> attn1_score_21
+	attn1_k_21 -> attn1_score_21
+	attn1_v_21 -> attn1_out_21
+	attn1_score_21 -> attn1_out_21
+	comm_layer0 -> residual1_21
+	attn1_out_21 -> residual1_21
+	gate1_21 -> expert1_21 [style=dashed]
+	residual1_21 -> expert1_21
+	expert1_21 -> token_agg1_21
+	token_agg1_21 -> final_residual1_21
+	residual1_21 -> final_residual1_21
+	final_residual1_21 -> comm_layer1
+	comm_layer0 -> gate1_22
+	comm_layer0 -> attn1_q_22
+	comm_layer0 -> attn1_k_22
+	comm_layer0 -> attn1_v_22
+	attn1_q_22 -> attn1_score_22
+	attn1_k_22 -> attn1_score_22
+	attn1_v_22 -> attn1_out_22
+	attn1_score_22 -> attn1_out_22
+	comm_layer0 -> residual1_22
+	attn1_out_22 -> residual1_22
+	gate1_22 -> expert1_22 [style=dashed]
+	residual1_22 -> expert1_22
+	expert1_22 -> token_agg1_22
+	token_agg1_22 -> final_residual1_22
+	residual1_22 -> final_residual1_22
+	final_residual1_22 -> comm_layer1
+	comm_layer0 -> gate1_23
+	comm_layer0 -> attn1_q_23
+	comm_layer0 -> attn1_k_23
+	comm_layer0 -> attn1_v_23
+	attn1_q_23 -> attn1_score_23
+	attn1_k_23 -> attn1_score_23
+	attn1_v_23 -> attn1_out_23
+	attn1_score_23 -> attn1_out_23
+	comm_layer0 -> residual1_23
+	attn1_out_23 -> residual1_23
+	gate1_23 -> expert1_23 [style=dashed]
+	residual1_23 -> expert1_23
+	expert1_23 -> token_agg1_23
+	token_agg1_23 -> final_residual1_23
+	residual1_23 -> final_residual1_23
+	final_residual1_23 -> comm_layer1
+	comm_layer0 -> gate1_24
+	comm_layer0 -> attn1_q_24
+	comm_layer0 -> attn1_k_24
+	comm_layer0 -> attn1_v_24
+	attn1_q_24 -> attn1_score_24
+	attn1_k_24 -> attn1_score_24
+	attn1_v_24 -> attn1_out_24
+	attn1_score_24 -> attn1_out_24
+	comm_layer0 -> residual1_24
+	attn1_out_24 -> residual1_24
+	gate1_24 -> expert1_24 [style=dashed]
+	residual1_24 -> expert1_24
+	expert1_24 -> token_agg1_24
+	token_agg1_24 -> final_residual1_24
+	residual1_24 -> final_residual1_24
+	final_residual1_24 -> comm_layer1
+	comm_layer0 -> gate1_25
+	comm_layer0 -> attn1_q_25
+	comm_layer0 -> attn1_k_25
+	comm_layer0 -> attn1_v_25
+	attn1_q_25 -> attn1_score_25
+	attn1_k_25 -> attn1_score_25
+	attn1_v_25 -> attn1_out_25
+	attn1_score_25 -> attn1_out_25
+	comm_layer0 -> residual1_25
+	attn1_out_25 -> residual1_25
+	gate1_25 -> expert1_25 [style=dashed]
+	residual1_25 -> expert1_25
+	expert1_25 -> token_agg1_25
+	token_agg1_25 -> final_residual1_25
+	residual1_25 -> final_residual1_25
+	final_residual1_25 -> comm_layer1
+	comm_layer0 -> gate1_26
+	comm_layer0 -> attn1_q_26
+	comm_layer0 -> attn1_k_26
+	comm_layer0 -> attn1_v_26
+	attn1_q_26 -> attn1_score_26
+	attn1_k_26 -> attn1_score_26
+	attn1_v_26 -> attn1_out_26
+	attn1_score_26 -> attn1_out_26
+	comm_layer0 -> residual1_26
+	attn1_out_26 -> residual1_26
+	gate1_26 -> expert1_26 [style=dashed]
+	residual1_26 -> expert1_26
+	expert1_26 -> token_agg1_26
+	token_agg1_26 -> final_residual1_26
+	residual1_26 -> final_residual1_26
+	final_residual1_26 -> comm_layer1
+	comm_layer0 -> gate1_27
+	comm_layer0 -> attn1_q_27
+	comm_layer0 -> attn1_k_27
+	comm_layer0 -> attn1_v_27
+	attn1_q_27 -> attn1_score_27
+	attn1_k_27 -> attn1_score_27
+	attn1_v_27 -> attn1_out_27
+	attn1_score_27 -> attn1_out_27
+	comm_layer0 -> residual1_27
+	attn1_out_27 -> residual1_27
+	gate1_27 -> expert1_27 [style=dashed]
+	residual1_27 -> expert1_27
+	expert1_27 -> token_agg1_27
+	token_agg1_27 -> final_residual1_27
+	residual1_27 -> final_residual1_27
+	final_residual1_27 -> comm_layer1
+	comm_layer0 -> gate1_28
+	comm_layer0 -> attn1_q_28
+	comm_layer0 -> attn1_k_28
+	comm_layer0 -> attn1_v_28
+	attn1_q_28 -> attn1_score_28
+	attn1_k_28 -> attn1_score_28
+	attn1_v_28 -> attn1_out_28
+	attn1_score_28 -> attn1_out_28
+	comm_layer0 -> residual1_28
+	attn1_out_28 -> residual1_28
+	gate1_28 -> expert1_28 [style=dashed]
+	residual1_28 -> expert1_28
+	expert1_28 -> token_agg1_28
+	token_agg1_28 -> final_residual1_28
+	residual1_28 -> final_residual1_28
+	final_residual1_28 -> comm_layer1
+	comm_layer0 -> gate1_29
+	comm_layer0 -> attn1_q_29
+	comm_layer0 -> attn1_k_29
+	comm_layer0 -> attn1_v_29
+	attn1_q_29 -> attn1_score_29
+	attn1_k_29 -> attn1_score_29
+	attn1_v_29 -> attn1_out_29
+	attn1_score_29 -> attn1_out_29
+	comm_layer0 -> residual1_29
+	attn1_out_29 -> residual1_29
+	gate1_29 -> expert1_29 [style=dashed]
+	residual1_29 -> expert1_29
+	expert1_29 -> token_agg1_29
+	token_agg1_29 -> final_residual1_29
+	residual1_29 -> final_residual1_29
+	final_residual1_29 -> comm_layer1
+	comm_layer0 -> gate1_30
+	comm_layer0 -> attn1_q_30
+	comm_layer0 -> attn1_k_30
+	comm_layer0 -> attn1_v_30
+	attn1_q_30 -> attn1_score_30
+	attn1_k_30 -> attn1_score_30
+	attn1_v_30 -> attn1_out_30
+	attn1_score_30 -> attn1_out_30
+	comm_layer0 -> residual1_30
+	attn1_out_30 -> residual1_30
+	gate1_30 -> expert1_30 [style=dashed]
+	residual1_30 -> expert1_30
+	expert1_30 -> token_agg1_30
+	token_agg1_30 -> final_residual1_30
+	residual1_30 -> final_residual1_30
+	final_residual1_30 -> comm_layer1
+	comm_layer0 -> gate1_31
+	comm_layer0 -> attn1_q_31
+	comm_layer0 -> attn1_k_31
+	comm_layer0 -> attn1_v_31
+	attn1_q_31 -> attn1_score_31
+	attn1_k_31 -> attn1_score_31
+	attn1_v_31 -> attn1_out_31
+	attn1_score_31 -> attn1_out_31
+	comm_layer0 -> residual1_31
+	attn1_out_31 -> residual1_31
+	gate1_31 -> expert1_31 [style=dashed]
+	residual1_31 -> expert1_31
+	expert1_31 -> token_agg1_31
+	token_agg1_31 -> final_residual1_31
+	residual1_31 -> final_residual1_31
+	final_residual1_31 -> comm_layer1
+	comm_layer1 -> gate2_32
+	comm_layer1 -> attn2_q_32
+	comm_layer1 -> attn2_k_32
+	comm_layer1 -> attn2_v_32
+	attn2_q_32 -> attn2_score_32
+	attn2_k_32 -> attn2_score_32
+	attn2_v_32 -> attn2_out_32
+	attn2_score_32 -> attn2_out_32
+	comm_layer1 -> residual2_32
+	attn2_out_32 -> residual2_32
+	gate2_32 -> expert2_32 [style=dashed]
+	residual2_32 -> expert2_32
+	expert2_32 -> token_agg2_32
+	token_agg2_32 -> final_residual2_32
+	residual2_32 -> final_residual2_32
+	final_residual2_32 -> comm_layer2
+	comm_layer1 -> gate2_33
+	comm_layer1 -> attn2_q_33
+	comm_layer1 -> attn2_k_33
+	comm_layer1 -> attn2_v_33
+	attn2_q_33 -> attn2_score_33
+	attn2_k_33 -> attn2_score_33
+	attn2_v_33 -> attn2_out_33
+	attn2_score_33 -> attn2_out_33
+	comm_layer1 -> residual2_33
+	attn2_out_33 -> residual2_33
+	gate2_33 -> expert2_33 [style=dashed]
+	residual2_33 -> expert2_33
+	expert2_33 -> token_agg2_33
+	token_agg2_33 -> final_residual2_33
+	residual2_33 -> final_residual2_33
+	final_residual2_33 -> comm_layer2
+	comm_layer1 -> gate2_34
+	comm_layer1 -> attn2_q_34
+	comm_layer1 -> attn2_k_34
+	comm_layer1 -> attn2_v_34
+	attn2_q_34 -> attn2_score_34
+	attn2_k_34 -> attn2_score_34
+	attn2_v_34 -> attn2_out_34
+	attn2_score_34 -> attn2_out_34
+	comm_layer1 -> residual2_34
+	attn2_out_34 -> residual2_34
+	gate2_34 -> expert2_34 [style=dashed]
+	residual2_34 -> expert2_34
+	expert2_34 -> token_agg2_34
+	token_agg2_34 -> final_residual2_34
+	residual2_34 -> final_residual2_34
+	final_residual2_34 -> comm_layer2
+	comm_layer1 -> gate2_35
+	comm_layer1 -> attn2_q_35
+	comm_layer1 -> attn2_k_35
+	comm_layer1 -> attn2_v_35
+	attn2_q_35 -> attn2_score_35
+	attn2_k_35 -> attn2_score_35
+	attn2_v_35 -> attn2_out_35
+	attn2_score_35 -> attn2_out_35
+	comm_layer1 -> residual2_35
+	attn2_out_35 -> residual2_35
+	gate2_35 -> expert2_35 [style=dashed]
+	residual2_35 -> expert2_35
+	expert2_35 -> token_agg2_35
+	token_agg2_35 -> final_residual2_35
+	residual2_35 -> final_residual2_35
+	final_residual2_35 -> comm_layer2
+	comm_layer1 -> gate2_36
+	comm_layer1 -> attn2_q_36
+	comm_layer1 -> attn2_k_36
+	comm_layer1 -> attn2_v_36
+	attn2_q_36 -> attn2_score_36
+	attn2_k_36 -> attn2_score_36
+	attn2_v_36 -> attn2_out_36
+	attn2_score_36 -> attn2_out_36
+	comm_layer1 -> residual2_36
+	attn2_out_36 -> residual2_36
+	gate2_36 -> expert2_36 [style=dashed]
+	residual2_36 -> expert2_36
+	expert2_36 -> token_agg2_36
+	token_agg2_36 -> final_residual2_36
+	residual2_36 -> final_residual2_36
+	final_residual2_36 -> comm_layer2
+	comm_layer1 -> gate2_37
+	comm_layer1 -> attn2_q_37
+	comm_layer1 -> attn2_k_37
+	comm_layer1 -> attn2_v_37
+	attn2_q_37 -> attn2_score_37
+	attn2_k_37 -> attn2_score_37
+	attn2_v_37 -> attn2_out_37
+	attn2_score_37 -> attn2_out_37
+	comm_layer1 -> residual2_37
+	attn2_out_37 -> residual2_37
+	gate2_37 -> expert2_37 [style=dashed]
+	residual2_37 -> expert2_37
+	expert2_37 -> token_agg2_37
+	token_agg2_37 -> final_residual2_37
+	residual2_37 -> final_residual2_37
+	final_residual2_37 -> comm_layer2
+	comm_layer1 -> gate2_38
+	comm_layer1 -> attn2_q_38
+	comm_layer1 -> attn2_k_38
+	comm_layer1 -> attn2_v_38
+	attn2_q_38 -> attn2_score_38
+	attn2_k_38 -> attn2_score_38
+	attn2_v_38 -> attn2_out_38
+	attn2_score_38 -> attn2_out_38
+	comm_layer1 -> residual2_38
+	attn2_out_38 -> residual2_38
+	gate2_38 -> expert2_38 [style=dashed]
+	residual2_38 -> expert2_38
+	expert2_38 -> token_agg2_38
+	token_agg2_38 -> final_residual2_38
+	residual2_38 -> final_residual2_38
+	final_residual2_38 -> comm_layer2
+	comm_layer1 -> gate2_39
+	comm_layer1 -> attn2_q_39
+	comm_layer1 -> attn2_k_39
+	comm_layer1 -> attn2_v_39
+	attn2_q_39 -> attn2_score_39
+	attn2_k_39 -> attn2_score_39
+	attn2_v_39 -> attn2_out_39
+	attn2_score_39 -> attn2_out_39
+	comm_layer1 -> residual2_39
+	attn2_out_39 -> residual2_39
+	gate2_39 -> expert2_39 [style=dashed]
+	residual2_39 -> expert2_39
+	expert2_39 -> token_agg2_39
+	token_agg2_39 -> final_residual2_39
+	residual2_39 -> final_residual2_39
+	final_residual2_39 -> comm_layer2
+	comm_layer1 -> gate2_40
+	comm_layer1 -> attn2_q_40
+	comm_layer1 -> attn2_k_40
+	comm_layer1 -> attn2_v_40
+	attn2_q_40 -> attn2_score_40
+	attn2_k_40 -> attn2_score_40
+	attn2_v_40 -> attn2_out_40
+	attn2_score_40 -> attn2_out_40
+	comm_layer1 -> residual2_40
+	attn2_out_40 -> residual2_40
+	gate2_40 -> expert2_40 [style=dashed]
+	residual2_40 -> expert2_40
+	expert2_40 -> token_agg2_40
+	token_agg2_40 -> final_residual2_40
+	residual2_40 -> final_residual2_40
+	final_residual2_40 -> comm_layer2
+	comm_layer1 -> gate2_41
+	comm_layer1 -> attn2_q_41
+	comm_layer1 -> attn2_k_41
+	comm_layer1 -> attn2_v_41
+	attn2_q_41 -> attn2_score_41
+	attn2_k_41 -> attn2_score_41
+	attn2_v_41 -> attn2_out_41
+	attn2_score_41 -> attn2_out_41
+	comm_layer1 -> residual2_41
+	attn2_out_41 -> residual2_41
+	gate2_41 -> expert2_41 [style=dashed]
+	residual2_41 -> expert2_41
+	expert2_41 -> token_agg2_41
+	token_agg2_41 -> final_residual2_41
+	residual2_41 -> final_residual2_41
+	final_residual2_41 -> comm_layer2
+	comm_layer1 -> gate2_42
+	comm_layer1 -> attn2_q_42
+	comm_layer1 -> attn2_k_42
+	comm_layer1 -> attn2_v_42
+	attn2_q_42 -> attn2_score_42
+	attn2_k_42 -> attn2_score_42
+	attn2_v_42 -> attn2_out_42
+	attn2_score_42 -> attn2_out_42
+	comm_layer1 -> residual2_42
+	attn2_out_42 -> residual2_42
+	gate2_42 -> expert2_42 [style=dashed]
+	residual2_42 -> expert2_42
+	expert2_42 -> token_agg2_42
+	token_agg2_42 -> final_residual2_42
+	residual2_42 -> final_residual2_42
+	final_residual2_42 -> comm_layer2
+	comm_layer1 -> gate2_43
+	comm_layer1 -> attn2_q_43
+	comm_layer1 -> attn2_k_43
+	comm_layer1 -> attn2_v_43
+	attn2_q_43 -> attn2_score_43
+	attn2_k_43 -> attn2_score_43
+	attn2_v_43 -> attn2_out_43
+	attn2_score_43 -> attn2_out_43
+	comm_layer1 -> residual2_43
+	attn2_out_43 -> residual2_43
+	gate2_43 -> expert2_43 [style=dashed]
+	residual2_43 -> expert2_43
+	expert2_43 -> token_agg2_43
+	token_agg2_43 -> final_residual2_43
+	residual2_43 -> final_residual2_43
+	final_residual2_43 -> comm_layer2
+	comm_layer1 -> gate2_44
+	comm_layer1 -> attn2_q_44
+	comm_layer1 -> attn2_k_44
+	comm_layer1 -> attn2_v_44
+	attn2_q_44 -> attn2_score_44
+	attn2_k_44 -> attn2_score_44
+	attn2_v_44 -> attn2_out_44
+	attn2_score_44 -> attn2_out_44
+	comm_layer1 -> residual2_44
+	attn2_out_44 -> residual2_44
+	gate2_44 -> expert2_44 [style=dashed]
+	residual2_44 -> expert2_44
+	expert2_44 -> token_agg2_44
+	token_agg2_44 -> final_residual2_44
+	residual2_44 -> final_residual2_44
+	final_residual2_44 -> comm_layer2
+	comm_layer1 -> gate2_45
+	comm_layer1 -> attn2_q_45
+	comm_layer1 -> attn2_k_45
+	comm_layer1 -> attn2_v_45
+	attn2_q_45 -> attn2_score_45
+	attn2_k_45 -> attn2_score_45
+	attn2_v_45 -> attn2_out_45
+	attn2_score_45 -> attn2_out_45
+	comm_layer1 -> residual2_45
+	attn2_out_45 -> residual2_45
+	gate2_45 -> expert2_45 [style=dashed]
+	residual2_45 -> expert2_45
+	expert2_45 -> token_agg2_45
+	token_agg2_45 -> final_residual2_45
+	residual2_45 -> final_residual2_45
+	final_residual2_45 -> comm_layer2
+	comm_layer1 -> gate2_46
+	comm_layer1 -> attn2_q_46
+	comm_layer1 -> attn2_k_46
+	comm_layer1 -> attn2_v_46
+	attn2_q_46 -> attn2_score_46
+	attn2_k_46 -> attn2_score_46
+	attn2_v_46 -> attn2_out_46
+	attn2_score_46 -> attn2_out_46
+	comm_layer1 -> residual2_46
+	attn2_out_46 -> residual2_46
+	gate2_46 -> expert2_46 [style=dashed]
+	residual2_46 -> expert2_46
+	expert2_46 -> token_agg2_46
+	token_agg2_46 -> final_residual2_46
+	residual2_46 -> final_residual2_46
+	final_residual2_46 -> comm_layer2
+	comm_layer1 -> gate2_47
+	comm_layer1 -> attn2_q_47
+	comm_layer1 -> attn2_k_47
+	comm_layer1 -> attn2_v_47
+	attn2_q_47 -> attn2_score_47
+	attn2_k_47 -> attn2_score_47
+	attn2_v_47 -> attn2_out_47
+	attn2_score_47 -> attn2_out_47
+	comm_layer1 -> residual2_47
+	attn2_out_47 -> residual2_47
+	gate2_47 -> expert2_47 [style=dashed]
+	residual2_47 -> expert2_47
+	expert2_47 -> token_agg2_47
+	token_agg2_47 -> final_residual2_47
+	residual2_47 -> final_residual2_47
+	final_residual2_47 -> comm_layer2
+	comm_layer2 -> gate3_48
+	comm_layer2 -> attn3_q_48
+	comm_layer2 -> attn3_k_48
+	comm_layer2 -> attn3_v_48
+	attn3_q_48 -> attn3_score_48
+	attn3_k_48 -> attn3_score_48
+	attn3_v_48 -> attn3_out_48
+	attn3_score_48 -> attn3_out_48
+	comm_layer2 -> residual3_48
+	attn3_out_48 -> residual3_48
+	gate3_48 -> expert3_48 [style=dashed]
+	residual3_48 -> expert3_48
+	expert3_48 -> token_agg3_48
+	token_agg3_48 -> final_residual3_48
+	residual3_48 -> final_residual3_48
+	final_residual3_48 -> output
+	comm_layer2 -> gate3_49
+	comm_layer2 -> attn3_q_49
+	comm_layer2 -> attn3_k_49
+	comm_layer2 -> attn3_v_49
+	attn3_q_49 -> attn3_score_49
+	attn3_k_49 -> attn3_score_49
+	attn3_v_49 -> attn3_out_49
+	attn3_score_49 -> attn3_out_49
+	comm_layer2 -> residual3_49
+	attn3_out_49 -> residual3_49
+	gate3_49 -> expert3_49 [style=dashed]
+	residual3_49 -> expert3_49
+	expert3_49 -> token_agg3_49
+	token_agg3_49 -> final_residual3_49
+	residual3_49 -> final_residual3_49
+	final_residual3_49 -> output
+	comm_layer2 -> gate3_50
+	comm_layer2 -> attn3_q_50
+	comm_layer2 -> attn3_k_50
+	comm_layer2 -> attn3_v_50
+	attn3_q_50 -> attn3_score_50
+	attn3_k_50 -> attn3_score_50
+	attn3_v_50 -> attn3_out_50
+	attn3_score_50 -> attn3_out_50
+	comm_layer2 -> residual3_50
+	attn3_out_50 -> residual3_50
+	gate3_50 -> expert3_50 [style=dashed]
+	residual3_50 -> expert3_50
+	expert3_50 -> token_agg3_50
+	token_agg3_50 -> final_residual3_50
+	residual3_50 -> final_residual3_50
+	final_residual3_50 -> output
+	comm_layer2 -> gate3_51
+	comm_layer2 -> attn3_q_51
+	comm_layer2 -> attn3_k_51
+	comm_layer2 -> attn3_v_51
+	attn3_q_51 -> attn3_score_51
+	attn3_k_51 -> attn3_score_51
+	attn3_v_51 -> attn3_out_51
+	attn3_score_51 -> attn3_out_51
+	comm_layer2 -> residual3_51
+	attn3_out_51 -> residual3_51
+	gate3_51 -> expert3_51 [style=dashed]
+	residual3_51 -> expert3_51
+	expert3_51 -> token_agg3_51
+	token_agg3_51 -> final_residual3_51
+	residual3_51 -> final_residual3_51
+	final_residual3_51 -> output
+	comm_layer2 -> gate3_52
+	comm_layer2 -> attn3_q_52
+	comm_layer2 -> attn3_k_52
+	comm_layer2 -> attn3_v_52
+	attn3_q_52 -> attn3_score_52
+	attn3_k_52 -> attn3_score_52
+	attn3_v_52 -> attn3_out_52
+	attn3_score_52 -> attn3_out_52
+	comm_layer2 -> residual3_52
+	attn3_out_52 -> residual3_52
+	gate3_52 -> expert3_52 [style=dashed]
+	residual3_52 -> expert3_52
+	expert3_52 -> token_agg3_52
+	token_agg3_52 -> final_residual3_52
+	residual3_52 -> final_residual3_52
+	final_residual3_52 -> output
+	comm_layer2 -> gate3_53
+	comm_layer2 -> attn3_q_53
+	comm_layer2 -> attn3_k_53
+	comm_layer2 -> attn3_v_53
+	attn3_q_53 -> attn3_score_53
+	attn3_k_53 -> attn3_score_53
+	attn3_v_53 -> attn3_out_53
+	attn3_score_53 -> attn3_out_53
+	comm_layer2 -> residual3_53
+	attn3_out_53 -> residual3_53
+	gate3_53 -> expert3_53 [style=dashed]
+	residual3_53 -> expert3_53
+	expert3_53 -> token_agg3_53
+	token_agg3_53 -> final_residual3_53
+	residual3_53 -> final_residual3_53
+	final_residual3_53 -> output
+	comm_layer2 -> gate3_54
+	comm_layer2 -> attn3_q_54
+	comm_layer2 -> attn3_k_54
+	comm_layer2 -> attn3_v_54
+	attn3_q_54 -> attn3_score_54
+	attn3_k_54 -> attn3_score_54
+	attn3_v_54 -> attn3_out_54
+	attn3_score_54 -> attn3_out_54
+	comm_layer2 -> residual3_54
+	attn3_out_54 -> residual3_54
+	gate3_54 -> expert3_54 [style=dashed]
+	residual3_54 -> expert3_54
+	expert3_54 -> token_agg3_54
+	token_agg3_54 -> final_residual3_54
+	residual3_54 -> final_residual3_54
+	final_residual3_54 -> output
+	comm_layer2 -> gate3_55
+	comm_layer2 -> attn3_q_55
+	comm_layer2 -> attn3_k_55
+	comm_layer2 -> attn3_v_55
+	attn3_q_55 -> attn3_score_55
+	attn3_k_55 -> attn3_score_55
+	attn3_v_55 -> attn3_out_55
+	attn3_score_55 -> attn3_out_55
+	comm_layer2 -> residual3_55
+	attn3_out_55 -> residual3_55
+	gate3_55 -> expert3_55 [style=dashed]
+	residual3_55 -> expert3_55
+	expert3_55 -> token_agg3_55
+	token_agg3_55 -> final_residual3_55
+	residual3_55 -> final_residual3_55
+	final_residual3_55 -> output
+	comm_layer2 -> gate3_56
+	comm_layer2 -> attn3_q_56
+	comm_layer2 -> attn3_k_56
+	comm_layer2 -> attn3_v_56
+	attn3_q_56 -> attn3_score_56
+	attn3_k_56 -> attn3_score_56
+	attn3_v_56 -> attn3_out_56
+	attn3_score_56 -> attn3_out_56
+	comm_layer2 -> residual3_56
+	attn3_out_56 -> residual3_56
+	gate3_56 -> expert3_56 [style=dashed]
+	residual3_56 -> expert3_56
+	expert3_56 -> token_agg3_56
+	token_agg3_56 -> final_residual3_56
+	residual3_56 -> final_residual3_56
+	final_residual3_56 -> output
+	comm_layer2 -> gate3_57
+	comm_layer2 -> attn3_q_57
+	comm_layer2 -> attn3_k_57
+	comm_layer2 -> attn3_v_57
+	attn3_q_57 -> attn3_score_57
+	attn3_k_57 -> attn3_score_57
+	attn3_v_57 -> attn3_out_57
+	attn3_score_57 -> attn3_out_57
+	comm_layer2 -> residual3_57
+	attn3_out_57 -> residual3_57
+	gate3_57 -> expert3_57 [style=dashed]
+	residual3_57 -> expert3_57
+	expert3_57 -> token_agg3_57
+	token_agg3_57 -> final_residual3_57
+	residual3_57 -> final_residual3_57
+	final_residual3_57 -> output
+	comm_layer2 -> gate3_58
+	comm_layer2 -> attn3_q_58
+	comm_layer2 -> attn3_k_58
+	comm_layer2 -> attn3_v_58
+	attn3_q_58 -> attn3_score_58
+	attn3_k_58 -> attn3_score_58
+	attn3_v_58 -> attn3_out_58
+	attn3_score_58 -> attn3_out_58
+	comm_layer2 -> residual3_58
+	attn3_out_58 -> residual3_58
+	gate3_58 -> expert3_58 [style=dashed]
+	residual3_58 -> expert3_58
+	expert3_58 -> token_agg3_58
+	token_agg3_58 -> final_residual3_58
+	residual3_58 -> final_residual3_58
+	final_residual3_58 -> output
+	comm_layer2 -> gate3_59
+	comm_layer2 -> attn3_q_59
+	comm_layer2 -> attn3_k_59
+	comm_layer2 -> attn3_v_59
+	attn3_q_59 -> attn3_score_59
+	attn3_k_59 -> attn3_score_59
+	attn3_v_59 -> attn3_out_59
+	attn3_score_59 -> attn3_out_59
+	comm_layer2 -> residual3_59
+	attn3_out_59 -> residual3_59
+	gate3_59 -> expert3_59 [style=dashed]
+	residual3_59 -> expert3_59
+	expert3_59 -> token_agg3_59
+	token_agg3_59 -> final_residual3_59
+	residual3_59 -> final_residual3_59
+	final_residual3_59 -> output
+	comm_layer2 -> gate3_60
+	comm_layer2 -> attn3_q_60
+	comm_layer2 -> attn3_k_60
+	comm_layer2 -> attn3_v_60
+	attn3_q_60 -> attn3_score_60
+	attn3_k_60 -> attn3_score_60
+	attn3_v_60 -> attn3_out_60
+	attn3_score_60 -> attn3_out_60
+	comm_layer2 -> residual3_60
+	attn3_out_60 -> residual3_60
+	gate3_60 -> expert3_60 [style=dashed]
+	residual3_60 -> expert3_60
+	expert3_60 -> token_agg3_60
+	token_agg3_60 -> final_residual3_60
+	residual3_60 -> final_residual3_60
+	final_residual3_60 -> output
+	comm_layer2 -> gate3_61
+	comm_layer2 -> attn3_q_61
+	comm_layer2 -> attn3_k_61
+	comm_layer2 -> attn3_v_61
+	attn3_q_61 -> attn3_score_61
+	attn3_k_61 -> attn3_score_61
+	attn3_v_61 -> attn3_out_61
+	attn3_score_61 -> attn3_out_61
+	comm_layer2 -> residual3_61
+	attn3_out_61 -> residual3_61
+	gate3_61 -> expert3_61 [style=dashed]
+	residual3_61 -> expert3_61
+	expert3_61 -> token_agg3_61
+	token_agg3_61 -> final_residual3_61
+	residual3_61 -> final_residual3_61
+	final_residual3_61 -> output
+	comm_layer2 -> gate3_62
+	comm_layer2 -> attn3_q_62
+	comm_layer2 -> attn3_k_62
+	comm_layer2 -> attn3_v_62
+	attn3_q_62 -> attn3_score_62
+	attn3_k_62 -> attn3_score_62
+	attn3_v_62 -> attn3_out_62
+	attn3_score_62 -> attn3_out_62
+	comm_layer2 -> residual3_62
+	attn3_out_62 -> residual3_62
+	gate3_62 -> expert3_62 [style=dashed]
+	residual3_62 -> expert3_62
+	expert3_62 -> token_agg3_62
+	token_agg3_62 -> final_residual3_62
+	residual3_62 -> final_residual3_62
+	final_residual3_62 -> output
+	comm_layer2 -> gate3_63
+	comm_layer2 -> attn3_q_63
+	comm_layer2 -> attn3_k_63
+	comm_layer2 -> attn3_v_63
+	attn3_q_63 -> attn3_score_63
+	attn3_k_63 -> attn3_score_63
+	attn3_v_63 -> attn3_out_63
+	attn3_score_63 -> attn3_out_63
+	comm_layer2 -> residual3_63
+	attn3_out_63 -> residual3_63
+	gate3_63 -> expert3_63 [style=dashed]
+	residual3_63 -> expert3_63
+	expert3_63 -> token_agg3_63
+	token_agg3_63 -> final_residual3_63
+	residual3_63 -> final_residual3_63
+	final_residual3_63 -> output
+}

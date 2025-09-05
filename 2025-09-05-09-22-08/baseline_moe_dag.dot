@@ -1,0 +1,357 @@
+// Baseline MoE Deployment: TP=8, PP=2
+digraph {
+	fontname=Arial rankdir=TB size="20,30"
+	node [fontname=Arial shape=rectangle style=filled]
+	edge [fontname=Arial fontsize=10]
+	input [label="Input
+[1024, 2048, 8192]" fillcolor=lightgrey]
+	subgraph cluster_stage0 {
+		color=blue label="Pipeline Stage 0 (GPUs 0-7)" style=dashed
+		stage0_attn_qkv [label="Attention QKV
+[1024, 8192] -> [1024, 16, 512]
+TP=8 shard
+GPU: 0-7" fillcolor=lightblue]
+		stage0_attn_score [label="Attention Score
+[1024, 16, 512] x [512, 2048]
+TP=8 shard
+GPU: 0-7" fillcolor=lightblue]
+		stage0_attn_out [label="Attention Output
+[1024, 16, 512] -> [1024, 8192]
+TP=8 shard
+GPU: 0-7" fillcolor=lightblue]
+		stage0_attn_residual [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU: 0-7" fillcolor=lightblue]
+		stage0_gate [label="Gate Network
+[1024, 8192] -> [1024, 16]
+GPU: 0-7" fillcolor=lightblue]
+		stage0_expert0_gpu0 [label="Expert 0
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 0" fillcolor=lightblue]
+		stage0_expert1_gpu0 [label="Expert 1
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 0" fillcolor=lightblue]
+		stage0_expert0_gpu1 [label="Expert 2
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 1" fillcolor=lightblue]
+		stage0_expert1_gpu1 [label="Expert 3
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 1" fillcolor=lightblue]
+		stage0_expert0_gpu2 [label="Expert 4
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 2" fillcolor=lightblue]
+		stage0_expert1_gpu2 [label="Expert 5
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 2" fillcolor=lightblue]
+		stage0_expert0_gpu3 [label="Expert 6
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 3" fillcolor=lightblue]
+		stage0_expert1_gpu3 [label="Expert 7
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 3" fillcolor=lightblue]
+		stage0_expert0_gpu4 [label="Expert 8
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 4" fillcolor=lightblue]
+		stage0_expert1_gpu4 [label="Expert 9
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 4" fillcolor=lightblue]
+		stage0_expert0_gpu5 [label="Expert 10
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 5" fillcolor=lightblue]
+		stage0_expert1_gpu5 [label="Expert 11
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 5" fillcolor=lightblue]
+		stage0_expert0_gpu6 [label="Expert 12
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 6" fillcolor=lightblue]
+		stage0_expert1_gpu6 [label="Expert 13
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 6" fillcolor=lightblue]
+		stage0_expert0_gpu7 [label="Expert 14
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 7" fillcolor=lightblue]
+		stage0_expert1_gpu7 [label="Expert 15
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 7" fillcolor=lightblue]
+		stage0_moe_aggregate [label="Expert Aggregation
+[1024, 8192] x k=2
+GPU: 0-7" fillcolor=lightblue]
+		stage0_moe_residual [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU: 0-7" fillcolor=lightblue]
+	}
+	comm_stage0_to_stage1 [label="Pipeline Communication
+[1024, 8192]
+GPU: 7 -> GPU: 8" fillcolor=yellow shape=ellipse]
+	subgraph cluster_stage1 {
+		color=green label="Pipeline Stage 1 (GPUs 8-15)" style=dashed
+		stage1_attn_qkv [label="Attention QKV
+[1024, 8192] -> [1024, 16, 512]
+TP=8 shard
+GPU: 8-15" fillcolor=lightgreen]
+		stage1_attn_score [label="Attention Score
+[1024, 16, 512] x [512, 2048]
+TP=8 shard
+GPU: 8-15" fillcolor=lightgreen]
+		stage1_attn_out [label="Attention Output
+[1024, 16, 512] -> [1024, 8192]
+TP=8 shard
+GPU: 8-15" fillcolor=lightgreen]
+		stage1_attn_residual [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU: 8-15" fillcolor=lightgreen]
+		stage1_gate [label="Gate Network
+[1024, 8192] -> [1024, 16]
+GPU: 8-15" fillcolor=lightgreen]
+		stage1_expert0_gpu8 [label="Expert 16
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 8" fillcolor=lightgreen]
+		stage1_expert1_gpu8 [label="Expert 17
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 8" fillcolor=lightgreen]
+		stage1_expert0_gpu9 [label="Expert 18
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 9" fillcolor=lightgreen]
+		stage1_expert1_gpu9 [label="Expert 19
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 9" fillcolor=lightgreen]
+		stage1_expert0_gpu10 [label="Expert 20
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 10" fillcolor=lightgreen]
+		stage1_expert1_gpu10 [label="Expert 21
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 10" fillcolor=lightgreen]
+		stage1_expert0_gpu11 [label="Expert 22
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 11" fillcolor=lightgreen]
+		stage1_expert1_gpu11 [label="Expert 23
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 11" fillcolor=lightgreen]
+		stage1_expert0_gpu12 [label="Expert 24
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 12" fillcolor=lightgreen]
+		stage1_expert1_gpu12 [label="Expert 25
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 12" fillcolor=lightgreen]
+		stage1_expert0_gpu13 [label="Expert 26
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 13" fillcolor=lightgreen]
+		stage1_expert1_gpu13 [label="Expert 27
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 13" fillcolor=lightgreen]
+		stage1_expert0_gpu14 [label="Expert 28
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 14" fillcolor=lightgreen]
+		stage1_expert1_gpu14 [label="Expert 29
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 14" fillcolor=lightgreen]
+		stage1_expert0_gpu15 [label="Expert 30
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 15" fillcolor=lightgreen]
+		stage1_expert1_gpu15 [label="Expert 31
+[1024, 8192] -> [1024, 32768] -> [1024, 8192]
+TP=8 shard
+GPU: 15" fillcolor=lightgreen]
+		stage1_moe_aggregate [label="Expert Aggregation
+[1024, 8192] x k=2
+GPU: 8-15" fillcolor=lightgreen]
+		stage1_moe_residual [label="Residual Add
+[1024, 8192] + [1024, 8192]
+GPU: 8-15" fillcolor=lightgreen]
+	}
+	comm_stage1_to_stage0 [label="Pipeline Communication
+[1024, 8192]
+GPU: 15 -> GPU: 0" fillcolor=yellow shape=ellipse]
+	comm_stage2_to_stage1_again [label="Pipeline Communication
+[1024, 8192]
+GPU: 7 -> GPU: 8" fillcolor=yellow shape=ellipse]
+	output [label="Output
+[1024, 2048, 8192]" fillcolor=lightcoral]
+	input -> stage0_attn_qkv
+	stage0_attn_qkv -> stage0_attn_score
+	stage0_attn_score -> stage0_attn_out
+	stage0_attn_out -> stage0_attn_residual
+	stage0_attn_residual -> stage0_gate
+	stage0_gate -> stage0_expert0_gpu0 [label=route style=dashed]
+	stage0_gate -> stage0_expert1_gpu0 [label=route style=dashed]
+	stage0_expert0_gpu0 -> stage0_moe_aggregate
+	stage0_expert1_gpu0 -> stage0_moe_aggregate
+	stage0_gate -> stage0_expert0_gpu1 [label=route style=dashed]
+	stage0_gate -> stage0_expert1_gpu1 [label=route style=dashed]
+	stage0_expert0_gpu1 -> stage0_moe_aggregate
+	stage0_expert1_gpu1 -> stage0_moe_aggregate
+	stage0_gate -> stage0_expert0_gpu2 [label=route style=dashed]
+	stage0_gate -> stage0_expert1_gpu2 [label=route style=dashed]
+	stage0_expert0_gpu2 -> stage0_moe_aggregate
+	stage0_expert1_gpu2 -> stage0_moe_aggregate
+	stage0_gate -> stage0_expert0_gpu3 [label=route style=dashed]
+	stage0_gate -> stage0_expert1_gpu3 [label=route style=dashed]
+	stage0_expert0_gpu3 -> stage0_moe_aggregate
+	stage0_expert1_gpu3 -> stage0_moe_aggregate
+	stage0_gate -> stage0_expert0_gpu4 [label=route style=dashed]
+	stage0_gate -> stage0_expert1_gpu4 [label=route style=dashed]
+	stage0_expert0_gpu4 -> stage0_moe_aggregate
+	stage0_expert1_gpu4 -> stage0_moe_aggregate
+	stage0_gate -> stage0_expert0_gpu5 [label=route style=dashed]
+	stage0_gate -> stage0_expert1_gpu5 [label=route style=dashed]
+	stage0_expert0_gpu5 -> stage0_moe_aggregate
+	stage0_expert1_gpu5 -> stage0_moe_aggregate
+	stage0_gate -> stage0_expert0_gpu6 [label=route style=dashed]
+	stage0_gate -> stage0_expert1_gpu6 [label=route style=dashed]
+	stage0_expert0_gpu6 -> stage0_moe_aggregate
+	stage0_expert1_gpu6 -> stage0_moe_aggregate
+	stage0_gate -> stage0_expert0_gpu7 [label=route style=dashed]
+	stage0_gate -> stage0_expert1_gpu7 [label=route style=dashed]
+	stage0_expert0_gpu7 -> stage0_moe_aggregate
+	stage0_expert1_gpu7 -> stage0_moe_aggregate
+	stage0_moe_aggregate -> stage0_moe_residual
+	stage0_moe_residual -> comm_stage0_to_stage1
+	comm_stage0_to_stage1 -> stage1_attn_qkv
+	stage1_attn_qkv -> stage1_attn_score
+	stage1_attn_score -> stage1_attn_out
+	stage1_attn_out -> stage1_attn_residual
+	stage1_attn_residual -> stage1_gate
+	stage1_gate -> stage1_expert0_gpu8 [label=route style=dashed]
+	stage1_gate -> stage1_expert1_gpu8 [label=route style=dashed]
+	stage1_expert0_gpu8 -> stage1_moe_aggregate
+	stage1_expert1_gpu8 -> stage1_moe_aggregate
+	stage1_gate -> stage1_expert0_gpu9 [label=route style=dashed]
+	stage1_gate -> stage1_expert1_gpu9 [label=route style=dashed]
+	stage1_expert0_gpu9 -> stage1_moe_aggregate
+	stage1_expert1_gpu9 -> stage1_moe_aggregate
+	stage1_gate -> stage1_expert0_gpu10 [label=route style=dashed]
+	stage1_gate -> stage1_expert1_gpu10 [label=route style=dashed]
+	stage1_expert0_gpu10 -> stage1_moe_aggregate
+	stage1_expert1_gpu10 -> stage1_moe_aggregate
+	stage1_gate -> stage1_expert0_gpu11 [label=route style=dashed]
+	stage1_gate -> stage1_expert1_gpu11 [label=route style=dashed]
+	stage1_expert0_gpu11 -> stage1_moe_aggregate
+	stage1_expert1_gpu11 -> stage1_moe_aggregate
+	stage1_gate -> stage1_expert0_gpu12 [label=route style=dashed]
+	stage1_gate -> stage1_expert1_gpu12 [label=route style=dashed]
+	stage1_expert0_gpu12 -> stage1_moe_aggregate
+	stage1_expert1_gpu12 -> stage1_moe_aggregate
+	stage1_gate -> stage1_expert0_gpu13 [label=route style=dashed]
+	stage1_gate -> stage1_expert1_gpu13 [label=route style=dashed]
+	stage1_expert0_gpu13 -> stage1_moe_aggregate
+	stage1_expert1_gpu13 -> stage1_moe_aggregate
+	stage1_gate -> stage1_expert0_gpu14 [label=route style=dashed]
+	stage1_gate -> stage1_expert1_gpu14 [label=route style=dashed]
+	stage1_expert0_gpu14 -> stage1_moe_aggregate
+	stage1_expert1_gpu14 -> stage1_moe_aggregate
+	stage1_gate -> stage1_expert0_gpu15 [label=route style=dashed]
+	stage1_gate -> stage1_expert1_gpu15 [label=route style=dashed]
+	stage1_expert0_gpu15 -> stage1_moe_aggregate
+	stage1_expert1_gpu15 -> stage1_moe_aggregate
+	stage1_moe_aggregate -> stage1_moe_residual
+	stage1_moe_residual -> comm_stage1_to_stage0
+	comm_stage1_to_stage0 -> stage2_attn_qkv
+	stage2_attn_qkv -> stage2_attn_score
+	stage2_attn_score -> stage2_attn_out
+	stage2_attn_out -> stage2_attn_residual
+	stage2_attn_residual -> stage2_gate
+	stage2_gate -> stage2_expert0_gpu0 [label=route style=dashed]
+	stage2_gate -> stage2_expert1_gpu0 [label=route style=dashed]
+	stage2_expert0_gpu0 -> stage2_moe_aggregate
+	stage2_expert1_gpu0 -> stage2_moe_aggregate
+	stage2_gate -> stage2_expert0_gpu1 [label=route style=dashed]
+	stage2_gate -> stage2_expert1_gpu1 [label=route style=dashed]
+	stage2_expert0_gpu1 -> stage2_moe_aggregate
+	stage2_expert1_gpu1 -> stage2_moe_aggregate
+	stage2_gate -> stage2_expert0_gpu2 [label=route style=dashed]
+	stage2_gate -> stage2_expert1_gpu2 [label=route style=dashed]
+	stage2_expert0_gpu2 -> stage2_moe_aggregate
+	stage2_expert1_gpu2 -> stage2_moe_aggregate
+	stage2_gate -> stage2_expert0_gpu3 [label=route style=dashed]
+	stage2_gate -> stage2_expert1_gpu3 [label=route style=dashed]
+	stage2_expert0_gpu3 -> stage2_moe_aggregate
+	stage2_expert1_gpu3 -> stage2_moe_aggregate
+	stage2_gate -> stage2_expert0_gpu4 [label=route style=dashed]
+	stage2_gate -> stage2_expert1_gpu4 [label=route style=dashed]
+	stage2_expert0_gpu4 -> stage2_moe_aggregate
+	stage2_expert1_gpu4 -> stage2_moe_aggregate
+	stage2_gate -> stage2_expert0_gpu5 [label=route style=dashed]
+	stage2_gate -> stage2_expert1_gpu5 [label=route style=dashed]
+	stage2_expert0_gpu5 -> stage2_moe_aggregate
+	stage2_expert1_gpu5 -> stage2_moe_aggregate
+	stage2_gate -> stage2_expert0_gpu6 [label=route style=dashed]
+	stage2_gate -> stage2_expert1_gpu6 [label=route style=dashed]
+	stage2_expert0_gpu6 -> stage2_moe_aggregate
+	stage2_expert1_gpu6 -> stage2_moe_aggregate
+	stage2_gate -> stage2_expert0_gpu7 [label=route style=dashed]
+	stage2_gate -> stage2_expert1_gpu7 [label=route style=dashed]
+	stage2_expert0_gpu7 -> stage2_moe_aggregate
+	stage2_expert1_gpu7 -> stage2_moe_aggregate
+	stage2_moe_aggregate -> stage2_moe_residual
+	stage2_moe_residual -> comm_stage2_to_stage1_again
+	comm_stage2_to_stage1_again -> stage3_attn_qkv
+	stage3_attn_qkv -> stage3_attn_score
+	stage3_attn_score -> stage3_attn_out
+	stage3_attn_out -> stage3_attn_residual
+	stage3_attn_residual -> stage3_gate
+	stage3_gate -> stage3_expert0_gpu8 [label=route style=dashed]
+	stage3_gate -> stage3_expert1_gpu8 [label=route style=dashed]
+	stage3_expert0_gpu8 -> stage3_moe_aggregate
+	stage3_expert1_gpu8 -> stage3_moe_aggregate
+	stage3_gate -> stage3_expert0_gpu9 [label=route style=dashed]
+	stage3_gate -> stage3_expert1_gpu9 [label=route style=dashed]
+	stage3_expert0_gpu9 -> stage3_moe_aggregate
+	stage3_expert1_gpu9 -> stage3_moe_aggregate
+	stage3_gate -> stage3_expert0_gpu10 [label=route style=dashed]
+	stage3_gate -> stage3_expert1_gpu10 [label=route style=dashed]
+	stage3_expert0_gpu10 -> stage3_moe_aggregate
+	stage3_expert1_gpu10 -> stage3_moe_aggregate
+	stage3_gate -> stage3_expert0_gpu11 [label=route style=dashed]
+	stage3_gate -> stage3_expert1_gpu11 [label=route style=dashed]
+	stage3_expert0_gpu11 -> stage3_moe_aggregate
+	stage3_expert1_gpu11 -> stage3_moe_aggregate
+	stage3_gate -> stage3_expert0_gpu12 [label=route style=dashed]
+	stage3_gate -> stage3_expert1_gpu12 [label=route style=dashed]
+	stage3_expert0_gpu12 -> stage3_moe_aggregate
+	stage3_expert1_gpu12 -> stage3_moe_aggregate
+	stage3_gate -> stage3_expert0_gpu13 [label=route style=dashed]
+	stage3_gate -> stage3_expert1_gpu13 [label=route style=dashed]
+	stage3_expert0_gpu13 -> stage3_moe_aggregate
+	stage3_expert1_gpu13 -> stage3_moe_aggregate
+	stage3_gate -> stage3_expert0_gpu14 [label=route style=dashed]
+	stage3_gate -> stage3_expert1_gpu14 [label=route style=dashed]
+	stage3_expert0_gpu14 -> stage3_moe_aggregate
+	stage3_expert1_gpu14 -> stage3_moe_aggregate
+	stage3_gate -> stage3_expert0_gpu15 [label=route style=dashed]
+	stage3_gate -> stage3_expert1_gpu15 [label=route style=dashed]
+	stage3_expert0_gpu15 -> stage3_moe_aggregate
+	stage3_expert1_gpu15 -> stage3_moe_aggregate
+	stage3_moe_aggregate -> stage3_moe_residual
+	stage3_moe_residual -> output
+}

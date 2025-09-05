@@ -1,0 +1,10 @@
+{
+  "baseline_dag": {
+    "dot_path": "/home/wzc/data/file-share/2025-09-04-15-56-46/baseline_moe.dot",
+    "svg_path": "/home/wzc/data/file-share/2025-09-04-15-56-46/baseline_moe.svg"
+  },
+  "proposed_dag": {
+    "dot_path": "/home/wzc/data/file-share/2025-09-04-15-56-46/proposed_moe.dot", 
+    "svg_path": "/home/wzc/data/file-share/2025-09-04-15-56-46/proposed_moe.svg"
+  }
+}

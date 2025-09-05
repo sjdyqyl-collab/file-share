@@ -1,0 +1,22 @@
+{
+  "baseline_deployment": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-05-09-22-08/baseline_moe_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-05-09-22-08/baseline_moe_dag.svg",
+    "description": "Baseline MoE deployment with Tensor Parallelism=8, Pipeline Parallelism=2, 16 GPUs total, 4 experts per GPU"
+  },
+  "proposed_deployment": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-05-09-22-08/proposed_moe_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-05-09-22-08/proposed_moe_dag.svg",
+    "description": "Proposed large-scale cross-node expert parallelism with Expert Parallelism=64, 64 GPUs total, 1 expert per GPU"
+  },
+  "generation_info": {
+    "total_gpus_baseline": 16,
+    "total_gpus_proposed": 64,
+    "experts_per_layer": 16,
+    "layers": 4,
+    "batch_size": 1024,
+    "sequence_length": 2048,
+    "hidden_size": 8192,
+    "expert_hidden_size": 32768
+  }
+}

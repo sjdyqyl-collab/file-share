@@ -1,0 +1,1258 @@
+// Baseline MoE Deployment
+digraph baseline_moe {
+	rankdir=TB size="20,15"
+	node [fontname=Arial fontsize=10]
+	input [label="Input\n[1024, seq_len, 8192]" fillcolor="#F0F0F0" shape=ellipse style=filled]
+	layer0_mha_input_gpu0 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_qkv_gpu0 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_gpu0 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_out_gpu0 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_res_gpu0 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_ln1_gpu0 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert0_gpu0 [label="Expert 0\nMLP [1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert1_gpu0 [label="Expert 1\nMLP [1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert2_gpu0 [label="Expert 2\nMLP [1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert3_gpu0 [label="Expert 3\nMLP [1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_gate_gpu0 [label="Gating Network\n[1024, seq_len, 16]\nGPU 0" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_expert_agg_gpu0 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_mlp_out_gpu0 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_output_gpu0 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	input -> layer0_mha_input_gpu0
+	layer0_mha_input_gpu0 -> layer0_qkv_gpu0
+	layer0_qkv_gpu0 -> layer0_mha_gpu0
+	layer0_mha_gpu0 -> layer0_mha_out_gpu0
+	layer0_mha_out_gpu0 -> layer0_mha_res_gpu0
+	layer0_mha_input_gpu0 -> layer0_mha_res_gpu0
+	layer0_mha_res_gpu0 -> layer0_ln1_gpu0
+	layer0_ln1_gpu0 -> layer0_gate_gpu0
+	layer0_gate_gpu0 -> layer0_expert0_gpu0 [style=dashed]
+	layer0_ln1_gpu0 -> layer0_expert0_gpu0
+	layer0_expert0_gpu0 -> layer0_expert_agg_gpu0
+	layer0_gate_gpu0 -> layer0_expert1_gpu0 [style=dashed]
+	layer0_ln1_gpu0 -> layer0_expert1_gpu0
+	layer0_expert1_gpu0 -> layer0_expert_agg_gpu0
+	layer0_gate_gpu0 -> layer0_expert2_gpu0 [style=dashed]
+	layer0_ln1_gpu0 -> layer0_expert2_gpu0
+	layer0_expert2_gpu0 -> layer0_expert_agg_gpu0
+	layer0_gate_gpu0 -> layer0_expert3_gpu0 [style=dashed]
+	layer0_ln1_gpu0 -> layer0_expert3_gpu0
+	layer0_expert3_gpu0 -> layer0_expert_agg_gpu0
+	layer0_gate_gpu0 -> layer0_expert_agg_gpu0
+	layer0_expert_agg_gpu0 -> layer0_mlp_out_gpu0
+	layer0_mlp_out_gpu0 -> layer0_output_gpu0
+	layer0_ln1_gpu0 -> layer0_output_gpu0
+	layer0_mha_input_gpu1 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_qkv_gpu1 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_gpu1 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_out_gpu1 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_res_gpu1 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_ln1_gpu1 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert4_gpu1 [label="Expert 4\nMLP [1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert5_gpu1 [label="Expert 5\nMLP [1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert6_gpu1 [label="Expert 6\nMLP [1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert7_gpu1 [label="Expert 7\nMLP [1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_gate_gpu1 [label="Gating Network\n[1024, seq_len, 16]\nGPU 1" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_expert_agg_gpu1 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_mlp_out_gpu1 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_output_gpu1 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	input -> layer0_mha_input_gpu1
+	layer0_mha_input_gpu1 -> layer0_qkv_gpu1
+	layer0_qkv_gpu1 -> layer0_mha_gpu1
+	layer0_mha_gpu1 -> layer0_mha_out_gpu1
+	layer0_mha_out_gpu1 -> layer0_mha_res_gpu1
+	layer0_mha_input_gpu1 -> layer0_mha_res_gpu1
+	layer0_mha_res_gpu1 -> layer0_ln1_gpu1
+	layer0_ln1_gpu1 -> layer0_gate_gpu1
+	layer0_gate_gpu1 -> layer0_expert4_gpu1 [style=dashed]
+	layer0_ln1_gpu1 -> layer0_expert4_gpu1
+	layer0_expert4_gpu1 -> layer0_expert_agg_gpu1
+	layer0_gate_gpu1 -> layer0_expert5_gpu1 [style=dashed]
+	layer0_ln1_gpu1 -> layer0_expert5_gpu1
+	layer0_expert5_gpu1 -> layer0_expert_agg_gpu1
+	layer0_gate_gpu1 -> layer0_expert6_gpu1 [style=dashed]
+	layer0_ln1_gpu1 -> layer0_expert6_gpu1
+	layer0_expert6_gpu1 -> layer0_expert_agg_gpu1
+	layer0_gate_gpu1 -> layer0_expert7_gpu1 [style=dashed]
+	layer0_ln1_gpu1 -> layer0_expert7_gpu1
+	layer0_expert7_gpu1 -> layer0_expert_agg_gpu1
+	layer0_gate_gpu1 -> layer0_expert_agg_gpu1
+	layer0_expert_agg_gpu1 -> layer0_mlp_out_gpu1
+	layer0_mlp_out_gpu1 -> layer0_output_gpu1
+	layer0_ln1_gpu1 -> layer0_output_gpu1
+	layer0_mha_input_gpu2 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_qkv_gpu2 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_gpu2 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_out_gpu2 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_res_gpu2 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_ln1_gpu2 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert8_gpu2 [label="Expert 8\nMLP [1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert9_gpu2 [label="Expert 9\nMLP [1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert10_gpu2 [label="Expert 10\nMLP [1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert11_gpu2 [label="Expert 11\nMLP [1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_gate_gpu2 [label="Gating Network\n[1024, seq_len, 16]\nGPU 2" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_expert_agg_gpu2 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_mlp_out_gpu2 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_output_gpu2 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	input -> layer0_mha_input_gpu2
+	layer0_mha_input_gpu2 -> layer0_qkv_gpu2
+	layer0_qkv_gpu2 -> layer0_mha_gpu2
+	layer0_mha_gpu2 -> layer0_mha_out_gpu2
+	layer0_mha_out_gpu2 -> layer0_mha_res_gpu2
+	layer0_mha_input_gpu2 -> layer0_mha_res_gpu2
+	layer0_mha_res_gpu2 -> layer0_ln1_gpu2
+	layer0_ln1_gpu2 -> layer0_gate_gpu2
+	layer0_gate_gpu2 -> layer0_expert8_gpu2 [style=dashed]
+	layer0_ln1_gpu2 -> layer0_expert8_gpu2
+	layer0_expert8_gpu2 -> layer0_expert_agg_gpu2
+	layer0_gate_gpu2 -> layer0_expert9_gpu2 [style=dashed]
+	layer0_ln1_gpu2 -> layer0_expert9_gpu2
+	layer0_expert9_gpu2 -> layer0_expert_agg_gpu2
+	layer0_gate_gpu2 -> layer0_expert10_gpu2 [style=dashed]
+	layer0_ln1_gpu2 -> layer0_expert10_gpu2
+	layer0_expert10_gpu2 -> layer0_expert_agg_gpu2
+	layer0_gate_gpu2 -> layer0_expert11_gpu2 [style=dashed]
+	layer0_ln1_gpu2 -> layer0_expert11_gpu2
+	layer0_expert11_gpu2 -> layer0_expert_agg_gpu2
+	layer0_gate_gpu2 -> layer0_expert_agg_gpu2
+	layer0_expert_agg_gpu2 -> layer0_mlp_out_gpu2
+	layer0_mlp_out_gpu2 -> layer0_output_gpu2
+	layer0_ln1_gpu2 -> layer0_output_gpu2
+	layer0_mha_input_gpu3 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_qkv_gpu3 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_gpu3 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_out_gpu3 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_res_gpu3 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_ln1_gpu3 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert12_gpu3 [label="Expert 12\nMLP [1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert13_gpu3 [label="Expert 13\nMLP [1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert14_gpu3 [label="Expert 14\nMLP [1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert15_gpu3 [label="Expert 15\nMLP [1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_gate_gpu3 [label="Gating Network\n[1024, seq_len, 16]\nGPU 3" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_expert_agg_gpu3 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_mlp_out_gpu3 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_output_gpu3 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	input -> layer0_mha_input_gpu3
+	layer0_mha_input_gpu3 -> layer0_qkv_gpu3
+	layer0_qkv_gpu3 -> layer0_mha_gpu3
+	layer0_mha_gpu3 -> layer0_mha_out_gpu3
+	layer0_mha_out_gpu3 -> layer0_mha_res_gpu3
+	layer0_mha_input_gpu3 -> layer0_mha_res_gpu3
+	layer0_mha_res_gpu3 -> layer0_ln1_gpu3
+	layer0_ln1_gpu3 -> layer0_gate_gpu3
+	layer0_gate_gpu3 -> layer0_expert12_gpu3 [style=dashed]
+	layer0_ln1_gpu3 -> layer0_expert12_gpu3
+	layer0_expert12_gpu3 -> layer0_expert_agg_gpu3
+	layer0_gate_gpu3 -> layer0_expert13_gpu3 [style=dashed]
+	layer0_ln1_gpu3 -> layer0_expert13_gpu3
+	layer0_expert13_gpu3 -> layer0_expert_agg_gpu3
+	layer0_gate_gpu3 -> layer0_expert14_gpu3 [style=dashed]
+	layer0_ln1_gpu3 -> layer0_expert14_gpu3
+	layer0_expert14_gpu3 -> layer0_expert_agg_gpu3
+	layer0_gate_gpu3 -> layer0_expert15_gpu3 [style=dashed]
+	layer0_ln1_gpu3 -> layer0_expert15_gpu3
+	layer0_expert15_gpu3 -> layer0_expert_agg_gpu3
+	layer0_gate_gpu3 -> layer0_expert_agg_gpu3
+	layer0_expert_agg_gpu3 -> layer0_mlp_out_gpu3
+	layer0_mlp_out_gpu3 -> layer0_output_gpu3
+	layer0_ln1_gpu3 -> layer0_output_gpu3
+	layer0_mha_input_gpu4 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_qkv_gpu4 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_gpu4 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_out_gpu4 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_res_gpu4 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_ln1_gpu4 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert16_gpu4 [label="Expert 16\nMLP [1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert17_gpu4 [label="Expert 17\nMLP [1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert18_gpu4 [label="Expert 18\nMLP [1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert19_gpu4 [label="Expert 19\nMLP [1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_gate_gpu4 [label="Gating Network\n[1024, seq_len, 16]\nGPU 4" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_expert_agg_gpu4 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_mlp_out_gpu4 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_output_gpu4 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	input -> layer0_mha_input_gpu4
+	layer0_mha_input_gpu4 -> layer0_qkv_gpu4
+	layer0_qkv_gpu4 -> layer0_mha_gpu4
+	layer0_mha_gpu4 -> layer0_mha_out_gpu4
+	layer0_mha_out_gpu4 -> layer0_mha_res_gpu4
+	layer0_mha_input_gpu4 -> layer0_mha_res_gpu4
+	layer0_mha_res_gpu4 -> layer0_ln1_gpu4
+	layer0_ln1_gpu4 -> layer0_gate_gpu4
+	layer0_gate_gpu4 -> layer0_expert16_gpu4 [style=dashed]
+	layer0_ln1_gpu4 -> layer0_expert16_gpu4
+	layer0_expert16_gpu4 -> layer0_expert_agg_gpu4
+	layer0_gate_gpu4 -> layer0_expert17_gpu4 [style=dashed]
+	layer0_ln1_gpu4 -> layer0_expert17_gpu4
+	layer0_expert17_gpu4 -> layer0_expert_agg_gpu4
+	layer0_gate_gpu4 -> layer0_expert18_gpu4 [style=dashed]
+	layer0_ln1_gpu4 -> layer0_expert18_gpu4
+	layer0_expert18_gpu4 -> layer0_expert_agg_gpu4
+	layer0_gate_gpu4 -> layer0_expert19_gpu4 [style=dashed]
+	layer0_ln1_gpu4 -> layer0_expert19_gpu4
+	layer0_expert19_gpu4 -> layer0_expert_agg_gpu4
+	layer0_gate_gpu4 -> layer0_expert_agg_gpu4
+	layer0_expert_agg_gpu4 -> layer0_mlp_out_gpu4
+	layer0_mlp_out_gpu4 -> layer0_output_gpu4
+	layer0_ln1_gpu4 -> layer0_output_gpu4
+	layer0_mha_input_gpu5 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_qkv_gpu5 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_gpu5 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_out_gpu5 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_res_gpu5 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_ln1_gpu5 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert20_gpu5 [label="Expert 20\nMLP [1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert21_gpu5 [label="Expert 21\nMLP [1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert22_gpu5 [label="Expert 22\nMLP [1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert23_gpu5 [label="Expert 23\nMLP [1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_gate_gpu5 [label="Gating Network\n[1024, seq_len, 16]\nGPU 5" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_expert_agg_gpu5 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_mlp_out_gpu5 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_output_gpu5 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	input -> layer0_mha_input_gpu5
+	layer0_mha_input_gpu5 -> layer0_qkv_gpu5
+	layer0_qkv_gpu5 -> layer0_mha_gpu5
+	layer0_mha_gpu5 -> layer0_mha_out_gpu5
+	layer0_mha_out_gpu5 -> layer0_mha_res_gpu5
+	layer0_mha_input_gpu5 -> layer0_mha_res_gpu5
+	layer0_mha_res_gpu5 -> layer0_ln1_gpu5
+	layer0_ln1_gpu5 -> layer0_gate_gpu5
+	layer0_gate_gpu5 -> layer0_expert20_gpu5 [style=dashed]
+	layer0_ln1_gpu5 -> layer0_expert20_gpu5
+	layer0_expert20_gpu5 -> layer0_expert_agg_gpu5
+	layer0_gate_gpu5 -> layer0_expert21_gpu5 [style=dashed]
+	layer0_ln1_gpu5 -> layer0_expert21_gpu5
+	layer0_expert21_gpu5 -> layer0_expert_agg_gpu5
+	layer0_gate_gpu5 -> layer0_expert22_gpu5 [style=dashed]
+	layer0_ln1_gpu5 -> layer0_expert22_gpu5
+	layer0_expert22_gpu5 -> layer0_expert_agg_gpu5
+	layer0_gate_gpu5 -> layer0_expert23_gpu5 [style=dashed]
+	layer0_ln1_gpu5 -> layer0_expert23_gpu5
+	layer0_expert23_gpu5 -> layer0_expert_agg_gpu5
+	layer0_gate_gpu5 -> layer0_expert_agg_gpu5
+	layer0_expert_agg_gpu5 -> layer0_mlp_out_gpu5
+	layer0_mlp_out_gpu5 -> layer0_output_gpu5
+	layer0_ln1_gpu5 -> layer0_output_gpu5
+	layer0_mha_input_gpu6 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_qkv_gpu6 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_gpu6 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_out_gpu6 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_res_gpu6 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_ln1_gpu6 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert24_gpu6 [label="Expert 24\nMLP [1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert25_gpu6 [label="Expert 25\nMLP [1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert26_gpu6 [label="Expert 26\nMLP [1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert27_gpu6 [label="Expert 27\nMLP [1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_gate_gpu6 [label="Gating Network\n[1024, seq_len, 16]\nGPU 6" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_expert_agg_gpu6 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_mlp_out_gpu6 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_output_gpu6 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	input -> layer0_mha_input_gpu6
+	layer0_mha_input_gpu6 -> layer0_qkv_gpu6
+	layer0_qkv_gpu6 -> layer0_mha_gpu6
+	layer0_mha_gpu6 -> layer0_mha_out_gpu6
+	layer0_mha_out_gpu6 -> layer0_mha_res_gpu6
+	layer0_mha_input_gpu6 -> layer0_mha_res_gpu6
+	layer0_mha_res_gpu6 -> layer0_ln1_gpu6
+	layer0_ln1_gpu6 -> layer0_gate_gpu6
+	layer0_gate_gpu6 -> layer0_expert24_gpu6 [style=dashed]
+	layer0_ln1_gpu6 -> layer0_expert24_gpu6
+	layer0_expert24_gpu6 -> layer0_expert_agg_gpu6
+	layer0_gate_gpu6 -> layer0_expert25_gpu6 [style=dashed]
+	layer0_ln1_gpu6 -> layer0_expert25_gpu6
+	layer0_expert25_gpu6 -> layer0_expert_agg_gpu6
+	layer0_gate_gpu6 -> layer0_expert26_gpu6 [style=dashed]
+	layer0_ln1_gpu6 -> layer0_expert26_gpu6
+	layer0_expert26_gpu6 -> layer0_expert_agg_gpu6
+	layer0_gate_gpu6 -> layer0_expert27_gpu6 [style=dashed]
+	layer0_ln1_gpu6 -> layer0_expert27_gpu6
+	layer0_expert27_gpu6 -> layer0_expert_agg_gpu6
+	layer0_gate_gpu6 -> layer0_expert_agg_gpu6
+	layer0_expert_agg_gpu6 -> layer0_mlp_out_gpu6
+	layer0_mlp_out_gpu6 -> layer0_output_gpu6
+	layer0_ln1_gpu6 -> layer0_output_gpu6
+	layer0_mha_input_gpu7 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_qkv_gpu7 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_gpu7 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_out_gpu7 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_mha_res_gpu7 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_ln1_gpu7 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert28_gpu7 [label="Expert 28\nMLP [1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert29_gpu7 [label="Expert 29\nMLP [1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert30_gpu7 [label="Expert 30\nMLP [1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_expert31_gpu7 [label="Expert 31\nMLP [1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_gate_gpu7 [label="Gating Network\n[1024, seq_len, 16]\nGPU 7" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_expert_agg_gpu7 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer0_mlp_out_gpu7 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer0_output_gpu7 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	input -> layer0_mha_input_gpu7
+	layer0_mha_input_gpu7 -> layer0_qkv_gpu7
+	layer0_qkv_gpu7 -> layer0_mha_gpu7
+	layer0_mha_gpu7 -> layer0_mha_out_gpu7
+	layer0_mha_out_gpu7 -> layer0_mha_res_gpu7
+	layer0_mha_input_gpu7 -> layer0_mha_res_gpu7
+	layer0_mha_res_gpu7 -> layer0_ln1_gpu7
+	layer0_ln1_gpu7 -> layer0_gate_gpu7
+	layer0_gate_gpu7 -> layer0_expert28_gpu7 [style=dashed]
+	layer0_ln1_gpu7 -> layer0_expert28_gpu7
+	layer0_expert28_gpu7 -> layer0_expert_agg_gpu7
+	layer0_gate_gpu7 -> layer0_expert29_gpu7 [style=dashed]
+	layer0_ln1_gpu7 -> layer0_expert29_gpu7
+	layer0_expert29_gpu7 -> layer0_expert_agg_gpu7
+	layer0_gate_gpu7 -> layer0_expert30_gpu7 [style=dashed]
+	layer0_ln1_gpu7 -> layer0_expert30_gpu7
+	layer0_expert30_gpu7 -> layer0_expert_agg_gpu7
+	layer0_gate_gpu7 -> layer0_expert31_gpu7 [style=dashed]
+	layer0_ln1_gpu7 -> layer0_expert31_gpu7
+	layer0_expert31_gpu7 -> layer0_expert_agg_gpu7
+	layer0_gate_gpu7 -> layer0_expert_agg_gpu7
+	layer0_expert_agg_gpu7 -> layer0_mlp_out_gpu7
+	layer0_mlp_out_gpu7 -> layer0_output_gpu7
+	layer0_ln1_gpu7 -> layer0_output_gpu7
+	layer1_mha_input_gpu8 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_qkv_gpu8 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_gpu8 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_out_gpu8 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_res_gpu8 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_ln1_gpu8 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert0_gpu8 [label="Expert 0\nMLP [1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert1_gpu8 [label="Expert 1\nMLP [1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert2_gpu8 [label="Expert 2\nMLP [1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert3_gpu8 [label="Expert 3\nMLP [1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_gate_gpu8 [label="Gating Network\n[1024, seq_len, 16]\nGPU 8" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_expert_agg_gpu8 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_mlp_out_gpu8 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_output_gpu8 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_input_gpu8 -> layer1_qkv_gpu8
+	layer1_qkv_gpu8 -> layer1_mha_gpu8
+	layer1_mha_gpu8 -> layer1_mha_out_gpu8
+	layer1_mha_out_gpu8 -> layer1_mha_res_gpu8
+	layer1_mha_input_gpu8 -> layer1_mha_res_gpu8
+	layer1_mha_res_gpu8 -> layer1_ln1_gpu8
+	layer1_ln1_gpu8 -> layer1_gate_gpu8
+	layer1_gate_gpu8 -> layer1_expert0_gpu8 [style=dashed]
+	layer1_ln1_gpu8 -> layer1_expert0_gpu8
+	layer1_expert0_gpu8 -> layer1_expert_agg_gpu8
+	layer1_gate_gpu8 -> layer1_expert1_gpu8 [style=dashed]
+	layer1_ln1_gpu8 -> layer1_expert1_gpu8
+	layer1_expert1_gpu8 -> layer1_expert_agg_gpu8
+	layer1_gate_gpu8 -> layer1_expert2_gpu8 [style=dashed]
+	layer1_ln1_gpu8 -> layer1_expert2_gpu8
+	layer1_expert2_gpu8 -> layer1_expert_agg_gpu8
+	layer1_gate_gpu8 -> layer1_expert3_gpu8 [style=dashed]
+	layer1_ln1_gpu8 -> layer1_expert3_gpu8
+	layer1_expert3_gpu8 -> layer1_expert_agg_gpu8
+	layer1_gate_gpu8 -> layer1_expert_agg_gpu8
+	layer1_expert_agg_gpu8 -> layer1_mlp_out_gpu8
+	layer1_mlp_out_gpu8 -> layer1_output_gpu8
+	layer1_ln1_gpu8 -> layer1_output_gpu8
+	layer1_mha_input_gpu9 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_qkv_gpu9 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_gpu9 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_out_gpu9 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_res_gpu9 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_ln1_gpu9 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert4_gpu9 [label="Expert 4\nMLP [1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert5_gpu9 [label="Expert 5\nMLP [1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert6_gpu9 [label="Expert 6\nMLP [1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert7_gpu9 [label="Expert 7\nMLP [1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_gate_gpu9 [label="Gating Network\n[1024, seq_len, 16]\nGPU 9" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_expert_agg_gpu9 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_mlp_out_gpu9 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_output_gpu9 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_input_gpu9 -> layer1_qkv_gpu9
+	layer1_qkv_gpu9 -> layer1_mha_gpu9
+	layer1_mha_gpu9 -> layer1_mha_out_gpu9
+	layer1_mha_out_gpu9 -> layer1_mha_res_gpu9
+	layer1_mha_input_gpu9 -> layer1_mha_res_gpu9
+	layer1_mha_res_gpu9 -> layer1_ln1_gpu9
+	layer1_ln1_gpu9 -> layer1_gate_gpu9
+	layer1_gate_gpu9 -> layer1_expert4_gpu9 [style=dashed]
+	layer1_ln1_gpu9 -> layer1_expert4_gpu9
+	layer1_expert4_gpu9 -> layer1_expert_agg_gpu9
+	layer1_gate_gpu9 -> layer1_expert5_gpu9 [style=dashed]
+	layer1_ln1_gpu9 -> layer1_expert5_gpu9
+	layer1_expert5_gpu9 -> layer1_expert_agg_gpu9
+	layer1_gate_gpu9 -> layer1_expert6_gpu9 [style=dashed]
+	layer1_ln1_gpu9 -> layer1_expert6_gpu9
+	layer1_expert6_gpu9 -> layer1_expert_agg_gpu9
+	layer1_gate_gpu9 -> layer1_expert7_gpu9 [style=dashed]
+	layer1_ln1_gpu9 -> layer1_expert7_gpu9
+	layer1_expert7_gpu9 -> layer1_expert_agg_gpu9
+	layer1_gate_gpu9 -> layer1_expert_agg_gpu9
+	layer1_expert_agg_gpu9 -> layer1_mlp_out_gpu9
+	layer1_mlp_out_gpu9 -> layer1_output_gpu9
+	layer1_ln1_gpu9 -> layer1_output_gpu9
+	layer1_mha_input_gpu10 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_qkv_gpu10 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_gpu10 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_out_gpu10 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_res_gpu10 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_ln1_gpu10 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert8_gpu10 [label="Expert 8\nMLP [1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert9_gpu10 [label="Expert 9\nMLP [1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert10_gpu10 [label="Expert 10\nMLP [1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert11_gpu10 [label="Expert 11\nMLP [1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_gate_gpu10 [label="Gating Network\n[1024, seq_len, 16]\nGPU 10" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_expert_agg_gpu10 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_mlp_out_gpu10 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_output_gpu10 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_input_gpu10 -> layer1_qkv_gpu10
+	layer1_qkv_gpu10 -> layer1_mha_gpu10
+	layer1_mha_gpu10 -> layer1_mha_out_gpu10
+	layer1_mha_out_gpu10 -> layer1_mha_res_gpu10
+	layer1_mha_input_gpu10 -> layer1_mha_res_gpu10
+	layer1_mha_res_gpu10 -> layer1_ln1_gpu10
+	layer1_ln1_gpu10 -> layer1_gate_gpu10
+	layer1_gate_gpu10 -> layer1_expert8_gpu10 [style=dashed]
+	layer1_ln1_gpu10 -> layer1_expert8_gpu10
+	layer1_expert8_gpu10 -> layer1_expert_agg_gpu10
+	layer1_gate_gpu10 -> layer1_expert9_gpu10 [style=dashed]
+	layer1_ln1_gpu10 -> layer1_expert9_gpu10
+	layer1_expert9_gpu10 -> layer1_expert_agg_gpu10
+	layer1_gate_gpu10 -> layer1_expert10_gpu10 [style=dashed]
+	layer1_ln1_gpu10 -> layer1_expert10_gpu10
+	layer1_expert10_gpu10 -> layer1_expert_agg_gpu10
+	layer1_gate_gpu10 -> layer1_expert11_gpu10 [style=dashed]
+	layer1_ln1_gpu10 -> layer1_expert11_gpu10
+	layer1_expert11_gpu10 -> layer1_expert_agg_gpu10
+	layer1_gate_gpu10 -> layer1_expert_agg_gpu10
+	layer1_expert_agg_gpu10 -> layer1_mlp_out_gpu10
+	layer1_mlp_out_gpu10 -> layer1_output_gpu10
+	layer1_ln1_gpu10 -> layer1_output_gpu10
+	layer1_mha_input_gpu11 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_qkv_gpu11 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_gpu11 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_out_gpu11 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_res_gpu11 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_ln1_gpu11 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert12_gpu11 [label="Expert 12\nMLP [1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert13_gpu11 [label="Expert 13\nMLP [1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert14_gpu11 [label="Expert 14\nMLP [1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert15_gpu11 [label="Expert 15\nMLP [1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_gate_gpu11 [label="Gating Network\n[1024, seq_len, 16]\nGPU 11" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_expert_agg_gpu11 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_mlp_out_gpu11 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_output_gpu11 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_input_gpu11 -> layer1_qkv_gpu11
+	layer1_qkv_gpu11 -> layer1_mha_gpu11
+	layer1_mha_gpu11 -> layer1_mha_out_gpu11
+	layer1_mha_out_gpu11 -> layer1_mha_res_gpu11
+	layer1_mha_input_gpu11 -> layer1_mha_res_gpu11
+	layer1_mha_res_gpu11 -> layer1_ln1_gpu11
+	layer1_ln1_gpu11 -> layer1_gate_gpu11
+	layer1_gate_gpu11 -> layer1_expert12_gpu11 [style=dashed]
+	layer1_ln1_gpu11 -> layer1_expert12_gpu11
+	layer1_expert12_gpu11 -> layer1_expert_agg_gpu11
+	layer1_gate_gpu11 -> layer1_expert13_gpu11 [style=dashed]
+	layer1_ln1_gpu11 -> layer1_expert13_gpu11
+	layer1_expert13_gpu11 -> layer1_expert_agg_gpu11
+	layer1_gate_gpu11 -> layer1_expert14_gpu11 [style=dashed]
+	layer1_ln1_gpu11 -> layer1_expert14_gpu11
+	layer1_expert14_gpu11 -> layer1_expert_agg_gpu11
+	layer1_gate_gpu11 -> layer1_expert15_gpu11 [style=dashed]
+	layer1_ln1_gpu11 -> layer1_expert15_gpu11
+	layer1_expert15_gpu11 -> layer1_expert_agg_gpu11
+	layer1_gate_gpu11 -> layer1_expert_agg_gpu11
+	layer1_expert_agg_gpu11 -> layer1_mlp_out_gpu11
+	layer1_mlp_out_gpu11 -> layer1_output_gpu11
+	layer1_ln1_gpu11 -> layer1_output_gpu11
+	layer1_mha_input_gpu12 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_qkv_gpu12 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_gpu12 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_out_gpu12 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_res_gpu12 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_ln1_gpu12 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert16_gpu12 [label="Expert 16\nMLP [1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert17_gpu12 [label="Expert 17\nMLP [1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert18_gpu12 [label="Expert 18\nMLP [1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert19_gpu12 [label="Expert 19\nMLP [1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_gate_gpu12 [label="Gating Network\n[1024, seq_len, 16]\nGPU 12" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_expert_agg_gpu12 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_mlp_out_gpu12 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_output_gpu12 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_input_gpu12 -> layer1_qkv_gpu12
+	layer1_qkv_gpu12 -> layer1_mha_gpu12
+	layer1_mha_gpu12 -> layer1_mha_out_gpu12
+	layer1_mha_out_gpu12 -> layer1_mha_res_gpu12
+	layer1_mha_input_gpu12 -> layer1_mha_res_gpu12
+	layer1_mha_res_gpu12 -> layer1_ln1_gpu12
+	layer1_ln1_gpu12 -> layer1_gate_gpu12
+	layer1_gate_gpu12 -> layer1_expert16_gpu12 [style=dashed]
+	layer1_ln1_gpu12 -> layer1_expert16_gpu12
+	layer1_expert16_gpu12 -> layer1_expert_agg_gpu12
+	layer1_gate_gpu12 -> layer1_expert17_gpu12 [style=dashed]
+	layer1_ln1_gpu12 -> layer1_expert17_gpu12
+	layer1_expert17_gpu12 -> layer1_expert_agg_gpu12
+	layer1_gate_gpu12 -> layer1_expert18_gpu12 [style=dashed]
+	layer1_ln1_gpu12 -> layer1_expert18_gpu12
+	layer1_expert18_gpu12 -> layer1_expert_agg_gpu12
+	layer1_gate_gpu12 -> layer1_expert19_gpu12 [style=dashed]
+	layer1_ln1_gpu12 -> layer1_expert19_gpu12
+	layer1_expert19_gpu12 -> layer1_expert_agg_gpu12
+	layer1_gate_gpu12 -> layer1_expert_agg_gpu12
+	layer1_expert_agg_gpu12 -> layer1_mlp_out_gpu12
+	layer1_mlp_out_gpu12 -> layer1_output_gpu12
+	layer1_ln1_gpu12 -> layer1_output_gpu12
+	layer1_mha_input_gpu13 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_qkv_gpu13 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_gpu13 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_out_gpu13 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_res_gpu13 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_ln1_gpu13 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert20_gpu13 [label="Expert 20\nMLP [1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert21_gpu13 [label="Expert 21\nMLP [1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert22_gpu13 [label="Expert 22\nMLP [1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert23_gpu13 [label="Expert 23\nMLP [1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_gate_gpu13 [label="Gating Network\n[1024, seq_len, 16]\nGPU 13" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_expert_agg_gpu13 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_mlp_out_gpu13 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_output_gpu13 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_input_gpu13 -> layer1_qkv_gpu13
+	layer1_qkv_gpu13 -> layer1_mha_gpu13
+	layer1_mha_gpu13 -> layer1_mha_out_gpu13
+	layer1_mha_out_gpu13 -> layer1_mha_res_gpu13
+	layer1_mha_input_gpu13 -> layer1_mha_res_gpu13
+	layer1_mha_res_gpu13 -> layer1_ln1_gpu13
+	layer1_ln1_gpu13 -> layer1_gate_gpu13
+	layer1_gate_gpu13 -> layer1_expert20_gpu13 [style=dashed]
+	layer1_ln1_gpu13 -> layer1_expert20_gpu13
+	layer1_expert20_gpu13 -> layer1_expert_agg_gpu13
+	layer1_gate_gpu13 -> layer1_expert21_gpu13 [style=dashed]
+	layer1_ln1_gpu13 -> layer1_expert21_gpu13
+	layer1_expert21_gpu13 -> layer1_expert_agg_gpu13
+	layer1_gate_gpu13 -> layer1_expert22_gpu13 [style=dashed]
+	layer1_ln1_gpu13 -> layer1_expert22_gpu13
+	layer1_expert22_gpu13 -> layer1_expert_agg_gpu13
+	layer1_gate_gpu13 -> layer1_expert23_gpu13 [style=dashed]
+	layer1_ln1_gpu13 -> layer1_expert23_gpu13
+	layer1_expert23_gpu13 -> layer1_expert_agg_gpu13
+	layer1_gate_gpu13 -> layer1_expert_agg_gpu13
+	layer1_expert_agg_gpu13 -> layer1_mlp_out_gpu13
+	layer1_mlp_out_gpu13 -> layer1_output_gpu13
+	layer1_ln1_gpu13 -> layer1_output_gpu13
+	layer1_mha_input_gpu14 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_qkv_gpu14 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_gpu14 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_out_gpu14 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_res_gpu14 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_ln1_gpu14 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert24_gpu14 [label="Expert 24\nMLP [1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert25_gpu14 [label="Expert 25\nMLP [1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert26_gpu14 [label="Expert 26\nMLP [1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert27_gpu14 [label="Expert 27\nMLP [1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_gate_gpu14 [label="Gating Network\n[1024, seq_len, 16]\nGPU 14" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_expert_agg_gpu14 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_mlp_out_gpu14 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_output_gpu14 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_input_gpu14 -> layer1_qkv_gpu14
+	layer1_qkv_gpu14 -> layer1_mha_gpu14
+	layer1_mha_gpu14 -> layer1_mha_out_gpu14
+	layer1_mha_out_gpu14 -> layer1_mha_res_gpu14
+	layer1_mha_input_gpu14 -> layer1_mha_res_gpu14
+	layer1_mha_res_gpu14 -> layer1_ln1_gpu14
+	layer1_ln1_gpu14 -> layer1_gate_gpu14
+	layer1_gate_gpu14 -> layer1_expert24_gpu14 [style=dashed]
+	layer1_ln1_gpu14 -> layer1_expert24_gpu14
+	layer1_expert24_gpu14 -> layer1_expert_agg_gpu14
+	layer1_gate_gpu14 -> layer1_expert25_gpu14 [style=dashed]
+	layer1_ln1_gpu14 -> layer1_expert25_gpu14
+	layer1_expert25_gpu14 -> layer1_expert_agg_gpu14
+	layer1_gate_gpu14 -> layer1_expert26_gpu14 [style=dashed]
+	layer1_ln1_gpu14 -> layer1_expert26_gpu14
+	layer1_expert26_gpu14 -> layer1_expert_agg_gpu14
+	layer1_gate_gpu14 -> layer1_expert27_gpu14 [style=dashed]
+	layer1_ln1_gpu14 -> layer1_expert27_gpu14
+	layer1_expert27_gpu14 -> layer1_expert_agg_gpu14
+	layer1_gate_gpu14 -> layer1_expert_agg_gpu14
+	layer1_expert_agg_gpu14 -> layer1_mlp_out_gpu14
+	layer1_mlp_out_gpu14 -> layer1_output_gpu14
+	layer1_ln1_gpu14 -> layer1_output_gpu14
+	layer1_mha_input_gpu15 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_qkv_gpu15 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_gpu15 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_out_gpu15 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_res_gpu15 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_ln1_gpu15 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert28_gpu15 [label="Expert 28\nMLP [1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert29_gpu15 [label="Expert 29\nMLP [1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert30_gpu15 [label="Expert 30\nMLP [1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_expert31_gpu15 [label="Expert 31\nMLP [1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_gate_gpu15 [label="Gating Network\n[1024, seq_len, 16]\nGPU 15" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_expert_agg_gpu15 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer1_mlp_out_gpu15 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_output_gpu15 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer1_mha_input_gpu15 -> layer1_qkv_gpu15
+	layer1_qkv_gpu15 -> layer1_mha_gpu15
+	layer1_mha_gpu15 -> layer1_mha_out_gpu15
+	layer1_mha_out_gpu15 -> layer1_mha_res_gpu15
+	layer1_mha_input_gpu15 -> layer1_mha_res_gpu15
+	layer1_mha_res_gpu15 -> layer1_ln1_gpu15
+	layer1_ln1_gpu15 -> layer1_gate_gpu15
+	layer1_gate_gpu15 -> layer1_expert28_gpu15 [style=dashed]
+	layer1_ln1_gpu15 -> layer1_expert28_gpu15
+	layer1_expert28_gpu15 -> layer1_expert_agg_gpu15
+	layer1_gate_gpu15 -> layer1_expert29_gpu15 [style=dashed]
+	layer1_ln1_gpu15 -> layer1_expert29_gpu15
+	layer1_expert29_gpu15 -> layer1_expert_agg_gpu15
+	layer1_gate_gpu15 -> layer1_expert30_gpu15 [style=dashed]
+	layer1_ln1_gpu15 -> layer1_expert30_gpu15
+	layer1_expert30_gpu15 -> layer1_expert_agg_gpu15
+	layer1_gate_gpu15 -> layer1_expert31_gpu15 [style=dashed]
+	layer1_ln1_gpu15 -> layer1_expert31_gpu15
+	layer1_expert31_gpu15 -> layer1_expert_agg_gpu15
+	layer1_gate_gpu15 -> layer1_expert_agg_gpu15
+	layer1_expert_agg_gpu15 -> layer1_mlp_out_gpu15
+	layer1_mlp_out_gpu15 -> layer1_output_gpu15
+	layer1_ln1_gpu15 -> layer1_output_gpu15
+	pipe_comm_1 [label="Pipeline Comm\nLayer 0 -> 1" fillcolor="#FFF2CC" shape=ellipse style="filled, dashed"]
+	layer0_output_gpu0 -> pipe_comm_1
+	pipe_comm_1 -> layer1_mha_input_gpu8
+	layer0_output_gpu1 -> pipe_comm_1
+	pipe_comm_1 -> layer1_mha_input_gpu9
+	layer0_output_gpu2 -> pipe_comm_1
+	pipe_comm_1 -> layer1_mha_input_gpu10
+	layer0_output_gpu3 -> pipe_comm_1
+	pipe_comm_1 -> layer1_mha_input_gpu11
+	layer0_output_gpu4 -> pipe_comm_1
+	pipe_comm_1 -> layer1_mha_input_gpu12
+	layer0_output_gpu5 -> pipe_comm_1
+	pipe_comm_1 -> layer1_mha_input_gpu13
+	layer0_output_gpu6 -> pipe_comm_1
+	pipe_comm_1 -> layer1_mha_input_gpu14
+	layer0_output_gpu7 -> pipe_comm_1
+	pipe_comm_1 -> layer1_mha_input_gpu15
+	layer2_mha_input_gpu0 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_qkv_gpu0 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_gpu0 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_out_gpu0 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_res_gpu0 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_ln1_gpu0 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert0_gpu0 [label="Expert 0\nMLP [1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert1_gpu0 [label="Expert 1\nMLP [1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert2_gpu0 [label="Expert 2\nMLP [1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert3_gpu0 [label="Expert 3\nMLP [1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_gate_gpu0 [label="Gating Network\n[1024, seq_len, 16]\nGPU 0" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_expert_agg_gpu0 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_mlp_out_gpu0 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_output_gpu0 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 0" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_input_gpu0 -> layer2_qkv_gpu0
+	layer2_qkv_gpu0 -> layer2_mha_gpu0
+	layer2_mha_gpu0 -> layer2_mha_out_gpu0
+	layer2_mha_out_gpu0 -> layer2_mha_res_gpu0
+	layer2_mha_input_gpu0 -> layer2_mha_res_gpu0
+	layer2_mha_res_gpu0 -> layer2_ln1_gpu0
+	layer2_ln1_gpu0 -> layer2_gate_gpu0
+	layer2_gate_gpu0 -> layer2_expert0_gpu0 [style=dashed]
+	layer2_ln1_gpu0 -> layer2_expert0_gpu0
+	layer2_expert0_gpu0 -> layer2_expert_agg_gpu0
+	layer2_gate_gpu0 -> layer2_expert1_gpu0 [style=dashed]
+	layer2_ln1_gpu0 -> layer2_expert1_gpu0
+	layer2_expert1_gpu0 -> layer2_expert_agg_gpu0
+	layer2_gate_gpu0 -> layer2_expert2_gpu0 [style=dashed]
+	layer2_ln1_gpu0 -> layer2_expert2_gpu0
+	layer2_expert2_gpu0 -> layer2_expert_agg_gpu0
+	layer2_gate_gpu0 -> layer2_expert3_gpu0 [style=dashed]
+	layer2_ln1_gpu0 -> layer2_expert3_gpu0
+	layer2_expert3_gpu0 -> layer2_expert_agg_gpu0
+	layer2_gate_gpu0 -> layer2_expert_agg_gpu0
+	layer2_expert_agg_gpu0 -> layer2_mlp_out_gpu0
+	layer2_mlp_out_gpu0 -> layer2_output_gpu0
+	layer2_ln1_gpu0 -> layer2_output_gpu0
+	layer2_mha_input_gpu1 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_qkv_gpu1 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_gpu1 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_out_gpu1 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_res_gpu1 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_ln1_gpu1 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert4_gpu1 [label="Expert 4\nMLP [1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert5_gpu1 [label="Expert 5\nMLP [1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert6_gpu1 [label="Expert 6\nMLP [1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert7_gpu1 [label="Expert 7\nMLP [1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_gate_gpu1 [label="Gating Network\n[1024, seq_len, 16]\nGPU 1" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_expert_agg_gpu1 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_mlp_out_gpu1 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_output_gpu1 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 1" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_input_gpu1 -> layer2_qkv_gpu1
+	layer2_qkv_gpu1 -> layer2_mha_gpu1
+	layer2_mha_gpu1 -> layer2_mha_out_gpu1
+	layer2_mha_out_gpu1 -> layer2_mha_res_gpu1
+	layer2_mha_input_gpu1 -> layer2_mha_res_gpu1
+	layer2_mha_res_gpu1 -> layer2_ln1_gpu1
+	layer2_ln1_gpu1 -> layer2_gate_gpu1
+	layer2_gate_gpu1 -> layer2_expert4_gpu1 [style=dashed]
+	layer2_ln1_gpu1 -> layer2_expert4_gpu1
+	layer2_expert4_gpu1 -> layer2_expert_agg_gpu1
+	layer2_gate_gpu1 -> layer2_expert5_gpu1 [style=dashed]
+	layer2_ln1_gpu1 -> layer2_expert5_gpu1
+	layer2_expert5_gpu1 -> layer2_expert_agg_gpu1
+	layer2_gate_gpu1 -> layer2_expert6_gpu1 [style=dashed]
+	layer2_ln1_gpu1 -> layer2_expert6_gpu1
+	layer2_expert6_gpu1 -> layer2_expert_agg_gpu1
+	layer2_gate_gpu1 -> layer2_expert7_gpu1 [style=dashed]
+	layer2_ln1_gpu1 -> layer2_expert7_gpu1
+	layer2_expert7_gpu1 -> layer2_expert_agg_gpu1
+	layer2_gate_gpu1 -> layer2_expert_agg_gpu1
+	layer2_expert_agg_gpu1 -> layer2_mlp_out_gpu1
+	layer2_mlp_out_gpu1 -> layer2_output_gpu1
+	layer2_ln1_gpu1 -> layer2_output_gpu1
+	layer2_mha_input_gpu2 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_qkv_gpu2 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_gpu2 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_out_gpu2 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_res_gpu2 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_ln1_gpu2 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert8_gpu2 [label="Expert 8\nMLP [1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert9_gpu2 [label="Expert 9\nMLP [1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert10_gpu2 [label="Expert 10\nMLP [1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert11_gpu2 [label="Expert 11\nMLP [1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_gate_gpu2 [label="Gating Network\n[1024, seq_len, 16]\nGPU 2" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_expert_agg_gpu2 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_mlp_out_gpu2 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_output_gpu2 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 2" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_input_gpu2 -> layer2_qkv_gpu2
+	layer2_qkv_gpu2 -> layer2_mha_gpu2
+	layer2_mha_gpu2 -> layer2_mha_out_gpu2
+	layer2_mha_out_gpu2 -> layer2_mha_res_gpu2
+	layer2_mha_input_gpu2 -> layer2_mha_res_gpu2
+	layer2_mha_res_gpu2 -> layer2_ln1_gpu2
+	layer2_ln1_gpu2 -> layer2_gate_gpu2
+	layer2_gate_gpu2 -> layer2_expert8_gpu2 [style=dashed]
+	layer2_ln1_gpu2 -> layer2_expert8_gpu2
+	layer2_expert8_gpu2 -> layer2_expert_agg_gpu2
+	layer2_gate_gpu2 -> layer2_expert9_gpu2 [style=dashed]
+	layer2_ln1_gpu2 -> layer2_expert9_gpu2
+	layer2_expert9_gpu2 -> layer2_expert_agg_gpu2
+	layer2_gate_gpu2 -> layer2_expert10_gpu2 [style=dashed]
+	layer2_ln1_gpu2 -> layer2_expert10_gpu2
+	layer2_expert10_gpu2 -> layer2_expert_agg_gpu2
+	layer2_gate_gpu2 -> layer2_expert11_gpu2 [style=dashed]
+	layer2_ln1_gpu2 -> layer2_expert11_gpu2
+	layer2_expert11_gpu2 -> layer2_expert_agg_gpu2
+	layer2_gate_gpu2 -> layer2_expert_agg_gpu2
+	layer2_expert_agg_gpu2 -> layer2_mlp_out_gpu2
+	layer2_mlp_out_gpu2 -> layer2_output_gpu2
+	layer2_ln1_gpu2 -> layer2_output_gpu2
+	layer2_mha_input_gpu3 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_qkv_gpu3 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_gpu3 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_out_gpu3 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_res_gpu3 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_ln1_gpu3 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert12_gpu3 [label="Expert 12\nMLP [1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert13_gpu3 [label="Expert 13\nMLP [1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert14_gpu3 [label="Expert 14\nMLP [1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert15_gpu3 [label="Expert 15\nMLP [1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_gate_gpu3 [label="Gating Network\n[1024, seq_len, 16]\nGPU 3" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_expert_agg_gpu3 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_mlp_out_gpu3 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_output_gpu3 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 3" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_input_gpu3 -> layer2_qkv_gpu3
+	layer2_qkv_gpu3 -> layer2_mha_gpu3
+	layer2_mha_gpu3 -> layer2_mha_out_gpu3
+	layer2_mha_out_gpu3 -> layer2_mha_res_gpu3
+	layer2_mha_input_gpu3 -> layer2_mha_res_gpu3
+	layer2_mha_res_gpu3 -> layer2_ln1_gpu3
+	layer2_ln1_gpu3 -> layer2_gate_gpu3
+	layer2_gate_gpu3 -> layer2_expert12_gpu3 [style=dashed]
+	layer2_ln1_gpu3 -> layer2_expert12_gpu3
+	layer2_expert12_gpu3 -> layer2_expert_agg_gpu3
+	layer2_gate_gpu3 -> layer2_expert13_gpu3 [style=dashed]
+	layer2_ln1_gpu3 -> layer2_expert13_gpu3
+	layer2_expert13_gpu3 -> layer2_expert_agg_gpu3
+	layer2_gate_gpu3 -> layer2_expert14_gpu3 [style=dashed]
+	layer2_ln1_gpu3 -> layer2_expert14_gpu3
+	layer2_expert14_gpu3 -> layer2_expert_agg_gpu3
+	layer2_gate_gpu3 -> layer2_expert15_gpu3 [style=dashed]
+	layer2_ln1_gpu3 -> layer2_expert15_gpu3
+	layer2_expert15_gpu3 -> layer2_expert_agg_gpu3
+	layer2_gate_gpu3 -> layer2_expert_agg_gpu3
+	layer2_expert_agg_gpu3 -> layer2_mlp_out_gpu3
+	layer2_mlp_out_gpu3 -> layer2_output_gpu3
+	layer2_ln1_gpu3 -> layer2_output_gpu3
+	layer2_mha_input_gpu4 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_qkv_gpu4 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_gpu4 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_out_gpu4 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_res_gpu4 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_ln1_gpu4 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert16_gpu4 [label="Expert 16\nMLP [1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert17_gpu4 [label="Expert 17\nMLP [1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert18_gpu4 [label="Expert 18\nMLP [1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert19_gpu4 [label="Expert 19\nMLP [1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_gate_gpu4 [label="Gating Network\n[1024, seq_len, 16]\nGPU 4" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_expert_agg_gpu4 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_mlp_out_gpu4 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_output_gpu4 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 4" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_input_gpu4 -> layer2_qkv_gpu4
+	layer2_qkv_gpu4 -> layer2_mha_gpu4
+	layer2_mha_gpu4 -> layer2_mha_out_gpu4
+	layer2_mha_out_gpu4 -> layer2_mha_res_gpu4
+	layer2_mha_input_gpu4 -> layer2_mha_res_gpu4
+	layer2_mha_res_gpu4 -> layer2_ln1_gpu4
+	layer2_ln1_gpu4 -> layer2_gate_gpu4
+	layer2_gate_gpu4 -> layer2_expert16_gpu4 [style=dashed]
+	layer2_ln1_gpu4 -> layer2_expert16_gpu4
+	layer2_expert16_gpu4 -> layer2_expert_agg_gpu4
+	layer2_gate_gpu4 -> layer2_expert17_gpu4 [style=dashed]
+	layer2_ln1_gpu4 -> layer2_expert17_gpu4
+	layer2_expert17_gpu4 -> layer2_expert_agg_gpu4
+	layer2_gate_gpu4 -> layer2_expert18_gpu4 [style=dashed]
+	layer2_ln1_gpu4 -> layer2_expert18_gpu4
+	layer2_expert18_gpu4 -> layer2_expert_agg_gpu4
+	layer2_gate_gpu4 -> layer2_expert19_gpu4 [style=dashed]
+	layer2_ln1_gpu4 -> layer2_expert19_gpu4
+	layer2_expert19_gpu4 -> layer2_expert_agg_gpu4
+	layer2_gate_gpu4 -> layer2_expert_agg_gpu4
+	layer2_expert_agg_gpu4 -> layer2_mlp_out_gpu4
+	layer2_mlp_out_gpu4 -> layer2_output_gpu4
+	layer2_ln1_gpu4 -> layer2_output_gpu4
+	layer2_mha_input_gpu5 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_qkv_gpu5 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_gpu5 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_out_gpu5 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_res_gpu5 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_ln1_gpu5 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert20_gpu5 [label="Expert 20\nMLP [1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert21_gpu5 [label="Expert 21\nMLP [1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert22_gpu5 [label="Expert 22\nMLP [1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert23_gpu5 [label="Expert 23\nMLP [1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_gate_gpu5 [label="Gating Network\n[1024, seq_len, 16]\nGPU 5" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_expert_agg_gpu5 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_mlp_out_gpu5 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_output_gpu5 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 5" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_input_gpu5 -> layer2_qkv_gpu5
+	layer2_qkv_gpu5 -> layer2_mha_gpu5
+	layer2_mha_gpu5 -> layer2_mha_out_gpu5
+	layer2_mha_out_gpu5 -> layer2_mha_res_gpu5
+	layer2_mha_input_gpu5 -> layer2_mha_res_gpu5
+	layer2_mha_res_gpu5 -> layer2_ln1_gpu5
+	layer2_ln1_gpu5 -> layer2_gate_gpu5
+	layer2_gate_gpu5 -> layer2_expert20_gpu5 [style=dashed]
+	layer2_ln1_gpu5 -> layer2_expert20_gpu5
+	layer2_expert20_gpu5 -> layer2_expert_agg_gpu5
+	layer2_gate_gpu5 -> layer2_expert21_gpu5 [style=dashed]
+	layer2_ln1_gpu5 -> layer2_expert21_gpu5
+	layer2_expert21_gpu5 -> layer2_expert_agg_gpu5
+	layer2_gate_gpu5 -> layer2_expert22_gpu5 [style=dashed]
+	layer2_ln1_gpu5 -> layer2_expert22_gpu5
+	layer2_expert22_gpu5 -> layer2_expert_agg_gpu5
+	layer2_gate_gpu5 -> layer2_expert23_gpu5 [style=dashed]
+	layer2_ln1_gpu5 -> layer2_expert23_gpu5
+	layer2_expert23_gpu5 -> layer2_expert_agg_gpu5
+	layer2_gate_gpu5 -> layer2_expert_agg_gpu5
+	layer2_expert_agg_gpu5 -> layer2_mlp_out_gpu5
+	layer2_mlp_out_gpu5 -> layer2_output_gpu5
+	layer2_ln1_gpu5 -> layer2_output_gpu5
+	layer2_mha_input_gpu6 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_qkv_gpu6 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_gpu6 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_out_gpu6 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_res_gpu6 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_ln1_gpu6 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert24_gpu6 [label="Expert 24\nMLP [1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert25_gpu6 [label="Expert 25\nMLP [1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert26_gpu6 [label="Expert 26\nMLP [1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert27_gpu6 [label="Expert 27\nMLP [1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_gate_gpu6 [label="Gating Network\n[1024, seq_len, 16]\nGPU 6" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_expert_agg_gpu6 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_mlp_out_gpu6 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_output_gpu6 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 6" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_input_gpu6 -> layer2_qkv_gpu6
+	layer2_qkv_gpu6 -> layer2_mha_gpu6
+	layer2_mha_gpu6 -> layer2_mha_out_gpu6
+	layer2_mha_out_gpu6 -> layer2_mha_res_gpu6
+	layer2_mha_input_gpu6 -> layer2_mha_res_gpu6
+	layer2_mha_res_gpu6 -> layer2_ln1_gpu6
+	layer2_ln1_gpu6 -> layer2_gate_gpu6
+	layer2_gate_gpu6 -> layer2_expert24_gpu6 [style=dashed]
+	layer2_ln1_gpu6 -> layer2_expert24_gpu6
+	layer2_expert24_gpu6 -> layer2_expert_agg_gpu6
+	layer2_gate_gpu6 -> layer2_expert25_gpu6 [style=dashed]
+	layer2_ln1_gpu6 -> layer2_expert25_gpu6
+	layer2_expert25_gpu6 -> layer2_expert_agg_gpu6
+	layer2_gate_gpu6 -> layer2_expert26_gpu6 [style=dashed]
+	layer2_ln1_gpu6 -> layer2_expert26_gpu6
+	layer2_expert26_gpu6 -> layer2_expert_agg_gpu6
+	layer2_gate_gpu6 -> layer2_expert27_gpu6 [style=dashed]
+	layer2_ln1_gpu6 -> layer2_expert27_gpu6
+	layer2_expert27_gpu6 -> layer2_expert_agg_gpu6
+	layer2_gate_gpu6 -> layer2_expert_agg_gpu6
+	layer2_expert_agg_gpu6 -> layer2_mlp_out_gpu6
+	layer2_mlp_out_gpu6 -> layer2_output_gpu6
+	layer2_ln1_gpu6 -> layer2_output_gpu6
+	layer2_mha_input_gpu7 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_qkv_gpu7 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_gpu7 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_out_gpu7 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_res_gpu7 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_ln1_gpu7 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert28_gpu7 [label="Expert 28\nMLP [1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert29_gpu7 [label="Expert 29\nMLP [1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert30_gpu7 [label="Expert 30\nMLP [1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_expert31_gpu7 [label="Expert 31\nMLP [1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_gate_gpu7 [label="Gating Network\n[1024, seq_len, 16]\nGPU 7" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_expert_agg_gpu7 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer2_mlp_out_gpu7 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_output_gpu7 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 7" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer2_mha_input_gpu7 -> layer2_qkv_gpu7
+	layer2_qkv_gpu7 -> layer2_mha_gpu7
+	layer2_mha_gpu7 -> layer2_mha_out_gpu7
+	layer2_mha_out_gpu7 -> layer2_mha_res_gpu7
+	layer2_mha_input_gpu7 -> layer2_mha_res_gpu7
+	layer2_mha_res_gpu7 -> layer2_ln1_gpu7
+	layer2_ln1_gpu7 -> layer2_gate_gpu7
+	layer2_gate_gpu7 -> layer2_expert28_gpu7 [style=dashed]
+	layer2_ln1_gpu7 -> layer2_expert28_gpu7
+	layer2_expert28_gpu7 -> layer2_expert_agg_gpu7
+	layer2_gate_gpu7 -> layer2_expert29_gpu7 [style=dashed]
+	layer2_ln1_gpu7 -> layer2_expert29_gpu7
+	layer2_expert29_gpu7 -> layer2_expert_agg_gpu7
+	layer2_gate_gpu7 -> layer2_expert30_gpu7 [style=dashed]
+	layer2_ln1_gpu7 -> layer2_expert30_gpu7
+	layer2_expert30_gpu7 -> layer2_expert_agg_gpu7
+	layer2_gate_gpu7 -> layer2_expert31_gpu7 [style=dashed]
+	layer2_ln1_gpu7 -> layer2_expert31_gpu7
+	layer2_expert31_gpu7 -> layer2_expert_agg_gpu7
+	layer2_gate_gpu7 -> layer2_expert_agg_gpu7
+	layer2_expert_agg_gpu7 -> layer2_mlp_out_gpu7
+	layer2_mlp_out_gpu7 -> layer2_output_gpu7
+	layer2_ln1_gpu7 -> layer2_output_gpu7
+	pipe_comm_2 [label="Pipeline Comm\nLayer 1 -> 2" fillcolor="#FFF2CC" shape=ellipse style="filled, dashed"]
+	layer1_output_gpu8 -> pipe_comm_2
+	pipe_comm_2 -> layer2_mha_input_gpu0
+	layer1_output_gpu9 -> pipe_comm_2
+	pipe_comm_2 -> layer2_mha_input_gpu1
+	layer1_output_gpu10 -> pipe_comm_2
+	pipe_comm_2 -> layer2_mha_input_gpu2
+	layer1_output_gpu11 -> pipe_comm_2
+	pipe_comm_2 -> layer2_mha_input_gpu3
+	layer1_output_gpu12 -> pipe_comm_2
+	pipe_comm_2 -> layer2_mha_input_gpu4
+	layer1_output_gpu13 -> pipe_comm_2
+	pipe_comm_2 -> layer2_mha_input_gpu5
+	layer1_output_gpu14 -> pipe_comm_2
+	pipe_comm_2 -> layer2_mha_input_gpu6
+	layer1_output_gpu15 -> pipe_comm_2
+	pipe_comm_2 -> layer2_mha_input_gpu7
+	layer3_mha_input_gpu8 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_qkv_gpu8 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_gpu8 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_out_gpu8 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_res_gpu8 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_ln1_gpu8 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert0_gpu8 [label="Expert 0\nMLP [1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert1_gpu8 [label="Expert 1\nMLP [1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert2_gpu8 [label="Expert 2\nMLP [1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert3_gpu8 [label="Expert 3\nMLP [1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_gate_gpu8 [label="Gating Network\n[1024, seq_len, 16]\nGPU 8" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_expert_agg_gpu8 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_mlp_out_gpu8 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_output_gpu8 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 8" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_input_gpu8 -> layer3_qkv_gpu8
+	layer3_qkv_gpu8 -> layer3_mha_gpu8
+	layer3_mha_gpu8 -> layer3_mha_out_gpu8
+	layer3_mha_out_gpu8 -> layer3_mha_res_gpu8
+	layer3_mha_input_gpu8 -> layer3_mha_res_gpu8
+	layer3_mha_res_gpu8 -> layer3_ln1_gpu8
+	layer3_ln1_gpu8 -> layer3_gate_gpu8
+	layer3_gate_gpu8 -> layer3_expert0_gpu8 [style=dashed]
+	layer3_ln1_gpu8 -> layer3_expert0_gpu8
+	layer3_expert0_gpu8 -> layer3_expert_agg_gpu8
+	layer3_gate_gpu8 -> layer3_expert1_gpu8 [style=dashed]
+	layer3_ln1_gpu8 -> layer3_expert1_gpu8
+	layer3_expert1_gpu8 -> layer3_expert_agg_gpu8
+	layer3_gate_gpu8 -> layer3_expert2_gpu8 [style=dashed]
+	layer3_ln1_gpu8 -> layer3_expert2_gpu8
+	layer3_expert2_gpu8 -> layer3_expert_agg_gpu8
+	layer3_gate_gpu8 -> layer3_expert3_gpu8 [style=dashed]
+	layer3_ln1_gpu8 -> layer3_expert3_gpu8
+	layer3_expert3_gpu8 -> layer3_expert_agg_gpu8
+	layer3_gate_gpu8 -> layer3_expert_agg_gpu8
+	layer3_expert_agg_gpu8 -> layer3_mlp_out_gpu8
+	layer3_mlp_out_gpu8 -> layer3_output_gpu8
+	layer3_ln1_gpu8 -> layer3_output_gpu8
+	layer3_mha_input_gpu9 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_qkv_gpu9 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_gpu9 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_out_gpu9 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_res_gpu9 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_ln1_gpu9 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert4_gpu9 [label="Expert 4\nMLP [1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert5_gpu9 [label="Expert 5\nMLP [1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert6_gpu9 [label="Expert 6\nMLP [1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert7_gpu9 [label="Expert 7\nMLP [1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_gate_gpu9 [label="Gating Network\n[1024, seq_len, 16]\nGPU 9" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_expert_agg_gpu9 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_mlp_out_gpu9 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_output_gpu9 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 9" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_input_gpu9 -> layer3_qkv_gpu9
+	layer3_qkv_gpu9 -> layer3_mha_gpu9
+	layer3_mha_gpu9 -> layer3_mha_out_gpu9
+	layer3_mha_out_gpu9 -> layer3_mha_res_gpu9
+	layer3_mha_input_gpu9 -> layer3_mha_res_gpu9
+	layer3_mha_res_gpu9 -> layer3_ln1_gpu9
+	layer3_ln1_gpu9 -> layer3_gate_gpu9
+	layer3_gate_gpu9 -> layer3_expert4_gpu9 [style=dashed]
+	layer3_ln1_gpu9 -> layer3_expert4_gpu9
+	layer3_expert4_gpu9 -> layer3_expert_agg_gpu9
+	layer3_gate_gpu9 -> layer3_expert5_gpu9 [style=dashed]
+	layer3_ln1_gpu9 -> layer3_expert5_gpu9
+	layer3_expert5_gpu9 -> layer3_expert_agg_gpu9
+	layer3_gate_gpu9 -> layer3_expert6_gpu9 [style=dashed]
+	layer3_ln1_gpu9 -> layer3_expert6_gpu9
+	layer3_expert6_gpu9 -> layer3_expert_agg_gpu9
+	layer3_gate_gpu9 -> layer3_expert7_gpu9 [style=dashed]
+	layer3_ln1_gpu9 -> layer3_expert7_gpu9
+	layer3_expert7_gpu9 -> layer3_expert_agg_gpu9
+	layer3_gate_gpu9 -> layer3_expert_agg_gpu9
+	layer3_expert_agg_gpu9 -> layer3_mlp_out_gpu9
+	layer3_mlp_out_gpu9 -> layer3_output_gpu9
+	layer3_ln1_gpu9 -> layer3_output_gpu9
+	layer3_mha_input_gpu10 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_qkv_gpu10 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_gpu10 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_out_gpu10 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_res_gpu10 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_ln1_gpu10 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert8_gpu10 [label="Expert 8\nMLP [1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert9_gpu10 [label="Expert 9\nMLP [1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert10_gpu10 [label="Expert 10\nMLP [1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert11_gpu10 [label="Expert 11\nMLP [1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_gate_gpu10 [label="Gating Network\n[1024, seq_len, 16]\nGPU 10" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_expert_agg_gpu10 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_mlp_out_gpu10 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_output_gpu10 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 10" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_input_gpu10 -> layer3_qkv_gpu10
+	layer3_qkv_gpu10 -> layer3_mha_gpu10
+	layer3_mha_gpu10 -> layer3_mha_out_gpu10
+	layer3_mha_out_gpu10 -> layer3_mha_res_gpu10
+	layer3_mha_input_gpu10 -> layer3_mha_res_gpu10
+	layer3_mha_res_gpu10 -> layer3_ln1_gpu10
+	layer3_ln1_gpu10 -> layer3_gate_gpu10
+	layer3_gate_gpu10 -> layer3_expert8_gpu10 [style=dashed]
+	layer3_ln1_gpu10 -> layer3_expert8_gpu10
+	layer3_expert8_gpu10 -> layer3_expert_agg_gpu10
+	layer3_gate_gpu10 -> layer3_expert9_gpu10 [style=dashed]
+	layer3_ln1_gpu10 -> layer3_expert9_gpu10
+	layer3_expert9_gpu10 -> layer3_expert_agg_gpu10
+	layer3_gate_gpu10 -> layer3_expert10_gpu10 [style=dashed]
+	layer3_ln1_gpu10 -> layer3_expert10_gpu10
+	layer3_expert10_gpu10 -> layer3_expert_agg_gpu10
+	layer3_gate_gpu10 -> layer3_expert11_gpu10 [style=dashed]
+	layer3_ln1_gpu10 -> layer3_expert11_gpu10
+	layer3_expert11_gpu10 -> layer3_expert_agg_gpu10
+	layer3_gate_gpu10 -> layer3_expert_agg_gpu10
+	layer3_expert_agg_gpu10 -> layer3_mlp_out_gpu10
+	layer3_mlp_out_gpu10 -> layer3_output_gpu10
+	layer3_ln1_gpu10 -> layer3_output_gpu10
+	layer3_mha_input_gpu11 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_qkv_gpu11 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_gpu11 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_out_gpu11 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_res_gpu11 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_ln1_gpu11 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert12_gpu11 [label="Expert 12\nMLP [1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert13_gpu11 [label="Expert 13\nMLP [1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert14_gpu11 [label="Expert 14\nMLP [1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert15_gpu11 [label="Expert 15\nMLP [1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_gate_gpu11 [label="Gating Network\n[1024, seq_len, 16]\nGPU 11" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_expert_agg_gpu11 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_mlp_out_gpu11 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_output_gpu11 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 11" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_input_gpu11 -> layer3_qkv_gpu11
+	layer3_qkv_gpu11 -> layer3_mha_gpu11
+	layer3_mha_gpu11 -> layer3_mha_out_gpu11
+	layer3_mha_out_gpu11 -> layer3_mha_res_gpu11
+	layer3_mha_input_gpu11 -> layer3_mha_res_gpu11
+	layer3_mha_res_gpu11 -> layer3_ln1_gpu11
+	layer3_ln1_gpu11 -> layer3_gate_gpu11
+	layer3_gate_gpu11 -> layer3_expert12_gpu11 [style=dashed]
+	layer3_ln1_gpu11 -> layer3_expert12_gpu11
+	layer3_expert12_gpu11 -> layer3_expert_agg_gpu11
+	layer3_gate_gpu11 -> layer3_expert13_gpu11 [style=dashed]
+	layer3_ln1_gpu11 -> layer3_expert13_gpu11
+	layer3_expert13_gpu11 -> layer3_expert_agg_gpu11
+	layer3_gate_gpu11 -> layer3_expert14_gpu11 [style=dashed]
+	layer3_ln1_gpu11 -> layer3_expert14_gpu11
+	layer3_expert14_gpu11 -> layer3_expert_agg_gpu11
+	layer3_gate_gpu11 -> layer3_expert15_gpu11 [style=dashed]
+	layer3_ln1_gpu11 -> layer3_expert15_gpu11
+	layer3_expert15_gpu11 -> layer3_expert_agg_gpu11
+	layer3_gate_gpu11 -> layer3_expert_agg_gpu11
+	layer3_expert_agg_gpu11 -> layer3_mlp_out_gpu11
+	layer3_mlp_out_gpu11 -> layer3_output_gpu11
+	layer3_ln1_gpu11 -> layer3_output_gpu11
+	layer3_mha_input_gpu12 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_qkv_gpu12 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_gpu12 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_out_gpu12 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_res_gpu12 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_ln1_gpu12 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert16_gpu12 [label="Expert 16\nMLP [1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert17_gpu12 [label="Expert 17\nMLP [1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert18_gpu12 [label="Expert 18\nMLP [1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert19_gpu12 [label="Expert 19\nMLP [1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_gate_gpu12 [label="Gating Network\n[1024, seq_len, 16]\nGPU 12" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_expert_agg_gpu12 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_mlp_out_gpu12 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_output_gpu12 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 12" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_input_gpu12 -> layer3_qkv_gpu12
+	layer3_qkv_gpu12 -> layer3_mha_gpu12
+	layer3_mha_gpu12 -> layer3_mha_out_gpu12
+	layer3_mha_out_gpu12 -> layer3_mha_res_gpu12
+	layer3_mha_input_gpu12 -> layer3_mha_res_gpu12
+	layer3_mha_res_gpu12 -> layer3_ln1_gpu12
+	layer3_ln1_gpu12 -> layer3_gate_gpu12
+	layer3_gate_gpu12 -> layer3_expert16_gpu12 [style=dashed]
+	layer3_ln1_gpu12 -> layer3_expert16_gpu12
+	layer3_expert16_gpu12 -> layer3_expert_agg_gpu12
+	layer3_gate_gpu12 -> layer3_expert17_gpu12 [style=dashed]
+	layer3_ln1_gpu12 -> layer3_expert17_gpu12
+	layer3_expert17_gpu12 -> layer3_expert_agg_gpu12
+	layer3_gate_gpu12 -> layer3_expert18_gpu12 [style=dashed]
+	layer3_ln1_gpu12 -> layer3_expert18_gpu12
+	layer3_expert18_gpu12 -> layer3_expert_agg_gpu12
+	layer3_gate_gpu12 -> layer3_expert19_gpu12 [style=dashed]
+	layer3_ln1_gpu12 -> layer3_expert19_gpu12
+	layer3_expert19_gpu12 -> layer3_expert_agg_gpu12
+	layer3_gate_gpu12 -> layer3_expert_agg_gpu12
+	layer3_expert_agg_gpu12 -> layer3_mlp_out_gpu12
+	layer3_mlp_out_gpu12 -> layer3_output_gpu12
+	layer3_ln1_gpu12 -> layer3_output_gpu12
+	layer3_mha_input_gpu13 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_qkv_gpu13 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_gpu13 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_out_gpu13 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_res_gpu13 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_ln1_gpu13 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert20_gpu13 [label="Expert 20\nMLP [1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert21_gpu13 [label="Expert 21\nMLP [1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert22_gpu13 [label="Expert 22\nMLP [1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert23_gpu13 [label="Expert 23\nMLP [1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_gate_gpu13 [label="Gating Network\n[1024, seq_len, 16]\nGPU 13" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_expert_agg_gpu13 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_mlp_out_gpu13 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_output_gpu13 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 13" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_input_gpu13 -> layer3_qkv_gpu13
+	layer3_qkv_gpu13 -> layer3_mha_gpu13
+	layer3_mha_gpu13 -> layer3_mha_out_gpu13
+	layer3_mha_out_gpu13 -> layer3_mha_res_gpu13
+	layer3_mha_input_gpu13 -> layer3_mha_res_gpu13
+	layer3_mha_res_gpu13 -> layer3_ln1_gpu13
+	layer3_ln1_gpu13 -> layer3_gate_gpu13
+	layer3_gate_gpu13 -> layer3_expert20_gpu13 [style=dashed]
+	layer3_ln1_gpu13 -> layer3_expert20_gpu13
+	layer3_expert20_gpu13 -> layer3_expert_agg_gpu13
+	layer3_gate_gpu13 -> layer3_expert21_gpu13 [style=dashed]
+	layer3_ln1_gpu13 -> layer3_expert21_gpu13
+	layer3_expert21_gpu13 -> layer3_expert_agg_gpu13
+	layer3_gate_gpu13 -> layer3_expert22_gpu13 [style=dashed]
+	layer3_ln1_gpu13 -> layer3_expert22_gpu13
+	layer3_expert22_gpu13 -> layer3_expert_agg_gpu13
+	layer3_gate_gpu13 -> layer3_expert23_gpu13 [style=dashed]
+	layer3_ln1_gpu13 -> layer3_expert23_gpu13
+	layer3_expert23_gpu13 -> layer3_expert_agg_gpu13
+	layer3_gate_gpu13 -> layer3_expert_agg_gpu13
+	layer3_expert_agg_gpu13 -> layer3_mlp_out_gpu13
+	layer3_mlp_out_gpu13 -> layer3_output_gpu13
+	layer3_ln1_gpu13 -> layer3_output_gpu13
+	layer3_mha_input_gpu14 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_qkv_gpu14 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_gpu14 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_out_gpu14 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_res_gpu14 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_ln1_gpu14 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert24_gpu14 [label="Expert 24\nMLP [1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert25_gpu14 [label="Expert 25\nMLP [1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert26_gpu14 [label="Expert 26\nMLP [1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert27_gpu14 [label="Expert 27\nMLP [1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_gate_gpu14 [label="Gating Network\n[1024, seq_len, 16]\nGPU 14" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_expert_agg_gpu14 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_mlp_out_gpu14 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_output_gpu14 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 14" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_input_gpu14 -> layer3_qkv_gpu14
+	layer3_qkv_gpu14 -> layer3_mha_gpu14
+	layer3_mha_gpu14 -> layer3_mha_out_gpu14
+	layer3_mha_out_gpu14 -> layer3_mha_res_gpu14
+	layer3_mha_input_gpu14 -> layer3_mha_res_gpu14
+	layer3_mha_res_gpu14 -> layer3_ln1_gpu14
+	layer3_ln1_gpu14 -> layer3_gate_gpu14
+	layer3_gate_gpu14 -> layer3_expert24_gpu14 [style=dashed]
+	layer3_ln1_gpu14 -> layer3_expert24_gpu14
+	layer3_expert24_gpu14 -> layer3_expert_agg_gpu14
+	layer3_gate_gpu14 -> layer3_expert25_gpu14 [style=dashed]
+	layer3_ln1_gpu14 -> layer3_expert25_gpu14
+	layer3_expert25_gpu14 -> layer3_expert_agg_gpu14
+	layer3_gate_gpu14 -> layer3_expert26_gpu14 [style=dashed]
+	layer3_ln1_gpu14 -> layer3_expert26_gpu14
+	layer3_expert26_gpu14 -> layer3_expert_agg_gpu14
+	layer3_gate_gpu14 -> layer3_expert27_gpu14 [style=dashed]
+	layer3_ln1_gpu14 -> layer3_expert27_gpu14
+	layer3_expert27_gpu14 -> layer3_expert_agg_gpu14
+	layer3_gate_gpu14 -> layer3_expert_agg_gpu14
+	layer3_expert_agg_gpu14 -> layer3_mlp_out_gpu14
+	layer3_mlp_out_gpu14 -> layer3_output_gpu14
+	layer3_ln1_gpu14 -> layer3_output_gpu14
+	layer3_mha_input_gpu15 [label="MHA Input\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_qkv_gpu15 [label="QKV Projection\n[1024, seq_len, 1536]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_gpu15 [label="MHA (2 heads)\n[1024, seq_len, 1024]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_out_gpu15 [label="MHA Output\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_res_gpu15 [label="Residual Add\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_ln1_gpu15 [label="Layer Norm\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert28_gpu15 [label="Expert 28\nMLP [1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert29_gpu15 [label="Expert 29\nMLP [1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert30_gpu15 [label="Expert 30\nMLP [1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_expert31_gpu15 [label="Expert 31\nMLP [1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_gate_gpu15 [label="Gating Network\n[1024, seq_len, 16]\nGPU 15" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_expert_agg_gpu15 [label="Expert Aggregation\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E1F5E1" shape=parallelogram style=filled]
+	layer3_mlp_out_gpu15 [label="MLP Output\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_output_gpu15 [label="Layer Output\n[1024, seq_len, 8192]\nGPU 15" fillcolor="#E8F4FD" shape=rectangle style=filled]
+	layer3_mha_input_gpu15 -> layer3_qkv_gpu15
+	layer3_qkv_gpu15 -> layer3_mha_gpu15
+	layer3_mha_gpu15 -> layer3_mha_out_gpu15
+	layer3_mha_out_gpu15 -> layer3_mha_res_gpu15
+	layer3_mha_input_gpu15 -> layer3_mha_res_gpu15
+	layer3_mha_res_gpu15 -> layer3_ln1_gpu15
+	layer3_ln1_gpu15 -> layer3_gate_gpu15
+	layer3_gate_gpu15 -> layer3_expert28_gpu15 [style=dashed]
+	layer3_ln1_gpu15 -> layer3_expert28_gpu15
+	layer3_expert28_gpu15 -> layer3_expert_agg_gpu15
+	layer3_gate_gpu15 -> layer3_expert29_gpu15 [style=dashed]
+	layer3_ln1_gpu15 -> layer3_expert29_gpu15
+	layer3_expert29_gpu15 -> layer3_expert_agg_gpu15
+	layer3_gate_gpu15 -> layer3_expert30_gpu15 [style=dashed]
+	layer3_ln1_gpu15 -> layer3_expert30_gpu15
+	layer3_expert30_gpu15 -> layer3_expert_agg_gpu15
+	layer3_gate_gpu15 -> layer3_expert31_gpu15 [style=dashed]
+	layer3_ln1_gpu15 -> layer3_expert31_gpu15
+	layer3_expert31_gpu15 -> layer3_expert_agg_gpu15
+	layer3_gate_gpu15 -> layer3_expert_agg_gpu15
+	layer3_expert_agg_gpu15 -> layer3_mlp_out_gpu15
+	layer3_mlp_out_gpu15 -> layer3_output_gpu15
+	layer3_ln1_gpu15 -> layer3_output_gpu15
+	pipe_comm_3 [label="Pipeline Comm\nLayer 2 -> 3" fillcolor="#FFF2CC" shape=ellipse style="filled, dashed"]
+	layer2_output_gpu0 -> pipe_comm_3
+	pipe_comm_3 -> layer3_mha_input_gpu8
+	layer2_output_gpu1 -> pipe_comm_3
+	pipe_comm_3 -> layer3_mha_input_gpu9
+	layer2_output_gpu2 -> pipe_comm_3
+	pipe_comm_3 -> layer3_mha_input_gpu10
+	layer2_output_gpu3 -> pipe_comm_3
+	pipe_comm_3 -> layer3_mha_input_gpu11
+	layer2_output_gpu4 -> pipe_comm_3
+	pipe_comm_3 -> layer3_mha_input_gpu12
+	layer2_output_gpu5 -> pipe_comm_3
+	pipe_comm_3 -> layer3_mha_input_gpu13
+	layer2_output_gpu6 -> pipe_comm_3
+	pipe_comm_3 -> layer3_mha_input_gpu14
+	layer2_output_gpu7 -> pipe_comm_3
+	pipe_comm_3 -> layer3_mha_input_gpu15
+	output [label="Output\n[1024, seq_len, 8192]" fillcolor="#FFE6E6" shape=ellipse style=filled]
+	layer3_output_gpu8 -> output
+	layer3_output_gpu9 -> output
+	layer3_output_gpu10 -> output
+	layer3_output_gpu11 -> output
+	layer3_output_gpu12 -> output
+	layer3_output_gpu13 -> output
+	layer3_output_gpu14 -> output
+	layer3_output_gpu15 -> output
+}
