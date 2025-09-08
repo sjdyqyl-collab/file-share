@@ -1,0 +1,293 @@
+// Baseline MoE Deployment (TP=8, PP=2, 16 GPUs)
+digraph baseline_moe {
+	rankdir=TB size="20,20"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=yellow shape=parallelogram style=filled]
+	node [fillcolor=orange shape=diamond style=filled]
+	input [label="Input\n[1024 seqs, 10000 tokens, 8192 dim]\nAll GPUs" shape=ellipse]
+	subgraph cluster_stage1 {
+		label="Pipeline Stage 1\nGPUs 0-7" style=dashed
+		l1_norm1 [label="LayerNorm1\n[1024×10000×8192]\nGPUs 0-7" shape=rectangle]
+		l1_mha_qkv [label="MHA QKV\n[1024×10000×8192]\nGPUs 0-7 (TP=8)" shape=rectangle]
+		l1_mha_attn [label="MHA Attention\n[1024×10000×8192]\nGPUs 0-7 (TP=8)" shape=rectangle]
+		l1_mha_out [label="MHA Output\n[1024×10000×8192]\nGPUs 0-7 (TP=8)" shape=rectangle]
+		l1_res1 [label="Residual Add1\n[1024×10000×8192]\nGPUs 0-7" shape=parallelogram]
+		l1_norm2 [label="LayerNorm2\n[1024×10000×8192]\nGPUs 0-7" shape=rectangle]
+		l1_gate [label="Gate\n[1024×10000×16 experts]\nGPUs 0-7" shape=parallelogram]
+		l1_exp0 [label="Expert0\n[1024×10000×32768]\nGPU 0" shape=rectangle]
+		l1_exp1 [label="Expert1\n[1024×10000×32768]\nGPU 0" shape=rectangle]
+		l1_exp2 [label="Expert2\n[1024×10000×32768]\nGPU 0" shape=rectangle]
+		l1_exp3 [label="Expert3\n[1024×10000×32768]\nGPU 0" shape=rectangle]
+		l1_exp4 [label="Expert4\n[1024×10000×32768]\nGPU 1" shape=rectangle]
+		l1_exp5 [label="Expert5\n[1024×10000×32768]\nGPU 1" shape=rectangle]
+		l1_exp6 [label="Expert6\n[1024×10000×32768]\nGPU 1" shape=rectangle]
+		l1_exp7 [label="Expert7\n[1024×10000×32768]\nGPU 1" shape=rectangle]
+		l1_exp8 [label="Expert8\n[1024×10000×32768]\nGPU 2" shape=rectangle]
+		l1_exp9 [label="Expert9\n[1024×10000×32768]\nGPU 2" shape=rectangle]
+		l1_exp10 [label="Expert10\n[1024×10000×32768]\nGPU 2" shape=rectangle]
+		l1_exp11 [label="Expert11\n[1024×10000×32768]\nGPU 2" shape=rectangle]
+		l1_exp12 [label="Expert12\n[1024×10000×32768]\nGPU 3" shape=rectangle]
+		l1_exp13 [label="Expert13\n[1024×10000×32768]\nGPU 3" shape=rectangle]
+		l1_exp14 [label="Expert14\n[1024×10000×32768]\nGPU 3" shape=rectangle]
+		l1_exp15 [label="Expert15\n[1024×10000×32768]\nGPU 3" shape=rectangle]
+		l1_agg [label="Expert Aggregation\n[1024×10000×8192]\nGPUs 0-7" shape=parallelogram]
+		l1_res2 [label="Residual Add2\n[1024×10000×8192]\nGPUs 0-7" shape=parallelogram]
+	}
+	subgraph cluster_stage2 {
+		label="Pipeline Stage 2\nGPUs 8-15" style=dashed
+		stage1_to_stage2 [label="Pipeline Communication\n[1024×10000×8192]\nGPUs 7→8" shape=diamond]
+		l3_norm1 [label="LayerNorm3\n[1024×10000×8192]\nGPUs 8-15" shape=rectangle]
+		l3_mha_qkv [label="MHA QKV\n[1024×10000×8192]\nGPUs 8-15 (TP=8)" shape=rectangle]
+		l3_mha_attn [label="MHA Attention\n[1024×10000×8192]\nGPUs 8-15 (TP=8)" shape=rectangle]
+		l3_mha_out [label="MHA Output\n[1024×10000×8192]\nGPUs 8-15 (TP=8)" shape=rectangle]
+		l3_res1 [label="Residual Add3\n[1024×10000×8192]\nGPUs 8-15" shape=parallelogram]
+		l3_norm2 [label="LayerNorm4\n[1024×10000×8192]\nGPUs 8-15" shape=rectangle]
+		l3_gate [label="Gate\n[1024×10000×16 experts]\nGPUs 8-15" shape=parallelogram]
+		l3_exp0 [label="Expert0\n[1024×10000×32768]\nGPU 8" shape=rectangle]
+		l3_exp1 [label="Expert1\n[1024×10000×32768]\nGPU 8" shape=rectangle]
+		l3_exp2 [label="Expert2\n[1024×10000×32768]\nGPU 8" shape=rectangle]
+		l3_exp3 [label="Expert3\n[1024×10000×32768]\nGPU 8" shape=rectangle]
+		l3_exp4 [label="Expert4\n[1024×10000×32768]\nGPU 9" shape=rectangle]
+		l3_exp5 [label="Expert5\n[1024×10000×32768]\nGPU 9" shape=rectangle]
+		l3_exp6 [label="Expert6\n[1024×10000×32768]\nGPU 9" shape=rectangle]
+		l3_exp7 [label="Expert7\n[1024×10000×32768]\nGPU 9" shape=rectangle]
+		l3_exp8 [label="Expert8\n[1024×10000×32768]\nGPU 10" shape=rectangle]
+		l3_exp9 [label="Expert9\n[1024×10000×32768]\nGPU 10" shape=rectangle]
+		l3_exp10 [label="Expert10\n[1024×10000×32768]\nGPU 10" shape=rectangle]
+		l3_exp11 [label="Expert11\n[1024×10000×32768]\nGPU 10" shape=rectangle]
+		l3_exp12 [label="Expert12\n[1024×10000×32768]\nGPU 11" shape=rectangle]
+		l3_exp13 [label="Expert13\n[1024×10000×32768]\nGPU 11" shape=rectangle]
+		l3_exp14 [label="Expert14\n[1024×10000×32768]\nGPU 11" shape=rectangle]
+		l3_exp15 [label="Expert15\n[1024×10000×32768]\nGPU 11" shape=rectangle]
+		l3_agg [label="Expert Aggregation\n[1024×10000×8192]\nGPUs 8-15" shape=parallelogram]
+		l3_res2 [label="Residual Add4\n[1024×10000×8192]\nGPUs 8-15" shape=parallelogram]
+	}
+	subgraph cluster_layer2 {
+		label="Layer 2\nGPUs 0-7" style=dotted
+		l2_norm1 [label="LayerNorm2\n[1024×10000×8192]\nGPUs 0-7" shape=rectangle]
+		l2_mha_qkv [label="MHA QKV2\n[1024×10000×8192]\nGPUs 0-7 (TP=8)" shape=rectangle]
+		l2_mha_attn [label="MHA Attention2\n[1024×10000×8192]\nGPUs 0-7 (TP=8)" shape=rectangle]
+		l2_mha_out [label="MHA Output2\n[1024×10000×8192]\nGPUs 0-7 (TP=8)" shape=rectangle]
+		l2_res1 [label="Residual Add2\n[1024×10000×8192]\nGPUs 0-7" shape=parallelogram]
+		l2_norm2 [label="LayerNorm2\n[1024×10000×8192]\nGPUs 0-7" shape=rectangle]
+		l2_gate [label="Gate2\n[1024×10000×16 experts]\nGPUs 0-7" shape=parallelogram]
+		l2_exp0 [label="Expert0\n[1024×10000×32768]\nGPU 4" shape=rectangle]
+		l2_exp1 [label="Expert1\n[1024×10000×32768]\nGPU 4" shape=rectangle]
+		l2_exp2 [label="Expert2\n[1024×10000×32768]\nGPU 4" shape=rectangle]
+		l2_exp3 [label="Expert3\n[1024×10000×32768]\nGPU 4" shape=rectangle]
+		l2_exp4 [label="Expert4\n[1024×10000×32768]\nGPU 5" shape=rectangle]
+		l2_exp5 [label="Expert5\n[1024×10000×32768]\nGPU 5" shape=rectangle]
+		l2_exp6 [label="Expert6\n[1024×10000×32768]\nGPU 5" shape=rectangle]
+		l2_exp7 [label="Expert7\n[1024×10000×32768]\nGPU 5" shape=rectangle]
+		l2_exp8 [label="Expert8\n[1024×10000×32768]\nGPU 6" shape=rectangle]
+		l2_exp9 [label="Expert9\n[1024×10000×32768]\nGPU 6" shape=rectangle]
+		l2_exp10 [label="Expert10\n[1024×10000×32768]\nGPU 6" shape=rectangle]
+		l2_exp11 [label="Expert11\n[1024×10000×32768]\nGPU 6" shape=rectangle]
+		l2_exp12 [label="Expert12\n[1024×10000×32768]\nGPU 7" shape=rectangle]
+		l2_exp13 [label="Expert13\n[1024×10000×32768]\nGPU 7" shape=rectangle]
+		l2_exp14 [label="Expert14\n[1024×10000×32768]\nGPU 7" shape=rectangle]
+		l2_exp15 [label="Expert15\n[1024×10000×32768]\nGPU 7" shape=rectangle]
+		l2_agg [label="Expert Aggregation2\n[1024×10000×8192]\nGPUs 0-7" shape=parallelogram]
+		l2_res2 [label="Residual Add2\n[1024×10000×8192]\nGPUs 0-7" shape=parallelogram]
+	}
+	subgraph cluster_layer4 {
+		label="Layer 4\nGPUs 8-15" style=dotted
+		l4_norm1 [label="LayerNorm4\n[1024×10000×8192]\nGPUs 8-15" shape=rectangle]
+		l4_mha_qkv [label="MHA QKV4\n[1024×10000×8192]\nGPUs 8-15 (TP=8)" shape=rectangle]
+		l4_mha_attn [label="MHA Attention4\n[1024×10000×8192]\nGPUs 8-15 (TP=8)" shape=rectangle]
+		l4_mha_out [label="MHA Output4\n[1024×10000×8192]\nGPUs 8-15 (TP=8)" shape=rectangle]
+		l4_res1 [label="Residual Add4\n[1024×10000×8192]\nGPUs 8-15" shape=parallelogram]
+		l4_norm2 [label="LayerNorm4\n[1024×10000×8192]\nGPUs 8-15" shape=rectangle]
+		l4_gate [label="Gate4\n[1024×10000×16 experts]\nGPUs 8-15" shape=parallelogram]
+		l4_exp0 [label="Expert0\n[1024×10000×32768]\nGPU 12" shape=rectangle]
+		l4_exp1 [label="Expert1\n[1024×10000×32768]\nGPU 12" shape=rectangle]
+		l4_exp2 [label="Expert2\n[1024×10000×32768]\nGPU 12" shape=rectangle]
+		l4_exp3 [label="Expert3\n[1024×10000×32768]\nGPU 12" shape=rectangle]
+		l4_exp4 [label="Expert4\n[1024×10000×32768]\nGPU 13" shape=rectangle]
+		l4_exp5 [label="Expert5\n[1024×10000×32768]\nGPU 13" shape=rectangle]
+		l4_exp6 [label="Expert6\n[1024×10000×32768]\nGPU 13" shape=rectangle]
+		l4_exp7 [label="Expert7\n[1024×10000×32768]\nGPU 13" shape=rectangle]
+		l4_exp8 [label="Expert8\n[1024×10000×32768]\nGPU 14" shape=rectangle]
+		l4_exp9 [label="Expert9\n[1024×10000×32768]\nGPU 14" shape=rectangle]
+		l4_exp10 [label="Expert10\n[1024×10000×32768]\nGPU 14" shape=rectangle]
+		l4_exp11 [label="Expert11\n[1024×10000×32768]\nGPU 14" shape=rectangle]
+		l4_exp12 [label="Expert12\n[1024×10000×32768]\nGPU 15" shape=rectangle]
+		l4_exp13 [label="Expert13\n[1024×10000×32768]\nGPU 15" shape=rectangle]
+		l4_exp14 [label="Expert14\n[1024×10000×32768]\nGPU 15" shape=rectangle]
+		l4_exp15 [label="Expert15\n[1024×10000×32768]\nGPU 15" shape=rectangle]
+		l4_agg [label="Expert Aggregation4\n[1024×10000×8192]\nGPUs 8-15" shape=parallelogram]
+		l4_res2 [label="Residual Add4\n[1024×10000×8192]\nGPUs 8-15" shape=parallelogram]
+	}
+	output [label="Output\n[1024 seqs, 10000 tokens, 8192 dim]\nGPUs 8-15" shape=ellipse]
+	input -> l1_norm1
+	l1_norm1 -> l1_mha_qkv
+	l1_mha_qkv -> l1_mha_attn
+	l1_mha_attn -> l1_mha_out
+	l1_mha_out -> l1_res1
+	input -> l1_res1
+	l1_res1 -> l1_norm2
+	l1_norm2 -> l1_gate
+	l1_gate -> l1_exp0 [style=dashed]
+	l1_exp0 -> l1_agg
+	l1_gate -> l1_exp1 [style=dashed]
+	l1_exp1 -> l1_agg
+	l1_gate -> l1_exp2 [style=dashed]
+	l1_exp2 -> l1_agg
+	l1_gate -> l1_exp3 [style=dashed]
+	l1_exp3 -> l1_agg
+	l1_gate -> l1_exp4 [style=dashed]
+	l1_exp4 -> l1_agg
+	l1_gate -> l1_exp5 [style=dashed]
+	l1_exp5 -> l1_agg
+	l1_gate -> l1_exp6 [style=dashed]
+	l1_exp6 -> l1_agg
+	l1_gate -> l1_exp7 [style=dashed]
+	l1_exp7 -> l1_agg
+	l1_gate -> l1_exp8 [style=dashed]
+	l1_exp8 -> l1_agg
+	l1_gate -> l1_exp9 [style=dashed]
+	l1_exp9 -> l1_agg
+	l1_gate -> l1_exp10 [style=dashed]
+	l1_exp10 -> l1_agg
+	l1_gate -> l1_exp11 [style=dashed]
+	l1_exp11 -> l1_agg
+	l1_gate -> l1_exp12 [style=dashed]
+	l1_exp12 -> l1_agg
+	l1_gate -> l1_exp13 [style=dashed]
+	l1_exp13 -> l1_agg
+	l1_gate -> l1_exp14 [style=dashed]
+	l1_exp14 -> l1_agg
+	l1_gate -> l1_exp15 [style=dashed]
+	l1_exp15 -> l1_agg
+	l1_agg -> l1_res2
+	l1_res1 -> l1_res2
+	l1_res2 -> l2_norm1
+	l2_norm1 -> l2_mha_qkv
+	l2_mha_qkv -> l2_mha_attn
+	l2_mha_attn -> l2_mha_out
+	l2_mha_out -> l2_res1
+	l1_res2 -> l2_res1
+	l2_res1 -> l2_norm2
+	l2_norm2 -> l2_gate
+	l2_gate -> l2_exp0 [style=dashed]
+	l2_exp0 -> l2_agg
+	l2_gate -> l2_exp1 [style=dashed]
+	l2_exp1 -> l2_agg
+	l2_gate -> l2_exp2 [style=dashed]
+	l2_exp2 -> l2_agg
+	l2_gate -> l2_exp3 [style=dashed]
+	l2_exp3 -> l2_agg
+	l2_gate -> l2_exp4 [style=dashed]
+	l2_exp4 -> l2_agg
+	l2_gate -> l2_exp5 [style=dashed]
+	l2_exp5 -> l2_agg
+	l2_gate -> l2_exp6 [style=dashed]
+	l2_exp6 -> l2_agg
+	l2_gate -> l2_exp7 [style=dashed]
+	l2_exp7 -> l2_agg
+	l2_gate -> l2_exp8 [style=dashed]
+	l2_exp8 -> l2_agg
+	l2_gate -> l2_exp9 [style=dashed]
+	l2_exp9 -> l2_agg
+	l2_gate -> l2_exp10 [style=dashed]
+	l2_exp10 -> l2_agg
+	l2_gate -> l2_exp11 [style=dashed]
+	l2_exp11 -> l2_agg
+	l2_gate -> l2_exp12 [style=dashed]
+	l2_exp12 -> l2_agg
+	l2_gate -> l2_exp13 [style=dashed]
+	l2_exp13 -> l2_agg
+	l2_gate -> l2_exp14 [style=dashed]
+	l2_exp14 -> l2_agg
+	l2_gate -> l2_exp15 [style=dashed]
+	l2_exp15 -> l2_agg
+	l2_agg -> l2_res2
+	l2_res1 -> l2_res2
+	l2_res2 -> stage1_to_stage2
+	stage1_to_stage2 -> l3_norm1
+	l3_norm1 -> l3_mha_qkv
+	l3_mha_qkv -> l3_mha_attn
+	l3_mha_attn -> l3_mha_out
+	l3_mha_out -> l3_res1
+	stage1_to_stage2 -> l3_res1
+	l3_res1 -> l3_norm2
+	l3_norm2 -> l3_gate
+	l3_gate -> l3_exp0 [style=dashed]
+	l3_exp0 -> l3_agg
+	l3_gate -> l3_exp1 [style=dashed]
+	l3_exp1 -> l3_agg
+	l3_gate -> l3_exp2 [style=dashed]
+	l3_exp2 -> l3_agg
+	l3_gate -> l3_exp3 [style=dashed]
+	l3_exp3 -> l3_agg
+	l3_gate -> l3_exp4 [style=dashed]
+	l3_exp4 -> l3_agg
+	l3_gate -> l3_exp5 [style=dashed]
+	l3_exp5 -> l3_agg
+	l3_gate -> l3_exp6 [style=dashed]
+	l3_exp6 -> l3_agg
+	l3_gate -> l3_exp7 [style=dashed]
+	l3_exp7 -> l3_agg
+	l3_gate -> l3_exp8 [style=dashed]
+	l3_exp8 -> l3_agg
+	l3_gate -> l3_exp9 [style=dashed]
+	l3_exp9 -> l3_agg
+	l3_gate -> l3_exp10 [style=dashed]
+	l3_exp10 -> l3_agg
+	l3_gate -> l3_exp11 [style=dashed]
+	l3_exp11 -> l3_agg
+	l3_gate -> l3_exp12 [style=dashed]
+	l3_exp12 -> l3_agg
+	l3_gate -> l3_exp13 [style=dashed]
+	l3_exp13 -> l3_agg
+	l3_gate -> l3_exp14 [style=dashed]
+	l3_exp14 -> l3_agg
+	l3_gate -> l3_exp15 [style=dashed]
+	l3_exp15 -> l3_agg
+	l3_agg -> l3_res2
+	l3_res1 -> l3_res2
+	l3_res2 -> l4_norm1
+	l4_norm1 -> l4_mha_qkv
+	l4_mha_qkv -> l4_mha_attn
+	l4_mha_attn -> l4_mha_out
+	l4_mha_out -> l4_res1
+	l3_res2 -> l4_res1
+	l4_res1 -> l4_norm2
+	l4_norm2 -> l4_gate
+	l4_gate -> l4_exp0 [style=dashed]
+	l4_exp0 -> l4_agg
+	l4_gate -> l4_exp1 [style=dashed]
+	l4_exp1 -> l4_agg
+	l4_gate -> l4_exp2 [style=dashed]
+	l4_exp2 -> l4_agg
+	l4_gate -> l4_exp3 [style=dashed]
+	l4_exp3 -> l4_agg
+	l4_gate -> l4_exp4 [style=dashed]
+	l4_exp4 -> l4_agg
+	l4_gate -> l4_exp5 [style=dashed]
+	l4_exp5 -> l4_agg
+	l4_gate -> l4_exp6 [style=dashed]
+	l4_exp6 -> l4_agg
+	l4_gate -> l4_exp7 [style=dashed]
+	l4_exp7 -> l4_agg
+	l4_gate -> l4_exp8 [style=dashed]
+	l4_exp8 -> l4_agg
+	l4_gate -> l4_exp9 [style=dashed]
+	l4_exp9 -> l4_agg
+	l4_gate -> l4_exp10 [style=dashed]
+	l4_exp10 -> l4_agg
+	l4_gate -> l4_exp11 [style=dashed]
+	l4_exp11 -> l4_agg
+	l4_gate -> l4_exp12 [style=dashed]
+	l4_exp12 -> l4_agg
+	l4_gate -> l4_exp13 [style=dashed]
+	l4_exp13 -> l4_agg
+	l4_gate -> l4_exp14 [style=dashed]
+	l4_exp14 -> l4_agg
+	l4_gate -> l4_exp15 [style=dashed]
+	l4_exp15 -> l4_agg
+	l4_agg -> l4_res2
+	l4_res1 -> l4_res2
+	l4_res2 -> output
+}

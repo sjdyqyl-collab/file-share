@@ -1,0 +1,365 @@
+{
+  "deployments": {
+    "baseline": {
+      "name": "Baseline MoE Deployment",
+      "description": "Traditional approach with colocated experts",
+      "parallel_strategy": {
+        "tensor_parallelism": {
+          "degree": 8,
+          "type": "column_and_row_parallel",
+          "parameters": {
+            "partition_dim": "hidden_dimension",
+            "all_reduce_required": true,
+            "communication_library": "NCCL",
+            "backend": "PyTorch_DDP",
+            "module_splitting": {
+              "MHA": {
+                "split_type": "column_parallel",
+                "parameters": {
+                  "query_split": 8,
+                  "key_split": 8,
+                  "value_split": 8,
+                  "head_dimension": 512,
+                  "attention_heads": 16
+                }
+              },
+              "FFN": {
+                "split_type": "row_and_column_parallel",
+                "parameters": {
+                  "column_parallel_size": 32768,
+                  "row_parallel_size": 8192,
+                  "activation_checkpointing": true
+                }
+              }
+            }
+          }
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "type": "layer_wise",
+          "parameters": {
+            "stages": 2,
+            "micro_batches": 8,
+            "micro_batch_size": 128,
+            "schedule": "1F1B",
+            "activation_buffer_size": 8,
+            "communication_library": "NCCL",
+            "pipeline_flush_interval": 1
+          }
+        },
+        "expert_parallelism": {
+          "degree": 4,
+          "type": "colocated",
+          "parameters": {
+            "experts_per_gpu": 4,
+            "placement_strategy": "memory_balanced",
+            "expert_capacity": 1.25,
+            "top_k_routing": 2,
+            "load_balancing_loss": true,
+            "jitter_eps": 0.1
+          }
+        }
+      },
+      "model_configuration": {
+        "layers": 4,
+        "experts_per_layer": 16,
+        "expert_type": "MLP",
+        "token_dimension": 8192,
+        "hidden_size_mlp": 32768,
+        "mha_heads": 16,
+        "head_dimension": 512,
+        "precision": "FP16",
+        "expert_capacity": 1.25,
+        "top_k_routing": 2,
+        "activation_function": "SwiGLU",
+        "normalization": "RMSNorm"
+      },
+      "module_specifications": {
+        "MHA": {
+          "type": "MultiHeadAttention",
+          "parameters": {
+            "hidden_size": 8192,
+            "num_heads": 16,
+            "head_dim": 512,
+            "attention_dropout": 0.1,
+            "sequence_length": 10000
+          }
+        },
+        "MoE": {
+          "type": "MixtureOfExperts",
+          "parameters": {
+            "num_experts": 16,
+            "expert_capacity": 1.25,
+            "top_k": 2,
+            "hidden_size": 32768,
+            "activation_function": "SwiGLU",
+            "expert_dropout": 0.1
+          }
+        },
+        "FFN": {
+          "type": "FeedForwardNetwork",
+          "parameters": {
+            "hidden_size": 8192,
+            "intermediate_size": 32768,
+            "activation_function": "SwiGLU",
+            "dropout": 0.1
+          }
+        }
+      },
+      "device_mapping": {
+        "total_gpus": 16,
+        "gpu_type": "H100",
+        "communication_backend": "NCCL",
+        "mpi_processes": 16,
+        "mapping_strategy": {
+          "stage_0": {
+            "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+            "experts": [0, 1, 2, 3, 4, 5, 6, 7],
+            "experts_per_gpu": 4,
+            "MHA_modules": [0, 1, 2, 3, 4, 5, 6, 7],
+            "FFN_modules": [0, 1, 2, 3, 4, 5, 6, 7]
+          },
+          "stage_1": {
+            "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+            "experts": [8, 9, 10, 11, 12, 13, 14, 15],
+            "experts_per_gpu": 4,
+            "MHA_modules": [8, 9, 10, 11, 12, 13, 14, 15],
+            "FFN_modules": [8, 9, 10, 11, 12, 13, 14, 15]
+          }
+        }
+      },
+      "batch_configuration": {
+        "batch_size": 1024,
+        "sequence_length": 10000,
+        "micro_batch_size": 128,
+        "micro_batches": 8,
+        "gradient_accumulation_steps": 1,
+        "data_parallel_degree": 1
+      },
+      "communication_configuration": {
+        "library": "NCCL",
+        "backend": "PyTorch_DDP",
+        "mpi_implementation": "OpenMPI",
+        "network": "InfiniBand",
+        "bandwidth": "400Gbps"
+      }
+    },
+    "proposed": {
+      "name": "Cross-Node Expert Parallelism",
+      "description": "Large-scale expert parallelism with one expert per GPU",
+      "parallel_strategy": {
+        "tensor_parallelism": {
+          "degree": 1,
+          "type": "optional",
+          "parameters": {
+            "enable_when": "expert_exceeds_memory",
+            "max_degree": 2,
+            "partition_dim": "expert_hidden_dimension",
+            "communication_library": "NCCL",
+            "backend": "PyTorch_DDP"
+          }
+        },
+        "pipeline_parallelism": {
+          "degree": 4,
+          "type": "layer_wise_micro_stages",
+          "parameters": {
+            "stages": 4,
+            "micro_batches": 16,
+            "micro_batch_size": 64,
+            "schedule": "overlapped_communication",
+            "overlap_type": "token_routing",
+            "activation_buffer_size": 16,
+            "communication_library": "NCCL",
+            "pipeline_flush_interval": 1
+          }
+        },
+        "expert_parallelism": {
+          "degree": 64,
+          "type": "distributed",
+          "parameters": {
+            "experts_per_gpu": 1,
+            "placement_strategy": "topology_aware",
+            "cross_node_distribution": true,
+            "min_ep_degree": 16,
+            "expert_capacity": 1.25,
+            "top_k_routing": 2,
+            "load_balancing_loss": true,
+            "jitter_eps": 0.1,
+            "aux_loss_weight": 0.01
+          }
+        }
+      },
+      "model_configuration": {
+        "layers": 4,
+        "experts_per_layer": 16,
+        "expert_type": "MLP",
+        "token_dimension": 8192,
+        "hidden_size_mlp": 32768,
+        "mha_heads": 16,
+        "head_dimension": 512,
+        "precision": "FP16",
+        "expert_capacity": 1.25,
+        "top_k_routing": 2,
+        "activation_function": "SwiGLU",
+        "normalization": "RMSNorm"
+      },
+      "module_specifications": {
+        "MHA": {
+          "type": "MultiHeadAttention",
+          "parameters": {
+            "hidden_size": 8192,
+            "num_heads": 16,
+            "head_dim": 512,
+            "attention_dropout": 0.1,
+            "sequence_length": 10000
+          }
+        },
+        "MoE": {
+          "type": "MixtureOfExperts",
+          "parameters": {
+            "num_experts": 16,
+            "expert_capacity": 1.25,
+            "top_k": 2,
+            "hidden_size": 32768,
+            "activation_function": "SwiGLU",
+            "expert_dropout": 0.1,
+            "routing_algorithm": "learnable_sparse_routing"
+          }
+        },
+        "FFN": {
+          "type": "FeedForwardNetwork",
+          "parameters": {
+            "hidden_size": 8192,
+            "intermediate_size": 32768,
+            "activation_function": "SwiGLU",
+            "dropout": 0.1
+          }
+        }
+      },
+      "device_mapping": {
+        "total_gpus": 64,
+        "gpu_type": "H100",
+        "nodes": 16,
+        "gpus_per_node": 4,
+        "communication_backend": "NCCL",
+        "mpi_processes": 64,
+        "mapping_strategy": {
+          "layer_0": {
+            "MHA_modules": [0, 1, 2, 3],
+            "experts": {
+              "expert_0": {"gpu": 0, "node": 0, "module_id": 0},
+              "expert_1": {"gpu": 1, "node": 0, "module_id": 1},
+              "expert_2": {"gpu": 2, "node": 0, "module_id": 2},
+              "expert_3": {"gpu": 3, "node": 0, "module_id": 3},
+              "expert_4": {"gpu": 4, "node": 1, "module_id": 4},
+              "expert_5": {"gpu": 5, "node": 1, "module_id": 5},
+              "expert_6": {"gpu": 6, "node": 1, "module_id": 6},
+              "expert_7": {"gpu": 7, "node": 1, "module_id": 7},
+              "expert_8": {"gpu": 8, "node": 2, "module_id": 8},
+              "expert_9": {"gpu": 9, "node": 2, "module_id": 9},
+              "expert_10": {"gpu": 10, "node": 2, "module_id": 10},
+              "expert_11": {"gpu": 11, "node": 2, "module_id": 11},
+              "expert_12": {"gpu": 12, "node": 3, "module_id": 12},
+              "expert_13": {"gpu": 13, "node": 3, "module_id": 13},
+              "expert_14": {"gpu": 14, "node": 3, "module_id": 14},
+              "expert_15": {"gpu": 15, "node": 3, "module_id": 15}
+            }
+          },
+          "layer_1": {
+            "MHA_modules": [16, 17, 18, 19],
+            "experts": {
+              "expert_16": {"gpu": 16, "node": 4, "module_id": 16},
+              "expert_17": {"gpu": 17, "node": 4, "module_id": 17},
+              "expert_18": {"gpu": 18, "node": 4, "module_id": 18},
+              "expert_19": {"gpu": 19, "node": 4, "module_id": 19},
+              "expert_20": {"gpu": 20, "node": 5, "module_id": 20},
+              "expert_21": {"gpu": 21, "node": 5, "module_id": 21},
+              "expert_22": {"gpu": 22, "node": 5, "module_id": 22},
+              "expert_23": {"gpu": 23, "node": 5, "module_id": 23},
+              "expert_24": {"gpu": 24, "node": 6, "module_id": 24},
+              "expert_25": {"gpu": 25, "node": 6, "module_id": 25},
+              "expert_26": {"gpu": 26, "node": 6, "module_id": 26},
+              "expert_27": {"gpu": 27, "node": 6, "module_id": 27},
+              "expert_28": {"gpu": 28, "node": 7, "module_id": 28},
+              "expert_29": {"gpu": 29, "node": 7, "module_id": 29},
+              "expert_30": {"gpu": 30, "node": 7, "module_id": 30},
+              "expert_31": {"gpu": 31, "node": 7, "module_id": 31}
+            }
+          },
+          "layer_2": {
+            "MHA_modules": [32, 33, 34, 35],
+            "experts": {
+              "expert_32": {"gpu": 32, "node": 8, "module_id": 32},
+              "expert_33": {"gpu": 33, "node": 8, "module_id": 33},
+              "expert_34": {"gpu": 34, "node": 8, "module_id": 34},
+              "expert_35": {"gpu": 35, "node": 8, "module_id": 35},
+              "expert_36": {"gpu": 36, "node": 9, "module_id": 36},
+              "expert_37": {"gpu": 37, "node": 9, "module_id": 37},
+              "expert_38": {"gpu": 38, "node": 9, "module_id": 38},
+              "expert_39": {"gpu": 39, "node": 9, "module_id": 39},
+              "expert_40": {"gpu": 40, "node": 10, "module_id": 40},
+              "expert_41": {"gpu": 41, "node": 10, "module_id": 41},
+              "expert_42": {"gpu": 42, "node": 10, "module_id": 42},
+              "expert_43": {"gpu": 43, "node": 10, "module_id": 43},
+              "expert_44": {"gpu": 44, "node": 11, "module_id": 44},
+              "expert_45": {"gpu": 45, "node": 11, "module_id": 45},
+              "expert_46": {"gpu": 46, "node": 11, "module_id": 46},
+              "expert_47": {"gpu": 47, "node": 11, "module_id": 47}
+            }
+          },
+          "layer_3": {
+            "MHA_modules": [48, 49, 50, 51],
+            "experts": {
+              "expert_48": {"gpu": 48, "node": 12, "module_id": 48},
+              "expert_49": {"gpu": 49, "node": 12, "module_id": 49},
+              "expert_50": {"gpu": 50, "node": 12, "module_id": 50},
+              "expert_51": {"gpu": 51, "node": 12, "module_id": 51},
+              "expert_52": {"gpu": 52, "node": 13, "module_id": 52},
+              "expert_53": {"gpu": 53, "node": 13, "module_id": 53},
+              "expert_54": {"gpu": 54, "node": 13, "module_id": 54},
+              "expert_55": {"gpu": 55, "node": 13, "module_id": 55},
+              "expert_56": {"gpu": 56, "node": 14, "module_id": 56},
+              "expert_57": {"gpu": 57, "node": 14, "module_id": 57},
+              "expert_58": {"gpu": 58, "node": 14, "module_id": 58},
+              "expert_59": {"gpu": 59, "node": 14, "module_id": 59},
+              "expert_60": {"gpu": 60, "node": 15, "module_id": 60},
+              "expert_61": {"gpu": 61, "node": 15, "module_id": 61},
+              "expert_62": {"gpu": 62, "node": 15, "module_id": 62},
+              "expert_63": {"gpu": 63, "node": 15, "module_id": 63}
+            }
+          }
+        }
+      },
+      "communication_strategy": {
+        "type": "asynchronous_token_routing",
+        "parameters": {
+          "token_batching": true,
+          "overlap_compute_communication": true,
+          "communication_library": "NCCL",
+          "mpi_implementation": "OpenMPI",
+          "topology_aware_routing": true,
+          "load_balancing": "dynamic",
+          "network": "InfiniBand",
+          "bandwidth": "400Gbps",
+          "latency": "2us"
+        }
+      },
+      "batch_configuration": {
+        "batch_size": 1024,
+        "sequence_length": 10000,
+        "micro_batch_size": 64,
+        "micro_batches": 16,
+        "gradient_accumulation_steps": 1,
+        "token_sharding": "destination_expert_based",
+        "data_parallel_degree": 1,
+        "context_parallel_degree": 1
+      },
+      "performance_targets": {
+        "expected_tps": 450000,
+        "expected_tpot_ms": 2.2,
+        "scalability_factor": 3.75,
+        "communication_overhead": "<15%"
+      }
+    }
+  }
+}

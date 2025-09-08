@@ -1,0 +1,1891 @@
+// Proposed Cross-Node Expert Parallelism (EP=64, 64 GPUs)
+digraph proposed_moe {
+	rankdir=TB size="30,30"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=yellow shape=parallelogram style=filled]
+	node [fillcolor=orange shape=diamond style=filled]
+	input [label="Input\n[1024 seqs, 10000 tokens, 8192 dim]\nAll 64 GPUs" shape=ellipse]
+	subgraph cluster_layer1 {
+		label="Layer 1\n64 GPUs, 1 Expert/GPU" style=dashed
+		l1_norm1 [label="LayerNorm1\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l1_mha_qkv [label="MHA QKV1\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l1_mha_attn [label="MHA Attention1\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l1_mha_out [label="MHA Output1\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l1_res1 [label="Residual Add1\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+		l1_norm2 [label="LayerNorm2\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l1_gate [label="Gate1\n[1024×10000×64 experts]\nAll 64 GPUs" shape=parallelogram]
+		l1_exp0 [label="Expert0\n[1024×tokens×32768]\nGPU 0" shape=rectangle]
+		l1_exp1 [label="Expert1\n[1024×tokens×32768]\nGPU 1" shape=rectangle]
+		l1_exp2 [label="Expert2\n[1024×tokens×32768]\nGPU 2" shape=rectangle]
+		l1_exp3 [label="Expert3\n[1024×tokens×32768]\nGPU 3" shape=rectangle]
+		l1_exp4 [label="Expert4\n[1024×tokens×32768]\nGPU 4" shape=rectangle]
+		l1_exp5 [label="Expert5\n[1024×tokens×32768]\nGPU 5" shape=rectangle]
+		l1_exp6 [label="Expert6\n[1024×tokens×32768]\nGPU 6" shape=rectangle]
+		l1_exp7 [label="Expert7\n[1024×tokens×32768]\nGPU 7" shape=rectangle]
+		l1_exp8 [label="Expert8\n[1024×tokens×32768]\nGPU 8" shape=rectangle]
+		l1_exp9 [label="Expert9\n[1024×tokens×32768]\nGPU 9" shape=rectangle]
+		l1_exp10 [label="Expert10\n[1024×tokens×32768]\nGPU 10" shape=rectangle]
+		l1_exp11 [label="Expert11\n[1024×tokens×32768]\nGPU 11" shape=rectangle]
+		l1_exp12 [label="Expert12\n[1024×tokens×32768]\nGPU 12" shape=rectangle]
+		l1_exp13 [label="Expert13\n[1024×tokens×32768]\nGPU 13" shape=rectangle]
+		l1_exp14 [label="Expert14\n[1024×tokens×32768]\nGPU 14" shape=rectangle]
+		l1_exp15 [label="Expert15\n[1024×tokens×32768]\nGPU 15" shape=rectangle]
+		l1_exp16 [label="Expert0\n[1024×tokens×32768]\nGPU 16" shape=rectangle]
+		l1_exp17 [label="Expert1\n[1024×tokens×32768]\nGPU 17" shape=rectangle]
+		l1_exp18 [label="Expert2\n[1024×tokens×32768]\nGPU 18" shape=rectangle]
+		l1_exp19 [label="Expert3\n[1024×tokens×32768]\nGPU 19" shape=rectangle]
+		l1_exp20 [label="Expert4\n[1024×tokens×32768]\nGPU 20" shape=rectangle]
+		l1_exp21 [label="Expert5\n[1024×tokens×32768]\nGPU 21" shape=rectangle]
+		l1_exp22 [label="Expert6\n[1024×tokens×32768]\nGPU 22" shape=rectangle]
+		l1_exp23 [label="Expert7\n[1024×tokens×32768]\nGPU 23" shape=rectangle]
+		l1_exp24 [label="Expert8\n[1024×tokens×32768]\nGPU 24" shape=rectangle]
+		l1_exp25 [label="Expert9\n[1024×tokens×32768]\nGPU 25" shape=rectangle]
+		l1_exp26 [label="Expert10\n[1024×tokens×32768]\nGPU 26" shape=rectangle]
+		l1_exp27 [label="Expert11\n[1024×tokens×32768]\nGPU 27" shape=rectangle]
+		l1_exp28 [label="Expert12\n[1024×tokens×32768]\nGPU 28" shape=rectangle]
+		l1_exp29 [label="Expert13\n[1024×tokens×32768]\nGPU 29" shape=rectangle]
+		l1_exp30 [label="Expert14\n[1024×tokens×32768]\nGPU 30" shape=rectangle]
+		l1_exp31 [label="Expert15\n[1024×tokens×32768]\nGPU 31" shape=rectangle]
+		l1_exp32 [label="Expert0\n[1024×tokens×32768]\nGPU 32" shape=rectangle]
+		l1_exp33 [label="Expert1\n[1024×tokens×32768]\nGPU 33" shape=rectangle]
+		l1_exp34 [label="Expert2\n[1024×tokens×32768]\nGPU 34" shape=rectangle]
+		l1_exp35 [label="Expert3\n[1024×tokens×32768]\nGPU 35" shape=rectangle]
+		l1_exp36 [label="Expert4\n[1024×tokens×32768]\nGPU 36" shape=rectangle]
+		l1_exp37 [label="Expert5\n[1024×tokens×32768]\nGPU 37" shape=rectangle]
+		l1_exp38 [label="Expert6\n[1024×tokens×32768]\nGPU 38" shape=rectangle]
+		l1_exp39 [label="Expert7\n[1024×tokens×32768]\nGPU 39" shape=rectangle]
+		l1_exp40 [label="Expert8\n[1024×tokens×32768]\nGPU 40" shape=rectangle]
+		l1_exp41 [label="Expert9\n[1024×tokens×32768]\nGPU 41" shape=rectangle]
+		l1_exp42 [label="Expert10\n[1024×tokens×32768]\nGPU 42" shape=rectangle]
+		l1_exp43 [label="Expert11\n[1024×tokens×32768]\nGPU 43" shape=rectangle]
+		l1_exp44 [label="Expert12\n[1024×tokens×32768]\nGPU 44" shape=rectangle]
+		l1_exp45 [label="Expert13\n[1024×tokens×32768]\nGPU 45" shape=rectangle]
+		l1_exp46 [label="Expert14\n[1024×tokens×32768]\nGPU 46" shape=rectangle]
+		l1_exp47 [label="Expert15\n[1024×tokens×32768]\nGPU 47" shape=rectangle]
+		l1_exp48 [label="Expert0\n[1024×tokens×32768]\nGPU 48" shape=rectangle]
+		l1_exp49 [label="Expert1\n[1024×tokens×32768]\nGPU 49" shape=rectangle]
+		l1_exp50 [label="Expert2\n[1024×tokens×32768]\nGPU 50" shape=rectangle]
+		l1_exp51 [label="Expert3\n[1024×tokens×32768]\nGPU 51" shape=rectangle]
+		l1_exp52 [label="Expert4\n[1024×tokens×32768]\nGPU 52" shape=rectangle]
+		l1_exp53 [label="Expert5\n[1024×tokens×32768]\nGPU 53" shape=rectangle]
+		l1_exp54 [label="Expert6\n[1024×tokens×32768]\nGPU 54" shape=rectangle]
+		l1_exp55 [label="Expert7\n[1024×tokens×32768]\nGPU 55" shape=rectangle]
+		l1_exp56 [label="Expert8\n[1024×tokens×32768]\nGPU 56" shape=rectangle]
+		l1_exp57 [label="Expert9\n[1024×tokens×32768]\nGPU 57" shape=rectangle]
+		l1_exp58 [label="Expert10\n[1024×tokens×32768]\nGPU 58" shape=rectangle]
+		l1_exp59 [label="Expert11\n[1024×tokens×32768]\nGPU 59" shape=rectangle]
+		l1_exp60 [label="Expert12\n[1024×tokens×32768]\nGPU 60" shape=rectangle]
+		l1_exp61 [label="Expert13\n[1024×tokens×32768]\nGPU 61" shape=rectangle]
+		l1_exp62 [label="Expert14\n[1024×tokens×32768]\nGPU 62" shape=rectangle]
+		l1_exp63 [label="Expert15\n[1024×tokens×32768]\nGPU 63" shape=rectangle]
+		l1_route_0 [label="Token Routing\n[selected tokens×8192]\nGPU 0" shape=diamond]
+		l1_gather_0 [label="Expert Gathering\n[1024×10000×8192]\nGPU 0" shape=diamond]
+		l1_route_1 [label="Token Routing\n[selected tokens×8192]\nGPU 1" shape=diamond]
+		l1_gather_1 [label="Expert Gathering\n[1024×10000×8192]\nGPU 1" shape=diamond]
+		l1_route_2 [label="Token Routing\n[selected tokens×8192]\nGPU 2" shape=diamond]
+		l1_gather_2 [label="Expert Gathering\n[1024×10000×8192]\nGPU 2" shape=diamond]
+		l1_route_3 [label="Token Routing\n[selected tokens×8192]\nGPU 3" shape=diamond]
+		l1_gather_3 [label="Expert Gathering\n[1024×10000×8192]\nGPU 3" shape=diamond]
+		l1_route_4 [label="Token Routing\n[selected tokens×8192]\nGPU 4" shape=diamond]
+		l1_gather_4 [label="Expert Gathering\n[1024×10000×8192]\nGPU 4" shape=diamond]
+		l1_route_5 [label="Token Routing\n[selected tokens×8192]\nGPU 5" shape=diamond]
+		l1_gather_5 [label="Expert Gathering\n[1024×10000×8192]\nGPU 5" shape=diamond]
+		l1_route_6 [label="Token Routing\n[selected tokens×8192]\nGPU 6" shape=diamond]
+		l1_gather_6 [label="Expert Gathering\n[1024×10000×8192]\nGPU 6" shape=diamond]
+		l1_route_7 [label="Token Routing\n[selected tokens×8192]\nGPU 7" shape=diamond]
+		l1_gather_7 [label="Expert Gathering\n[1024×10000×8192]\nGPU 7" shape=diamond]
+		l1_route_8 [label="Token Routing\n[selected tokens×8192]\nGPU 8" shape=diamond]
+		l1_gather_8 [label="Expert Gathering\n[1024×10000×8192]\nGPU 8" shape=diamond]
+		l1_route_9 [label="Token Routing\n[selected tokens×8192]\nGPU 9" shape=diamond]
+		l1_gather_9 [label="Expert Gathering\n[1024×10000×8192]\nGPU 9" shape=diamond]
+		l1_route_10 [label="Token Routing\n[selected tokens×8192]\nGPU 10" shape=diamond]
+		l1_gather_10 [label="Expert Gathering\n[1024×10000×8192]\nGPU 10" shape=diamond]
+		l1_route_11 [label="Token Routing\n[selected tokens×8192]\nGPU 11" shape=diamond]
+		l1_gather_11 [label="Expert Gathering\n[1024×10000×8192]\nGPU 11" shape=diamond]
+		l1_route_12 [label="Token Routing\n[selected tokens×8192]\nGPU 12" shape=diamond]
+		l1_gather_12 [label="Expert Gathering\n[1024×10000×8192]\nGPU 12" shape=diamond]
+		l1_route_13 [label="Token Routing\n[selected tokens×8192]\nGPU 13" shape=diamond]
+		l1_gather_13 [label="Expert Gathering\n[1024×10000×8192]\nGPU 13" shape=diamond]
+		l1_route_14 [label="Token Routing\n[selected tokens×8192]\nGPU 14" shape=diamond]
+		l1_gather_14 [label="Expert Gathering\n[1024×10000×8192]\nGPU 14" shape=diamond]
+		l1_route_15 [label="Token Routing\n[selected tokens×8192]\nGPU 15" shape=diamond]
+		l1_gather_15 [label="Expert Gathering\n[1024×10000×8192]\nGPU 15" shape=diamond]
+		l1_route_16 [label="Token Routing\n[selected tokens×8192]\nGPU 16" shape=diamond]
+		l1_gather_16 [label="Expert Gathering\n[1024×10000×8192]\nGPU 16" shape=diamond]
+		l1_route_17 [label="Token Routing\n[selected tokens×8192]\nGPU 17" shape=diamond]
+		l1_gather_17 [label="Expert Gathering\n[1024×10000×8192]\nGPU 17" shape=diamond]
+		l1_route_18 [label="Token Routing\n[selected tokens×8192]\nGPU 18" shape=diamond]
+		l1_gather_18 [label="Expert Gathering\n[1024×10000×8192]\nGPU 18" shape=diamond]
+		l1_route_19 [label="Token Routing\n[selected tokens×8192]\nGPU 19" shape=diamond]
+		l1_gather_19 [label="Expert Gathering\n[1024×10000×8192]\nGPU 19" shape=diamond]
+		l1_route_20 [label="Token Routing\n[selected tokens×8192]\nGPU 20" shape=diamond]
+		l1_gather_20 [label="Expert Gathering\n[1024×10000×8192]\nGPU 20" shape=diamond]
+		l1_route_21 [label="Token Routing\n[selected tokens×8192]\nGPU 21" shape=diamond]
+		l1_gather_21 [label="Expert Gathering\n[1024×10000×8192]\nGPU 21" shape=diamond]
+		l1_route_22 [label="Token Routing\n[selected tokens×8192]\nGPU 22" shape=diamond]
+		l1_gather_22 [label="Expert Gathering\n[1024×10000×8192]\nGPU 22" shape=diamond]
+		l1_route_23 [label="Token Routing\n[selected tokens×8192]\nGPU 23" shape=diamond]
+		l1_gather_23 [label="Expert Gathering\n[1024×10000×8192]\nGPU 23" shape=diamond]
+		l1_route_24 [label="Token Routing\n[selected tokens×8192]\nGPU 24" shape=diamond]
+		l1_gather_24 [label="Expert Gathering\n[1024×10000×8192]\nGPU 24" shape=diamond]
+		l1_route_25 [label="Token Routing\n[selected tokens×8192]\nGPU 25" shape=diamond]
+		l1_gather_25 [label="Expert Gathering\n[1024×10000×8192]\nGPU 25" shape=diamond]
+		l1_route_26 [label="Token Routing\n[selected tokens×8192]\nGPU 26" shape=diamond]
+		l1_gather_26 [label="Expert Gathering\n[1024×10000×8192]\nGPU 26" shape=diamond]
+		l1_route_27 [label="Token Routing\n[selected tokens×8192]\nGPU 27" shape=diamond]
+		l1_gather_27 [label="Expert Gathering\n[1024×10000×8192]\nGPU 27" shape=diamond]
+		l1_route_28 [label="Token Routing\n[selected tokens×8192]\nGPU 28" shape=diamond]
+		l1_gather_28 [label="Expert Gathering\n[1024×10000×8192]\nGPU 28" shape=diamond]
+		l1_route_29 [label="Token Routing\n[selected tokens×8192]\nGPU 29" shape=diamond]
+		l1_gather_29 [label="Expert Gathering\n[1024×10000×8192]\nGPU 29" shape=diamond]
+		l1_route_30 [label="Token Routing\n[selected tokens×8192]\nGPU 30" shape=diamond]
+		l1_gather_30 [label="Expert Gathering\n[1024×10000×8192]\nGPU 30" shape=diamond]
+		l1_route_31 [label="Token Routing\n[selected tokens×8192]\nGPU 31" shape=diamond]
+		l1_gather_31 [label="Expert Gathering\n[1024×10000×8192]\nGPU 31" shape=diamond]
+		l1_route_32 [label="Token Routing\n[selected tokens×8192]\nGPU 32" shape=diamond]
+		l1_gather_32 [label="Expert Gathering\n[1024×10000×8192]\nGPU 32" shape=diamond]
+		l1_route_33 [label="Token Routing\n[selected tokens×8192]\nGPU 33" shape=diamond]
+		l1_gather_33 [label="Expert Gathering\n[1024×10000×8192]\nGPU 33" shape=diamond]
+		l1_route_34 [label="Token Routing\n[selected tokens×8192]\nGPU 34" shape=diamond]
+		l1_gather_34 [label="Expert Gathering\n[1024×10000×8192]\nGPU 34" shape=diamond]
+		l1_route_35 [label="Token Routing\n[selected tokens×8192]\nGPU 35" shape=diamond]
+		l1_gather_35 [label="Expert Gathering\n[1024×10000×8192]\nGPU 35" shape=diamond]
+		l1_route_36 [label="Token Routing\n[selected tokens×8192]\nGPU 36" shape=diamond]
+		l1_gather_36 [label="Expert Gathering\n[1024×10000×8192]\nGPU 36" shape=diamond]
+		l1_route_37 [label="Token Routing\n[selected tokens×8192]\nGPU 37" shape=diamond]
+		l1_gather_37 [label="Expert Gathering\n[1024×10000×8192]\nGPU 37" shape=diamond]
+		l1_route_38 [label="Token Routing\n[selected tokens×8192]\nGPU 38" shape=diamond]
+		l1_gather_38 [label="Expert Gathering\n[1024×10000×8192]\nGPU 38" shape=diamond]
+		l1_route_39 [label="Token Routing\n[selected tokens×8192]\nGPU 39" shape=diamond]
+		l1_gather_39 [label="Expert Gathering\n[1024×10000×8192]\nGPU 39" shape=diamond]
+		l1_route_40 [label="Token Routing\n[selected tokens×8192]\nGPU 40" shape=diamond]
+		l1_gather_40 [label="Expert Gathering\n[1024×10000×8192]\nGPU 40" shape=diamond]
+		l1_route_41 [label="Token Routing\n[selected tokens×8192]\nGPU 41" shape=diamond]
+		l1_gather_41 [label="Expert Gathering\n[1024×10000×8192]\nGPU 41" shape=diamond]
+		l1_route_42 [label="Token Routing\n[selected tokens×8192]\nGPU 42" shape=diamond]
+		l1_gather_42 [label="Expert Gathering\n[1024×10000×8192]\nGPU 42" shape=diamond]
+		l1_route_43 [label="Token Routing\n[selected tokens×8192]\nGPU 43" shape=diamond]
+		l1_gather_43 [label="Expert Gathering\n[1024×10000×8192]\nGPU 43" shape=diamond]
+		l1_route_44 [label="Token Routing\n[selected tokens×8192]\nGPU 44" shape=diamond]
+		l1_gather_44 [label="Expert Gathering\n[1024×10000×8192]\nGPU 44" shape=diamond]
+		l1_route_45 [label="Token Routing\n[selected tokens×8192]\nGPU 45" shape=diamond]
+		l1_gather_45 [label="Expert Gathering\n[1024×10000×8192]\nGPU 45" shape=diamond]
+		l1_route_46 [label="Token Routing\n[selected tokens×8192]\nGPU 46" shape=diamond]
+		l1_gather_46 [label="Expert Gathering\n[1024×10000×8192]\nGPU 46" shape=diamond]
+		l1_route_47 [label="Token Routing\n[selected tokens×8192]\nGPU 47" shape=diamond]
+		l1_gather_47 [label="Expert Gathering\n[1024×10000×8192]\nGPU 47" shape=diamond]
+		l1_route_48 [label="Token Routing\n[selected tokens×8192]\nGPU 48" shape=diamond]
+		l1_gather_48 [label="Expert Gathering\n[1024×10000×8192]\nGPU 48" shape=diamond]
+		l1_route_49 [label="Token Routing\n[selected tokens×8192]\nGPU 49" shape=diamond]
+		l1_gather_49 [label="Expert Gathering\n[1024×10000×8192]\nGPU 49" shape=diamond]
+		l1_route_50 [label="Token Routing\n[selected tokens×8192]\nGPU 50" shape=diamond]
+		l1_gather_50 [label="Expert Gathering\n[1024×10000×8192]\nGPU 50" shape=diamond]
+		l1_route_51 [label="Token Routing\n[selected tokens×8192]\nGPU 51" shape=diamond]
+		l1_gather_51 [label="Expert Gathering\n[1024×10000×8192]\nGPU 51" shape=diamond]
+		l1_route_52 [label="Token Routing\n[selected tokens×8192]\nGPU 52" shape=diamond]
+		l1_gather_52 [label="Expert Gathering\n[1024×10000×8192]\nGPU 52" shape=diamond]
+		l1_route_53 [label="Token Routing\n[selected tokens×8192]\nGPU 53" shape=diamond]
+		l1_gather_53 [label="Expert Gathering\n[1024×10000×8192]\nGPU 53" shape=diamond]
+		l1_route_54 [label="Token Routing\n[selected tokens×8192]\nGPU 54" shape=diamond]
+		l1_gather_54 [label="Expert Gathering\n[1024×10000×8192]\nGPU 54" shape=diamond]
+		l1_route_55 [label="Token Routing\n[selected tokens×8192]\nGPU 55" shape=diamond]
+		l1_gather_55 [label="Expert Gathering\n[1024×10000×8192]\nGPU 55" shape=diamond]
+		l1_route_56 [label="Token Routing\n[selected tokens×8192]\nGPU 56" shape=diamond]
+		l1_gather_56 [label="Expert Gathering\n[1024×10000×8192]\nGPU 56" shape=diamond]
+		l1_route_57 [label="Token Routing\n[selected tokens×8192]\nGPU 57" shape=diamond]
+		l1_gather_57 [label="Expert Gathering\n[1024×10000×8192]\nGPU 57" shape=diamond]
+		l1_route_58 [label="Token Routing\n[selected tokens×8192]\nGPU 58" shape=diamond]
+		l1_gather_58 [label="Expert Gathering\n[1024×10000×8192]\nGPU 58" shape=diamond]
+		l1_route_59 [label="Token Routing\n[selected tokens×8192]\nGPU 59" shape=diamond]
+		l1_gather_59 [label="Expert Gathering\n[1024×10000×8192]\nGPU 59" shape=diamond]
+		l1_route_60 [label="Token Routing\n[selected tokens×8192]\nGPU 60" shape=diamond]
+		l1_gather_60 [label="Expert Gathering\n[1024×10000×8192]\nGPU 60" shape=diamond]
+		l1_route_61 [label="Token Routing\n[selected tokens×8192]\nGPU 61" shape=diamond]
+		l1_gather_61 [label="Expert Gathering\n[1024×10000×8192]\nGPU 61" shape=diamond]
+		l1_route_62 [label="Token Routing\n[selected tokens×8192]\nGPU 62" shape=diamond]
+		l1_gather_62 [label="Expert Gathering\n[1024×10000×8192]\nGPU 62" shape=diamond]
+		l1_route_63 [label="Token Routing\n[selected tokens×8192]\nGPU 63" shape=diamond]
+		l1_gather_63 [label="Expert Gathering\n[1024×10000×8192]\nGPU 63" shape=diamond]
+		l1_agg [label="Expert Aggregation1\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+		l1_res2 [label="Residual Add1\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+	}
+	subgraph cluster_layer2 {
+		label="Layer 2\n64 GPUs, 1 Expert/GPU" style=dashed
+		l2_norm1 [label="LayerNorm2\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l2_mha_qkv [label="MHA QKV2\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l2_mha_attn [label="MHA Attention2\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l2_mha_out [label="MHA Output2\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l2_res1 [label="Residual Add2\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+		l2_norm2 [label="LayerNorm2\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l2_gate [label="Gate2\n[1024×10000×64 experts]\nAll 64 GPUs" shape=parallelogram]
+		l2_exp0 [label="Expert0\n[1024×tokens×32768]\nGPU 0" shape=rectangle]
+		l2_exp1 [label="Expert1\n[1024×tokens×32768]\nGPU 1" shape=rectangle]
+		l2_exp2 [label="Expert2\n[1024×tokens×32768]\nGPU 2" shape=rectangle]
+		l2_exp3 [label="Expert3\n[1024×tokens×32768]\nGPU 3" shape=rectangle]
+		l2_exp4 [label="Expert4\n[1024×tokens×32768]\nGPU 4" shape=rectangle]
+		l2_exp5 [label="Expert5\n[1024×tokens×32768]\nGPU 5" shape=rectangle]
+		l2_exp6 [label="Expert6\n[1024×tokens×32768]\nGPU 6" shape=rectangle]
+		l2_exp7 [label="Expert7\n[1024×tokens×32768]\nGPU 7" shape=rectangle]
+		l2_exp8 [label="Expert8\n[1024×tokens×32768]\nGPU 8" shape=rectangle]
+		l2_exp9 [label="Expert9\n[1024×tokens×32768]\nGPU 9" shape=rectangle]
+		l2_exp10 [label="Expert10\n[1024×tokens×32768]\nGPU 10" shape=rectangle]
+		l2_exp11 [label="Expert11\n[1024×tokens×32768]\nGPU 11" shape=rectangle]
+		l2_exp12 [label="Expert12\n[1024×tokens×32768]\nGPU 12" shape=rectangle]
+		l2_exp13 [label="Expert13\n[1024×tokens×32768]\nGPU 13" shape=rectangle]
+		l2_exp14 [label="Expert14\n[1024×tokens×32768]\nGPU 14" shape=rectangle]
+		l2_exp15 [label="Expert15\n[1024×tokens×32768]\nGPU 15" shape=rectangle]
+		l2_exp16 [label="Expert0\n[1024×tokens×32768]\nGPU 16" shape=rectangle]
+		l2_exp17 [label="Expert1\n[1024×tokens×32768]\nGPU 17" shape=rectangle]
+		l2_exp18 [label="Expert2\n[1024×tokens×32768]\nGPU 18" shape=rectangle]
+		l2_exp19 [label="Expert3\n[1024×tokens×32768]\nGPU 19" shape=rectangle]
+		l2_exp20 [label="Expert4\n[1024×tokens×32768]\nGPU 20" shape=rectangle]
+		l2_exp21 [label="Expert5\n[1024×tokens×32768]\nGPU 21" shape=rectangle]
+		l2_exp22 [label="Expert6\n[1024×tokens×32768]\nGPU 22" shape=rectangle]
+		l2_exp23 [label="Expert7\n[1024×tokens×32768]\nGPU 23" shape=rectangle]
+		l2_exp24 [label="Expert8\n[1024×tokens×32768]\nGPU 24" shape=rectangle]
+		l2_exp25 [label="Expert9\n[1024×tokens×32768]\nGPU 25" shape=rectangle]
+		l2_exp26 [label="Expert10\n[1024×tokens×32768]\nGPU 26" shape=rectangle]
+		l2_exp27 [label="Expert11\n[1024×tokens×32768]\nGPU 27" shape=rectangle]
+		l2_exp28 [label="Expert12\n[1024×tokens×32768]\nGPU 28" shape=rectangle]
+		l2_exp29 [label="Expert13\n[1024×tokens×32768]\nGPU 29" shape=rectangle]
+		l2_exp30 [label="Expert14\n[1024×tokens×32768]\nGPU 30" shape=rectangle]
+		l2_exp31 [label="Expert15\n[1024×tokens×32768]\nGPU 31" shape=rectangle]
+		l2_exp32 [label="Expert0\n[1024×tokens×32768]\nGPU 32" shape=rectangle]
+		l2_exp33 [label="Expert1\n[1024×tokens×32768]\nGPU 33" shape=rectangle]
+		l2_exp34 [label="Expert2\n[1024×tokens×32768]\nGPU 34" shape=rectangle]
+		l2_exp35 [label="Expert3\n[1024×tokens×32768]\nGPU 35" shape=rectangle]
+		l2_exp36 [label="Expert4\n[1024×tokens×32768]\nGPU 36" shape=rectangle]
+		l2_exp37 [label="Expert5\n[1024×tokens×32768]\nGPU 37" shape=rectangle]
+		l2_exp38 [label="Expert6\n[1024×tokens×32768]\nGPU 38" shape=rectangle]
+		l2_exp39 [label="Expert7\n[1024×tokens×32768]\nGPU 39" shape=rectangle]
+		l2_exp40 [label="Expert8\n[1024×tokens×32768]\nGPU 40" shape=rectangle]
+		l2_exp41 [label="Expert9\n[1024×tokens×32768]\nGPU 41" shape=rectangle]
+		l2_exp42 [label="Expert10\n[1024×tokens×32768]\nGPU 42" shape=rectangle]
+		l2_exp43 [label="Expert11\n[1024×tokens×32768]\nGPU 43" shape=rectangle]
+		l2_exp44 [label="Expert12\n[1024×tokens×32768]\nGPU 44" shape=rectangle]
+		l2_exp45 [label="Expert13\n[1024×tokens×32768]\nGPU 45" shape=rectangle]
+		l2_exp46 [label="Expert14\n[1024×tokens×32768]\nGPU 46" shape=rectangle]
+		l2_exp47 [label="Expert15\n[1024×tokens×32768]\nGPU 47" shape=rectangle]
+		l2_exp48 [label="Expert0\n[1024×tokens×32768]\nGPU 48" shape=rectangle]
+		l2_exp49 [label="Expert1\n[1024×tokens×32768]\nGPU 49" shape=rectangle]
+		l2_exp50 [label="Expert2\n[1024×tokens×32768]\nGPU 50" shape=rectangle]
+		l2_exp51 [label="Expert3\n[1024×tokens×32768]\nGPU 51" shape=rectangle]
+		l2_exp52 [label="Expert4\n[1024×tokens×32768]\nGPU 52" shape=rectangle]
+		l2_exp53 [label="Expert5\n[1024×tokens×32768]\nGPU 53" shape=rectangle]
+		l2_exp54 [label="Expert6\n[1024×tokens×32768]\nGPU 54" shape=rectangle]
+		l2_exp55 [label="Expert7\n[1024×tokens×32768]\nGPU 55" shape=rectangle]
+		l2_exp56 [label="Expert8\n[1024×tokens×32768]\nGPU 56" shape=rectangle]
+		l2_exp57 [label="Expert9\n[1024×tokens×32768]\nGPU 57" shape=rectangle]
+		l2_exp58 [label="Expert10\n[1024×tokens×32768]\nGPU 58" shape=rectangle]
+		l2_exp59 [label="Expert11\n[1024×tokens×32768]\nGPU 59" shape=rectangle]
+		l2_exp60 [label="Expert12\n[1024×tokens×32768]\nGPU 60" shape=rectangle]
+		l2_exp61 [label="Expert13\n[1024×tokens×32768]\nGPU 61" shape=rectangle]
+		l2_exp62 [label="Expert14\n[1024×tokens×32768]\nGPU 62" shape=rectangle]
+		l2_exp63 [label="Expert15\n[1024×tokens×32768]\nGPU 63" shape=rectangle]
+		l2_route_0 [label="Token Routing\n[selected tokens×8192]\nGPU 0" shape=diamond]
+		l2_gather_0 [label="Expert Gathering\n[1024×10000×8192]\nGPU 0" shape=diamond]
+		l2_route_1 [label="Token Routing\n[selected tokens×8192]\nGPU 1" shape=diamond]
+		l2_gather_1 [label="Expert Gathering\n[1024×10000×8192]\nGPU 1" shape=diamond]
+		l2_route_2 [label="Token Routing\n[selected tokens×8192]\nGPU 2" shape=diamond]
+		l2_gather_2 [label="Expert Gathering\n[1024×10000×8192]\nGPU 2" shape=diamond]
+		l2_route_3 [label="Token Routing\n[selected tokens×8192]\nGPU 3" shape=diamond]
+		l2_gather_3 [label="Expert Gathering\n[1024×10000×8192]\nGPU 3" shape=diamond]
+		l2_route_4 [label="Token Routing\n[selected tokens×8192]\nGPU 4" shape=diamond]
+		l2_gather_4 [label="Expert Gathering\n[1024×10000×8192]\nGPU 4" shape=diamond]
+		l2_route_5 [label="Token Routing\n[selected tokens×8192]\nGPU 5" shape=diamond]
+		l2_gather_5 [label="Expert Gathering\n[1024×10000×8192]\nGPU 5" shape=diamond]
+		l2_route_6 [label="Token Routing\n[selected tokens×8192]\nGPU 6" shape=diamond]
+		l2_gather_6 [label="Expert Gathering\n[1024×10000×8192]\nGPU 6" shape=diamond]
+		l2_route_7 [label="Token Routing\n[selected tokens×8192]\nGPU 7" shape=diamond]
+		l2_gather_7 [label="Expert Gathering\n[1024×10000×8192]\nGPU 7" shape=diamond]
+		l2_route_8 [label="Token Routing\n[selected tokens×8192]\nGPU 8" shape=diamond]
+		l2_gather_8 [label="Expert Gathering\n[1024×10000×8192]\nGPU 8" shape=diamond]
+		l2_route_9 [label="Token Routing\n[selected tokens×8192]\nGPU 9" shape=diamond]
+		l2_gather_9 [label="Expert Gathering\n[1024×10000×8192]\nGPU 9" shape=diamond]
+		l2_route_10 [label="Token Routing\n[selected tokens×8192]\nGPU 10" shape=diamond]
+		l2_gather_10 [label="Expert Gathering\n[1024×10000×8192]\nGPU 10" shape=diamond]
+		l2_route_11 [label="Token Routing\n[selected tokens×8192]\nGPU 11" shape=diamond]
+		l2_gather_11 [label="Expert Gathering\n[1024×10000×8192]\nGPU 11" shape=diamond]
+		l2_route_12 [label="Token Routing\n[selected tokens×8192]\nGPU 12" shape=diamond]
+		l2_gather_12 [label="Expert Gathering\n[1024×10000×8192]\nGPU 12" shape=diamond]
+		l2_route_13 [label="Token Routing\n[selected tokens×8192]\nGPU 13" shape=diamond]
+		l2_gather_13 [label="Expert Gathering\n[1024×10000×8192]\nGPU 13" shape=diamond]
+		l2_route_14 [label="Token Routing\n[selected tokens×8192]\nGPU 14" shape=diamond]
+		l2_gather_14 [label="Expert Gathering\n[1024×10000×8192]\nGPU 14" shape=diamond]
+		l2_route_15 [label="Token Routing\n[selected tokens×8192]\nGPU 15" shape=diamond]
+		l2_gather_15 [label="Expert Gathering\n[1024×10000×8192]\nGPU 15" shape=diamond]
+		l2_route_16 [label="Token Routing\n[selected tokens×8192]\nGPU 16" shape=diamond]
+		l2_gather_16 [label="Expert Gathering\n[1024×10000×8192]\nGPU 16" shape=diamond]
+		l2_route_17 [label="Token Routing\n[selected tokens×8192]\nGPU 17" shape=diamond]
+		l2_gather_17 [label="Expert Gathering\n[1024×10000×8192]\nGPU 17" shape=diamond]
+		l2_route_18 [label="Token Routing\n[selected tokens×8192]\nGPU 18" shape=diamond]
+		l2_gather_18 [label="Expert Gathering\n[1024×10000×8192]\nGPU 18" shape=diamond]
+		l2_route_19 [label="Token Routing\n[selected tokens×8192]\nGPU 19" shape=diamond]
+		l2_gather_19 [label="Expert Gathering\n[1024×10000×8192]\nGPU 19" shape=diamond]
+		l2_route_20 [label="Token Routing\n[selected tokens×8192]\nGPU 20" shape=diamond]
+		l2_gather_20 [label="Expert Gathering\n[1024×10000×8192]\nGPU 20" shape=diamond]
+		l2_route_21 [label="Token Routing\n[selected tokens×8192]\nGPU 21" shape=diamond]
+		l2_gather_21 [label="Expert Gathering\n[1024×10000×8192]\nGPU 21" shape=diamond]
+		l2_route_22 [label="Token Routing\n[selected tokens×8192]\nGPU 22" shape=diamond]
+		l2_gather_22 [label="Expert Gathering\n[1024×10000×8192]\nGPU 22" shape=diamond]
+		l2_route_23 [label="Token Routing\n[selected tokens×8192]\nGPU 23" shape=diamond]
+		l2_gather_23 [label="Expert Gathering\n[1024×10000×8192]\nGPU 23" shape=diamond]
+		l2_route_24 [label="Token Routing\n[selected tokens×8192]\nGPU 24" shape=diamond]
+		l2_gather_24 [label="Expert Gathering\n[1024×10000×8192]\nGPU 24" shape=diamond]
+		l2_route_25 [label="Token Routing\n[selected tokens×8192]\nGPU 25" shape=diamond]
+		l2_gather_25 [label="Expert Gathering\n[1024×10000×8192]\nGPU 25" shape=diamond]
+		l2_route_26 [label="Token Routing\n[selected tokens×8192]\nGPU 26" shape=diamond]
+		l2_gather_26 [label="Expert Gathering\n[1024×10000×8192]\nGPU 26" shape=diamond]
+		l2_route_27 [label="Token Routing\n[selected tokens×8192]\nGPU 27" shape=diamond]
+		l2_gather_27 [label="Expert Gathering\n[1024×10000×8192]\nGPU 27" shape=diamond]
+		l2_route_28 [label="Token Routing\n[selected tokens×8192]\nGPU 28" shape=diamond]
+		l2_gather_28 [label="Expert Gathering\n[1024×10000×8192]\nGPU 28" shape=diamond]
+		l2_route_29 [label="Token Routing\n[selected tokens×8192]\nGPU 29" shape=diamond]
+		l2_gather_29 [label="Expert Gathering\n[1024×10000×8192]\nGPU 29" shape=diamond]
+		l2_route_30 [label="Token Routing\n[selected tokens×8192]\nGPU 30" shape=diamond]
+		l2_gather_30 [label="Expert Gathering\n[1024×10000×8192]\nGPU 30" shape=diamond]
+		l2_route_31 [label="Token Routing\n[selected tokens×8192]\nGPU 31" shape=diamond]
+		l2_gather_31 [label="Expert Gathering\n[1024×10000×8192]\nGPU 31" shape=diamond]
+		l2_route_32 [label="Token Routing\n[selected tokens×8192]\nGPU 32" shape=diamond]
+		l2_gather_32 [label="Expert Gathering\n[1024×10000×8192]\nGPU 32" shape=diamond]
+		l2_route_33 [label="Token Routing\n[selected tokens×8192]\nGPU 33" shape=diamond]
+		l2_gather_33 [label="Expert Gathering\n[1024×10000×8192]\nGPU 33" shape=diamond]
+		l2_route_34 [label="Token Routing\n[selected tokens×8192]\nGPU 34" shape=diamond]
+		l2_gather_34 [label="Expert Gathering\n[1024×10000×8192]\nGPU 34" shape=diamond]
+		l2_route_35 [label="Token Routing\n[selected tokens×8192]\nGPU 35" shape=diamond]
+		l2_gather_35 [label="Expert Gathering\n[1024×10000×8192]\nGPU 35" shape=diamond]
+		l2_route_36 [label="Token Routing\n[selected tokens×8192]\nGPU 36" shape=diamond]
+		l2_gather_36 [label="Expert Gathering\n[1024×10000×8192]\nGPU 36" shape=diamond]
+		l2_route_37 [label="Token Routing\n[selected tokens×8192]\nGPU 37" shape=diamond]
+		l2_gather_37 [label="Expert Gathering\n[1024×10000×8192]\nGPU 37" shape=diamond]
+		l2_route_38 [label="Token Routing\n[selected tokens×8192]\nGPU 38" shape=diamond]
+		l2_gather_38 [label="Expert Gathering\n[1024×10000×8192]\nGPU 38" shape=diamond]
+		l2_route_39 [label="Token Routing\n[selected tokens×8192]\nGPU 39" shape=diamond]
+		l2_gather_39 [label="Expert Gathering\n[1024×10000×8192]\nGPU 39" shape=diamond]
+		l2_route_40 [label="Token Routing\n[selected tokens×8192]\nGPU 40" shape=diamond]
+		l2_gather_40 [label="Expert Gathering\n[1024×10000×8192]\nGPU 40" shape=diamond]
+		l2_route_41 [label="Token Routing\n[selected tokens×8192]\nGPU 41" shape=diamond]
+		l2_gather_41 [label="Expert Gathering\n[1024×10000×8192]\nGPU 41" shape=diamond]
+		l2_route_42 [label="Token Routing\n[selected tokens×8192]\nGPU 42" shape=diamond]
+		l2_gather_42 [label="Expert Gathering\n[1024×10000×8192]\nGPU 42" shape=diamond]
+		l2_route_43 [label="Token Routing\n[selected tokens×8192]\nGPU 43" shape=diamond]
+		l2_gather_43 [label="Expert Gathering\n[1024×10000×8192]\nGPU 43" shape=diamond]
+		l2_route_44 [label="Token Routing\n[selected tokens×8192]\nGPU 44" shape=diamond]
+		l2_gather_44 [label="Expert Gathering\n[1024×10000×8192]\nGPU 44" shape=diamond]
+		l2_route_45 [label="Token Routing\n[selected tokens×8192]\nGPU 45" shape=diamond]
+		l2_gather_45 [label="Expert Gathering\n[1024×10000×8192]\nGPU 45" shape=diamond]
+		l2_route_46 [label="Token Routing\n[selected tokens×8192]\nGPU 46" shape=diamond]
+		l2_gather_46 [label="Expert Gathering\n[1024×10000×8192]\nGPU 46" shape=diamond]
+		l2_route_47 [label="Token Routing\n[selected tokens×8192]\nGPU 47" shape=diamond]
+		l2_gather_47 [label="Expert Gathering\n[1024×10000×8192]\nGPU 47" shape=diamond]
+		l2_route_48 [label="Token Routing\n[selected tokens×8192]\nGPU 48" shape=diamond]
+		l2_gather_48 [label="Expert Gathering\n[1024×10000×8192]\nGPU 48" shape=diamond]
+		l2_route_49 [label="Token Routing\n[selected tokens×8192]\nGPU 49" shape=diamond]
+		l2_gather_49 [label="Expert Gathering\n[1024×10000×8192]\nGPU 49" shape=diamond]
+		l2_route_50 [label="Token Routing\n[selected tokens×8192]\nGPU 50" shape=diamond]
+		l2_gather_50 [label="Expert Gathering\n[1024×10000×8192]\nGPU 50" shape=diamond]
+		l2_route_51 [label="Token Routing\n[selected tokens×8192]\nGPU 51" shape=diamond]
+		l2_gather_51 [label="Expert Gathering\n[1024×10000×8192]\nGPU 51" shape=diamond]
+		l2_route_52 [label="Token Routing\n[selected tokens×8192]\nGPU 52" shape=diamond]
+		l2_gather_52 [label="Expert Gathering\n[1024×10000×8192]\nGPU 52" shape=diamond]
+		l2_route_53 [label="Token Routing\n[selected tokens×8192]\nGPU 53" shape=diamond]
+		l2_gather_53 [label="Expert Gathering\n[1024×10000×8192]\nGPU 53" shape=diamond]
+		l2_route_54 [label="Token Routing\n[selected tokens×8192]\nGPU 54" shape=diamond]
+		l2_gather_54 [label="Expert Gathering\n[1024×10000×8192]\nGPU 54" shape=diamond]
+		l2_route_55 [label="Token Routing\n[selected tokens×8192]\nGPU 55" shape=diamond]
+		l2_gather_55 [label="Expert Gathering\n[1024×10000×8192]\nGPU 55" shape=diamond]
+		l2_route_56 [label="Token Routing\n[selected tokens×8192]\nGPU 56" shape=diamond]
+		l2_gather_56 [label="Expert Gathering\n[1024×10000×8192]\nGPU 56" shape=diamond]
+		l2_route_57 [label="Token Routing\n[selected tokens×8192]\nGPU 57" shape=diamond]
+		l2_gather_57 [label="Expert Gathering\n[1024×10000×8192]\nGPU 57" shape=diamond]
+		l2_route_58 [label="Token Routing\n[selected tokens×8192]\nGPU 58" shape=diamond]
+		l2_gather_58 [label="Expert Gathering\n[1024×10000×8192]\nGPU 58" shape=diamond]
+		l2_route_59 [label="Token Routing\n[selected tokens×8192]\nGPU 59" shape=diamond]
+		l2_gather_59 [label="Expert Gathering\n[1024×10000×8192]\nGPU 59" shape=diamond]
+		l2_route_60 [label="Token Routing\n[selected tokens×8192]\nGPU 60" shape=diamond]
+		l2_gather_60 [label="Expert Gathering\n[1024×10000×8192]\nGPU 60" shape=diamond]
+		l2_route_61 [label="Token Routing\n[selected tokens×8192]\nGPU 61" shape=diamond]
+		l2_gather_61 [label="Expert Gathering\n[1024×10000×8192]\nGPU 61" shape=diamond]
+		l2_route_62 [label="Token Routing\n[selected tokens×8192]\nGPU 62" shape=diamond]
+		l2_gather_62 [label="Expert Gathering\n[1024×10000×8192]\nGPU 62" shape=diamond]
+		l2_route_63 [label="Token Routing\n[selected tokens×8192]\nGPU 63" shape=diamond]
+		l2_gather_63 [label="Expert Gathering\n[1024×10000×8192]\nGPU 63" shape=diamond]
+		l2_agg [label="Expert Aggregation2\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+		l2_res2 [label="Residual Add2\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+	}
+	subgraph cluster_layer3 {
+		label="Layer 3\n64 GPUs, 1 Expert/GPU" style=dashed
+		l3_norm1 [label="LayerNorm3\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l3_mha_qkv [label="MHA QKV3\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l3_mha_attn [label="MHA Attention3\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l3_mha_out [label="MHA Output3\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l3_res1 [label="Residual Add3\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+		l3_norm2 [label="LayerNorm3\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l3_gate [label="Gate3\n[1024×10000×64 experts]\nAll 64 GPUs" shape=parallelogram]
+		l3_exp0 [label="Expert0\n[1024×tokens×32768]\nGPU 0" shape=rectangle]
+		l3_exp1 [label="Expert1\n[1024×tokens×32768]\nGPU 1" shape=rectangle]
+		l3_exp2 [label="Expert2\n[1024×tokens×32768]\nGPU 2" shape=rectangle]
+		l3_exp3 [label="Expert3\n[1024×tokens×32768]\nGPU 3" shape=rectangle]
+		l3_exp4 [label="Expert4\n[1024×tokens×32768]\nGPU 4" shape=rectangle]
+		l3_exp5 [label="Expert5\n[1024×tokens×32768]\nGPU 5" shape=rectangle]
+		l3_exp6 [label="Expert6\n[1024×tokens×32768]\nGPU 6" shape=rectangle]
+		l3_exp7 [label="Expert7\n[1024×tokens×32768]\nGPU 7" shape=rectangle]
+		l3_exp8 [label="Expert8\n[1024×tokens×32768]\nGPU 8" shape=rectangle]
+		l3_exp9 [label="Expert9\n[1024×tokens×32768]\nGPU 9" shape=rectangle]
+		l3_exp10 [label="Expert10\n[1024×tokens×32768]\nGPU 10" shape=rectangle]
+		l3_exp11 [label="Expert11\n[1024×tokens×32768]\nGPU 11" shape=rectangle]
+		l3_exp12 [label="Expert12\n[1024×tokens×32768]\nGPU 12" shape=rectangle]
+		l3_exp13 [label="Expert13\n[1024×tokens×32768]\nGPU 13" shape=rectangle]
+		l3_exp14 [label="Expert14\n[1024×tokens×32768]\nGPU 14" shape=rectangle]
+		l3_exp15 [label="Expert15\n[1024×tokens×32768]\nGPU 15" shape=rectangle]
+		l3_exp16 [label="Expert0\n[1024×tokens×32768]\nGPU 16" shape=rectangle]
+		l3_exp17 [label="Expert1\n[1024×tokens×32768]\nGPU 17" shape=rectangle]
+		l3_exp18 [label="Expert2\n[1024×tokens×32768]\nGPU 18" shape=rectangle]
+		l3_exp19 [label="Expert3\n[1024×tokens×32768]\nGPU 19" shape=rectangle]
+		l3_exp20 [label="Expert4\n[1024×tokens×32768]\nGPU 20" shape=rectangle]
+		l3_exp21 [label="Expert5\n[1024×tokens×32768]\nGPU 21" shape=rectangle]
+		l3_exp22 [label="Expert6\n[1024×tokens×32768]\nGPU 22" shape=rectangle]
+		l3_exp23 [label="Expert7\n[1024×tokens×32768]\nGPU 23" shape=rectangle]
+		l3_exp24 [label="Expert8\n[1024×tokens×32768]\nGPU 24" shape=rectangle]
+		l3_exp25 [label="Expert9\n[1024×tokens×32768]\nGPU 25" shape=rectangle]
+		l3_exp26 [label="Expert10\n[1024×tokens×32768]\nGPU 26" shape=rectangle]
+		l3_exp27 [label="Expert11\n[1024×tokens×32768]\nGPU 27" shape=rectangle]
+		l3_exp28 [label="Expert12\n[1024×tokens×32768]\nGPU 28" shape=rectangle]
+		l3_exp29 [label="Expert13\n[1024×tokens×32768]\nGPU 29" shape=rectangle]
+		l3_exp30 [label="Expert14\n[1024×tokens×32768]\nGPU 30" shape=rectangle]
+		l3_exp31 [label="Expert15\n[1024×tokens×32768]\nGPU 31" shape=rectangle]
+		l3_exp32 [label="Expert0\n[1024×tokens×32768]\nGPU 32" shape=rectangle]
+		l3_exp33 [label="Expert1\n[1024×tokens×32768]\nGPU 33" shape=rectangle]
+		l3_exp34 [label="Expert2\n[1024×tokens×32768]\nGPU 34" shape=rectangle]
+		l3_exp35 [label="Expert3\n[1024×tokens×32768]\nGPU 35" shape=rectangle]
+		l3_exp36 [label="Expert4\n[1024×tokens×32768]\nGPU 36" shape=rectangle]
+		l3_exp37 [label="Expert5\n[1024×tokens×32768]\nGPU 37" shape=rectangle]
+		l3_exp38 [label="Expert6\n[1024×tokens×32768]\nGPU 38" shape=rectangle]
+		l3_exp39 [label="Expert7\n[1024×tokens×32768]\nGPU 39" shape=rectangle]
+		l3_exp40 [label="Expert8\n[1024×tokens×32768]\nGPU 40" shape=rectangle]
+		l3_exp41 [label="Expert9\n[1024×tokens×32768]\nGPU 41" shape=rectangle]
+		l3_exp42 [label="Expert10\n[1024×tokens×32768]\nGPU 42" shape=rectangle]
+		l3_exp43 [label="Expert11\n[1024×tokens×32768]\nGPU 43" shape=rectangle]
+		l3_exp44 [label="Expert12\n[1024×tokens×32768]\nGPU 44" shape=rectangle]
+		l3_exp45 [label="Expert13\n[1024×tokens×32768]\nGPU 45" shape=rectangle]
+		l3_exp46 [label="Expert14\n[1024×tokens×32768]\nGPU 46" shape=rectangle]
+		l3_exp47 [label="Expert15\n[1024×tokens×32768]\nGPU 47" shape=rectangle]
+		l3_exp48 [label="Expert0\n[1024×tokens×32768]\nGPU 48" shape=rectangle]
+		l3_exp49 [label="Expert1\n[1024×tokens×32768]\nGPU 49" shape=rectangle]
+		l3_exp50 [label="Expert2\n[1024×tokens×32768]\nGPU 50" shape=rectangle]
+		l3_exp51 [label="Expert3\n[1024×tokens×32768]\nGPU 51" shape=rectangle]
+		l3_exp52 [label="Expert4\n[1024×tokens×32768]\nGPU 52" shape=rectangle]
+		l3_exp53 [label="Expert5\n[1024×tokens×32768]\nGPU 53" shape=rectangle]
+		l3_exp54 [label="Expert6\n[1024×tokens×32768]\nGPU 54" shape=rectangle]
+		l3_exp55 [label="Expert7\n[1024×tokens×32768]\nGPU 55" shape=rectangle]
+		l3_exp56 [label="Expert8\n[1024×tokens×32768]\nGPU 56" shape=rectangle]
+		l3_exp57 [label="Expert9\n[1024×tokens×32768]\nGPU 57" shape=rectangle]
+		l3_exp58 [label="Expert10\n[1024×tokens×32768]\nGPU 58" shape=rectangle]
+		l3_exp59 [label="Expert11\n[1024×tokens×32768]\nGPU 59" shape=rectangle]
+		l3_exp60 [label="Expert12\n[1024×tokens×32768]\nGPU 60" shape=rectangle]
+		l3_exp61 [label="Expert13\n[1024×tokens×32768]\nGPU 61" shape=rectangle]
+		l3_exp62 [label="Expert14\n[1024×tokens×32768]\nGPU 62" shape=rectangle]
+		l3_exp63 [label="Expert15\n[1024×tokens×32768]\nGPU 63" shape=rectangle]
+		l3_route_0 [label="Token Routing\n[selected tokens×8192]\nGPU 0" shape=diamond]
+		l3_gather_0 [label="Expert Gathering\n[1024×10000×8192]\nGPU 0" shape=diamond]
+		l3_route_1 [label="Token Routing\n[selected tokens×8192]\nGPU 1" shape=diamond]
+		l3_gather_1 [label="Expert Gathering\n[1024×10000×8192]\nGPU 1" shape=diamond]
+		l3_route_2 [label="Token Routing\n[selected tokens×8192]\nGPU 2" shape=diamond]
+		l3_gather_2 [label="Expert Gathering\n[1024×10000×8192]\nGPU 2" shape=diamond]
+		l3_route_3 [label="Token Routing\n[selected tokens×8192]\nGPU 3" shape=diamond]
+		l3_gather_3 [label="Expert Gathering\n[1024×10000×8192]\nGPU 3" shape=diamond]
+		l3_route_4 [label="Token Routing\n[selected tokens×8192]\nGPU 4" shape=diamond]
+		l3_gather_4 [label="Expert Gathering\n[1024×10000×8192]\nGPU 4" shape=diamond]
+		l3_route_5 [label="Token Routing\n[selected tokens×8192]\nGPU 5" shape=diamond]
+		l3_gather_5 [label="Expert Gathering\n[1024×10000×8192]\nGPU 5" shape=diamond]
+		l3_route_6 [label="Token Routing\n[selected tokens×8192]\nGPU 6" shape=diamond]
+		l3_gather_6 [label="Expert Gathering\n[1024×10000×8192]\nGPU 6" shape=diamond]
+		l3_route_7 [label="Token Routing\n[selected tokens×8192]\nGPU 7" shape=diamond]
+		l3_gather_7 [label="Expert Gathering\n[1024×10000×8192]\nGPU 7" shape=diamond]
+		l3_route_8 [label="Token Routing\n[selected tokens×8192]\nGPU 8" shape=diamond]
+		l3_gather_8 [label="Expert Gathering\n[1024×10000×8192]\nGPU 8" shape=diamond]
+		l3_route_9 [label="Token Routing\n[selected tokens×8192]\nGPU 9" shape=diamond]
+		l3_gather_9 [label="Expert Gathering\n[1024×10000×8192]\nGPU 9" shape=diamond]
+		l3_route_10 [label="Token Routing\n[selected tokens×8192]\nGPU 10" shape=diamond]
+		l3_gather_10 [label="Expert Gathering\n[1024×10000×8192]\nGPU 10" shape=diamond]
+		l3_route_11 [label="Token Routing\n[selected tokens×8192]\nGPU 11" shape=diamond]
+		l3_gather_11 [label="Expert Gathering\n[1024×10000×8192]\nGPU 11" shape=diamond]
+		l3_route_12 [label="Token Routing\n[selected tokens×8192]\nGPU 12" shape=diamond]
+		l3_gather_12 [label="Expert Gathering\n[1024×10000×8192]\nGPU 12" shape=diamond]
+		l3_route_13 [label="Token Routing\n[selected tokens×8192]\nGPU 13" shape=diamond]
+		l3_gather_13 [label="Expert Gathering\n[1024×10000×8192]\nGPU 13" shape=diamond]
+		l3_route_14 [label="Token Routing\n[selected tokens×8192]\nGPU 14" shape=diamond]
+		l3_gather_14 [label="Expert Gathering\n[1024×10000×8192]\nGPU 14" shape=diamond]
+		l3_route_15 [label="Token Routing\n[selected tokens×8192]\nGPU 15" shape=diamond]
+		l3_gather_15 [label="Expert Gathering\n[1024×10000×8192]\nGPU 15" shape=diamond]
+		l3_route_16 [label="Token Routing\n[selected tokens×8192]\nGPU 16" shape=diamond]
+		l3_gather_16 [label="Expert Gathering\n[1024×10000×8192]\nGPU 16" shape=diamond]
+		l3_route_17 [label="Token Routing\n[selected tokens×8192]\nGPU 17" shape=diamond]
+		l3_gather_17 [label="Expert Gathering\n[1024×10000×8192]\nGPU 17" shape=diamond]
+		l3_route_18 [label="Token Routing\n[selected tokens×8192]\nGPU 18" shape=diamond]
+		l3_gather_18 [label="Expert Gathering\n[1024×10000×8192]\nGPU 18" shape=diamond]
+		l3_route_19 [label="Token Routing\n[selected tokens×8192]\nGPU 19" shape=diamond]
+		l3_gather_19 [label="Expert Gathering\n[1024×10000×8192]\nGPU 19" shape=diamond]
+		l3_route_20 [label="Token Routing\n[selected tokens×8192]\nGPU 20" shape=diamond]
+		l3_gather_20 [label="Expert Gathering\n[1024×10000×8192]\nGPU 20" shape=diamond]
+		l3_route_21 [label="Token Routing\n[selected tokens×8192]\nGPU 21" shape=diamond]
+		l3_gather_21 [label="Expert Gathering\n[1024×10000×8192]\nGPU 21" shape=diamond]
+		l3_route_22 [label="Token Routing\n[selected tokens×8192]\nGPU 22" shape=diamond]
+		l3_gather_22 [label="Expert Gathering\n[1024×10000×8192]\nGPU 22" shape=diamond]
+		l3_route_23 [label="Token Routing\n[selected tokens×8192]\nGPU 23" shape=diamond]
+		l3_gather_23 [label="Expert Gathering\n[1024×10000×8192]\nGPU 23" shape=diamond]
+		l3_route_24 [label="Token Routing\n[selected tokens×8192]\nGPU 24" shape=diamond]
+		l3_gather_24 [label="Expert Gathering\n[1024×10000×8192]\nGPU 24" shape=diamond]
+		l3_route_25 [label="Token Routing\n[selected tokens×8192]\nGPU 25" shape=diamond]
+		l3_gather_25 [label="Expert Gathering\n[1024×10000×8192]\nGPU 25" shape=diamond]
+		l3_route_26 [label="Token Routing\n[selected tokens×8192]\nGPU 26" shape=diamond]
+		l3_gather_26 [label="Expert Gathering\n[1024×10000×8192]\nGPU 26" shape=diamond]
+		l3_route_27 [label="Token Routing\n[selected tokens×8192]\nGPU 27" shape=diamond]
+		l3_gather_27 [label="Expert Gathering\n[1024×10000×8192]\nGPU 27" shape=diamond]
+		l3_route_28 [label="Token Routing\n[selected tokens×8192]\nGPU 28" shape=diamond]
+		l3_gather_28 [label="Expert Gathering\n[1024×10000×8192]\nGPU 28" shape=diamond]
+		l3_route_29 [label="Token Routing\n[selected tokens×8192]\nGPU 29" shape=diamond]
+		l3_gather_29 [label="Expert Gathering\n[1024×10000×8192]\nGPU 29" shape=diamond]
+		l3_route_30 [label="Token Routing\n[selected tokens×8192]\nGPU 30" shape=diamond]
+		l3_gather_30 [label="Expert Gathering\n[1024×10000×8192]\nGPU 30" shape=diamond]
+		l3_route_31 [label="Token Routing\n[selected tokens×8192]\nGPU 31" shape=diamond]
+		l3_gather_31 [label="Expert Gathering\n[1024×10000×8192]\nGPU 31" shape=diamond]
+		l3_route_32 [label="Token Routing\n[selected tokens×8192]\nGPU 32" shape=diamond]
+		l3_gather_32 [label="Expert Gathering\n[1024×10000×8192]\nGPU 32" shape=diamond]
+		l3_route_33 [label="Token Routing\n[selected tokens×8192]\nGPU 33" shape=diamond]
+		l3_gather_33 [label="Expert Gathering\n[1024×10000×8192]\nGPU 33" shape=diamond]
+		l3_route_34 [label="Token Routing\n[selected tokens×8192]\nGPU 34" shape=diamond]
+		l3_gather_34 [label="Expert Gathering\n[1024×10000×8192]\nGPU 34" shape=diamond]
+		l3_route_35 [label="Token Routing\n[selected tokens×8192]\nGPU 35" shape=diamond]
+		l3_gather_35 [label="Expert Gathering\n[1024×10000×8192]\nGPU 35" shape=diamond]
+		l3_route_36 [label="Token Routing\n[selected tokens×8192]\nGPU 36" shape=diamond]
+		l3_gather_36 [label="Expert Gathering\n[1024×10000×8192]\nGPU 36" shape=diamond]
+		l3_route_37 [label="Token Routing\n[selected tokens×8192]\nGPU 37" shape=diamond]
+		l3_gather_37 [label="Expert Gathering\n[1024×10000×8192]\nGPU 37" shape=diamond]
+		l3_route_38 [label="Token Routing\n[selected tokens×8192]\nGPU 38" shape=diamond]
+		l3_gather_38 [label="Expert Gathering\n[1024×10000×8192]\nGPU 38" shape=diamond]
+		l3_route_39 [label="Token Routing\n[selected tokens×8192]\nGPU 39" shape=diamond]
+		l3_gather_39 [label="Expert Gathering\n[1024×10000×8192]\nGPU 39" shape=diamond]
+		l3_route_40 [label="Token Routing\n[selected tokens×8192]\nGPU 40" shape=diamond]
+		l3_gather_40 [label="Expert Gathering\n[1024×10000×8192]\nGPU 40" shape=diamond]
+		l3_route_41 [label="Token Routing\n[selected tokens×8192]\nGPU 41" shape=diamond]
+		l3_gather_41 [label="Expert Gathering\n[1024×10000×8192]\nGPU 41" shape=diamond]
+		l3_route_42 [label="Token Routing\n[selected tokens×8192]\nGPU 42" shape=diamond]
+		l3_gather_42 [label="Expert Gathering\n[1024×10000×8192]\nGPU 42" shape=diamond]
+		l3_route_43 [label="Token Routing\n[selected tokens×8192]\nGPU 43" shape=diamond]
+		l3_gather_43 [label="Expert Gathering\n[1024×10000×8192]\nGPU 43" shape=diamond]
+		l3_route_44 [label="Token Routing\n[selected tokens×8192]\nGPU 44" shape=diamond]
+		l3_gather_44 [label="Expert Gathering\n[1024×10000×8192]\nGPU 44" shape=diamond]
+		l3_route_45 [label="Token Routing\n[selected tokens×8192]\nGPU 45" shape=diamond]
+		l3_gather_45 [label="Expert Gathering\n[1024×10000×8192]\nGPU 45" shape=diamond]
+		l3_route_46 [label="Token Routing\n[selected tokens×8192]\nGPU 46" shape=diamond]
+		l3_gather_46 [label="Expert Gathering\n[1024×10000×8192]\nGPU 46" shape=diamond]
+		l3_route_47 [label="Token Routing\n[selected tokens×8192]\nGPU 47" shape=diamond]
+		l3_gather_47 [label="Expert Gathering\n[1024×10000×8192]\nGPU 47" shape=diamond]
+		l3_route_48 [label="Token Routing\n[selected tokens×8192]\nGPU 48" shape=diamond]
+		l3_gather_48 [label="Expert Gathering\n[1024×10000×8192]\nGPU 48" shape=diamond]
+		l3_route_49 [label="Token Routing\n[selected tokens×8192]\nGPU 49" shape=diamond]
+		l3_gather_49 [label="Expert Gathering\n[1024×10000×8192]\nGPU 49" shape=diamond]
+		l3_route_50 [label="Token Routing\n[selected tokens×8192]\nGPU 50" shape=diamond]
+		l3_gather_50 [label="Expert Gathering\n[1024×10000×8192]\nGPU 50" shape=diamond]
+		l3_route_51 [label="Token Routing\n[selected tokens×8192]\nGPU 51" shape=diamond]
+		l3_gather_51 [label="Expert Gathering\n[1024×10000×8192]\nGPU 51" shape=diamond]
+		l3_route_52 [label="Token Routing\n[selected tokens×8192]\nGPU 52" shape=diamond]
+		l3_gather_52 [label="Expert Gathering\n[1024×10000×8192]\nGPU 52" shape=diamond]
+		l3_route_53 [label="Token Routing\n[selected tokens×8192]\nGPU 53" shape=diamond]
+		l3_gather_53 [label="Expert Gathering\n[1024×10000×8192]\nGPU 53" shape=diamond]
+		l3_route_54 [label="Token Routing\n[selected tokens×8192]\nGPU 54" shape=diamond]
+		l3_gather_54 [label="Expert Gathering\n[1024×10000×8192]\nGPU 54" shape=diamond]
+		l3_route_55 [label="Token Routing\n[selected tokens×8192]\nGPU 55" shape=diamond]
+		l3_gather_55 [label="Expert Gathering\n[1024×10000×8192]\nGPU 55" shape=diamond]
+		l3_route_56 [label="Token Routing\n[selected tokens×8192]\nGPU 56" shape=diamond]
+		l3_gather_56 [label="Expert Gathering\n[1024×10000×8192]\nGPU 56" shape=diamond]
+		l3_route_57 [label="Token Routing\n[selected tokens×8192]\nGPU 57" shape=diamond]
+		l3_gather_57 [label="Expert Gathering\n[1024×10000×8192]\nGPU 57" shape=diamond]
+		l3_route_58 [label="Token Routing\n[selected tokens×8192]\nGPU 58" shape=diamond]
+		l3_gather_58 [label="Expert Gathering\n[1024×10000×8192]\nGPU 58" shape=diamond]
+		l3_route_59 [label="Token Routing\n[selected tokens×8192]\nGPU 59" shape=diamond]
+		l3_gather_59 [label="Expert Gathering\n[1024×10000×8192]\nGPU 59" shape=diamond]
+		l3_route_60 [label="Token Routing\n[selected tokens×8192]\nGPU 60" shape=diamond]
+		l3_gather_60 [label="Expert Gathering\n[1024×10000×8192]\nGPU 60" shape=diamond]
+		l3_route_61 [label="Token Routing\n[selected tokens×8192]\nGPU 61" shape=diamond]
+		l3_gather_61 [label="Expert Gathering\n[1024×10000×8192]\nGPU 61" shape=diamond]
+		l3_route_62 [label="Token Routing\n[selected tokens×8192]\nGPU 62" shape=diamond]
+		l3_gather_62 [label="Expert Gathering\n[1024×10000×8192]\nGPU 62" shape=diamond]
+		l3_route_63 [label="Token Routing\n[selected tokens×8192]\nGPU 63" shape=diamond]
+		l3_gather_63 [label="Expert Gathering\n[1024×10000×8192]\nGPU 63" shape=diamond]
+		l3_agg [label="Expert Aggregation3\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+		l3_res2 [label="Residual Add3\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+	}
+	subgraph cluster_layer4 {
+		label="Layer 4\n64 GPUs, 1 Expert/GPU" style=dashed
+		l4_norm1 [label="LayerNorm4\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l4_mha_qkv [label="MHA QKV4\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l4_mha_attn [label="MHA Attention4\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l4_mha_out [label="MHA Output4\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l4_res1 [label="Residual Add4\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+		l4_norm2 [label="LayerNorm4\n[1024×10000×8192]\nAll 64 GPUs" shape=rectangle]
+		l4_gate [label="Gate4\n[1024×10000×64 experts]\nAll 64 GPUs" shape=parallelogram]
+		l4_exp0 [label="Expert0\n[1024×tokens×32768]\nGPU 0" shape=rectangle]
+		l4_exp1 [label="Expert1\n[1024×tokens×32768]\nGPU 1" shape=rectangle]
+		l4_exp2 [label="Expert2\n[1024×tokens×32768]\nGPU 2" shape=rectangle]
+		l4_exp3 [label="Expert3\n[1024×tokens×32768]\nGPU 3" shape=rectangle]
+		l4_exp4 [label="Expert4\n[1024×tokens×32768]\nGPU 4" shape=rectangle]
+		l4_exp5 [label="Expert5\n[1024×tokens×32768]\nGPU 5" shape=rectangle]
+		l4_exp6 [label="Expert6\n[1024×tokens×32768]\nGPU 6" shape=rectangle]
+		l4_exp7 [label="Expert7\n[1024×tokens×32768]\nGPU 7" shape=rectangle]
+		l4_exp8 [label="Expert8\n[1024×tokens×32768]\nGPU 8" shape=rectangle]
+		l4_exp9 [label="Expert9\n[1024×tokens×32768]\nGPU 9" shape=rectangle]
+		l4_exp10 [label="Expert10\n[1024×tokens×32768]\nGPU 10" shape=rectangle]
+		l4_exp11 [label="Expert11\n[1024×tokens×32768]\nGPU 11" shape=rectangle]
+		l4_exp12 [label="Expert12\n[1024×tokens×32768]\nGPU 12" shape=rectangle]
+		l4_exp13 [label="Expert13\n[1024×tokens×32768]\nGPU 13" shape=rectangle]
+		l4_exp14 [label="Expert14\n[1024×tokens×32768]\nGPU 14" shape=rectangle]
+		l4_exp15 [label="Expert15\n[1024×tokens×32768]\nGPU 15" shape=rectangle]
+		l4_exp16 [label="Expert0\n[1024×tokens×32768]\nGPU 16" shape=rectangle]
+		l4_exp17 [label="Expert1\n[1024×tokens×32768]\nGPU 17" shape=rectangle]
+		l4_exp18 [label="Expert2\n[1024×tokens×32768]\nGPU 18" shape=rectangle]
+		l4_exp19 [label="Expert3\n[1024×tokens×32768]\nGPU 19" shape=rectangle]
+		l4_exp20 [label="Expert4\n[1024×tokens×32768]\nGPU 20" shape=rectangle]
+		l4_exp21 [label="Expert5\n[1024×tokens×32768]\nGPU 21" shape=rectangle]
+		l4_exp22 [label="Expert6\n[1024×tokens×32768]\nGPU 22" shape=rectangle]
+		l4_exp23 [label="Expert7\n[1024×tokens×32768]\nGPU 23" shape=rectangle]
+		l4_exp24 [label="Expert8\n[1024×tokens×32768]\nGPU 24" shape=rectangle]
+		l4_exp25 [label="Expert9\n[1024×tokens×32768]\nGPU 25" shape=rectangle]
+		l4_exp26 [label="Expert10\n[1024×tokens×32768]\nGPU 26" shape=rectangle]
+		l4_exp27 [label="Expert11\n[1024×tokens×32768]\nGPU 27" shape=rectangle]
+		l4_exp28 [label="Expert12\n[1024×tokens×32768]\nGPU 28" shape=rectangle]
+		l4_exp29 [label="Expert13\n[1024×tokens×32768]\nGPU 29" shape=rectangle]
+		l4_exp30 [label="Expert14\n[1024×tokens×32768]\nGPU 30" shape=rectangle]
+		l4_exp31 [label="Expert15\n[1024×tokens×32768]\nGPU 31" shape=rectangle]
+		l4_exp32 [label="Expert0\n[1024×tokens×32768]\nGPU 32" shape=rectangle]
+		l4_exp33 [label="Expert1\n[1024×tokens×32768]\nGPU 33" shape=rectangle]
+		l4_exp34 [label="Expert2\n[1024×tokens×32768]\nGPU 34" shape=rectangle]
+		l4_exp35 [label="Expert3\n[1024×tokens×32768]\nGPU 35" shape=rectangle]
+		l4_exp36 [label="Expert4\n[1024×tokens×32768]\nGPU 36" shape=rectangle]
+		l4_exp37 [label="Expert5\n[1024×tokens×32768]\nGPU 37" shape=rectangle]
+		l4_exp38 [label="Expert6\n[1024×tokens×32768]\nGPU 38" shape=rectangle]
+		l4_exp39 [label="Expert7\n[1024×tokens×32768]\nGPU 39" shape=rectangle]
+		l4_exp40 [label="Expert8\n[1024×tokens×32768]\nGPU 40" shape=rectangle]
+		l4_exp41 [label="Expert9\n[1024×tokens×32768]\nGPU 41" shape=rectangle]
+		l4_exp42 [label="Expert10\n[1024×tokens×32768]\nGPU 42" shape=rectangle]
+		l4_exp43 [label="Expert11\n[1024×tokens×32768]\nGPU 43" shape=rectangle]
+		l4_exp44 [label="Expert12\n[1024×tokens×32768]\nGPU 44" shape=rectangle]
+		l4_exp45 [label="Expert13\n[1024×tokens×32768]\nGPU 45" shape=rectangle]
+		l4_exp46 [label="Expert14\n[1024×tokens×32768]\nGPU 46" shape=rectangle]
+		l4_exp47 [label="Expert15\n[1024×tokens×32768]\nGPU 47" shape=rectangle]
+		l4_exp48 [label="Expert0\n[1024×tokens×32768]\nGPU 48" shape=rectangle]
+		l4_exp49 [label="Expert1\n[1024×tokens×32768]\nGPU 49" shape=rectangle]
+		l4_exp50 [label="Expert2\n[1024×tokens×32768]\nGPU 50" shape=rectangle]
+		l4_exp51 [label="Expert3\n[1024×tokens×32768]\nGPU 51" shape=rectangle]
+		l4_exp52 [label="Expert4\n[1024×tokens×32768]\nGPU 52" shape=rectangle]
+		l4_exp53 [label="Expert5\n[1024×tokens×32768]\nGPU 53" shape=rectangle]
+		l4_exp54 [label="Expert6\n[1024×tokens×32768]\nGPU 54" shape=rectangle]
+		l4_exp55 [label="Expert7\n[1024×tokens×32768]\nGPU 55" shape=rectangle]
+		l4_exp56 [label="Expert8\n[1024×tokens×32768]\nGPU 56" shape=rectangle]
+		l4_exp57 [label="Expert9\n[1024×tokens×32768]\nGPU 57" shape=rectangle]
+		l4_exp58 [label="Expert10\n[1024×tokens×32768]\nGPU 58" shape=rectangle]
+		l4_exp59 [label="Expert11\n[1024×tokens×32768]\nGPU 59" shape=rectangle]
+		l4_exp60 [label="Expert12\n[1024×tokens×32768]\nGPU 60" shape=rectangle]
+		l4_exp61 [label="Expert13\n[1024×tokens×32768]\nGPU 61" shape=rectangle]
+		l4_exp62 [label="Expert14\n[1024×tokens×32768]\nGPU 62" shape=rectangle]
+		l4_exp63 [label="Expert15\n[1024×tokens×32768]\nGPU 63" shape=rectangle]
+		l4_route_0 [label="Token Routing\n[selected tokens×8192]\nGPU 0" shape=diamond]
+		l4_gather_0 [label="Expert Gathering\n[1024×10000×8192]\nGPU 0" shape=diamond]
+		l4_route_1 [label="Token Routing\n[selected tokens×8192]\nGPU 1" shape=diamond]
+		l4_gather_1 [label="Expert Gathering\n[1024×10000×8192]\nGPU 1" shape=diamond]
+		l4_route_2 [label="Token Routing\n[selected tokens×8192]\nGPU 2" shape=diamond]
+		l4_gather_2 [label="Expert Gathering\n[1024×10000×8192]\nGPU 2" shape=diamond]
+		l4_route_3 [label="Token Routing\n[selected tokens×8192]\nGPU 3" shape=diamond]
+		l4_gather_3 [label="Expert Gathering\n[1024×10000×8192]\nGPU 3" shape=diamond]
+		l4_route_4 [label="Token Routing\n[selected tokens×8192]\nGPU 4" shape=diamond]
+		l4_gather_4 [label="Expert Gathering\n[1024×10000×8192]\nGPU 4" shape=diamond]
+		l4_route_5 [label="Token Routing\n[selected tokens×8192]\nGPU 5" shape=diamond]
+		l4_gather_5 [label="Expert Gathering\n[1024×10000×8192]\nGPU 5" shape=diamond]
+		l4_route_6 [label="Token Routing\n[selected tokens×8192]\nGPU 6" shape=diamond]
+		l4_gather_6 [label="Expert Gathering\n[1024×10000×8192]\nGPU 6" shape=diamond]
+		l4_route_7 [label="Token Routing\n[selected tokens×8192]\nGPU 7" shape=diamond]
+		l4_gather_7 [label="Expert Gathering\n[1024×10000×8192]\nGPU 7" shape=diamond]
+		l4_route_8 [label="Token Routing\n[selected tokens×8192]\nGPU 8" shape=diamond]
+		l4_gather_8 [label="Expert Gathering\n[1024×10000×8192]\nGPU 8" shape=diamond]
+		l4_route_9 [label="Token Routing\n[selected tokens×8192]\nGPU 9" shape=diamond]
+		l4_gather_9 [label="Expert Gathering\n[1024×10000×8192]\nGPU 9" shape=diamond]
+		l4_route_10 [label="Token Routing\n[selected tokens×8192]\nGPU 10" shape=diamond]
+		l4_gather_10 [label="Expert Gathering\n[1024×10000×8192]\nGPU 10" shape=diamond]
+		l4_route_11 [label="Token Routing\n[selected tokens×8192]\nGPU 11" shape=diamond]
+		l4_gather_11 [label="Expert Gathering\n[1024×10000×8192]\nGPU 11" shape=diamond]
+		l4_route_12 [label="Token Routing\n[selected tokens×8192]\nGPU 12" shape=diamond]
+		l4_gather_12 [label="Expert Gathering\n[1024×10000×8192]\nGPU 12" shape=diamond]
+		l4_route_13 [label="Token Routing\n[selected tokens×8192]\nGPU 13" shape=diamond]
+		l4_gather_13 [label="Expert Gathering\n[1024×10000×8192]\nGPU 13" shape=diamond]
+		l4_route_14 [label="Token Routing\n[selected tokens×8192]\nGPU 14" shape=diamond]
+		l4_gather_14 [label="Expert Gathering\n[1024×10000×8192]\nGPU 14" shape=diamond]
+		l4_route_15 [label="Token Routing\n[selected tokens×8192]\nGPU 15" shape=diamond]
+		l4_gather_15 [label="Expert Gathering\n[1024×10000×8192]\nGPU 15" shape=diamond]
+		l4_route_16 [label="Token Routing\n[selected tokens×8192]\nGPU 16" shape=diamond]
+		l4_gather_16 [label="Expert Gathering\n[1024×10000×8192]\nGPU 16" shape=diamond]
+		l4_route_17 [label="Token Routing\n[selected tokens×8192]\nGPU 17" shape=diamond]
+		l4_gather_17 [label="Expert Gathering\n[1024×10000×8192]\nGPU 17" shape=diamond]
+		l4_route_18 [label="Token Routing\n[selected tokens×8192]\nGPU 18" shape=diamond]
+		l4_gather_18 [label="Expert Gathering\n[1024×10000×8192]\nGPU 18" shape=diamond]
+		l4_route_19 [label="Token Routing\n[selected tokens×8192]\nGPU 19" shape=diamond]
+		l4_gather_19 [label="Expert Gathering\n[1024×10000×8192]\nGPU 19" shape=diamond]
+		l4_route_20 [label="Token Routing\n[selected tokens×8192]\nGPU 20" shape=diamond]
+		l4_gather_20 [label="Expert Gathering\n[1024×10000×8192]\nGPU 20" shape=diamond]
+		l4_route_21 [label="Token Routing\n[selected tokens×8192]\nGPU 21" shape=diamond]
+		l4_gather_21 [label="Expert Gathering\n[1024×10000×8192]\nGPU 21" shape=diamond]
+		l4_route_22 [label="Token Routing\n[selected tokens×8192]\nGPU 22" shape=diamond]
+		l4_gather_22 [label="Expert Gathering\n[1024×10000×8192]\nGPU 22" shape=diamond]
+		l4_route_23 [label="Token Routing\n[selected tokens×8192]\nGPU 23" shape=diamond]
+		l4_gather_23 [label="Expert Gathering\n[1024×10000×8192]\nGPU 23" shape=diamond]
+		l4_route_24 [label="Token Routing\n[selected tokens×8192]\nGPU 24" shape=diamond]
+		l4_gather_24 [label="Expert Gathering\n[1024×10000×8192]\nGPU 24" shape=diamond]
+		l4_route_25 [label="Token Routing\n[selected tokens×8192]\nGPU 25" shape=diamond]
+		l4_gather_25 [label="Expert Gathering\n[1024×10000×8192]\nGPU 25" shape=diamond]
+		l4_route_26 [label="Token Routing\n[selected tokens×8192]\nGPU 26" shape=diamond]
+		l4_gather_26 [label="Expert Gathering\n[1024×10000×8192]\nGPU 26" shape=diamond]
+		l4_route_27 [label="Token Routing\n[selected tokens×8192]\nGPU 27" shape=diamond]
+		l4_gather_27 [label="Expert Gathering\n[1024×10000×8192]\nGPU 27" shape=diamond]
+		l4_route_28 [label="Token Routing\n[selected tokens×8192]\nGPU 28" shape=diamond]
+		l4_gather_28 [label="Expert Gathering\n[1024×10000×8192]\nGPU 28" shape=diamond]
+		l4_route_29 [label="Token Routing\n[selected tokens×8192]\nGPU 29" shape=diamond]
+		l4_gather_29 [label="Expert Gathering\n[1024×10000×8192]\nGPU 29" shape=diamond]
+		l4_route_30 [label="Token Routing\n[selected tokens×8192]\nGPU 30" shape=diamond]
+		l4_gather_30 [label="Expert Gathering\n[1024×10000×8192]\nGPU 30" shape=diamond]
+		l4_route_31 [label="Token Routing\n[selected tokens×8192]\nGPU 31" shape=diamond]
+		l4_gather_31 [label="Expert Gathering\n[1024×10000×8192]\nGPU 31" shape=diamond]
+		l4_route_32 [label="Token Routing\n[selected tokens×8192]\nGPU 32" shape=diamond]
+		l4_gather_32 [label="Expert Gathering\n[1024×10000×8192]\nGPU 32" shape=diamond]
+		l4_route_33 [label="Token Routing\n[selected tokens×8192]\nGPU 33" shape=diamond]
+		l4_gather_33 [label="Expert Gathering\n[1024×10000×8192]\nGPU 33" shape=diamond]
+		l4_route_34 [label="Token Routing\n[selected tokens×8192]\nGPU 34" shape=diamond]
+		l4_gather_34 [label="Expert Gathering\n[1024×10000×8192]\nGPU 34" shape=diamond]
+		l4_route_35 [label="Token Routing\n[selected tokens×8192]\nGPU 35" shape=diamond]
+		l4_gather_35 [label="Expert Gathering\n[1024×10000×8192]\nGPU 35" shape=diamond]
+		l4_route_36 [label="Token Routing\n[selected tokens×8192]\nGPU 36" shape=diamond]
+		l4_gather_36 [label="Expert Gathering\n[1024×10000×8192]\nGPU 36" shape=diamond]
+		l4_route_37 [label="Token Routing\n[selected tokens×8192]\nGPU 37" shape=diamond]
+		l4_gather_37 [label="Expert Gathering\n[1024×10000×8192]\nGPU 37" shape=diamond]
+		l4_route_38 [label="Token Routing\n[selected tokens×8192]\nGPU 38" shape=diamond]
+		l4_gather_38 [label="Expert Gathering\n[1024×10000×8192]\nGPU 38" shape=diamond]
+		l4_route_39 [label="Token Routing\n[selected tokens×8192]\nGPU 39" shape=diamond]
+		l4_gather_39 [label="Expert Gathering\n[1024×10000×8192]\nGPU 39" shape=diamond]
+		l4_route_40 [label="Token Routing\n[selected tokens×8192]\nGPU 40" shape=diamond]
+		l4_gather_40 [label="Expert Gathering\n[1024×10000×8192]\nGPU 40" shape=diamond]
+		l4_route_41 [label="Token Routing\n[selected tokens×8192]\nGPU 41" shape=diamond]
+		l4_gather_41 [label="Expert Gathering\n[1024×10000×8192]\nGPU 41" shape=diamond]
+		l4_route_42 [label="Token Routing\n[selected tokens×8192]\nGPU 42" shape=diamond]
+		l4_gather_42 [label="Expert Gathering\n[1024×10000×8192]\nGPU 42" shape=diamond]
+		l4_route_43 [label="Token Routing\n[selected tokens×8192]\nGPU 43" shape=diamond]
+		l4_gather_43 [label="Expert Gathering\n[1024×10000×8192]\nGPU 43" shape=diamond]
+		l4_route_44 [label="Token Routing\n[selected tokens×8192]\nGPU 44" shape=diamond]
+		l4_gather_44 [label="Expert Gathering\n[1024×10000×8192]\nGPU 44" shape=diamond]
+		l4_route_45 [label="Token Routing\n[selected tokens×8192]\nGPU 45" shape=diamond]
+		l4_gather_45 [label="Expert Gathering\n[1024×10000×8192]\nGPU 45" shape=diamond]
+		l4_route_46 [label="Token Routing\n[selected tokens×8192]\nGPU 46" shape=diamond]
+		l4_gather_46 [label="Expert Gathering\n[1024×10000×8192]\nGPU 46" shape=diamond]
+		l4_route_47 [label="Token Routing\n[selected tokens×8192]\nGPU 47" shape=diamond]
+		l4_gather_47 [label="Expert Gathering\n[1024×10000×8192]\nGPU 47" shape=diamond]
+		l4_route_48 [label="Token Routing\n[selected tokens×8192]\nGPU 48" shape=diamond]
+		l4_gather_48 [label="Expert Gathering\n[1024×10000×8192]\nGPU 48" shape=diamond]
+		l4_route_49 [label="Token Routing\n[selected tokens×8192]\nGPU 49" shape=diamond]
+		l4_gather_49 [label="Expert Gathering\n[1024×10000×8192]\nGPU 49" shape=diamond]
+		l4_route_50 [label="Token Routing\n[selected tokens×8192]\nGPU 50" shape=diamond]
+		l4_gather_50 [label="Expert Gathering\n[1024×10000×8192]\nGPU 50" shape=diamond]
+		l4_route_51 [label="Token Routing\n[selected tokens×8192]\nGPU 51" shape=diamond]
+		l4_gather_51 [label="Expert Gathering\n[1024×10000×8192]\nGPU 51" shape=diamond]
+		l4_route_52 [label="Token Routing\n[selected tokens×8192]\nGPU 52" shape=diamond]
+		l4_gather_52 [label="Expert Gathering\n[1024×10000×8192]\nGPU 52" shape=diamond]
+		l4_route_53 [label="Token Routing\n[selected tokens×8192]\nGPU 53" shape=diamond]
+		l4_gather_53 [label="Expert Gathering\n[1024×10000×8192]\nGPU 53" shape=diamond]
+		l4_route_54 [label="Token Routing\n[selected tokens×8192]\nGPU 54" shape=diamond]
+		l4_gather_54 [label="Expert Gathering\n[1024×10000×8192]\nGPU 54" shape=diamond]
+		l4_route_55 [label="Token Routing\n[selected tokens×8192]\nGPU 55" shape=diamond]
+		l4_gather_55 [label="Expert Gathering\n[1024×10000×8192]\nGPU 55" shape=diamond]
+		l4_route_56 [label="Token Routing\n[selected tokens×8192]\nGPU 56" shape=diamond]
+		l4_gather_56 [label="Expert Gathering\n[1024×10000×8192]\nGPU 56" shape=diamond]
+		l4_route_57 [label="Token Routing\n[selected tokens×8192]\nGPU 57" shape=diamond]
+		l4_gather_57 [label="Expert Gathering\n[1024×10000×8192]\nGPU 57" shape=diamond]
+		l4_route_58 [label="Token Routing\n[selected tokens×8192]\nGPU 58" shape=diamond]
+		l4_gather_58 [label="Expert Gathering\n[1024×10000×8192]\nGPU 58" shape=diamond]
+		l4_route_59 [label="Token Routing\n[selected tokens×8192]\nGPU 59" shape=diamond]
+		l4_gather_59 [label="Expert Gathering\n[1024×10000×8192]\nGPU 59" shape=diamond]
+		l4_route_60 [label="Token Routing\n[selected tokens×8192]\nGPU 60" shape=diamond]
+		l4_gather_60 [label="Expert Gathering\n[1024×10000×8192]\nGPU 60" shape=diamond]
+		l4_route_61 [label="Token Routing\n[selected tokens×8192]\nGPU 61" shape=diamond]
+		l4_gather_61 [label="Expert Gathering\n[1024×10000×8192]\nGPU 61" shape=diamond]
+		l4_route_62 [label="Token Routing\n[selected tokens×8192]\nGPU 62" shape=diamond]
+		l4_gather_62 [label="Expert Gathering\n[1024×10000×8192]\nGPU 62" shape=diamond]
+		l4_route_63 [label="Token Routing\n[selected tokens×8192]\nGPU 63" shape=diamond]
+		l4_gather_63 [label="Expert Gathering\n[1024×10000×8192]\nGPU 63" shape=diamond]
+		l4_agg [label="Expert Aggregation4\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+		l4_res2 [label="Residual Add4\n[1024×10000×8192]\nAll 64 GPUs" shape=parallelogram]
+	}
+	output [label="Output\n[1024 seqs, 10000 tokens, 8192 dim]\nAll 64 GPUs" shape=ellipse]
+	input -> l1_norm1
+	l1_norm1 -> l1_mha_qkv
+	l1_mha_qkv -> l1_mha_attn
+	l1_mha_attn -> l1_mha_out
+	l1_mha_out -> l1_res1
+	input -> l1_res1
+	l1_res1 -> l1_norm2
+	l1_norm2 -> l1_gate
+	l1_gate -> l1_route_0
+	l1_route_0 -> l1_exp0
+	l1_exp0 -> l1_gather_0
+	l1_gather_0 -> l1_agg
+	l1_gate -> l1_route_1
+	l1_route_1 -> l1_exp1
+	l1_exp1 -> l1_gather_1
+	l1_gather_1 -> l1_agg
+	l1_gate -> l1_route_2
+	l1_route_2 -> l1_exp2
+	l1_exp2 -> l1_gather_2
+	l1_gather_2 -> l1_agg
+	l1_gate -> l1_route_3
+	l1_route_3 -> l1_exp3
+	l1_exp3 -> l1_gather_3
+	l1_gather_3 -> l1_agg
+	l1_gate -> l1_route_4
+	l1_route_4 -> l1_exp4
+	l1_exp4 -> l1_gather_4
+	l1_gather_4 -> l1_agg
+	l1_gate -> l1_route_5
+	l1_route_5 -> l1_exp5
+	l1_exp5 -> l1_gather_5
+	l1_gather_5 -> l1_agg
+	l1_gate -> l1_route_6
+	l1_route_6 -> l1_exp6
+	l1_exp6 -> l1_gather_6
+	l1_gather_6 -> l1_agg
+	l1_gate -> l1_route_7
+	l1_route_7 -> l1_exp7
+	l1_exp7 -> l1_gather_7
+	l1_gather_7 -> l1_agg
+	l1_gate -> l1_route_8
+	l1_route_8 -> l1_exp8
+	l1_exp8 -> l1_gather_8
+	l1_gather_8 -> l1_agg
+	l1_gate -> l1_route_9
+	l1_route_9 -> l1_exp9
+	l1_exp9 -> l1_gather_9
+	l1_gather_9 -> l1_agg
+	l1_gate -> l1_route_10
+	l1_route_10 -> l1_exp10
+	l1_exp10 -> l1_gather_10
+	l1_gather_10 -> l1_agg
+	l1_gate -> l1_route_11
+	l1_route_11 -> l1_exp11
+	l1_exp11 -> l1_gather_11
+	l1_gather_11 -> l1_agg
+	l1_gate -> l1_route_12
+	l1_route_12 -> l1_exp12
+	l1_exp12 -> l1_gather_12
+	l1_gather_12 -> l1_agg
+	l1_gate -> l1_route_13
+	l1_route_13 -> l1_exp13
+	l1_exp13 -> l1_gather_13
+	l1_gather_13 -> l1_agg
+	l1_gate -> l1_route_14
+	l1_route_14 -> l1_exp14
+	l1_exp14 -> l1_gather_14
+	l1_gather_14 -> l1_agg
+	l1_gate -> l1_route_15
+	l1_route_15 -> l1_exp15
+	l1_exp15 -> l1_gather_15
+	l1_gather_15 -> l1_agg
+	l1_gate -> l1_route_16
+	l1_route_16 -> l1_exp16
+	l1_exp16 -> l1_gather_16
+	l1_gather_16 -> l1_agg
+	l1_gate -> l1_route_17
+	l1_route_17 -> l1_exp17
+	l1_exp17 -> l1_gather_17
+	l1_gather_17 -> l1_agg
+	l1_gate -> l1_route_18
+	l1_route_18 -> l1_exp18
+	l1_exp18 -> l1_gather_18
+	l1_gather_18 -> l1_agg
+	l1_gate -> l1_route_19
+	l1_route_19 -> l1_exp19
+	l1_exp19 -> l1_gather_19
+	l1_gather_19 -> l1_agg
+	l1_gate -> l1_route_20
+	l1_route_20 -> l1_exp20
+	l1_exp20 -> l1_gather_20
+	l1_gather_20 -> l1_agg
+	l1_gate -> l1_route_21
+	l1_route_21 -> l1_exp21
+	l1_exp21 -> l1_gather_21
+	l1_gather_21 -> l1_agg
+	l1_gate -> l1_route_22
+	l1_route_22 -> l1_exp22
+	l1_exp22 -> l1_gather_22
+	l1_gather_22 -> l1_agg
+	l1_gate -> l1_route_23
+	l1_route_23 -> l1_exp23
+	l1_exp23 -> l1_gather_23
+	l1_gather_23 -> l1_agg
+	l1_gate -> l1_route_24
+	l1_route_24 -> l1_exp24
+	l1_exp24 -> l1_gather_24
+	l1_gather_24 -> l1_agg
+	l1_gate -> l1_route_25
+	l1_route_25 -> l1_exp25
+	l1_exp25 -> l1_gather_25
+	l1_gather_25 -> l1_agg
+	l1_gate -> l1_route_26
+	l1_route_26 -> l1_exp26
+	l1_exp26 -> l1_gather_26
+	l1_gather_26 -> l1_agg
+	l1_gate -> l1_route_27
+	l1_route_27 -> l1_exp27
+	l1_exp27 -> l1_gather_27
+	l1_gather_27 -> l1_agg
+	l1_gate -> l1_route_28
+	l1_route_28 -> l1_exp28
+	l1_exp28 -> l1_gather_28
+	l1_gather_28 -> l1_agg
+	l1_gate -> l1_route_29
+	l1_route_29 -> l1_exp29
+	l1_exp29 -> l1_gather_29
+	l1_gather_29 -> l1_agg
+	l1_gate -> l1_route_30
+	l1_route_30 -> l1_exp30
+	l1_exp30 -> l1_gather_30
+	l1_gather_30 -> l1_agg
+	l1_gate -> l1_route_31
+	l1_route_31 -> l1_exp31
+	l1_exp31 -> l1_gather_31
+	l1_gather_31 -> l1_agg
+	l1_gate -> l1_route_32
+	l1_route_32 -> l1_exp32
+	l1_exp32 -> l1_gather_32
+	l1_gather_32 -> l1_agg
+	l1_gate -> l1_route_33
+	l1_route_33 -> l1_exp33
+	l1_exp33 -> l1_gather_33
+	l1_gather_33 -> l1_agg
+	l1_gate -> l1_route_34
+	l1_route_34 -> l1_exp34
+	l1_exp34 -> l1_gather_34
+	l1_gather_34 -> l1_agg
+	l1_gate -> l1_route_35
+	l1_route_35 -> l1_exp35
+	l1_exp35 -> l1_gather_35
+	l1_gather_35 -> l1_agg
+	l1_gate -> l1_route_36
+	l1_route_36 -> l1_exp36
+	l1_exp36 -> l1_gather_36
+	l1_gather_36 -> l1_agg
+	l1_gate -> l1_route_37
+	l1_route_37 -> l1_exp37
+	l1_exp37 -> l1_gather_37
+	l1_gather_37 -> l1_agg
+	l1_gate -> l1_route_38
+	l1_route_38 -> l1_exp38
+	l1_exp38 -> l1_gather_38
+	l1_gather_38 -> l1_agg
+	l1_gate -> l1_route_39
+	l1_route_39 -> l1_exp39
+	l1_exp39 -> l1_gather_39
+	l1_gather_39 -> l1_agg
+	l1_gate -> l1_route_40
+	l1_route_40 -> l1_exp40
+	l1_exp40 -> l1_gather_40
+	l1_gather_40 -> l1_agg
+	l1_gate -> l1_route_41
+	l1_route_41 -> l1_exp41
+	l1_exp41 -> l1_gather_41
+	l1_gather_41 -> l1_agg
+	l1_gate -> l1_route_42
+	l1_route_42 -> l1_exp42
+	l1_exp42 -> l1_gather_42
+	l1_gather_42 -> l1_agg
+	l1_gate -> l1_route_43
+	l1_route_43 -> l1_exp43
+	l1_exp43 -> l1_gather_43
+	l1_gather_43 -> l1_agg
+	l1_gate -> l1_route_44
+	l1_route_44 -> l1_exp44
+	l1_exp44 -> l1_gather_44
+	l1_gather_44 -> l1_agg
+	l1_gate -> l1_route_45
+	l1_route_45 -> l1_exp45
+	l1_exp45 -> l1_gather_45
+	l1_gather_45 -> l1_agg
+	l1_gate -> l1_route_46
+	l1_route_46 -> l1_exp46
+	l1_exp46 -> l1_gather_46
+	l1_gather_46 -> l1_agg
+	l1_gate -> l1_route_47
+	l1_route_47 -> l1_exp47
+	l1_exp47 -> l1_gather_47
+	l1_gather_47 -> l1_agg
+	l1_gate -> l1_route_48
+	l1_route_48 -> l1_exp48
+	l1_exp48 -> l1_gather_48
+	l1_gather_48 -> l1_agg
+	l1_gate -> l1_route_49
+	l1_route_49 -> l1_exp49
+	l1_exp49 -> l1_gather_49
+	l1_gather_49 -> l1_agg
+	l1_gate -> l1_route_50
+	l1_route_50 -> l1_exp50
+	l1_exp50 -> l1_gather_50
+	l1_gather_50 -> l1_agg
+	l1_gate -> l1_route_51
+	l1_route_51 -> l1_exp51
+	l1_exp51 -> l1_gather_51
+	l1_gather_51 -> l1_agg
+	l1_gate -> l1_route_52
+	l1_route_52 -> l1_exp52
+	l1_exp52 -> l1_gather_52
+	l1_gather_52 -> l1_agg
+	l1_gate -> l1_route_53
+	l1_route_53 -> l1_exp53
+	l1_exp53 -> l1_gather_53
+	l1_gather_53 -> l1_agg
+	l1_gate -> l1_route_54
+	l1_route_54 -> l1_exp54
+	l1_exp54 -> l1_gather_54
+	l1_gather_54 -> l1_agg
+	l1_gate -> l1_route_55
+	l1_route_55 -> l1_exp55
+	l1_exp55 -> l1_gather_55
+	l1_gather_55 -> l1_agg
+	l1_gate -> l1_route_56
+	l1_route_56 -> l1_exp56
+	l1_exp56 -> l1_gather_56
+	l1_gather_56 -> l1_agg
+	l1_gate -> l1_route_57
+	l1_route_57 -> l1_exp57
+	l1_exp57 -> l1_gather_57
+	l1_gather_57 -> l1_agg
+	l1_gate -> l1_route_58
+	l1_route_58 -> l1_exp58
+	l1_exp58 -> l1_gather_58
+	l1_gather_58 -> l1_agg
+	l1_gate -> l1_route_59
+	l1_route_59 -> l1_exp59
+	l1_exp59 -> l1_gather_59
+	l1_gather_59 -> l1_agg
+	l1_gate -> l1_route_60
+	l1_route_60 -> l1_exp60
+	l1_exp60 -> l1_gather_60
+	l1_gather_60 -> l1_agg
+	l1_gate -> l1_route_61
+	l1_route_61 -> l1_exp61
+	l1_exp61 -> l1_gather_61
+	l1_gather_61 -> l1_agg
+	l1_gate -> l1_route_62
+	l1_route_62 -> l1_exp62
+	l1_exp62 -> l1_gather_62
+	l1_gather_62 -> l1_agg
+	l1_gate -> l1_route_63
+	l1_route_63 -> l1_exp63
+	l1_exp63 -> l1_gather_63
+	l1_gather_63 -> l1_agg
+	l1_agg -> l1_res2
+	l1_res1 -> l1_res2
+	l1_res2 -> l2_norm1
+	l2_norm1 -> l2_mha_qkv
+	l2_mha_qkv -> l2_mha_attn
+	l2_mha_attn -> l2_mha_out
+	l2_mha_out -> l2_res1
+	l1_res2 -> l2_res1
+	l2_res1 -> l2_norm2
+	l2_norm2 -> l2_gate
+	l2_gate -> l2_route_0
+	l2_route_0 -> l2_exp0
+	l2_exp0 -> l2_gather_0
+	l2_gather_0 -> l2_agg
+	l2_gate -> l2_route_1
+	l2_route_1 -> l2_exp1
+	l2_exp1 -> l2_gather_1
+	l2_gather_1 -> l2_agg
+	l2_gate -> l2_route_2
+	l2_route_2 -> l2_exp2
+	l2_exp2 -> l2_gather_2
+	l2_gather_2 -> l2_agg
+	l2_gate -> l2_route_3
+	l2_route_3 -> l2_exp3
+	l2_exp3 -> l2_gather_3
+	l2_gather_3 -> l2_agg
+	l2_gate -> l2_route_4
+	l2_route_4 -> l2_exp4
+	l2_exp4 -> l2_gather_4
+	l2_gather_4 -> l2_agg
+	l2_gate -> l2_route_5
+	l2_route_5 -> l2_exp5
+	l2_exp5 -> l2_gather_5
+	l2_gather_5 -> l2_agg
+	l2_gate -> l2_route_6
+	l2_route_6 -> l2_exp6
+	l2_exp6 -> l2_gather_6
+	l2_gather_6 -> l2_agg
+	l2_gate -> l2_route_7
+	l2_route_7 -> l2_exp7
+	l2_exp7 -> l2_gather_7
+	l2_gather_7 -> l2_agg
+	l2_gate -> l2_route_8
+	l2_route_8 -> l2_exp8
+	l2_exp8 -> l2_gather_8
+	l2_gather_8 -> l2_agg
+	l2_gate -> l2_route_9
+	l2_route_9 -> l2_exp9
+	l2_exp9 -> l2_gather_9
+	l2_gather_9 -> l2_agg
+	l2_gate -> l2_route_10
+	l2_route_10 -> l2_exp10
+	l2_exp10 -> l2_gather_10
+	l2_gather_10 -> l2_agg
+	l2_gate -> l2_route_11
+	l2_route_11 -> l2_exp11
+	l2_exp11 -> l2_gather_11
+	l2_gather_11 -> l2_agg
+	l2_gate -> l2_route_12
+	l2_route_12 -> l2_exp12
+	l2_exp12 -> l2_gather_12
+	l2_gather_12 -> l2_agg
+	l2_gate -> l2_route_13
+	l2_route_13 -> l2_exp13
+	l2_exp13 -> l2_gather_13
+	l2_gather_13 -> l2_agg
+	l2_gate -> l2_route_14
+	l2_route_14 -> l2_exp14
+	l2_exp14 -> l2_gather_14
+	l2_gather_14 -> l2_agg
+	l2_gate -> l2_route_15
+	l2_route_15 -> l2_exp15
+	l2_exp15 -> l2_gather_15
+	l2_gather_15 -> l2_agg
+	l2_gate -> l2_route_16
+	l2_route_16 -> l2_exp16
+	l2_exp16 -> l2_gather_16
+	l2_gather_16 -> l2_agg
+	l2_gate -> l2_route_17
+	l2_route_17 -> l2_exp17
+	l2_exp17 -> l2_gather_17
+	l2_gather_17 -> l2_agg
+	l2_gate -> l2_route_18
+	l2_route_18 -> l2_exp18
+	l2_exp18 -> l2_gather_18
+	l2_gather_18 -> l2_agg
+	l2_gate -> l2_route_19
+	l2_route_19 -> l2_exp19
+	l2_exp19 -> l2_gather_19
+	l2_gather_19 -> l2_agg
+	l2_gate -> l2_route_20
+	l2_route_20 -> l2_exp20
+	l2_exp20 -> l2_gather_20
+	l2_gather_20 -> l2_agg
+	l2_gate -> l2_route_21
+	l2_route_21 -> l2_exp21
+	l2_exp21 -> l2_gather_21
+	l2_gather_21 -> l2_agg
+	l2_gate -> l2_route_22
+	l2_route_22 -> l2_exp22
+	l2_exp22 -> l2_gather_22
+	l2_gather_22 -> l2_agg
+	l2_gate -> l2_route_23
+	l2_route_23 -> l2_exp23
+	l2_exp23 -> l2_gather_23
+	l2_gather_23 -> l2_agg
+	l2_gate -> l2_route_24
+	l2_route_24 -> l2_exp24
+	l2_exp24 -> l2_gather_24
+	l2_gather_24 -> l2_agg
+	l2_gate -> l2_route_25
+	l2_route_25 -> l2_exp25
+	l2_exp25 -> l2_gather_25
+	l2_gather_25 -> l2_agg
+	l2_gate -> l2_route_26
+	l2_route_26 -> l2_exp26
+	l2_exp26 -> l2_gather_26
+	l2_gather_26 -> l2_agg
+	l2_gate -> l2_route_27
+	l2_route_27 -> l2_exp27
+	l2_exp27 -> l2_gather_27
+	l2_gather_27 -> l2_agg
+	l2_gate -> l2_route_28
+	l2_route_28 -> l2_exp28
+	l2_exp28 -> l2_gather_28
+	l2_gather_28 -> l2_agg
+	l2_gate -> l2_route_29
+	l2_route_29 -> l2_exp29
+	l2_exp29 -> l2_gather_29
+	l2_gather_29 -> l2_agg
+	l2_gate -> l2_route_30
+	l2_route_30 -> l2_exp30
+	l2_exp30 -> l2_gather_30
+	l2_gather_30 -> l2_agg
+	l2_gate -> l2_route_31
+	l2_route_31 -> l2_exp31
+	l2_exp31 -> l2_gather_31
+	l2_gather_31 -> l2_agg
+	l2_gate -> l2_route_32
+	l2_route_32 -> l2_exp32
+	l2_exp32 -> l2_gather_32
+	l2_gather_32 -> l2_agg
+	l2_gate -> l2_route_33
+	l2_route_33 -> l2_exp33
+	l2_exp33 -> l2_gather_33
+	l2_gather_33 -> l2_agg
+	l2_gate -> l2_route_34
+	l2_route_34 -> l2_exp34
+	l2_exp34 -> l2_gather_34
+	l2_gather_34 -> l2_agg
+	l2_gate -> l2_route_35
+	l2_route_35 -> l2_exp35
+	l2_exp35 -> l2_gather_35
+	l2_gather_35 -> l2_agg
+	l2_gate -> l2_route_36
+	l2_route_36 -> l2_exp36
+	l2_exp36 -> l2_gather_36
+	l2_gather_36 -> l2_agg
+	l2_gate -> l2_route_37
+	l2_route_37 -> l2_exp37
+	l2_exp37 -> l2_gather_37
+	l2_gather_37 -> l2_agg
+	l2_gate -> l2_route_38
+	l2_route_38 -> l2_exp38
+	l2_exp38 -> l2_gather_38
+	l2_gather_38 -> l2_agg
+	l2_gate -> l2_route_39
+	l2_route_39 -> l2_exp39
+	l2_exp39 -> l2_gather_39
+	l2_gather_39 -> l2_agg
+	l2_gate -> l2_route_40
+	l2_route_40 -> l2_exp40
+	l2_exp40 -> l2_gather_40
+	l2_gather_40 -> l2_agg
+	l2_gate -> l2_route_41
+	l2_route_41 -> l2_exp41
+	l2_exp41 -> l2_gather_41
+	l2_gather_41 -> l2_agg
+	l2_gate -> l2_route_42
+	l2_route_42 -> l2_exp42
+	l2_exp42 -> l2_gather_42
+	l2_gather_42 -> l2_agg
+	l2_gate -> l2_route_43
+	l2_route_43 -> l2_exp43
+	l2_exp43 -> l2_gather_43
+	l2_gather_43 -> l2_agg
+	l2_gate -> l2_route_44
+	l2_route_44 -> l2_exp44
+	l2_exp44 -> l2_gather_44
+	l2_gather_44 -> l2_agg
+	l2_gate -> l2_route_45
+	l2_route_45 -> l2_exp45
+	l2_exp45 -> l2_gather_45
+	l2_gather_45 -> l2_agg
+	l2_gate -> l2_route_46
+	l2_route_46 -> l2_exp46
+	l2_exp46 -> l2_gather_46
+	l2_gather_46 -> l2_agg
+	l2_gate -> l2_route_47
+	l2_route_47 -> l2_exp47
+	l2_exp47 -> l2_gather_47
+	l2_gather_47 -> l2_agg
+	l2_gate -> l2_route_48
+	l2_route_48 -> l2_exp48
+	l2_exp48 -> l2_gather_48
+	l2_gather_48 -> l2_agg
+	l2_gate -> l2_route_49
+	l2_route_49 -> l2_exp49
+	l2_exp49 -> l2_gather_49
+	l2_gather_49 -> l2_agg
+	l2_gate -> l2_route_50
+	l2_route_50 -> l2_exp50
+	l2_exp50 -> l2_gather_50
+	l2_gather_50 -> l2_agg
+	l2_gate -> l2_route_51
+	l2_route_51 -> l2_exp51
+	l2_exp51 -> l2_gather_51
+	l2_gather_51 -> l2_agg
+	l2_gate -> l2_route_52
+	l2_route_52 -> l2_exp52
+	l2_exp52 -> l2_gather_52
+	l2_gather_52 -> l2_agg
+	l2_gate -> l2_route_53
+	l2_route_53 -> l2_exp53
+	l2_exp53 -> l2_gather_53
+	l2_gather_53 -> l2_agg
+	l2_gate -> l2_route_54
+	l2_route_54 -> l2_exp54
+	l2_exp54 -> l2_gather_54
+	l2_gather_54 -> l2_agg
+	l2_gate -> l2_route_55
+	l2_route_55 -> l2_exp55
+	l2_exp55 -> l2_gather_55
+	l2_gather_55 -> l2_agg
+	l2_gate -> l2_route_56
+	l2_route_56 -> l2_exp56
+	l2_exp56 -> l2_gather_56
+	l2_gather_56 -> l2_agg
+	l2_gate -> l2_route_57
+	l2_route_57 -> l2_exp57
+	l2_exp57 -> l2_gather_57
+	l2_gather_57 -> l2_agg
+	l2_gate -> l2_route_58
+	l2_route_58 -> l2_exp58
+	l2_exp58 -> l2_gather_58
+	l2_gather_58 -> l2_agg
+	l2_gate -> l2_route_59
+	l2_route_59 -> l2_exp59
+	l2_exp59 -> l2_gather_59
+	l2_gather_59 -> l2_agg
+	l2_gate -> l2_route_60
+	l2_route_60 -> l2_exp60
+	l2_exp60 -> l2_gather_60
+	l2_gather_60 -> l2_agg
+	l2_gate -> l2_route_61
+	l2_route_61 -> l2_exp61
+	l2_exp61 -> l2_gather_61
+	l2_gather_61 -> l2_agg
+	l2_gate -> l2_route_62
+	l2_route_62 -> l2_exp62
+	l2_exp62 -> l2_gather_62
+	l2_gather_62 -> l2_agg
+	l2_gate -> l2_route_63
+	l2_route_63 -> l2_exp63
+	l2_exp63 -> l2_gather_63
+	l2_gather_63 -> l2_agg
+	l2_agg -> l2_res2
+	l2_res1 -> l2_res2
+	l2_res2 -> l3_norm1
+	l3_norm1 -> l3_mha_qkv
+	l3_mha_qkv -> l3_mha_attn
+	l3_mha_attn -> l3_mha_out
+	l3_mha_out -> l3_res1
+	l2_res2 -> l3_res1
+	l3_res1 -> l3_norm2
+	l3_norm2 -> l3_gate
+	l3_gate -> l3_route_0
+	l3_route_0 -> l3_exp0
+	l3_exp0 -> l3_gather_0
+	l3_gather_0 -> l3_agg
+	l3_gate -> l3_route_1
+	l3_route_1 -> l3_exp1
+	l3_exp1 -> l3_gather_1
+	l3_gather_1 -> l3_agg
+	l3_gate -> l3_route_2
+	l3_route_2 -> l3_exp2
+	l3_exp2 -> l3_gather_2
+	l3_gather_2 -> l3_agg
+	l3_gate -> l3_route_3
+	l3_route_3 -> l3_exp3
+	l3_exp3 -> l3_gather_3
+	l3_gather_3 -> l3_agg
+	l3_gate -> l3_route_4
+	l3_route_4 -> l3_exp4
+	l3_exp4 -> l3_gather_4
+	l3_gather_4 -> l3_agg
+	l3_gate -> l3_route_5
+	l3_route_5 -> l3_exp5
+	l3_exp5 -> l3_gather_5
+	l3_gather_5 -> l3_agg
+	l3_gate -> l3_route_6
+	l3_route_6 -> l3_exp6
+	l3_exp6 -> l3_gather_6
+	l3_gather_6 -> l3_agg
+	l3_gate -> l3_route_7
+	l3_route_7 -> l3_exp7
+	l3_exp7 -> l3_gather_7
+	l3_gather_7 -> l3_agg
+	l3_gate -> l3_route_8
+	l3_route_8 -> l3_exp8
+	l3_exp8 -> l3_gather_8
+	l3_gather_8 -> l3_agg
+	l3_gate -> l3_route_9
+	l3_route_9 -> l3_exp9
+	l3_exp9 -> l3_gather_9
+	l3_gather_9 -> l3_agg
+	l3_gate -> l3_route_10
+	l3_route_10 -> l3_exp10
+	l3_exp10 -> l3_gather_10
+	l3_gather_10 -> l3_agg
+	l3_gate -> l3_route_11
+	l3_route_11 -> l3_exp11
+	l3_exp11 -> l3_gather_11
+	l3_gather_11 -> l3_agg
+	l3_gate -> l3_route_12
+	l3_route_12 -> l3_exp12
+	l3_exp12 -> l3_gather_12
+	l3_gather_12 -> l3_agg
+	l3_gate -> l3_route_13
+	l3_route_13 -> l3_exp13
+	l3_exp13 -> l3_gather_13
+	l3_gather_13 -> l3_agg
+	l3_gate -> l3_route_14
+	l3_route_14 -> l3_exp14
+	l3_exp14 -> l3_gather_14
+	l3_gather_14 -> l3_agg
+	l3_gate -> l3_route_15
+	l3_route_15 -> l3_exp15
+	l3_exp15 -> l3_gather_15
+	l3_gather_15 -> l3_agg
+	l3_gate -> l3_route_16
+	l3_route_16 -> l3_exp16
+	l3_exp16 -> l3_gather_16
+	l3_gather_16 -> l3_agg
+	l3_gate -> l3_route_17
+	l3_route_17 -> l3_exp17
+	l3_exp17 -> l3_gather_17
+	l3_gather_17 -> l3_agg
+	l3_gate -> l3_route_18
+	l3_route_18 -> l3_exp18
+	l3_exp18 -> l3_gather_18
+	l3_gather_18 -> l3_agg
+	l3_gate -> l3_route_19
+	l3_route_19 -> l3_exp19
+	l3_exp19 -> l3_gather_19
+	l3_gather_19 -> l3_agg
+	l3_gate -> l3_route_20
+	l3_route_20 -> l3_exp20
+	l3_exp20 -> l3_gather_20
+	l3_gather_20 -> l3_agg
+	l3_gate -> l3_route_21
+	l3_route_21 -> l3_exp21
+	l3_exp21 -> l3_gather_21
+	l3_gather_21 -> l3_agg
+	l3_gate -> l3_route_22
+	l3_route_22 -> l3_exp22
+	l3_exp22 -> l3_gather_22
+	l3_gather_22 -> l3_agg
+	l3_gate -> l3_route_23
+	l3_route_23 -> l3_exp23
+	l3_exp23 -> l3_gather_23
+	l3_gather_23 -> l3_agg
+	l3_gate -> l3_route_24
+	l3_route_24 -> l3_exp24
+	l3_exp24 -> l3_gather_24
+	l3_gather_24 -> l3_agg
+	l3_gate -> l3_route_25
+	l3_route_25 -> l3_exp25
+	l3_exp25 -> l3_gather_25
+	l3_gather_25 -> l3_agg
+	l3_gate -> l3_route_26
+	l3_route_26 -> l3_exp26
+	l3_exp26 -> l3_gather_26
+	l3_gather_26 -> l3_agg
+	l3_gate -> l3_route_27
+	l3_route_27 -> l3_exp27
+	l3_exp27 -> l3_gather_27
+	l3_gather_27 -> l3_agg
+	l3_gate -> l3_route_28
+	l3_route_28 -> l3_exp28
+	l3_exp28 -> l3_gather_28
+	l3_gather_28 -> l3_agg
+	l3_gate -> l3_route_29
+	l3_route_29 -> l3_exp29
+	l3_exp29 -> l3_gather_29
+	l3_gather_29 -> l3_agg
+	l3_gate -> l3_route_30
+	l3_route_30 -> l3_exp30
+	l3_exp30 -> l3_gather_30
+	l3_gather_30 -> l3_agg
+	l3_gate -> l3_route_31
+	l3_route_31 -> l3_exp31
+	l3_exp31 -> l3_gather_31
+	l3_gather_31 -> l3_agg
+	l3_gate -> l3_route_32
+	l3_route_32 -> l3_exp32
+	l3_exp32 -> l3_gather_32
+	l3_gather_32 -> l3_agg
+	l3_gate -> l3_route_33
+	l3_route_33 -> l3_exp33
+	l3_exp33 -> l3_gather_33
+	l3_gather_33 -> l3_agg
+	l3_gate -> l3_route_34
+	l3_route_34 -> l3_exp34
+	l3_exp34 -> l3_gather_34
+	l3_gather_34 -> l3_agg
+	l3_gate -> l3_route_35
+	l3_route_35 -> l3_exp35
+	l3_exp35 -> l3_gather_35
+	l3_gather_35 -> l3_agg
+	l3_gate -> l3_route_36
+	l3_route_36 -> l3_exp36
+	l3_exp36 -> l3_gather_36
+	l3_gather_36 -> l3_agg
+	l3_gate -> l3_route_37
+	l3_route_37 -> l3_exp37
+	l3_exp37 -> l3_gather_37
+	l3_gather_37 -> l3_agg
+	l3_gate -> l3_route_38
+	l3_route_38 -> l3_exp38
+	l3_exp38 -> l3_gather_38
+	l3_gather_38 -> l3_agg
+	l3_gate -> l3_route_39
+	l3_route_39 -> l3_exp39
+	l3_exp39 -> l3_gather_39
+	l3_gather_39 -> l3_agg
+	l3_gate -> l3_route_40
+	l3_route_40 -> l3_exp40
+	l3_exp40 -> l3_gather_40
+	l3_gather_40 -> l3_agg
+	l3_gate -> l3_route_41
+	l3_route_41 -> l3_exp41
+	l3_exp41 -> l3_gather_41
+	l3_gather_41 -> l3_agg
+	l3_gate -> l3_route_42
+	l3_route_42 -> l3_exp42
+	l3_exp42 -> l3_gather_42
+	l3_gather_42 -> l3_agg
+	l3_gate -> l3_route_43
+	l3_route_43 -> l3_exp43
+	l3_exp43 -> l3_gather_43
+	l3_gather_43 -> l3_agg
+	l3_gate -> l3_route_44
+	l3_route_44 -> l3_exp44
+	l3_exp44 -> l3_gather_44
+	l3_gather_44 -> l3_agg
+	l3_gate -> l3_route_45
+	l3_route_45 -> l3_exp45
+	l3_exp45 -> l3_gather_45
+	l3_gather_45 -> l3_agg
+	l3_gate -> l3_route_46
+	l3_route_46 -> l3_exp46
+	l3_exp46 -> l3_gather_46
+	l3_gather_46 -> l3_agg
+	l3_gate -> l3_route_47
+	l3_route_47 -> l3_exp47
+	l3_exp47 -> l3_gather_47
+	l3_gather_47 -> l3_agg
+	l3_gate -> l3_route_48
+	l3_route_48 -> l3_exp48
+	l3_exp48 -> l3_gather_48
+	l3_gather_48 -> l3_agg
+	l3_gate -> l3_route_49
+	l3_route_49 -> l3_exp49
+	l3_exp49 -> l3_gather_49
+	l3_gather_49 -> l3_agg
+	l3_gate -> l3_route_50
+	l3_route_50 -> l3_exp50
+	l3_exp50 -> l3_gather_50
+	l3_gather_50 -> l3_agg
+	l3_gate -> l3_route_51
+	l3_route_51 -> l3_exp51
+	l3_exp51 -> l3_gather_51
+	l3_gather_51 -> l3_agg
+	l3_gate -> l3_route_52
+	l3_route_52 -> l3_exp52
+	l3_exp52 -> l3_gather_52
+	l3_gather_52 -> l3_agg
+	l3_gate -> l3_route_53
+	l3_route_53 -> l3_exp53
+	l3_exp53 -> l3_gather_53
+	l3_gather_53 -> l3_agg
+	l3_gate -> l3_route_54
+	l3_route_54 -> l3_exp54
+	l3_exp54 -> l3_gather_54
+	l3_gather_54 -> l3_agg
+	l3_gate -> l3_route_55
+	l3_route_55 -> l3_exp55
+	l3_exp55 -> l3_gather_55
+	l3_gather_55 -> l3_agg
+	l3_gate -> l3_route_56
+	l3_route_56 -> l3_exp56
+	l3_exp56 -> l3_gather_56
+	l3_gather_56 -> l3_agg
+	l3_gate -> l3_route_57
+	l3_route_57 -> l3_exp57
+	l3_exp57 -> l3_gather_57
+	l3_gather_57 -> l3_agg
+	l3_gate -> l3_route_58
+	l3_route_58 -> l3_exp58
+	l3_exp58 -> l3_gather_58
+	l3_gather_58 -> l3_agg
+	l3_gate -> l3_route_59
+	l3_route_59 -> l3_exp59
+	l3_exp59 -> l3_gather_59
+	l3_gather_59 -> l3_agg
+	l3_gate -> l3_route_60
+	l3_route_60 -> l3_exp60
+	l3_exp60 -> l3_gather_60
+	l3_gather_60 -> l3_agg
+	l3_gate -> l3_route_61
+	l3_route_61 -> l3_exp61
+	l3_exp61 -> l3_gather_61
+	l3_gather_61 -> l3_agg
+	l3_gate -> l3_route_62
+	l3_route_62 -> l3_exp62
+	l3_exp62 -> l3_gather_62
+	l3_gather_62 -> l3_agg
+	l3_gate -> l3_route_63
+	l3_route_63 -> l3_exp63
+	l3_exp63 -> l3_gather_63
+	l3_gather_63 -> l3_agg
+	l3_agg -> l3_res2
+	l3_res1 -> l3_res2
+	l3_res2 -> l4_norm1
+	l4_norm1 -> l4_mha_qkv
+	l4_mha_qkv -> l4_mha_attn
+	l4_mha_attn -> l4_mha_out
+	l4_mha_out -> l4_res1
+	l3_res2 -> l4_res1
+	l4_res1 -> l4_norm2
+	l4_norm2 -> l4_gate
+	l4_gate -> l4_route_0
+	l4_route_0 -> l4_exp0
+	l4_exp0 -> l4_gather_0
+	l4_gather_0 -> l4_agg
+	l4_gate -> l4_route_1
+	l4_route_1 -> l4_exp1
+	l4_exp1 -> l4_gather_1
+	l4_gather_1 -> l4_agg
+	l4_gate -> l4_route_2
+	l4_route_2 -> l4_exp2
+	l4_exp2 -> l4_gather_2
+	l4_gather_2 -> l4_agg
+	l4_gate -> l4_route_3
+	l4_route_3 -> l4_exp3
+	l4_exp3 -> l4_gather_3
+	l4_gather_3 -> l4_agg
+	l4_gate -> l4_route_4
+	l4_route_4 -> l4_exp4
+	l4_exp4 -> l4_gather_4
+	l4_gather_4 -> l4_agg
+	l4_gate -> l4_route_5
+	l4_route_5 -> l4_exp5
+	l4_exp5 -> l4_gather_5
+	l4_gather_5 -> l4_agg
+	l4_gate -> l4_route_6
+	l4_route_6 -> l4_exp6
+	l4_exp6 -> l4_gather_6
+	l4_gather_6 -> l4_agg
+	l4_gate -> l4_route_7
+	l4_route_7 -> l4_exp7
+	l4_exp7 -> l4_gather_7
+	l4_gather_7 -> l4_agg
+	l4_gate -> l4_route_8
+	l4_route_8 -> l4_exp8
+	l4_exp8 -> l4_gather_8
+	l4_gather_8 -> l4_agg
+	l4_gate -> l4_route_9
+	l4_route_9 -> l4_exp9
+	l4_exp9 -> l4_gather_9
+	l4_gather_9 -> l4_agg
+	l4_gate -> l4_route_10
+	l4_route_10 -> l4_exp10
+	l4_exp10 -> l4_gather_10
+	l4_gather_10 -> l4_agg
+	l4_gate -> l4_route_11
+	l4_route_11 -> l4_exp11
+	l4_exp11 -> l4_gather_11
+	l4_gather_11 -> l4_agg
+	l4_gate -> l4_route_12
+	l4_route_12 -> l4_exp12
+	l4_exp12 -> l4_gather_12
+	l4_gather_12 -> l4_agg
+	l4_gate -> l4_route_13
+	l4_route_13 -> l4_exp13
+	l4_exp13 -> l4_gather_13
+	l4_gather_13 -> l4_agg
+	l4_gate -> l4_route_14
+	l4_route_14 -> l4_exp14
+	l4_exp14 -> l4_gather_14
+	l4_gather_14 -> l4_agg
+	l4_gate -> l4_route_15
+	l4_route_15 -> l4_exp15
+	l4_exp15 -> l4_gather_15
+	l4_gather_15 -> l4_agg
+	l4_gate -> l4_route_16
+	l4_route_16 -> l4_exp16
+	l4_exp16 -> l4_gather_16
+	l4_gather_16 -> l4_agg
+	l4_gate -> l4_route_17
+	l4_route_17 -> l4_exp17
+	l4_exp17 -> l4_gather_17
+	l4_gather_17 -> l4_agg
+	l4_gate -> l4_route_18
+	l4_route_18 -> l4_exp18
+	l4_exp18 -> l4_gather_18
+	l4_gather_18 -> l4_agg
+	l4_gate -> l4_route_19
+	l4_route_19 -> l4_exp19
+	l4_exp19 -> l4_gather_19
+	l4_gather_19 -> l4_agg
+	l4_gate -> l4_route_20
+	l4_route_20 -> l4_exp20
+	l4_exp20 -> l4_gather_20
+	l4_gather_20 -> l4_agg
+	l4_gate -> l4_route_21
+	l4_route_21 -> l4_exp21
+	l4_exp21 -> l4_gather_21
+	l4_gather_21 -> l4_agg
+	l4_gate -> l4_route_22
+	l4_route_22 -> l4_exp22
+	l4_exp22 -> l4_gather_22
+	l4_gather_22 -> l4_agg
+	l4_gate -> l4_route_23
+	l4_route_23 -> l4_exp23
+	l4_exp23 -> l4_gather_23
+	l4_gather_23 -> l4_agg
+	l4_gate -> l4_route_24
+	l4_route_24 -> l4_exp24
+	l4_exp24 -> l4_gather_24
+	l4_gather_24 -> l4_agg
+	l4_gate -> l4_route_25
+	l4_route_25 -> l4_exp25
+	l4_exp25 -> l4_gather_25
+	l4_gather_25 -> l4_agg
+	l4_gate -> l4_route_26
+	l4_route_26 -> l4_exp26
+	l4_exp26 -> l4_gather_26
+	l4_gather_26 -> l4_agg
+	l4_gate -> l4_route_27
+	l4_route_27 -> l4_exp27
+	l4_exp27 -> l4_gather_27
+	l4_gather_27 -> l4_agg
+	l4_gate -> l4_route_28
+	l4_route_28 -> l4_exp28
+	l4_exp28 -> l4_gather_28
+	l4_gather_28 -> l4_agg
+	l4_gate -> l4_route_29
+	l4_route_29 -> l4_exp29
+	l4_exp29 -> l4_gather_29
+	l4_gather_29 -> l4_agg
+	l4_gate -> l4_route_30
+	l4_route_30 -> l4_exp30
+	l4_exp30 -> l4_gather_30
+	l4_gather_30 -> l4_agg
+	l4_gate -> l4_route_31
+	l4_route_31 -> l4_exp31
+	l4_exp31 -> l4_gather_31
+	l4_gather_31 -> l4_agg
+	l4_gate -> l4_route_32
+	l4_route_32 -> l4_exp32
+	l4_exp32 -> l4_gather_32
+	l4_gather_32 -> l4_agg
+	l4_gate -> l4_route_33
+	l4_route_33 -> l4_exp33
+	l4_exp33 -> l4_gather_33
+	l4_gather_33 -> l4_agg
+	l4_gate -> l4_route_34
+	l4_route_34 -> l4_exp34
+	l4_exp34 -> l4_gather_34
+	l4_gather_34 -> l4_agg
+	l4_gate -> l4_route_35
+	l4_route_35 -> l4_exp35
+	l4_exp35 -> l4_gather_35
+	l4_gather_35 -> l4_agg
+	l4_gate -> l4_route_36
+	l4_route_36 -> l4_exp36
+	l4_exp36 -> l4_gather_36
+	l4_gather_36 -> l4_agg
+	l4_gate -> l4_route_37
+	l4_route_37 -> l4_exp37
+	l4_exp37 -> l4_gather_37
+	l4_gather_37 -> l4_agg
+	l4_gate -> l4_route_38
+	l4_route_38 -> l4_exp38
+	l4_exp38 -> l4_gather_38
+	l4_gather_38 -> l4_agg
+	l4_gate -> l4_route_39
+	l4_route_39 -> l4_exp39
+	l4_exp39 -> l4_gather_39
+	l4_gather_39 -> l4_agg
+	l4_gate -> l4_route_40
+	l4_route_40 -> l4_exp40
+	l4_exp40 -> l4_gather_40
+	l4_gather_40 -> l4_agg
+	l4_gate -> l4_route_41
+	l4_route_41 -> l4_exp41
+	l4_exp41 -> l4_gather_41
+	l4_gather_41 -> l4_agg
+	l4_gate -> l4_route_42
+	l4_route_42 -> l4_exp42
+	l4_exp42 -> l4_gather_42
+	l4_gather_42 -> l4_agg
+	l4_gate -> l4_route_43
+	l4_route_43 -> l4_exp43
+	l4_exp43 -> l4_gather_43
+	l4_gather_43 -> l4_agg
+	l4_gate -> l4_route_44
+	l4_route_44 -> l4_exp44
+	l4_exp44 -> l4_gather_44
+	l4_gather_44 -> l4_agg
+	l4_gate -> l4_route_45
+	l4_route_45 -> l4_exp45
+	l4_exp45 -> l4_gather_45
+	l4_gather_45 -> l4_agg
+	l4_gate -> l4_route_46
+	l4_route_46 -> l4_exp46
+	l4_exp46 -> l4_gather_46
+	l4_gather_46 -> l4_agg
+	l4_gate -> l4_route_47
+	l4_route_47 -> l4_exp47
+	l4_exp47 -> l4_gather_47
+	l4_gather_47 -> l4_agg
+	l4_gate -> l4_route_48
+	l4_route_48 -> l4_exp48
+	l4_exp48 -> l4_gather_48
+	l4_gather_48 -> l4_agg
+	l4_gate -> l4_route_49
+	l4_route_49 -> l4_exp49
+	l4_exp49 -> l4_gather_49
+	l4_gather_49 -> l4_agg
+	l4_gate -> l4_route_50
+	l4_route_50 -> l4_exp50
+	l4_exp50 -> l4_gather_50
+	l4_gather_50 -> l4_agg
+	l4_gate -> l4_route_51
+	l4_route_51 -> l4_exp51
+	l4_exp51 -> l4_gather_51
+	l4_gather_51 -> l4_agg
+	l4_gate -> l4_route_52
+	l4_route_52 -> l4_exp52
+	l4_exp52 -> l4_gather_52
+	l4_gather_52 -> l4_agg
+	l4_gate -> l4_route_53
+	l4_route_53 -> l4_exp53
+	l4_exp53 -> l4_gather_53
+	l4_gather_53 -> l4_agg
+	l4_gate -> l4_route_54
+	l4_route_54 -> l4_exp54
+	l4_exp54 -> l4_gather_54
+	l4_gather_54 -> l4_agg
+	l4_gate -> l4_route_55
+	l4_route_55 -> l4_exp55
+	l4_exp55 -> l4_gather_55
+	l4_gather_55 -> l4_agg
+	l4_gate -> l4_route_56
+	l4_route_56 -> l4_exp56
+	l4_exp56 -> l4_gather_56
+	l4_gather_56 -> l4_agg
+	l4_gate -> l4_route_57
+	l4_route_57 -> l4_exp57
+	l4_exp57 -> l4_gather_57
+	l4_gather_57 -> l4_agg
+	l4_gate -> l4_route_58
+	l4_route_58 -> l4_exp58
+	l4_exp58 -> l4_gather_58
+	l4_gather_58 -> l4_agg
+	l4_gate -> l4_route_59
+	l4_route_59 -> l4_exp59
+	l4_exp59 -> l4_gather_59
+	l4_gather_59 -> l4_agg
+	l4_gate -> l4_route_60
+	l4_route_60 -> l4_exp60
+	l4_exp60 -> l4_gather_60
+	l4_gather_60 -> l4_agg
+	l4_gate -> l4_route_61
+	l4_route_61 -> l4_exp61
+	l4_exp61 -> l4_gather_61
+	l4_gather_61 -> l4_agg
+	l4_gate -> l4_route_62
+	l4_route_62 -> l4_exp62
+	l4_exp62 -> l4_gather_62
+	l4_gather_62 -> l4_agg
+	l4_gate -> l4_route_63
+	l4_route_63 -> l4_exp63
+	l4_exp63 -> l4_gather_63
+	l4_gather_63 -> l4_agg
+	l4_agg -> l4_res2
+	l4_res1 -> l4_res2
+	l4_res2 -> output
+}

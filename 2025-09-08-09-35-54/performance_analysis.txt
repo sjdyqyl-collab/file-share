@@ -1,0 +1,131 @@
+# DAG Performance Analysis: Baseline vs Proposed MoE Configurations
+
+## Baseline Configuration (TP=8, PP=2, 16 GPUs)
+
+### Matrix Multiplication Operations Analysis
+
+#### Layer Structure (4 layers total)
+Each layer contains:
+
+1. **MHA QKV Projections**
+   - 3 separate matrix multiplications (Query, Key, Value)
+   - Dimensions: [1024×10000×8192] × [8192×8192] → [1024×10000×8192]
+   - Batch size: 10,240,000 tokens (1024×10000)
+   - Matrix dimensions: m=8192, k=8192, n=8192
+
+2. **MHA Attention**
+   - Q×K^T: [1024×10000×8192] × [1024×8192×10000] → [1024×10000×10000]
+   - Attention×V: [1024×10000×10000] × [1024×10000×8192] → [1024×10000×8192]
+   - Output projection: [1024×10000×8192] × [8192×8192] → [1024×10000×8192]
+
+3. **Gate Computation**
+   - [1024×10000×8192] × [8192×16] → [1024×10000×16]
+
+4. **Expert Feed Forward (16 experts per layer)**
+   - First layer: [1024×10000×8192] × [8192×32768] → [1024×10000×32768]
+   - Second layer: [1024×10000×32768] × [32768×8192] → [1024×10000×8192]
+   - Experts distributed: 4 experts per GPU (GPUs 0-3 for layer 1)
+
+### Parallelism Structure
+- **Tensor Parallel**: TP=8 within each pipeline stage
+- **Pipeline Parallel**: PP=2 stages (GPUs 0-7 and 8-15)
+- **Expert Parallel**: 16 experts per layer, 4 per GPU
+
+### Critical Path Analysis
+The longest path involves:
+1. Pipeline Stage 1: Layers 1-2 (GPUs 0-7)
+2. Pipeline communication: GPU 7→8
+3. Pipeline Stage 2: Layers 3-4 (GPUs 8-15)
+
+Runtime per layer = MHA_time + Expert_time + Communication_overhead
+Total runtime = 2×(Layer1-2_time) + 2×(Layer3-4_time) + Pipeline_communication
+
+## Proposed Configuration (EP=64, 64 GPUs)
+
+### Matrix Multiplication Operations Analysis
+
+#### Layer Structure (4 layers total)
+Each layer contains:
+
+1. **MHA QKV Projections**
+   - 3 separate matrix multiplications (Query, Key, Value)
+   - Dimensions: [1024×10000×8192] × [8192×8192] → [1024×10000×8192]
+   - Distributed across all 64 GPUs
+
+2. **MHA Attention**
+   - Same operations as baseline but distributed across 64 GPUs
+
+3. **Gate Computation**
+   - [1024×10000×8192] × [8192×64] → [1024×10000×64]
+
+4. **Expert Feed Forward (64 experts total)**
+   - 64 experts total (1 expert per GPU)
+   - Each expert processes: [1024×tokens_per_expert×8192] × [8192×32768]
+   - With uniform token distribution: ~156 tokens per expert (10,000/64)
+   - Second layer: [1024×156×32768] × [32768×8192] → [1024×156×8192]
+
+### Parallelism Structure
+- **Expert Parallel**: EP=64 (1 expert per GPU)
+- **No pipeline stages**: All 64 GPUs work on same layer
+- **Cross-node expert routing**: Token routing between GPUs
+
+### Critical Path Analysis
+The longest path involves:
+1. Layer 1: All 64 GPUs working in parallel
+2. Layer 2: All 64 GPUs working in parallel  
+3. Layer 3: All 64 GPUs working in parallel
+4. Layer 4: All 64 GPUs working in parallel
+
+Runtime per layer = MHA_time + Expert_time + Routing_overhead
+Total runtime = 4×(Layer_time) + Routing_communication
+
+## Performance Comparison
+
+### Expert Computation Scaling
+- **Baseline**: 16 experts, 4 per GPU → ~625 tokens per expert per GPU
+- **Proposed**: 64 experts, 1 per GPU → ~156 tokens per expert
+- **Speedup**: 4x reduction in per-expert computation
+
+### Communication Patterns
+- **Baseline**: Pipeline communication between stages (GPU 7→8 bottleneck)
+- **Proposed**: Token routing across all 64 GPUs (more distributed)
+
+### Load Distribution
+- **Baseline**: Uneven expert loading (4 experts per GPU)
+- **Proposed**: Perfect load balancing (1 expert per GPU)
+
+### Expected Runtime Improvement
+The proposed configuration should achieve:
+1. **4x reduction** in expert computation time due to 4x more experts
+2. **Elimination of pipeline stalls** by removing pipeline stages
+3. **Better load balancing** across all 64 GPUs
+4. **Reduced per-GPU memory pressure** with 1 expert per GPU vs 4
+
+### Theoretical Runtime Formula
+
+**Baseline Runtime:**
+```
+T_baseline = 4×[3×Get_Time(10240000, 8192, 8192, 8192) + 
+                 2×Get_Time(10240000, 10000, 8192, 8192) +
+                 Get_Time(10240000, 8192, 10000, 8192) +
+                 2×Get_Time(625000, 8192, 32768, 32768)] +
+            3×Pipeline_communication
+```
+
+**Proposed Runtime:**
+```
+T_proposed = 4×[3×Get_Time(10240000, 8192, 8192, 8192) +
+                2×Get_Time(10240000, 10000, 8192, 8192) +
+                Get_Time(10240000, 8192, 10000, 8192) +
+                2×Get_Time(156250, 8192, 32768, 32768)] +
+            3×Routing_communication
+```
+
+### Expected Performance Gain
+The proposed configuration should achieve approximately **3-4x speedup** over the baseline due to:
+- 4x reduction in expert computation
+- Elimination of pipeline serialization
+- Better resource utilization across 64 GPUs vs 16 GPUs
+- More efficient expert routing and load balancing
+
+Note: Exact performance numbers require the Get_Time function implementation.
