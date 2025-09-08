@@ -1,0 +1,135 @@
+{
+  "baseline_deployment": {
+    "name": "Baseline_TP8_PP2",
+    "parallel_strategy": {
+      "tensor_parallelism": {
+        "degree": 8,
+        "description": "Each tensor split across 8 GPUs"
+      },
+      "pipeline_parallelism": {
+        "degree": 2,
+        "description": "2 pipeline stages, each spanning 8 GPUs"
+      },
+      "expert_parallelism": {
+        "degree": 1,
+        "description": "Experts colocated on GPUs"
+      }
+    },
+    "total_gpus": 16,
+    "gpu_allocation": {
+      "per_gpu_experts": 4,
+      "per_gpu_tensor_shard": "1/8_of_all_layers",
+      "pipeline_stage_distribution": [
+        {
+          "stage": 1,
+          "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+          "layers": [0, 1]
+        },
+        {
+          "stage": 2,
+          "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+          "layers": [2, 3]
+        }
+      ]
+    },
+    "model_configuration": {
+      "layers": 4,
+      "experts_per_layer": 16,
+      "total_experts": 64,
+      "expert_type": "MLP",
+      "precision": "FP16",
+      "batch_size": 1024,
+      "sequence_length": 10000,
+      "token_dimension": 8192,
+      "mha_heads": 16,
+      "mha_head_dimension": 512,
+      "mlp_hidden_size": 32768
+    },
+    "performance": {
+      "tps": 120000,
+      "tpot_ms": 8.3
+    }
+  },
+  "proposed_deployment": {
+    "name": "Cross_Node_Expert_Parallelism",
+    "parallel_strategy": {
+      "expert_parallelism": {
+        "degree": 64,
+        "description": "Large EP regime (EP >= 16), one expert per GPU"
+      },
+      "tensor_parallelism": {
+        "degree": 1,
+        "description": "Optional TP=2 if expert FFN cannot fit on single GPU"
+      },
+      "pipeline_parallelism": {
+        "degree": 4,
+        "description": "Each MoE layer as micro-stage with overlapped communication"
+      }
+    },
+    "total_gpus": 64,
+    "gpu_allocation": {
+      "per_gpu_experts": 1,
+      "expert_distribution": "cross_node_topology_aware",
+      "placement_strategy": "one_expert_per_gpu_maximizes_parallelism",
+      "layer_expert_mapping": {
+        "layer_0": {
+          "experts": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "gpu_mapping": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        },
+        "layer_1": {
+          "experts": [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+          "gpu_mapping": [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+        },
+        "layer_2": {
+          "experts": [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47],
+          "gpu_mapping": [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
+        },
+        "layer_3": {
+          "experts": [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+          "gpu_mapping": [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+        }
+      }
+    },
+    "routing_configuration": {
+      "gating_mechanism": "top_k_dynamic",
+      "token_batching": "group_by_destination_expert",
+      "communication": "asynchronous_cross_node",
+      "load_balancing": "dynamic_gating_probability_adjustment"
+    },
+    "communication_overlap": {
+      "compute_communication_interleaving": true,
+      "asynchronous_libraries": ["NCCL", "MPI"],
+      "pipeline_scheduling": "fine_grained_partial_batch_processing"
+    },
+    "model_configuration": {
+      "layers": 4,
+      "experts_per_layer": 16,
+      "total_experts": 64,
+      "expert_type": "MLP",
+      "precision": "FP16",
+      "batch_size": 1024,
+      "sequence_length": 10000,
+      "token_dimension": 8192,
+      "mha_heads": 16,
+      "mha_head_dimension": 512,
+      "mlp_hidden_size": 32768
+    },
+    "performance": {
+      "tps": 450000,
+      "tpot_ms": 2.2,
+      "improvement_over_baseline": {
+        "throughput_multiplier": 3.75,
+        "latency_reduction_multiplier": 3.8
+      }
+    },
+    "scalability_features": {
+      "large_ep_regime": true,
+      "ep_degree": 64,
+      "topology_aware_placement": true,
+      "memory_integration": {
+        "tensor_parallelism_within_expert": "optional_TP2",
+        "data_parallelism_across_replicas": "supported"
+      }
+    }
+  }
+}

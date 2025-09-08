@@ -1,0 +1,540 @@
+// Baseline MoE Deployment: TP=8, PP=2, 16 GPUs
+digraph baseline_moe_deployment {
+	rankdir=TB size="20,20"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	input [label="Input
+[1024, 10000, 8192]" fillcolor=lightgreen shape=ellipse]
+	subgraph cluster_stage1 {
+		color=red label="Pipeline Stage 1 (Layers 0-1)" style=dashed
+		subgraph cluster_layer0 {
+			color=blue label="Layer 0" style=dashed
+			mha0_tp0 [label="MHA-0-TP0
+[1024, 10000, 8192/8]
+GPU0" fillcolor=lightcoral]
+			mha0_tp1 [label="MHA-0-TP1
+[1024, 10000, 8192/8]
+GPU1" fillcolor=lightcoral]
+			mha0_tp2 [label="MHA-0-TP2
+[1024, 10000, 8192/8]
+GPU2" fillcolor=lightcoral]
+			mha0_tp3 [label="MHA-0-TP3
+[1024, 10000, 8192/8]
+GPU3" fillcolor=lightcoral]
+			mha0_tp4 [label="MHA-0-TP4
+[1024, 10000, 8192/8]
+GPU4" fillcolor=lightcoral]
+			mha0_tp5 [label="MHA-0-TP5
+[1024, 10000, 8192/8]
+GPU5" fillcolor=lightcoral]
+			mha0_tp6 [label="MHA-0-TP6
+[1024, 10000, 8192/8]
+GPU6" fillcolor=lightcoral]
+			mha0_tp7 [label="MHA-0-TP7
+[1024, 10000, 8192/8]
+GPU7" fillcolor=lightcoral]
+			expert0_0 [label="Expert-0
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert0_1 [label="Expert-1
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert0_2 [label="Expert-2
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert0_3 [label="Expert-3
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert0_4 [label="Expert-4
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert0_5 [label="Expert-5
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert0_6 [label="Expert-6
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert0_7 [label="Expert-7
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert0_8 [label="Expert-8
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert0_9 [label="Expert-9
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert0_10 [label="Expert-10
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert0_11 [label="Expert-11
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert0_12 [label="Expert-12
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			expert0_13 [label="Expert-13
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			expert0_14 [label="Expert-14
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			expert0_15 [label="Expert-15
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			gate0 [label="Gate-0
+[1024, 10000, 16]
+All GPUs" fillcolor=lightpink shape=parallelogram]
+			residual0 [label="Residual-0
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightgray]
+		}
+		subgraph cluster_layer1 {
+			color=blue label="Layer 1" style=dashed
+			mha1_tp0 [label="MHA-1-TP0
+[1024, 10000, 8192/8]
+GPU0" fillcolor=lightcoral]
+			mha1_tp1 [label="MHA-1-TP1
+[1024, 10000, 8192/8]
+GPU1" fillcolor=lightcoral]
+			mha1_tp2 [label="MHA-1-TP2
+[1024, 10000, 8192/8]
+GPU2" fillcolor=lightcoral]
+			mha1_tp3 [label="MHA-1-TP3
+[1024, 10000, 8192/8]
+GPU3" fillcolor=lightcoral]
+			mha1_tp4 [label="MHA-1-TP4
+[1024, 10000, 8192/8]
+GPU4" fillcolor=lightcoral]
+			mha1_tp5 [label="MHA-1-TP5
+[1024, 10000, 8192/8]
+GPU5" fillcolor=lightcoral]
+			mha1_tp6 [label="MHA-1-TP6
+[1024, 10000, 8192/8]
+GPU6" fillcolor=lightcoral]
+			mha1_tp7 [label="MHA-1-TP7
+[1024, 10000, 8192/8]
+GPU7" fillcolor=lightcoral]
+			expert1_0 [label="Expert-0
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert1_1 [label="Expert-1
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert1_2 [label="Expert-2
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert1_3 [label="Expert-3
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert1_4 [label="Expert-4
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert1_5 [label="Expert-5
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert1_6 [label="Expert-6
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert1_7 [label="Expert-7
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert1_8 [label="Expert-8
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert1_9 [label="Expert-9
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert1_10 [label="Expert-10
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert1_11 [label="Expert-11
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert1_12 [label="Expert-12
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			expert1_13 [label="Expert-13
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			expert1_14 [label="Expert-14
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			expert1_15 [label="Expert-15
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			gate1 [label="Gate-1
+[1024, 10000, 16]
+All GPUs" fillcolor=lightpink shape=parallelogram]
+			residual1 [label="Residual-1
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightgray]
+		}
+	}
+	subgraph cluster_stage2 {
+		color=red label="Pipeline Stage 2 (Layers 2-3)" style=dashed
+		subgraph cluster_layer2 {
+			color=blue label="Layer 2" style=dashed
+			mha2_tp0 [label="MHA-2-TP0
+[1024, 10000, 8192/8]
+GPU8" fillcolor=lightcoral]
+			mha2_tp1 [label="MHA-2-TP1
+[1024, 10000, 8192/8]
+GPU9" fillcolor=lightcoral]
+			mha2_tp2 [label="MHA-2-TP2
+[1024, 10000, 8192/8]
+GPU10" fillcolor=lightcoral]
+			mha2_tp3 [label="MHA-2-TP3
+[1024, 10000, 8192/8]
+GPU11" fillcolor=lightcoral]
+			mha2_tp4 [label="MHA-2-TP4
+[1024, 10000, 8192/8]
+GPU12" fillcolor=lightcoral]
+			mha2_tp5 [label="MHA-2-TP5
+[1024, 10000, 8192/8]
+GPU13" fillcolor=lightcoral]
+			mha2_tp6 [label="MHA-2-TP6
+[1024, 10000, 8192/8]
+GPU14" fillcolor=lightcoral]
+			mha2_tp7 [label="MHA-2-TP7
+[1024, 10000, 8192/8]
+GPU15" fillcolor=lightcoral]
+			expert2_0 [label="Expert-0
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert2_1 [label="Expert-1
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert2_2 [label="Expert-2
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert2_3 [label="Expert-3
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert2_4 [label="Expert-4
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert2_5 [label="Expert-5
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert2_6 [label="Expert-6
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert2_7 [label="Expert-7
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert2_8 [label="Expert-8
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert2_9 [label="Expert-9
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert2_10 [label="Expert-10
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert2_11 [label="Expert-11
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert2_12 [label="Expert-12
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			expert2_13 [label="Expert-13
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			expert2_14 [label="Expert-14
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			expert2_15 [label="Expert-15
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			gate2 [label="Gate-2
+[1024, 10000, 16]
+All GPUs" fillcolor=lightpink shape=parallelogram]
+			residual2 [label="Residual-2
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightgray]
+		}
+		subgraph cluster_layer3 {
+			color=blue label="Layer 3" style=dashed
+			mha3_tp0 [label="MHA-3-TP0
+[1024, 10000, 8192/8]
+GPU8" fillcolor=lightcoral]
+			mha3_tp1 [label="MHA-3-TP1
+[1024, 10000, 8192/8]
+GPU9" fillcolor=lightcoral]
+			mha3_tp2 [label="MHA-3-TP2
+[1024, 10000, 8192/8]
+GPU10" fillcolor=lightcoral]
+			mha3_tp3 [label="MHA-3-TP3
+[1024, 10000, 8192/8]
+GPU11" fillcolor=lightcoral]
+			mha3_tp4 [label="MHA-3-TP4
+[1024, 10000, 8192/8]
+GPU12" fillcolor=lightcoral]
+			mha3_tp5 [label="MHA-3-TP5
+[1024, 10000, 8192/8]
+GPU13" fillcolor=lightcoral]
+			mha3_tp6 [label="MHA-3-TP6
+[1024, 10000, 8192/8]
+GPU14" fillcolor=lightcoral]
+			mha3_tp7 [label="MHA-3-TP7
+[1024, 10000, 8192/8]
+GPU15" fillcolor=lightcoral]
+			expert3_0 [label="Expert-0
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert3_1 [label="Expert-1
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert3_2 [label="Expert-2
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert3_3 [label="Expert-3
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert3_4 [label="Expert-4
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert3_5 [label="Expert-5
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert3_6 [label="Expert-6
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert3_7 [label="Expert-7
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert3_8 [label="Expert-8
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert3_9 [label="Expert-9
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert3_10 [label="Expert-10
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert3_11 [label="Expert-11
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert3_12 [label="Expert-12
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			expert3_13 [label="Expert-13
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			expert3_14 [label="Expert-14
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			expert3_15 [label="Expert-15
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			gate3 [label="Gate-3
+[1024, 10000, 16]
+All GPUs" fillcolor=lightpink shape=parallelogram]
+			residual3 [label="Residual-3
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightgray]
+		}
+	}
+	output [label="Output
+[1024, 10000, 8192]" fillcolor=lightgreen shape=ellipse]
+	input -> mha0_tp0
+	input -> mha0_tp1
+	input -> mha0_tp2
+	input -> mha0_tp3
+	input -> mha0_tp4
+	input -> mha0_tp5
+	input -> mha0_tp6
+	input -> mha0_tp7
+	mha0_tp0 -> gate0
+	mha0_tp1 -> gate0
+	mha0_tp2 -> gate0
+	mha0_tp3 -> gate0
+	mha0_tp4 -> gate0
+	mha0_tp5 -> gate0
+	mha0_tp6 -> gate0
+	mha0_tp7 -> gate0
+	gate0 -> residual0 [style=dashed]
+	gate0 -> expert0_0 [style=dashed]
+	expert0_0 -> residual0
+	gate0 -> expert0_1 [style=dashed]
+	expert0_1 -> residual0
+	gate0 -> expert0_2 [style=dashed]
+	expert0_2 -> residual0
+	gate0 -> expert0_3 [style=dashed]
+	expert0_3 -> residual0
+	gate0 -> expert0_4 [style=dashed]
+	expert0_4 -> residual0
+	gate0 -> expert0_5 [style=dashed]
+	expert0_5 -> residual0
+	gate0 -> expert0_6 [style=dashed]
+	expert0_6 -> residual0
+	gate0 -> expert0_7 [style=dashed]
+	expert0_7 -> residual0
+	gate0 -> expert0_8 [style=dashed]
+	expert0_8 -> residual0
+	gate0 -> expert0_9 [style=dashed]
+	expert0_9 -> residual0
+	gate0 -> expert0_10 [style=dashed]
+	expert0_10 -> residual0
+	gate0 -> expert0_11 [style=dashed]
+	expert0_11 -> residual0
+	gate0 -> expert0_12 [style=dashed]
+	expert0_12 -> residual0
+	gate0 -> expert0_13 [style=dashed]
+	expert0_13 -> residual0
+	gate0 -> expert0_14 [style=dashed]
+	expert0_14 -> residual0
+	gate0 -> expert0_15 [style=dashed]
+	expert0_15 -> residual0
+	residual0 -> gate1
+	residual0 -> mha1_tp0
+	residual0 -> mha1_tp1
+	residual0 -> mha1_tp2
+	residual0 -> mha1_tp3
+	residual0 -> mha1_tp4
+	residual0 -> mha1_tp5
+	residual0 -> mha1_tp6
+	residual0 -> mha1_tp7
+	mha1_tp0 -> gate1
+	mha1_tp1 -> gate1
+	mha1_tp2 -> gate1
+	mha1_tp3 -> gate1
+	mha1_tp4 -> gate1
+	mha1_tp5 -> gate1
+	mha1_tp6 -> gate1
+	mha1_tp7 -> gate1
+	gate1 -> residual1 [style=dashed]
+	gate1 -> expert1_0 [style=dashed]
+	expert1_0 -> residual1
+	gate1 -> expert1_1 [style=dashed]
+	expert1_1 -> residual1
+	gate1 -> expert1_2 [style=dashed]
+	expert1_2 -> residual1
+	gate1 -> expert1_3 [style=dashed]
+	expert1_3 -> residual1
+	gate1 -> expert1_4 [style=dashed]
+	expert1_4 -> residual1
+	gate1 -> expert1_5 [style=dashed]
+	expert1_5 -> residual1
+	gate1 -> expert1_6 [style=dashed]
+	expert1_6 -> residual1
+	gate1 -> expert1_7 [style=dashed]
+	expert1_7 -> residual1
+	gate1 -> expert1_8 [style=dashed]
+	expert1_8 -> residual1
+	gate1 -> expert1_9 [style=dashed]
+	expert1_9 -> residual1
+	gate1 -> expert1_10 [style=dashed]
+	expert1_10 -> residual1
+	gate1 -> expert1_11 [style=dashed]
+	expert1_11 -> residual1
+	gate1 -> expert1_12 [style=dashed]
+	expert1_12 -> residual1
+	gate1 -> expert1_13 [style=dashed]
+	expert1_13 -> residual1
+	gate1 -> expert1_14 [style=dashed]
+	expert1_14 -> residual1
+	gate1 -> expert1_15 [style=dashed]
+	expert1_15 -> residual1
+	residual1 -> gate2 [label="Pipeline Send
+GPU0-7 to GPU8-15"]
+	gate2 -> residual2 [style=dashed]
+	residual1 -> mha2_tp0
+	residual1 -> mha2_tp1
+	residual1 -> mha2_tp2
+	residual1 -> mha2_tp3
+	residual1 -> mha2_tp4
+	residual1 -> mha2_tp5
+	residual1 -> mha2_tp6
+	residual1 -> mha2_tp7
+	mha2_tp0 -> gate2
+	mha2_tp1 -> gate2
+	mha2_tp2 -> gate2
+	mha2_tp3 -> gate2
+	mha2_tp4 -> gate2
+	mha2_tp5 -> gate2
+	mha2_tp6 -> gate2
+	mha2_tp7 -> gate2
+	gate2 -> expert2_0 [style=dashed]
+	expert2_0 -> residual2
+	gate2 -> expert2_1 [style=dashed]
+	expert2_1 -> residual2
+	gate2 -> expert2_2 [style=dashed]
+	expert2_2 -> residual2
+	gate2 -> expert2_3 [style=dashed]
+	expert2_3 -> residual2
+	gate2 -> expert2_4 [style=dashed]
+	expert2_4 -> residual2
+	gate2 -> expert2_5 [style=dashed]
+	expert2_5 -> residual2
+	gate2 -> expert2_6 [style=dashed]
+	expert2_6 -> residual2
+	gate2 -> expert2_7 [style=dashed]
+	expert2_7 -> residual2
+	gate2 -> expert2_8 [style=dashed]
+	expert2_8 -> residual2
+	gate2 -> expert2_9 [style=dashed]
+	expert2_9 -> residual2
+	gate2 -> expert2_10 [style=dashed]
+	expert2_10 -> residual2
+	gate2 -> expert2_11 [style=dashed]
+	expert2_11 -> residual2
+	gate2 -> expert2_12 [style=dashed]
+	expert2_12 -> residual2
+	gate2 -> expert2_13 [style=dashed]
+	expert2_13 -> residual2
+	gate2 -> expert2_14 [style=dashed]
+	expert2_14 -> residual2
+	gate2 -> expert2_15 [style=dashed]
+	expert2_15 -> residual2
+	residual2 -> gate3
+	residual2 -> mha3_tp0
+	residual2 -> mha3_tp1
+	residual2 -> mha3_tp2
+	residual2 -> mha3_tp3
+	residual2 -> mha3_tp4
+	residual2 -> mha3_tp5
+	residual2 -> mha3_tp6
+	residual2 -> mha3_tp7
+	mha3_tp0 -> gate3
+	mha3_tp1 -> gate3
+	mha3_tp2 -> gate3
+	mha3_tp3 -> gate3
+	mha3_tp4 -> gate3
+	mha3_tp5 -> gate3
+	mha3_tp6 -> gate3
+	mha3_tp7 -> gate3
+	gate3 -> residual3 [style=dashed]
+	gate3 -> expert3_0 [style=dashed]
+	expert3_0 -> residual3
+	gate3 -> expert3_1 [style=dashed]
+	expert3_1 -> residual3
+	gate3 -> expert3_2 [style=dashed]
+	expert3_2 -> residual3
+	gate3 -> expert3_3 [style=dashed]
+	expert3_3 -> residual3
+	gate3 -> expert3_4 [style=dashed]
+	expert3_4 -> residual3
+	gate3 -> expert3_5 [style=dashed]
+	expert3_5 -> residual3
+	gate3 -> expert3_6 [style=dashed]
+	expert3_6 -> residual3
+	gate3 -> expert3_7 [style=dashed]
+	expert3_7 -> residual3
+	gate3 -> expert3_8 [style=dashed]
+	expert3_8 -> residual3
+	gate3 -> expert3_9 [style=dashed]
+	expert3_9 -> residual3
+	gate3 -> expert3_10 [style=dashed]
+	expert3_10 -> residual3
+	gate3 -> expert3_11 [style=dashed]
+	expert3_11 -> residual3
+	gate3 -> expert3_12 [style=dashed]
+	expert3_12 -> residual3
+	gate3 -> expert3_13 [style=dashed]
+	expert3_13 -> residual3
+	gate3 -> expert3_14 [style=dashed]
+	expert3_14 -> residual3
+	gate3 -> expert3_15 [style=dashed]
+	expert3_15 -> residual3
+	residual3 -> output
+}

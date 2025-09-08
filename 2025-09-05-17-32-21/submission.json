@@ -1,0 +1,25 @@
+{
+  "generated_dags": [
+    {
+      "method": "baseline",
+      "name": "Traditional MoE Parallelism",
+      "description": "Baseline MoE deployment with TP=8, PP=2, 16 GPUs total, 4 experts per GPU",
+      "svg_path": "/home/wzc/data/file-share/2025-09-05-17-32-21/baseline_moe_parallelism.svg",
+      "dot_path": "/home/wzc/data/file-share/2025-09-05-17-32-21/baseline_moe_parallelism.dot"
+    },
+    {
+      "method": "proposed",
+      "name": "Large-Scale Cross-Node Expert Parallelism",
+      "description": "Proposed method with EP=64, PP=4, 64 GPUs total, 1 expert per GPU",
+      "svg_path": "/home/wzc/data/file-share/2025-09-05-17-32-21/proposed_moe_parallelism.svg",
+      "dot_path": "/home/wzc/data/file-share/2025-09-05-17-32-21/proposed_moe_parallelism.dot"
+    }
+  ],
+  "total_files": 4,
+  "file_list": [
+    "/home/wzc/data/file-share/2025-09-05-17-32-21/baseline_moe_parallelism.svg",
+    "/home/wzc/data/file-share/2025-09-05-17-32-21/baseline_moe_parallelism.dot",
+    "/home/wzc/data/file-share/2025-09-05-17-32-21/proposed_moe_parallelism.svg",
+    "/home/wzc/data/file-share/2025-09-05-17-32-21/proposed_moe_parallelism.dot"
+  ]
+}

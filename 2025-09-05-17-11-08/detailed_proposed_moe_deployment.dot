@@ -1,0 +1,2138 @@
+// Detailed Proposed MoE Deployment: 64 GPUs, 1 Expert per GPU
+digraph detailed_proposed_moe_deployment {
+	rankdir=TB size="40,40"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	input [label="Input
+[1024, 10000, 8192]" fillcolor=lightgreen shape=ellipse]
+	subgraph cluster_layer0_detailed {
+		color=blue label="Layer 0 (GPUs 0-15)" style=dashed
+		subgraph cluster_mha0 {
+			color=green label="Multi-Head Attention" style=dotted
+			mha_q0_0 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU0" fillcolor=lightcoral]
+			mha_k0_0 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU0" fillcolor=lightcoral]
+			mha_v0_0 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU0" fillcolor=lightcoral]
+			mha_out0_0 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU0" fillcolor=lightcoral]
+			mha_q0_1 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU1" fillcolor=lightcoral]
+			mha_k0_1 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU1" fillcolor=lightcoral]
+			mha_v0_1 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU1" fillcolor=lightcoral]
+			mha_out0_1 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU1" fillcolor=lightcoral]
+			mha_q0_2 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU2" fillcolor=lightcoral]
+			mha_k0_2 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU2" fillcolor=lightcoral]
+			mha_v0_2 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU2" fillcolor=lightcoral]
+			mha_out0_2 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU2" fillcolor=lightcoral]
+			mha_q0_3 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU3" fillcolor=lightcoral]
+			mha_k0_3 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU3" fillcolor=lightcoral]
+			mha_v0_3 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU3" fillcolor=lightcoral]
+			mha_out0_3 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU3" fillcolor=lightcoral]
+			mha_q0_4 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU4" fillcolor=lightcoral]
+			mha_k0_4 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU4" fillcolor=lightcoral]
+			mha_v0_4 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU4" fillcolor=lightcoral]
+			mha_out0_4 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU4" fillcolor=lightcoral]
+			mha_q0_5 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU5" fillcolor=lightcoral]
+			mha_k0_5 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU5" fillcolor=lightcoral]
+			mha_v0_5 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU5" fillcolor=lightcoral]
+			mha_out0_5 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU5" fillcolor=lightcoral]
+			mha_q0_6 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU6" fillcolor=lightcoral]
+			mha_k0_6 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU6" fillcolor=lightcoral]
+			mha_v0_6 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU6" fillcolor=lightcoral]
+			mha_out0_6 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU6" fillcolor=lightcoral]
+			mha_q0_7 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU7" fillcolor=lightcoral]
+			mha_k0_7 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU7" fillcolor=lightcoral]
+			mha_v0_7 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU7" fillcolor=lightcoral]
+			mha_out0_7 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU7" fillcolor=lightcoral]
+			mha_q0_8 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU8" fillcolor=lightcoral]
+			mha_k0_8 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU8" fillcolor=lightcoral]
+			mha_v0_8 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU8" fillcolor=lightcoral]
+			mha_out0_8 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU8" fillcolor=lightcoral]
+			mha_q0_9 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU9" fillcolor=lightcoral]
+			mha_k0_9 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU9" fillcolor=lightcoral]
+			mha_v0_9 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU9" fillcolor=lightcoral]
+			mha_out0_9 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU9" fillcolor=lightcoral]
+			mha_q0_10 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU10" fillcolor=lightcoral]
+			mha_k0_10 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU10" fillcolor=lightcoral]
+			mha_v0_10 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU10" fillcolor=lightcoral]
+			mha_out0_10 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU10" fillcolor=lightcoral]
+			mha_q0_11 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU11" fillcolor=lightcoral]
+			mha_k0_11 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU11" fillcolor=lightcoral]
+			mha_v0_11 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU11" fillcolor=lightcoral]
+			mha_out0_11 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU11" fillcolor=lightcoral]
+			mha_q0_12 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU12" fillcolor=lightcoral]
+			mha_k0_12 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU12" fillcolor=lightcoral]
+			mha_v0_12 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU12" fillcolor=lightcoral]
+			mha_out0_12 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU12" fillcolor=lightcoral]
+			mha_q0_13 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU13" fillcolor=lightcoral]
+			mha_k0_13 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU13" fillcolor=lightcoral]
+			mha_v0_13 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU13" fillcolor=lightcoral]
+			mha_out0_13 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU13" fillcolor=lightcoral]
+			mha_q0_14 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU14" fillcolor=lightcoral]
+			mha_k0_14 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU14" fillcolor=lightcoral]
+			mha_v0_14 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU14" fillcolor=lightcoral]
+			mha_out0_14 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU14" fillcolor=lightcoral]
+			mha_q0_15 [label="MHA-Q-0
+[1024, 10000, 8192/16]
+GPU15" fillcolor=lightcoral]
+			mha_k0_15 [label="MHA-K-0
+[1024, 10000, 8192/16]
+GPU15" fillcolor=lightcoral]
+			mha_v0_15 [label="MHA-V-0
+[1024, 10000, 8192/16]
+GPU15" fillcolor=lightcoral]
+			mha_out0_15 [label="MHA-Out-0
+[1024, 10000, 8192/16]
+GPU15" fillcolor=lightcoral]
+		}
+		gate0_detailed [label="Gate-0
+[1024, 10000, 16]
+All GPUs" fillcolor=lightpink shape=parallelogram]
+		subgraph cluster_experts0 {
+			color=orange label="Experts (16 total)" style=dotted
+			expert0_gpu0_fc1 [label="Expert-0-0-FC1
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert0_gpu0_gelu [label="Expert-0-0-GELU
+[1024, 10000, 32768]
+GPU0" fillcolor=lightyellow]
+			expert0_gpu0_fc2 [label="Expert-0-0-FC2
+[1024, 10000, 8192]
+GPU0" fillcolor=lightyellow]
+			expert0_gpu1_fc1 [label="Expert-0-1-FC1
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert0_gpu1_gelu [label="Expert-0-1-GELU
+[1024, 10000, 32768]
+GPU1" fillcolor=lightyellow]
+			expert0_gpu1_fc2 [label="Expert-0-1-FC2
+[1024, 10000, 8192]
+GPU1" fillcolor=lightyellow]
+			expert0_gpu2_fc1 [label="Expert-0-2-FC1
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert0_gpu2_gelu [label="Expert-0-2-GELU
+[1024, 10000, 32768]
+GPU2" fillcolor=lightyellow]
+			expert0_gpu2_fc2 [label="Expert-0-2-FC2
+[1024, 10000, 8192]
+GPU2" fillcolor=lightyellow]
+			expert0_gpu3_fc1 [label="Expert-0-3-FC1
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			expert0_gpu3_gelu [label="Expert-0-3-GELU
+[1024, 10000, 32768]
+GPU3" fillcolor=lightyellow]
+			expert0_gpu3_fc2 [label="Expert-0-3-FC2
+[1024, 10000, 8192]
+GPU3" fillcolor=lightyellow]
+			expert0_gpu4_fc1 [label="Expert-0-4-FC1
+[1024, 10000, 32768]
+GPU4" fillcolor=lightyellow]
+			expert0_gpu4_gelu [label="Expert-0-4-GELU
+[1024, 10000, 32768]
+GPU4" fillcolor=lightyellow]
+			expert0_gpu4_fc2 [label="Expert-0-4-FC2
+[1024, 10000, 8192]
+GPU4" fillcolor=lightyellow]
+			expert0_gpu5_fc1 [label="Expert-0-5-FC1
+[1024, 10000, 32768]
+GPU5" fillcolor=lightyellow]
+			expert0_gpu5_gelu [label="Expert-0-5-GELU
+[1024, 10000, 32768]
+GPU5" fillcolor=lightyellow]
+			expert0_gpu5_fc2 [label="Expert-0-5-FC2
+[1024, 10000, 8192]
+GPU5" fillcolor=lightyellow]
+			expert0_gpu6_fc1 [label="Expert-0-6-FC1
+[1024, 10000, 32768]
+GPU6" fillcolor=lightyellow]
+			expert0_gpu6_gelu [label="Expert-0-6-GELU
+[1024, 10000, 32768]
+GPU6" fillcolor=lightyellow]
+			expert0_gpu6_fc2 [label="Expert-0-6-FC2
+[1024, 10000, 8192]
+GPU6" fillcolor=lightyellow]
+			expert0_gpu7_fc1 [label="Expert-0-7-FC1
+[1024, 10000, 32768]
+GPU7" fillcolor=lightyellow]
+			expert0_gpu7_gelu [label="Expert-0-7-GELU
+[1024, 10000, 32768]
+GPU7" fillcolor=lightyellow]
+			expert0_gpu7_fc2 [label="Expert-0-7-FC2
+[1024, 10000, 8192]
+GPU7" fillcolor=lightyellow]
+			expert0_gpu8_fc1 [label="Expert-0-8-FC1
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert0_gpu8_gelu [label="Expert-0-8-GELU
+[1024, 10000, 32768]
+GPU8" fillcolor=lightyellow]
+			expert0_gpu8_fc2 [label="Expert-0-8-FC2
+[1024, 10000, 8192]
+GPU8" fillcolor=lightyellow]
+			expert0_gpu9_fc1 [label="Expert-0-9-FC1
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert0_gpu9_gelu [label="Expert-0-9-GELU
+[1024, 10000, 32768]
+GPU9" fillcolor=lightyellow]
+			expert0_gpu9_fc2 [label="Expert-0-9-FC2
+[1024, 10000, 8192]
+GPU9" fillcolor=lightyellow]
+			expert0_gpu10_fc1 [label="Expert-0-10-FC1
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert0_gpu10_gelu [label="Expert-0-10-GELU
+[1024, 10000, 32768]
+GPU10" fillcolor=lightyellow]
+			expert0_gpu10_fc2 [label="Expert-0-10-FC2
+[1024, 10000, 8192]
+GPU10" fillcolor=lightyellow]
+			expert0_gpu11_fc1 [label="Expert-0-11-FC1
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			expert0_gpu11_gelu [label="Expert-0-11-GELU
+[1024, 10000, 32768]
+GPU11" fillcolor=lightyellow]
+			expert0_gpu11_fc2 [label="Expert-0-11-FC2
+[1024, 10000, 8192]
+GPU11" fillcolor=lightyellow]
+			expert0_gpu12_fc1 [label="Expert-0-12-FC1
+[1024, 10000, 32768]
+GPU12" fillcolor=lightyellow]
+			expert0_gpu12_gelu [label="Expert-0-12-GELU
+[1024, 10000, 32768]
+GPU12" fillcolor=lightyellow]
+			expert0_gpu12_fc2 [label="Expert-0-12-FC2
+[1024, 10000, 8192]
+GPU12" fillcolor=lightyellow]
+			expert0_gpu13_fc1 [label="Expert-0-13-FC1
+[1024, 10000, 32768]
+GPU13" fillcolor=lightyellow]
+			expert0_gpu13_gelu [label="Expert-0-13-GELU
+[1024, 10000, 32768]
+GPU13" fillcolor=lightyellow]
+			expert0_gpu13_fc2 [label="Expert-0-13-FC2
+[1024, 10000, 8192]
+GPU13" fillcolor=lightyellow]
+			expert0_gpu14_fc1 [label="Expert-0-14-FC1
+[1024, 10000, 32768]
+GPU14" fillcolor=lightyellow]
+			expert0_gpu14_gelu [label="Expert-0-14-GELU
+[1024, 10000, 32768]
+GPU14" fillcolor=lightyellow]
+			expert0_gpu14_fc2 [label="Expert-0-14-FC2
+[1024, 10000, 8192]
+GPU14" fillcolor=lightyellow]
+			expert0_gpu15_fc1 [label="Expert-0-15-FC1
+[1024, 10000, 32768]
+GPU15" fillcolor=lightyellow]
+			expert0_gpu15_gelu [label="Expert-0-15-GELU
+[1024, 10000, 32768]
+GPU15" fillcolor=lightyellow]
+			expert0_gpu15_fc2 [label="Expert-0-15-FC2
+[1024, 10000, 8192]
+GPU15" fillcolor=lightyellow]
+		}
+		agg0_detailed [label="Aggregate-0
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightcyan shape=parallelogram]
+		residual0_detailed [label="Residual-0
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightgray]
+	}
+	subgraph cluster_layer1_detailed {
+		color=blue label="Layer 1 (GPUs 16-31)" style=dashed
+		subgraph cluster_mha1 {
+			color=green label="Multi-Head Attention" style=dotted
+			mha_q1_0 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU16" fillcolor=lightcoral]
+			mha_k1_0 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU16" fillcolor=lightcoral]
+			mha_v1_0 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU16" fillcolor=lightcoral]
+			mha_out1_0 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU16" fillcolor=lightcoral]
+			mha_q1_1 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU17" fillcolor=lightcoral]
+			mha_k1_1 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU17" fillcolor=lightcoral]
+			mha_v1_1 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU17" fillcolor=lightcoral]
+			mha_out1_1 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU17" fillcolor=lightcoral]
+			mha_q1_2 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU18" fillcolor=lightcoral]
+			mha_k1_2 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU18" fillcolor=lightcoral]
+			mha_v1_2 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU18" fillcolor=lightcoral]
+			mha_out1_2 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU18" fillcolor=lightcoral]
+			mha_q1_3 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU19" fillcolor=lightcoral]
+			mha_k1_3 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU19" fillcolor=lightcoral]
+			mha_v1_3 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU19" fillcolor=lightcoral]
+			mha_out1_3 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU19" fillcolor=lightcoral]
+			mha_q1_4 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU20" fillcolor=lightcoral]
+			mha_k1_4 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU20" fillcolor=lightcoral]
+			mha_v1_4 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU20" fillcolor=lightcoral]
+			mha_out1_4 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU20" fillcolor=lightcoral]
+			mha_q1_5 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU21" fillcolor=lightcoral]
+			mha_k1_5 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU21" fillcolor=lightcoral]
+			mha_v1_5 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU21" fillcolor=lightcoral]
+			mha_out1_5 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU21" fillcolor=lightcoral]
+			mha_q1_6 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU22" fillcolor=lightcoral]
+			mha_k1_6 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU22" fillcolor=lightcoral]
+			mha_v1_6 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU22" fillcolor=lightcoral]
+			mha_out1_6 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU22" fillcolor=lightcoral]
+			mha_q1_7 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU23" fillcolor=lightcoral]
+			mha_k1_7 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU23" fillcolor=lightcoral]
+			mha_v1_7 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU23" fillcolor=lightcoral]
+			mha_out1_7 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU23" fillcolor=lightcoral]
+			mha_q1_8 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU24" fillcolor=lightcoral]
+			mha_k1_8 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU24" fillcolor=lightcoral]
+			mha_v1_8 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU24" fillcolor=lightcoral]
+			mha_out1_8 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU24" fillcolor=lightcoral]
+			mha_q1_9 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU25" fillcolor=lightcoral]
+			mha_k1_9 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU25" fillcolor=lightcoral]
+			mha_v1_9 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU25" fillcolor=lightcoral]
+			mha_out1_9 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU25" fillcolor=lightcoral]
+			mha_q1_10 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU26" fillcolor=lightcoral]
+			mha_k1_10 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU26" fillcolor=lightcoral]
+			mha_v1_10 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU26" fillcolor=lightcoral]
+			mha_out1_10 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU26" fillcolor=lightcoral]
+			mha_q1_11 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU27" fillcolor=lightcoral]
+			mha_k1_11 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU27" fillcolor=lightcoral]
+			mha_v1_11 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU27" fillcolor=lightcoral]
+			mha_out1_11 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU27" fillcolor=lightcoral]
+			mha_q1_12 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU28" fillcolor=lightcoral]
+			mha_k1_12 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU28" fillcolor=lightcoral]
+			mha_v1_12 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU28" fillcolor=lightcoral]
+			mha_out1_12 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU28" fillcolor=lightcoral]
+			mha_q1_13 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU29" fillcolor=lightcoral]
+			mha_k1_13 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU29" fillcolor=lightcoral]
+			mha_v1_13 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU29" fillcolor=lightcoral]
+			mha_out1_13 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU29" fillcolor=lightcoral]
+			mha_q1_14 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU30" fillcolor=lightcoral]
+			mha_k1_14 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU30" fillcolor=lightcoral]
+			mha_v1_14 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU30" fillcolor=lightcoral]
+			mha_out1_14 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU30" fillcolor=lightcoral]
+			mha_q1_15 [label="MHA-Q-1
+[1024, 10000, 8192/16]
+GPU31" fillcolor=lightcoral]
+			mha_k1_15 [label="MHA-K-1
+[1024, 10000, 8192/16]
+GPU31" fillcolor=lightcoral]
+			mha_v1_15 [label="MHA-V-1
+[1024, 10000, 8192/16]
+GPU31" fillcolor=lightcoral]
+			mha_out1_15 [label="MHA-Out-1
+[1024, 10000, 8192/16]
+GPU31" fillcolor=lightcoral]
+		}
+		gate1_detailed [label="Gate-1
+[1024, 10000, 16]
+All GPUs" fillcolor=lightpink shape=parallelogram]
+		subgraph cluster_experts1 {
+			color=orange label="Experts (16 total)" style=dotted
+			expert1_gpu0_fc1 [label="Expert-1-0-FC1
+[1024, 10000, 32768]
+GPU16" fillcolor=lightyellow]
+			expert1_gpu0_gelu [label="Expert-1-0-GELU
+[1024, 10000, 32768]
+GPU16" fillcolor=lightyellow]
+			expert1_gpu0_fc2 [label="Expert-1-0-FC2
+[1024, 10000, 8192]
+GPU16" fillcolor=lightyellow]
+			expert1_gpu1_fc1 [label="Expert-1-1-FC1
+[1024, 10000, 32768]
+GPU17" fillcolor=lightyellow]
+			expert1_gpu1_gelu [label="Expert-1-1-GELU
+[1024, 10000, 32768]
+GPU17" fillcolor=lightyellow]
+			expert1_gpu1_fc2 [label="Expert-1-1-FC2
+[1024, 10000, 8192]
+GPU17" fillcolor=lightyellow]
+			expert1_gpu2_fc1 [label="Expert-1-2-FC1
+[1024, 10000, 32768]
+GPU18" fillcolor=lightyellow]
+			expert1_gpu2_gelu [label="Expert-1-2-GELU
+[1024, 10000, 32768]
+GPU18" fillcolor=lightyellow]
+			expert1_gpu2_fc2 [label="Expert-1-2-FC2
+[1024, 10000, 8192]
+GPU18" fillcolor=lightyellow]
+			expert1_gpu3_fc1 [label="Expert-1-3-FC1
+[1024, 10000, 32768]
+GPU19" fillcolor=lightyellow]
+			expert1_gpu3_gelu [label="Expert-1-3-GELU
+[1024, 10000, 32768]
+GPU19" fillcolor=lightyellow]
+			expert1_gpu3_fc2 [label="Expert-1-3-FC2
+[1024, 10000, 8192]
+GPU19" fillcolor=lightyellow]
+			expert1_gpu4_fc1 [label="Expert-1-4-FC1
+[1024, 10000, 32768]
+GPU20" fillcolor=lightyellow]
+			expert1_gpu4_gelu [label="Expert-1-4-GELU
+[1024, 10000, 32768]
+GPU20" fillcolor=lightyellow]
+			expert1_gpu4_fc2 [label="Expert-1-4-FC2
+[1024, 10000, 8192]
+GPU20" fillcolor=lightyellow]
+			expert1_gpu5_fc1 [label="Expert-1-5-FC1
+[1024, 10000, 32768]
+GPU21" fillcolor=lightyellow]
+			expert1_gpu5_gelu [label="Expert-1-5-GELU
+[1024, 10000, 32768]
+GPU21" fillcolor=lightyellow]
+			expert1_gpu5_fc2 [label="Expert-1-5-FC2
+[1024, 10000, 8192]
+GPU21" fillcolor=lightyellow]
+			expert1_gpu6_fc1 [label="Expert-1-6-FC1
+[1024, 10000, 32768]
+GPU22" fillcolor=lightyellow]
+			expert1_gpu6_gelu [label="Expert-1-6-GELU
+[1024, 10000, 32768]
+GPU22" fillcolor=lightyellow]
+			expert1_gpu6_fc2 [label="Expert-1-6-FC2
+[1024, 10000, 8192]
+GPU22" fillcolor=lightyellow]
+			expert1_gpu7_fc1 [label="Expert-1-7-FC1
+[1024, 10000, 32768]
+GPU23" fillcolor=lightyellow]
+			expert1_gpu7_gelu [label="Expert-1-7-GELU
+[1024, 10000, 32768]
+GPU23" fillcolor=lightyellow]
+			expert1_gpu7_fc2 [label="Expert-1-7-FC2
+[1024, 10000, 8192]
+GPU23" fillcolor=lightyellow]
+			expert1_gpu8_fc1 [label="Expert-1-8-FC1
+[1024, 10000, 32768]
+GPU24" fillcolor=lightyellow]
+			expert1_gpu8_gelu [label="Expert-1-8-GELU
+[1024, 10000, 32768]
+GPU24" fillcolor=lightyellow]
+			expert1_gpu8_fc2 [label="Expert-1-8-FC2
+[1024, 10000, 8192]
+GPU24" fillcolor=lightyellow]
+			expert1_gpu9_fc1 [label="Expert-1-9-FC1
+[1024, 10000, 32768]
+GPU25" fillcolor=lightyellow]
+			expert1_gpu9_gelu [label="Expert-1-9-GELU
+[1024, 10000, 32768]
+GPU25" fillcolor=lightyellow]
+			expert1_gpu9_fc2 [label="Expert-1-9-FC2
+[1024, 10000, 8192]
+GPU25" fillcolor=lightyellow]
+			expert1_gpu10_fc1 [label="Expert-1-10-FC1
+[1024, 10000, 32768]
+GPU26" fillcolor=lightyellow]
+			expert1_gpu10_gelu [label="Expert-1-10-GELU
+[1024, 10000, 32768]
+GPU26" fillcolor=lightyellow]
+			expert1_gpu10_fc2 [label="Expert-1-10-FC2
+[1024, 10000, 8192]
+GPU26" fillcolor=lightyellow]
+			expert1_gpu11_fc1 [label="Expert-1-11-FC1
+[1024, 10000, 32768]
+GPU27" fillcolor=lightyellow]
+			expert1_gpu11_gelu [label="Expert-1-11-GELU
+[1024, 10000, 32768]
+GPU27" fillcolor=lightyellow]
+			expert1_gpu11_fc2 [label="Expert-1-11-FC2
+[1024, 10000, 8192]
+GPU27" fillcolor=lightyellow]
+			expert1_gpu12_fc1 [label="Expert-1-12-FC1
+[1024, 10000, 32768]
+GPU28" fillcolor=lightyellow]
+			expert1_gpu12_gelu [label="Expert-1-12-GELU
+[1024, 10000, 32768]
+GPU28" fillcolor=lightyellow]
+			expert1_gpu12_fc2 [label="Expert-1-12-FC2
+[1024, 10000, 8192]
+GPU28" fillcolor=lightyellow]
+			expert1_gpu13_fc1 [label="Expert-1-13-FC1
+[1024, 10000, 32768]
+GPU29" fillcolor=lightyellow]
+			expert1_gpu13_gelu [label="Expert-1-13-GELU
+[1024, 10000, 32768]
+GPU29" fillcolor=lightyellow]
+			expert1_gpu13_fc2 [label="Expert-1-13-FC2
+[1024, 10000, 8192]
+GPU29" fillcolor=lightyellow]
+			expert1_gpu14_fc1 [label="Expert-1-14-FC1
+[1024, 10000, 32768]
+GPU30" fillcolor=lightyellow]
+			expert1_gpu14_gelu [label="Expert-1-14-GELU
+[1024, 10000, 32768]
+GPU30" fillcolor=lightyellow]
+			expert1_gpu14_fc2 [label="Expert-1-14-FC2
+[1024, 10000, 8192]
+GPU30" fillcolor=lightyellow]
+			expert1_gpu15_fc1 [label="Expert-1-15-FC1
+[1024, 10000, 32768]
+GPU31" fillcolor=lightyellow]
+			expert1_gpu15_gelu [label="Expert-1-15-GELU
+[1024, 10000, 32768]
+GPU31" fillcolor=lightyellow]
+			expert1_gpu15_fc2 [label="Expert-1-15-FC2
+[1024, 10000, 8192]
+GPU31" fillcolor=lightyellow]
+		}
+		agg1_detailed [label="Aggregate-1
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightcyan shape=parallelogram]
+		residual1_detailed [label="Residual-1
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightgray]
+	}
+	subgraph cluster_layer2_detailed {
+		color=blue label="Layer 2 (GPUs 32-47)" style=dashed
+		subgraph cluster_mha2 {
+			color=green label="Multi-Head Attention" style=dotted
+			mha_q2_0 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU32" fillcolor=lightcoral]
+			mha_k2_0 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU32" fillcolor=lightcoral]
+			mha_v2_0 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU32" fillcolor=lightcoral]
+			mha_out2_0 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU32" fillcolor=lightcoral]
+			mha_q2_1 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU33" fillcolor=lightcoral]
+			mha_k2_1 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU33" fillcolor=lightcoral]
+			mha_v2_1 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU33" fillcolor=lightcoral]
+			mha_out2_1 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU33" fillcolor=lightcoral]
+			mha_q2_2 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU34" fillcolor=lightcoral]
+			mha_k2_2 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU34" fillcolor=lightcoral]
+			mha_v2_2 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU34" fillcolor=lightcoral]
+			mha_out2_2 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU34" fillcolor=lightcoral]
+			mha_q2_3 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU35" fillcolor=lightcoral]
+			mha_k2_3 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU35" fillcolor=lightcoral]
+			mha_v2_3 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU35" fillcolor=lightcoral]
+			mha_out2_3 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU35" fillcolor=lightcoral]
+			mha_q2_4 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU36" fillcolor=lightcoral]
+			mha_k2_4 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU36" fillcolor=lightcoral]
+			mha_v2_4 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU36" fillcolor=lightcoral]
+			mha_out2_4 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU36" fillcolor=lightcoral]
+			mha_q2_5 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU37" fillcolor=lightcoral]
+			mha_k2_5 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU37" fillcolor=lightcoral]
+			mha_v2_5 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU37" fillcolor=lightcoral]
+			mha_out2_5 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU37" fillcolor=lightcoral]
+			mha_q2_6 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU38" fillcolor=lightcoral]
+			mha_k2_6 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU38" fillcolor=lightcoral]
+			mha_v2_6 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU38" fillcolor=lightcoral]
+			mha_out2_6 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU38" fillcolor=lightcoral]
+			mha_q2_7 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU39" fillcolor=lightcoral]
+			mha_k2_7 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU39" fillcolor=lightcoral]
+			mha_v2_7 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU39" fillcolor=lightcoral]
+			mha_out2_7 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU39" fillcolor=lightcoral]
+			mha_q2_8 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU40" fillcolor=lightcoral]
+			mha_k2_8 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU40" fillcolor=lightcoral]
+			mha_v2_8 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU40" fillcolor=lightcoral]
+			mha_out2_8 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU40" fillcolor=lightcoral]
+			mha_q2_9 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU41" fillcolor=lightcoral]
+			mha_k2_9 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU41" fillcolor=lightcoral]
+			mha_v2_9 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU41" fillcolor=lightcoral]
+			mha_out2_9 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU41" fillcolor=lightcoral]
+			mha_q2_10 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU42" fillcolor=lightcoral]
+			mha_k2_10 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU42" fillcolor=lightcoral]
+			mha_v2_10 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU42" fillcolor=lightcoral]
+			mha_out2_10 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU42" fillcolor=lightcoral]
+			mha_q2_11 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU43" fillcolor=lightcoral]
+			mha_k2_11 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU43" fillcolor=lightcoral]
+			mha_v2_11 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU43" fillcolor=lightcoral]
+			mha_out2_11 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU43" fillcolor=lightcoral]
+			mha_q2_12 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU44" fillcolor=lightcoral]
+			mha_k2_12 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU44" fillcolor=lightcoral]
+			mha_v2_12 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU44" fillcolor=lightcoral]
+			mha_out2_12 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU44" fillcolor=lightcoral]
+			mha_q2_13 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU45" fillcolor=lightcoral]
+			mha_k2_13 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU45" fillcolor=lightcoral]
+			mha_v2_13 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU45" fillcolor=lightcoral]
+			mha_out2_13 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU45" fillcolor=lightcoral]
+			mha_q2_14 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU46" fillcolor=lightcoral]
+			mha_k2_14 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU46" fillcolor=lightcoral]
+			mha_v2_14 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU46" fillcolor=lightcoral]
+			mha_out2_14 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU46" fillcolor=lightcoral]
+			mha_q2_15 [label="MHA-Q-2
+[1024, 10000, 8192/16]
+GPU47" fillcolor=lightcoral]
+			mha_k2_15 [label="MHA-K-2
+[1024, 10000, 8192/16]
+GPU47" fillcolor=lightcoral]
+			mha_v2_15 [label="MHA-V-2
+[1024, 10000, 8192/16]
+GPU47" fillcolor=lightcoral]
+			mha_out2_15 [label="MHA-Out-2
+[1024, 10000, 8192/16]
+GPU47" fillcolor=lightcoral]
+		}
+		gate2_detailed [label="Gate-2
+[1024, 10000, 16]
+All GPUs" fillcolor=lightpink shape=parallelogram]
+		subgraph cluster_experts2 {
+			color=orange label="Experts (16 total)" style=dotted
+			expert2_gpu0_fc1 [label="Expert-2-0-FC1
+[1024, 10000, 32768]
+GPU32" fillcolor=lightyellow]
+			expert2_gpu0_gelu [label="Expert-2-0-GELU
+[1024, 10000, 32768]
+GPU32" fillcolor=lightyellow]
+			expert2_gpu0_fc2 [label="Expert-2-0-FC2
+[1024, 10000, 8192]
+GPU32" fillcolor=lightyellow]
+			expert2_gpu1_fc1 [label="Expert-2-1-FC1
+[1024, 10000, 32768]
+GPU33" fillcolor=lightyellow]
+			expert2_gpu1_gelu [label="Expert-2-1-GELU
+[1024, 10000, 32768]
+GPU33" fillcolor=lightyellow]
+			expert2_gpu1_fc2 [label="Expert-2-1-FC2
+[1024, 10000, 8192]
+GPU33" fillcolor=lightyellow]
+			expert2_gpu2_fc1 [label="Expert-2-2-FC1
+[1024, 10000, 32768]
+GPU34" fillcolor=lightyellow]
+			expert2_gpu2_gelu [label="Expert-2-2-GELU
+[1024, 10000, 32768]
+GPU34" fillcolor=lightyellow]
+			expert2_gpu2_fc2 [label="Expert-2-2-FC2
+[1024, 10000, 8192]
+GPU34" fillcolor=lightyellow]
+			expert2_gpu3_fc1 [label="Expert-2-3-FC1
+[1024, 10000, 32768]
+GPU35" fillcolor=lightyellow]
+			expert2_gpu3_gelu [label="Expert-2-3-GELU
+[1024, 10000, 32768]
+GPU35" fillcolor=lightyellow]
+			expert2_gpu3_fc2 [label="Expert-2-3-FC2
+[1024, 10000, 8192]
+GPU35" fillcolor=lightyellow]
+			expert2_gpu4_fc1 [label="Expert-2-4-FC1
+[1024, 10000, 32768]
+GPU36" fillcolor=lightyellow]
+			expert2_gpu4_gelu [label="Expert-2-4-GELU
+[1024, 10000, 32768]
+GPU36" fillcolor=lightyellow]
+			expert2_gpu4_fc2 [label="Expert-2-4-FC2
+[1024, 10000, 8192]
+GPU36" fillcolor=lightyellow]
+			expert2_gpu5_fc1 [label="Expert-2-5-FC1
+[1024, 10000, 32768]
+GPU37" fillcolor=lightyellow]
+			expert2_gpu5_gelu [label="Expert-2-5-GELU
+[1024, 10000, 32768]
+GPU37" fillcolor=lightyellow]
+			expert2_gpu5_fc2 [label="Expert-2-5-FC2
+[1024, 10000, 8192]
+GPU37" fillcolor=lightyellow]
+			expert2_gpu6_fc1 [label="Expert-2-6-FC1
+[1024, 10000, 32768]
+GPU38" fillcolor=lightyellow]
+			expert2_gpu6_gelu [label="Expert-2-6-GELU
+[1024, 10000, 32768]
+GPU38" fillcolor=lightyellow]
+			expert2_gpu6_fc2 [label="Expert-2-6-FC2
+[1024, 10000, 8192]
+GPU38" fillcolor=lightyellow]
+			expert2_gpu7_fc1 [label="Expert-2-7-FC1
+[1024, 10000, 32768]
+GPU39" fillcolor=lightyellow]
+			expert2_gpu7_gelu [label="Expert-2-7-GELU
+[1024, 10000, 32768]
+GPU39" fillcolor=lightyellow]
+			expert2_gpu7_fc2 [label="Expert-2-7-FC2
+[1024, 10000, 8192]
+GPU39" fillcolor=lightyellow]
+			expert2_gpu8_fc1 [label="Expert-2-8-FC1
+[1024, 10000, 32768]
+GPU40" fillcolor=lightyellow]
+			expert2_gpu8_gelu [label="Expert-2-8-GELU
+[1024, 10000, 32768]
+GPU40" fillcolor=lightyellow]
+			expert2_gpu8_fc2 [label="Expert-2-8-FC2
+[1024, 10000, 8192]
+GPU40" fillcolor=lightyellow]
+			expert2_gpu9_fc1 [label="Expert-2-9-FC1
+[1024, 10000, 32768]
+GPU41" fillcolor=lightyellow]
+			expert2_gpu9_gelu [label="Expert-2-9-GELU
+[1024, 10000, 32768]
+GPU41" fillcolor=lightyellow]
+			expert2_gpu9_fc2 [label="Expert-2-9-FC2
+[1024, 10000, 8192]
+GPU41" fillcolor=lightyellow]
+			expert2_gpu10_fc1 [label="Expert-2-10-FC1
+[1024, 10000, 32768]
+GPU42" fillcolor=lightyellow]
+			expert2_gpu10_gelu [label="Expert-2-10-GELU
+[1024, 10000, 32768]
+GPU42" fillcolor=lightyellow]
+			expert2_gpu10_fc2 [label="Expert-2-10-FC2
+[1024, 10000, 8192]
+GPU42" fillcolor=lightyellow]
+			expert2_gpu11_fc1 [label="Expert-2-11-FC1
+[1024, 10000, 32768]
+GPU43" fillcolor=lightyellow]
+			expert2_gpu11_gelu [label="Expert-2-11-GELU
+[1024, 10000, 32768]
+GPU43" fillcolor=lightyellow]
+			expert2_gpu11_fc2 [label="Expert-2-11-FC2
+[1024, 10000, 8192]
+GPU43" fillcolor=lightyellow]
+			expert2_gpu12_fc1 [label="Expert-2-12-FC1
+[1024, 10000, 32768]
+GPU44" fillcolor=lightyellow]
+			expert2_gpu12_gelu [label="Expert-2-12-GELU
+[1024, 10000, 32768]
+GPU44" fillcolor=lightyellow]
+			expert2_gpu12_fc2 [label="Expert-2-12-FC2
+[1024, 10000, 8192]
+GPU44" fillcolor=lightyellow]
+			expert2_gpu13_fc1 [label="Expert-2-13-FC1
+[1024, 10000, 32768]
+GPU45" fillcolor=lightyellow]
+			expert2_gpu13_gelu [label="Expert-2-13-GELU
+[1024, 10000, 32768]
+GPU45" fillcolor=lightyellow]
+			expert2_gpu13_fc2 [label="Expert-2-13-FC2
+[1024, 10000, 8192]
+GPU45" fillcolor=lightyellow]
+			expert2_gpu14_fc1 [label="Expert-2-14-FC1
+[1024, 10000, 32768]
+GPU46" fillcolor=lightyellow]
+			expert2_gpu14_gelu [label="Expert-2-14-GELU
+[1024, 10000, 32768]
+GPU46" fillcolor=lightyellow]
+			expert2_gpu14_fc2 [label="Expert-2-14-FC2
+[1024, 10000, 8192]
+GPU46" fillcolor=lightyellow]
+			expert2_gpu15_fc1 [label="Expert-2-15-FC1
+[1024, 10000, 32768]
+GPU47" fillcolor=lightyellow]
+			expert2_gpu15_gelu [label="Expert-2-15-GELU
+[1024, 10000, 32768]
+GPU47" fillcolor=lightyellow]
+			expert2_gpu15_fc2 [label="Expert-2-15-FC2
+[1024, 10000, 8192]
+GPU47" fillcolor=lightyellow]
+		}
+		agg2_detailed [label="Aggregate-2
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightcyan shape=parallelogram]
+		residual2_detailed [label="Residual-2
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightgray]
+	}
+	subgraph cluster_layer3_detailed {
+		color=blue label="Layer 3 (GPUs 48-63)" style=dashed
+		subgraph cluster_mha3 {
+			color=green label="Multi-Head Attention" style=dotted
+			mha_q3_0 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU48" fillcolor=lightcoral]
+			mha_k3_0 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU48" fillcolor=lightcoral]
+			mha_v3_0 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU48" fillcolor=lightcoral]
+			mha_out3_0 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU48" fillcolor=lightcoral]
+			mha_q3_1 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU49" fillcolor=lightcoral]
+			mha_k3_1 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU49" fillcolor=lightcoral]
+			mha_v3_1 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU49" fillcolor=lightcoral]
+			mha_out3_1 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU49" fillcolor=lightcoral]
+			mha_q3_2 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU50" fillcolor=lightcoral]
+			mha_k3_2 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU50" fillcolor=lightcoral]
+			mha_v3_2 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU50" fillcolor=lightcoral]
+			mha_out3_2 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU50" fillcolor=lightcoral]
+			mha_q3_3 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU51" fillcolor=lightcoral]
+			mha_k3_3 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU51" fillcolor=lightcoral]
+			mha_v3_3 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU51" fillcolor=lightcoral]
+			mha_out3_3 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU51" fillcolor=lightcoral]
+			mha_q3_4 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU52" fillcolor=lightcoral]
+			mha_k3_4 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU52" fillcolor=lightcoral]
+			mha_v3_4 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU52" fillcolor=lightcoral]
+			mha_out3_4 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU52" fillcolor=lightcoral]
+			mha_q3_5 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU53" fillcolor=lightcoral]
+			mha_k3_5 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU53" fillcolor=lightcoral]
+			mha_v3_5 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU53" fillcolor=lightcoral]
+			mha_out3_5 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU53" fillcolor=lightcoral]
+			mha_q3_6 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU54" fillcolor=lightcoral]
+			mha_k3_6 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU54" fillcolor=lightcoral]
+			mha_v3_6 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU54" fillcolor=lightcoral]
+			mha_out3_6 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU54" fillcolor=lightcoral]
+			mha_q3_7 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU55" fillcolor=lightcoral]
+			mha_k3_7 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU55" fillcolor=lightcoral]
+			mha_v3_7 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU55" fillcolor=lightcoral]
+			mha_out3_7 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU55" fillcolor=lightcoral]
+			mha_q3_8 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU56" fillcolor=lightcoral]
+			mha_k3_8 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU56" fillcolor=lightcoral]
+			mha_v3_8 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU56" fillcolor=lightcoral]
+			mha_out3_8 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU56" fillcolor=lightcoral]
+			mha_q3_9 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU57" fillcolor=lightcoral]
+			mha_k3_9 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU57" fillcolor=lightcoral]
+			mha_v3_9 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU57" fillcolor=lightcoral]
+			mha_out3_9 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU57" fillcolor=lightcoral]
+			mha_q3_10 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU58" fillcolor=lightcoral]
+			mha_k3_10 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU58" fillcolor=lightcoral]
+			mha_v3_10 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU58" fillcolor=lightcoral]
+			mha_out3_10 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU58" fillcolor=lightcoral]
+			mha_q3_11 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU59" fillcolor=lightcoral]
+			mha_k3_11 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU59" fillcolor=lightcoral]
+			mha_v3_11 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU59" fillcolor=lightcoral]
+			mha_out3_11 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU59" fillcolor=lightcoral]
+			mha_q3_12 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU60" fillcolor=lightcoral]
+			mha_k3_12 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU60" fillcolor=lightcoral]
+			mha_v3_12 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU60" fillcolor=lightcoral]
+			mha_out3_12 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU60" fillcolor=lightcoral]
+			mha_q3_13 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU61" fillcolor=lightcoral]
+			mha_k3_13 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU61" fillcolor=lightcoral]
+			mha_v3_13 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU61" fillcolor=lightcoral]
+			mha_out3_13 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU61" fillcolor=lightcoral]
+			mha_q3_14 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU62" fillcolor=lightcoral]
+			mha_k3_14 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU62" fillcolor=lightcoral]
+			mha_v3_14 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU62" fillcolor=lightcoral]
+			mha_out3_14 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU62" fillcolor=lightcoral]
+			mha_q3_15 [label="MHA-Q-3
+[1024, 10000, 8192/16]
+GPU63" fillcolor=lightcoral]
+			mha_k3_15 [label="MHA-K-3
+[1024, 10000, 8192/16]
+GPU63" fillcolor=lightcoral]
+			mha_v3_15 [label="MHA-V-3
+[1024, 10000, 8192/16]
+GPU63" fillcolor=lightcoral]
+			mha_out3_15 [label="MHA-Out-3
+[1024, 10000, 8192/16]
+GPU63" fillcolor=lightcoral]
+		}
+		gate3_detailed [label="Gate-3
+[1024, 10000, 16]
+All GPUs" fillcolor=lightpink shape=parallelogram]
+		subgraph cluster_experts3 {
+			color=orange label="Experts (16 total)" style=dotted
+			expert3_gpu0_fc1 [label="Expert-3-0-FC1
+[1024, 10000, 32768]
+GPU48" fillcolor=lightyellow]
+			expert3_gpu0_gelu [label="Expert-3-0-GELU
+[1024, 10000, 32768]
+GPU48" fillcolor=lightyellow]
+			expert3_gpu0_fc2 [label="Expert-3-0-FC2
+[1024, 10000, 8192]
+GPU48" fillcolor=lightyellow]
+			expert3_gpu1_fc1 [label="Expert-3-1-FC1
+[1024, 10000, 32768]
+GPU49" fillcolor=lightyellow]
+			expert3_gpu1_gelu [label="Expert-3-1-GELU
+[1024, 10000, 32768]
+GPU49" fillcolor=lightyellow]
+			expert3_gpu1_fc2 [label="Expert-3-1-FC2
+[1024, 10000, 8192]
+GPU49" fillcolor=lightyellow]
+			expert3_gpu2_fc1 [label="Expert-3-2-FC1
+[1024, 10000, 32768]
+GPU50" fillcolor=lightyellow]
+			expert3_gpu2_gelu [label="Expert-3-2-GELU
+[1024, 10000, 32768]
+GPU50" fillcolor=lightyellow]
+			expert3_gpu2_fc2 [label="Expert-3-2-FC2
+[1024, 10000, 8192]
+GPU50" fillcolor=lightyellow]
+			expert3_gpu3_fc1 [label="Expert-3-3-FC1
+[1024, 10000, 32768]
+GPU51" fillcolor=lightyellow]
+			expert3_gpu3_gelu [label="Expert-3-3-GELU
+[1024, 10000, 32768]
+GPU51" fillcolor=lightyellow]
+			expert3_gpu3_fc2 [label="Expert-3-3-FC2
+[1024, 10000, 8192]
+GPU51" fillcolor=lightyellow]
+			expert3_gpu4_fc1 [label="Expert-3-4-FC1
+[1024, 10000, 32768]
+GPU52" fillcolor=lightyellow]
+			expert3_gpu4_gelu [label="Expert-3-4-GELU
+[1024, 10000, 32768]
+GPU52" fillcolor=lightyellow]
+			expert3_gpu4_fc2 [label="Expert-3-4-FC2
+[1024, 10000, 8192]
+GPU52" fillcolor=lightyellow]
+			expert3_gpu5_fc1 [label="Expert-3-5-FC1
+[1024, 10000, 32768]
+GPU53" fillcolor=lightyellow]
+			expert3_gpu5_gelu [label="Expert-3-5-GELU
+[1024, 10000, 32768]
+GPU53" fillcolor=lightyellow]
+			expert3_gpu5_fc2 [label="Expert-3-5-FC2
+[1024, 10000, 8192]
+GPU53" fillcolor=lightyellow]
+			expert3_gpu6_fc1 [label="Expert-3-6-FC1
+[1024, 10000, 32768]
+GPU54" fillcolor=lightyellow]
+			expert3_gpu6_gelu [label="Expert-3-6-GELU
+[1024, 10000, 32768]
+GPU54" fillcolor=lightyellow]
+			expert3_gpu6_fc2 [label="Expert-3-6-FC2
+[1024, 10000, 8192]
+GPU54" fillcolor=lightyellow]
+			expert3_gpu7_fc1 [label="Expert-3-7-FC1
+[1024, 10000, 32768]
+GPU55" fillcolor=lightyellow]
+			expert3_gpu7_gelu [label="Expert-3-7-GELU
+[1024, 10000, 32768]
+GPU55" fillcolor=lightyellow]
+			expert3_gpu7_fc2 [label="Expert-3-7-FC2
+[1024, 10000, 8192]
+GPU55" fillcolor=lightyellow]
+			expert3_gpu8_fc1 [label="Expert-3-8-FC1
+[1024, 10000, 32768]
+GPU56" fillcolor=lightyellow]
+			expert3_gpu8_gelu [label="Expert-3-8-GELU
+[1024, 10000, 32768]
+GPU56" fillcolor=lightyellow]
+			expert3_gpu8_fc2 [label="Expert-3-8-FC2
+[1024, 10000, 8192]
+GPU56" fillcolor=lightyellow]
+			expert3_gpu9_fc1 [label="Expert-3-9-FC1
+[1024, 10000, 32768]
+GPU57" fillcolor=lightyellow]
+			expert3_gpu9_gelu [label="Expert-3-9-GELU
+[1024, 10000, 32768]
+GPU57" fillcolor=lightyellow]
+			expert3_gpu9_fc2 [label="Expert-3-9-FC2
+[1024, 10000, 8192]
+GPU57" fillcolor=lightyellow]
+			expert3_gpu10_fc1 [label="Expert-3-10-FC1
+[1024, 10000, 32768]
+GPU58" fillcolor=lightyellow]
+			expert3_gpu10_gelu [label="Expert-3-10-GELU
+[1024, 10000, 32768]
+GPU58" fillcolor=lightyellow]
+			expert3_gpu10_fc2 [label="Expert-3-10-FC2
+[1024, 10000, 8192]
+GPU58" fillcolor=lightyellow]
+			expert3_gpu11_fc1 [label="Expert-3-11-FC1
+[1024, 10000, 32768]
+GPU59" fillcolor=lightyellow]
+			expert3_gpu11_gelu [label="Expert-3-11-GELU
+[1024, 10000, 32768]
+GPU59" fillcolor=lightyellow]
+			expert3_gpu11_fc2 [label="Expert-3-11-FC2
+[1024, 10000, 8192]
+GPU59" fillcolor=lightyellow]
+			expert3_gpu12_fc1 [label="Expert-3-12-FC1
+[1024, 10000, 32768]
+GPU60" fillcolor=lightyellow]
+			expert3_gpu12_gelu [label="Expert-3-12-GELU
+[1024, 10000, 32768]
+GPU60" fillcolor=lightyellow]
+			expert3_gpu12_fc2 [label="Expert-3-12-FC2
+[1024, 10000, 8192]
+GPU60" fillcolor=lightyellow]
+			expert3_gpu13_fc1 [label="Expert-3-13-FC1
+[1024, 10000, 32768]
+GPU61" fillcolor=lightyellow]
+			expert3_gpu13_gelu [label="Expert-3-13-GELU
+[1024, 10000, 32768]
+GPU61" fillcolor=lightyellow]
+			expert3_gpu13_fc2 [label="Expert-3-13-FC2
+[1024, 10000, 8192]
+GPU61" fillcolor=lightyellow]
+			expert3_gpu14_fc1 [label="Expert-3-14-FC1
+[1024, 10000, 32768]
+GPU62" fillcolor=lightyellow]
+			expert3_gpu14_gelu [label="Expert-3-14-GELU
+[1024, 10000, 32768]
+GPU62" fillcolor=lightyellow]
+			expert3_gpu14_fc2 [label="Expert-3-14-FC2
+[1024, 10000, 8192]
+GPU62" fillcolor=lightyellow]
+			expert3_gpu15_fc1 [label="Expert-3-15-FC1
+[1024, 10000, 32768]
+GPU63" fillcolor=lightyellow]
+			expert3_gpu15_gelu [label="Expert-3-15-GELU
+[1024, 10000, 32768]
+GPU63" fillcolor=lightyellow]
+			expert3_gpu15_fc2 [label="Expert-3-15-FC2
+[1024, 10000, 8192]
+GPU63" fillcolor=lightyellow]
+		}
+		agg3_detailed [label="Aggregate-3
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightcyan shape=parallelogram]
+		residual3_detailed [label="Residual-3
+[1024, 10000, 8192]
+All GPUs" fillcolor=lightgray]
+	}
+	output_detailed [label="Output
+[1024, 10000, 8192]" fillcolor=lightgreen shape=ellipse]
+	input -> mha_q0_0
+	input -> mha_k0_0
+	input -> mha_v0_0
+	input -> mha_q0_1
+	input -> mha_k0_1
+	input -> mha_v0_1
+	input -> mha_q0_2
+	input -> mha_k0_2
+	input -> mha_v0_2
+	input -> mha_q0_3
+	input -> mha_k0_3
+	input -> mha_v0_3
+	input -> mha_q0_4
+	input -> mha_k0_4
+	input -> mha_v0_4
+	input -> mha_q0_5
+	input -> mha_k0_5
+	input -> mha_v0_5
+	input -> mha_q0_6
+	input -> mha_k0_6
+	input -> mha_v0_6
+	input -> mha_q0_7
+	input -> mha_k0_7
+	input -> mha_v0_7
+	input -> mha_q0_8
+	input -> mha_k0_8
+	input -> mha_v0_8
+	input -> mha_q0_9
+	input -> mha_k0_9
+	input -> mha_v0_9
+	input -> mha_q0_10
+	input -> mha_k0_10
+	input -> mha_v0_10
+	input -> mha_q0_11
+	input -> mha_k0_11
+	input -> mha_v0_11
+	input -> mha_q0_12
+	input -> mha_k0_12
+	input -> mha_v0_12
+	input -> mha_q0_13
+	input -> mha_k0_13
+	input -> mha_v0_13
+	input -> mha_q0_14
+	input -> mha_k0_14
+	input -> mha_v0_14
+	input -> mha_q0_15
+	input -> mha_k0_15
+	input -> mha_v0_15
+	mha_q0_0 -> mha_out0_0
+	mha_k0_0 -> mha_out0_0
+	mha_v0_0 -> mha_out0_0
+	mha_out0_0 -> gate0_detailed
+	mha_q0_1 -> mha_out0_1
+	mha_k0_1 -> mha_out0_1
+	mha_v0_1 -> mha_out0_1
+	mha_out0_1 -> gate0_detailed
+	mha_q0_2 -> mha_out0_2
+	mha_k0_2 -> mha_out0_2
+	mha_v0_2 -> mha_out0_2
+	mha_out0_2 -> gate0_detailed
+	mha_q0_3 -> mha_out0_3
+	mha_k0_3 -> mha_out0_3
+	mha_v0_3 -> mha_out0_3
+	mha_out0_3 -> gate0_detailed
+	mha_q0_4 -> mha_out0_4
+	mha_k0_4 -> mha_out0_4
+	mha_v0_4 -> mha_out0_4
+	mha_out0_4 -> gate0_detailed
+	mha_q0_5 -> mha_out0_5
+	mha_k0_5 -> mha_out0_5
+	mha_v0_5 -> mha_out0_5
+	mha_out0_5 -> gate0_detailed
+	mha_q0_6 -> mha_out0_6
+	mha_k0_6 -> mha_out0_6
+	mha_v0_6 -> mha_out0_6
+	mha_out0_6 -> gate0_detailed
+	mha_q0_7 -> mha_out0_7
+	mha_k0_7 -> mha_out0_7
+	mha_v0_7 -> mha_out0_7
+	mha_out0_7 -> gate0_detailed
+	mha_q0_8 -> mha_out0_8
+	mha_k0_8 -> mha_out0_8
+	mha_v0_8 -> mha_out0_8
+	mha_out0_8 -> gate0_detailed
+	mha_q0_9 -> mha_out0_9
+	mha_k0_9 -> mha_out0_9
+	mha_v0_9 -> mha_out0_9
+	mha_out0_9 -> gate0_detailed
+	mha_q0_10 -> mha_out0_10
+	mha_k0_10 -> mha_out0_10
+	mha_v0_10 -> mha_out0_10
+	mha_out0_10 -> gate0_detailed
+	mha_q0_11 -> mha_out0_11
+	mha_k0_11 -> mha_out0_11
+	mha_v0_11 -> mha_out0_11
+	mha_out0_11 -> gate0_detailed
+	mha_q0_12 -> mha_out0_12
+	mha_k0_12 -> mha_out0_12
+	mha_v0_12 -> mha_out0_12
+	mha_out0_12 -> gate0_detailed
+	mha_q0_13 -> mha_out0_13
+	mha_k0_13 -> mha_out0_13
+	mha_v0_13 -> mha_out0_13
+	mha_out0_13 -> gate0_detailed
+	mha_q0_14 -> mha_out0_14
+	mha_k0_14 -> mha_out0_14
+	mha_v0_14 -> mha_out0_14
+	mha_out0_14 -> gate0_detailed
+	mha_q0_15 -> mha_out0_15
+	mha_k0_15 -> mha_out0_15
+	mha_v0_15 -> mha_out0_15
+	mha_out0_15 -> gate0_detailed
+	gate0_detailed -> expert0_gpu0_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu1_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu2_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu3_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu4_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu5_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu6_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu7_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu8_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu9_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu10_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu11_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu12_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu13_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu14_fc1 [style=dashed]
+	gate0_detailed -> expert0_gpu15_fc1 [style=dashed]
+	expert0_gpu0_fc1 -> expert0_gpu0_gelu
+	expert0_gpu0_gelu -> expert0_gpu0_fc2
+	expert0_gpu0_fc2 -> agg0_detailed
+	expert0_gpu1_fc1 -> expert0_gpu1_gelu
+	expert0_gpu1_gelu -> expert0_gpu1_fc2
+	expert0_gpu1_fc2 -> agg0_detailed
+	expert0_gpu2_fc1 -> expert0_gpu2_gelu
+	expert0_gpu2_gelu -> expert0_gpu2_fc2
+	expert0_gpu2_fc2 -> agg0_detailed
+	expert0_gpu3_fc1 -> expert0_gpu3_gelu
+	expert0_gpu3_gelu -> expert0_gpu3_fc2
+	expert0_gpu3_fc2 -> agg0_detailed
+	expert0_gpu4_fc1 -> expert0_gpu4_gelu
+	expert0_gpu4_gelu -> expert0_gpu4_fc2
+	expert0_gpu4_fc2 -> agg0_detailed
+	expert0_gpu5_fc1 -> expert0_gpu5_gelu
+	expert0_gpu5_gelu -> expert0_gpu5_fc2
+	expert0_gpu5_fc2 -> agg0_detailed
+	expert0_gpu6_fc1 -> expert0_gpu6_gelu
+	expert0_gpu6_gelu -> expert0_gpu6_fc2
+	expert0_gpu6_fc2 -> agg0_detailed
+	expert0_gpu7_fc1 -> expert0_gpu7_gelu
+	expert0_gpu7_gelu -> expert0_gpu7_fc2
+	expert0_gpu7_fc2 -> agg0_detailed
+	expert0_gpu8_fc1 -> expert0_gpu8_gelu
+	expert0_gpu8_gelu -> expert0_gpu8_fc2
+	expert0_gpu8_fc2 -> agg0_detailed
+	expert0_gpu9_fc1 -> expert0_gpu9_gelu
+	expert0_gpu9_gelu -> expert0_gpu9_fc2
+	expert0_gpu9_fc2 -> agg0_detailed
+	expert0_gpu10_fc1 -> expert0_gpu10_gelu
+	expert0_gpu10_gelu -> expert0_gpu10_fc2
+	expert0_gpu10_fc2 -> agg0_detailed
+	expert0_gpu11_fc1 -> expert0_gpu11_gelu
+	expert0_gpu11_gelu -> expert0_gpu11_fc2
+	expert0_gpu11_fc2 -> agg0_detailed
+	expert0_gpu12_fc1 -> expert0_gpu12_gelu
+	expert0_gpu12_gelu -> expert0_gpu12_fc2
+	expert0_gpu12_fc2 -> agg0_detailed
+	expert0_gpu13_fc1 -> expert0_gpu13_gelu
+	expert0_gpu13_gelu -> expert0_gpu13_fc2
+	expert0_gpu13_fc2 -> agg0_detailed
+	expert0_gpu14_fc1 -> expert0_gpu14_gelu
+	expert0_gpu14_gelu -> expert0_gpu14_fc2
+	expert0_gpu14_fc2 -> agg0_detailed
+	expert0_gpu15_fc1 -> expert0_gpu15_gelu
+	expert0_gpu15_gelu -> expert0_gpu15_fc2
+	expert0_gpu15_fc2 -> agg0_detailed
+	gate0_detailed -> residual0_detailed [style=dashed]
+	agg0_detailed -> residual0_detailed
+	residual0_detailed -> mha_q1_0
+	residual0_detailed -> mha_k1_0
+	residual0_detailed -> mha_v1_0
+	residual0_detailed -> mha_q1_1
+	residual0_detailed -> mha_k1_1
+	residual0_detailed -> mha_v1_1
+	residual0_detailed -> mha_q1_2
+	residual0_detailed -> mha_k1_2
+	residual0_detailed -> mha_v1_2
+	residual0_detailed -> mha_q1_3
+	residual0_detailed -> mha_k1_3
+	residual0_detailed -> mha_v1_3
+	residual0_detailed -> mha_q1_4
+	residual0_detailed -> mha_k1_4
+	residual0_detailed -> mha_v1_4
+	residual0_detailed -> mha_q1_5
+	residual0_detailed -> mha_k1_5
+	residual0_detailed -> mha_v1_5
+	residual0_detailed -> mha_q1_6
+	residual0_detailed -> mha_k1_6
+	residual0_detailed -> mha_v1_6
+	residual0_detailed -> mha_q1_7
+	residual0_detailed -> mha_k1_7
+	residual0_detailed -> mha_v1_7
+	residual0_detailed -> mha_q1_8
+	residual0_detailed -> mha_k1_8
+	residual0_detailed -> mha_v1_8
+	residual0_detailed -> mha_q1_9
+	residual0_detailed -> mha_k1_9
+	residual0_detailed -> mha_v1_9
+	residual0_detailed -> mha_q1_10
+	residual0_detailed -> mha_k1_10
+	residual0_detailed -> mha_v1_10
+	residual0_detailed -> mha_q1_11
+	residual0_detailed -> mha_k1_11
+	residual0_detailed -> mha_v1_11
+	residual0_detailed -> mha_q1_12
+	residual0_detailed -> mha_k1_12
+	residual0_detailed -> mha_v1_12
+	residual0_detailed -> mha_q1_13
+	residual0_detailed -> mha_k1_13
+	residual0_detailed -> mha_v1_13
+	residual0_detailed -> mha_q1_14
+	residual0_detailed -> mha_k1_14
+	residual0_detailed -> mha_v1_14
+	residual0_detailed -> mha_q1_15
+	residual0_detailed -> mha_k1_15
+	residual0_detailed -> mha_v1_15
+	mha_q1_0 -> mha_out1_0
+	mha_k1_0 -> mha_out1_0
+	mha_v1_0 -> mha_out1_0
+	mha_out1_0 -> gate1_detailed
+	mha_q1_1 -> mha_out1_1
+	mha_k1_1 -> mha_out1_1
+	mha_v1_1 -> mha_out1_1
+	mha_out1_1 -> gate1_detailed
+	mha_q1_2 -> mha_out1_2
+	mha_k1_2 -> mha_out1_2
+	mha_v1_2 -> mha_out1_2
+	mha_out1_2 -> gate1_detailed
+	mha_q1_3 -> mha_out1_3
+	mha_k1_3 -> mha_out1_3
+	mha_v1_3 -> mha_out1_3
+	mha_out1_3 -> gate1_detailed
+	mha_q1_4 -> mha_out1_4
+	mha_k1_4 -> mha_out1_4
+	mha_v1_4 -> mha_out1_4
+	mha_out1_4 -> gate1_detailed
+	mha_q1_5 -> mha_out1_5
+	mha_k1_5 -> mha_out1_5
+	mha_v1_5 -> mha_out1_5
+	mha_out1_5 -> gate1_detailed
+	mha_q1_6 -> mha_out1_6
+	mha_k1_6 -> mha_out1_6
+	mha_v1_6 -> mha_out1_6
+	mha_out1_6 -> gate1_detailed
+	mha_q1_7 -> mha_out1_7
+	mha_k1_7 -> mha_out1_7
+	mha_v1_7 -> mha_out1_7
+	mha_out1_7 -> gate1_detailed
+	mha_q1_8 -> mha_out1_8
+	mha_k1_8 -> mha_out1_8
+	mha_v1_8 -> mha_out1_8
+	mha_out1_8 -> gate1_detailed
+	mha_q1_9 -> mha_out1_9
+	mha_k1_9 -> mha_out1_9
+	mha_v1_9 -> mha_out1_9
+	mha_out1_9 -> gate1_detailed
+	mha_q1_10 -> mha_out1_10
+	mha_k1_10 -> mha_out1_10
+	mha_v1_10 -> mha_out1_10
+	mha_out1_10 -> gate1_detailed
+	mha_q1_11 -> mha_out1_11
+	mha_k1_11 -> mha_out1_11
+	mha_v1_11 -> mha_out1_11
+	mha_out1_11 -> gate1_detailed
+	mha_q1_12 -> mha_out1_12
+	mha_k1_12 -> mha_out1_12
+	mha_v1_12 -> mha_out1_12
+	mha_out1_12 -> gate1_detailed
+	mha_q1_13 -> mha_out1_13
+	mha_k1_13 -> mha_out1_13
+	mha_v1_13 -> mha_out1_13
+	mha_out1_13 -> gate1_detailed
+	mha_q1_14 -> mha_out1_14
+	mha_k1_14 -> mha_out1_14
+	mha_v1_14 -> mha_out1_14
+	mha_out1_14 -> gate1_detailed
+	mha_q1_15 -> mha_out1_15
+	mha_k1_15 -> mha_out1_15
+	mha_v1_15 -> mha_out1_15
+	mha_out1_15 -> gate1_detailed
+	gate1_detailed -> expert1_gpu0_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu1_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu2_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu3_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu4_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu5_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu6_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu7_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu8_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu9_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu10_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu11_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu12_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu13_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu14_fc1 [style=dashed]
+	gate1_detailed -> expert1_gpu15_fc1 [style=dashed]
+	expert1_gpu0_fc1 -> expert1_gpu0_gelu
+	expert1_gpu0_gelu -> expert1_gpu0_fc2
+	expert1_gpu0_fc2 -> agg1_detailed
+	expert1_gpu1_fc1 -> expert1_gpu1_gelu
+	expert1_gpu1_gelu -> expert1_gpu1_fc2
+	expert1_gpu1_fc2 -> agg1_detailed
+	expert1_gpu2_fc1 -> expert1_gpu2_gelu
+	expert1_gpu2_gelu -> expert1_gpu2_fc2
+	expert1_gpu2_fc2 -> agg1_detailed
+	expert1_gpu3_fc1 -> expert1_gpu3_gelu
+	expert1_gpu3_gelu -> expert1_gpu3_fc2
+	expert1_gpu3_fc2 -> agg1_detailed
+	expert1_gpu4_fc1 -> expert1_gpu4_gelu
+	expert1_gpu4_gelu -> expert1_gpu4_fc2
+	expert1_gpu4_fc2 -> agg1_detailed
+	expert1_gpu5_fc1 -> expert1_gpu5_gelu
+	expert1_gpu5_gelu -> expert1_gpu5_fc2
+	expert1_gpu5_fc2 -> agg1_detailed
+	expert1_gpu6_fc1 -> expert1_gpu6_gelu
+	expert1_gpu6_gelu -> expert1_gpu6_fc2
+	expert1_gpu6_fc2 -> agg1_detailed
+	expert1_gpu7_fc1 -> expert1_gpu7_gelu
+	expert1_gpu7_gelu -> expert1_gpu7_fc2
+	expert1_gpu7_fc2 -> agg1_detailed
+	expert1_gpu8_fc1 -> expert1_gpu8_gelu
+	expert1_gpu8_gelu -> expert1_gpu8_fc2
+	expert1_gpu8_fc2 -> agg1_detailed
+	expert1_gpu9_fc1 -> expert1_gpu9_gelu
+	expert1_gpu9_gelu -> expert1_gpu9_fc2
+	expert1_gpu9_fc2 -> agg1_detailed
+	expert1_gpu10_fc1 -> expert1_gpu10_gelu
+	expert1_gpu10_gelu -> expert1_gpu10_fc2
+	expert1_gpu10_fc2 -> agg1_detailed
+	expert1_gpu11_fc1 -> expert1_gpu11_gelu
+	expert1_gpu11_gelu -> expert1_gpu11_fc2
+	expert1_gpu11_fc2 -> agg1_detailed
+	expert1_gpu12_fc1 -> expert1_gpu12_gelu
+	expert1_gpu12_gelu -> expert1_gpu12_fc2
+	expert1_gpu12_fc2 -> agg1_detailed
+	expert1_gpu13_fc1 -> expert1_gpu13_gelu
+	expert1_gpu13_gelu -> expert1_gpu13_fc2
+	expert1_gpu13_fc2 -> agg1_detailed
+	expert1_gpu14_fc1 -> expert1_gpu14_gelu
+	expert1_gpu14_gelu -> expert1_gpu14_fc2
+	expert1_gpu14_fc2 -> agg1_detailed
+	expert1_gpu15_fc1 -> expert1_gpu15_gelu
+	expert1_gpu15_gelu -> expert1_gpu15_fc2
+	expert1_gpu15_fc2 -> agg1_detailed
+	gate1_detailed -> residual1_detailed [style=dashed]
+	agg1_detailed -> residual1_detailed
+	residual1_detailed -> mha_q2_0
+	residual1_detailed -> mha_k2_0
+	residual1_detailed -> mha_v2_0
+	residual1_detailed -> mha_q2_1
+	residual1_detailed -> mha_k2_1
+	residual1_detailed -> mha_v2_1
+	residual1_detailed -> mha_q2_2
+	residual1_detailed -> mha_k2_2
+	residual1_detailed -> mha_v2_2
+	residual1_detailed -> mha_q2_3
+	residual1_detailed -> mha_k2_3
+	residual1_detailed -> mha_v2_3
+	residual1_detailed -> mha_q2_4
+	residual1_detailed -> mha_k2_4
+	residual1_detailed -> mha_v2_4
+	residual1_detailed -> mha_q2_5
+	residual1_detailed -> mha_k2_5
+	residual1_detailed -> mha_v2_5
+	residual1_detailed -> mha_q2_6
+	residual1_detailed -> mha_k2_6
+	residual1_detailed -> mha_v2_6
+	residual1_detailed -> mha_q2_7
+	residual1_detailed -> mha_k2_7
+	residual1_detailed -> mha_v2_7
+	residual1_detailed -> mha_q2_8
+	residual1_detailed -> mha_k2_8
+	residual1_detailed -> mha_v2_8
+	residual1_detailed -> mha_q2_9
+	residual1_detailed -> mha_k2_9
+	residual1_detailed -> mha_v2_9
+	residual1_detailed -> mha_q2_10
+	residual1_detailed -> mha_k2_10
+	residual1_detailed -> mha_v2_10
+	residual1_detailed -> mha_q2_11
+	residual1_detailed -> mha_k2_11
+	residual1_detailed -> mha_v2_11
+	residual1_detailed -> mha_q2_12
+	residual1_detailed -> mha_k2_12
+	residual1_detailed -> mha_v2_12
+	residual1_detailed -> mha_q2_13
+	residual1_detailed -> mha_k2_13
+	residual1_detailed -> mha_v2_13
+	residual1_detailed -> mha_q2_14
+	residual1_detailed -> mha_k2_14
+	residual1_detailed -> mha_v2_14
+	residual1_detailed -> mha_q2_15
+	residual1_detailed -> mha_k2_15
+	residual1_detailed -> mha_v2_15
+	mha_q2_0 -> mha_out2_0
+	mha_k2_0 -> mha_out2_0
+	mha_v2_0 -> mha_out2_0
+	mha_out2_0 -> gate2_detailed
+	mha_q2_1 -> mha_out2_1
+	mha_k2_1 -> mha_out2_1
+	mha_v2_1 -> mha_out2_1
+	mha_out2_1 -> gate2_detailed
+	mha_q2_2 -> mha_out2_2
+	mha_k2_2 -> mha_out2_2
+	mha_v2_2 -> mha_out2_2
+	mha_out2_2 -> gate2_detailed
+	mha_q2_3 -> mha_out2_3
+	mha_k2_3 -> mha_out2_3
+	mha_v2_3 -> mha_out2_3
+	mha_out2_3 -> gate2_detailed
+	mha_q2_4 -> mha_out2_4
+	mha_k2_4 -> mha_out2_4
+	mha_v2_4 -> mha_out2_4
+	mha_out2_4 -> gate2_detailed
+	mha_q2_5 -> mha_out2_5
+	mha_k2_5 -> mha_out2_5
+	mha_v2_5 -> mha_out2_5
+	mha_out2_5 -> gate2_detailed
+	mha_q2_6 -> mha_out2_6
+	mha_k2_6 -> mha_out2_6
+	mha_v2_6 -> mha_out2_6
+	mha_out2_6 -> gate2_detailed
+	mha_q2_7 -> mha_out2_7
+	mha_k2_7 -> mha_out2_7
+	mha_v2_7 -> mha_out2_7
+	mha_out2_7 -> gate2_detailed
+	mha_q2_8 -> mha_out2_8
+	mha_k2_8 -> mha_out2_8
+	mha_v2_8 -> mha_out2_8
+	mha_out2_8 -> gate2_detailed
+	mha_q2_9 -> mha_out2_9
+	mha_k2_9 -> mha_out2_9
+	mha_v2_9 -> mha_out2_9
+	mha_out2_9 -> gate2_detailed
+	mha_q2_10 -> mha_out2_10
+	mha_k2_10 -> mha_out2_10
+	mha_v2_10 -> mha_out2_10
+	mha_out2_10 -> gate2_detailed
+	mha_q2_11 -> mha_out2_11
+	mha_k2_11 -> mha_out2_11
+	mha_v2_11 -> mha_out2_11
+	mha_out2_11 -> gate2_detailed
+	mha_q2_12 -> mha_out2_12
+	mha_k2_12 -> mha_out2_12
+	mha_v2_12 -> mha_out2_12
+	mha_out2_12 -> gate2_detailed
+	mha_q2_13 -> mha_out2_13
+	mha_k2_13 -> mha_out2_13
+	mha_v2_13 -> mha_out2_13
+	mha_out2_13 -> gate2_detailed
+	mha_q2_14 -> mha_out2_14
+	mha_k2_14 -> mha_out2_14
+	mha_v2_14 -> mha_out2_14
+	mha_out2_14 -> gate2_detailed
+	mha_q2_15 -> mha_out2_15
+	mha_k2_15 -> mha_out2_15
+	mha_v2_15 -> mha_out2_15
+	mha_out2_15 -> gate2_detailed
+	gate2_detailed -> expert2_gpu0_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu1_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu2_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu3_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu4_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu5_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu6_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu7_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu8_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu9_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu10_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu11_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu12_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu13_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu14_fc1 [style=dashed]
+	gate2_detailed -> expert2_gpu15_fc1 [style=dashed]
+	expert2_gpu0_fc1 -> expert2_gpu0_gelu
+	expert2_gpu0_gelu -> expert2_gpu0_fc2
+	expert2_gpu0_fc2 -> agg2_detailed
+	expert2_gpu1_fc1 -> expert2_gpu1_gelu
+	expert2_gpu1_gelu -> expert2_gpu1_fc2
+	expert2_gpu1_fc2 -> agg2_detailed
+	expert2_gpu2_fc1 -> expert2_gpu2_gelu
+	expert2_gpu2_gelu -> expert2_gpu2_fc2
+	expert2_gpu2_fc2 -> agg2_detailed
+	expert2_gpu3_fc1 -> expert2_gpu3_gelu
+	expert2_gpu3_gelu -> expert2_gpu3_fc2
+	expert2_gpu3_fc2 -> agg2_detailed
+	expert2_gpu4_fc1 -> expert2_gpu4_gelu
+	expert2_gpu4_gelu -> expert2_gpu4_fc2
+	expert2_gpu4_fc2 -> agg2_detailed
+	expert2_gpu5_fc1 -> expert2_gpu5_gelu
+	expert2_gpu5_gelu -> expert2_gpu5_fc2
+	expert2_gpu5_fc2 -> agg2_detailed
+	expert2_gpu6_fc1 -> expert2_gpu6_gelu
+	expert2_gpu6_gelu -> expert2_gpu6_fc2
+	expert2_gpu6_fc2 -> agg2_detailed
+	expert2_gpu7_fc1 -> expert2_gpu7_gelu
+	expert2_gpu7_gelu -> expert2_gpu7_fc2
+	expert2_gpu7_fc2 -> agg2_detailed
+	expert2_gpu8_fc1 -> expert2_gpu8_gelu
+	expert2_gpu8_gelu -> expert2_gpu8_fc2
+	expert2_gpu8_fc2 -> agg2_detailed
+	expert2_gpu9_fc1 -> expert2_gpu9_gelu
+	expert2_gpu9_gelu -> expert2_gpu9_fc2
+	expert2_gpu9_fc2 -> agg2_detailed
+	expert2_gpu10_fc1 -> expert2_gpu10_gelu
+	expert2_gpu10_gelu -> expert2_gpu10_fc2
+	expert2_gpu10_fc2 -> agg2_detailed
+	expert2_gpu11_fc1 -> expert2_gpu11_gelu
+	expert2_gpu11_gelu -> expert2_gpu11_fc2
+	expert2_gpu11_fc2 -> agg2_detailed
+	expert2_gpu12_fc1 -> expert2_gpu12_gelu
+	expert2_gpu12_gelu -> expert2_gpu12_fc2
+	expert2_gpu12_fc2 -> agg2_detailed
+	expert2_gpu13_fc1 -> expert2_gpu13_gelu
+	expert2_gpu13_gelu -> expert2_gpu13_fc2
+	expert2_gpu13_fc2 -> agg2_detailed
+	expert2_gpu14_fc1 -> expert2_gpu14_gelu
+	expert2_gpu14_gelu -> expert2_gpu14_fc2
+	expert2_gpu14_fc2 -> agg2_detailed
+	expert2_gpu15_fc1 -> expert2_gpu15_gelu
+	expert2_gpu15_gelu -> expert2_gpu15_fc2
+	expert2_gpu15_fc2 -> agg2_detailed
+	gate2_detailed -> residual2_detailed [style=dashed]
+	agg2_detailed -> residual2_detailed
+	residual2_detailed -> mha_q3_0
+	residual2_detailed -> mha_k3_0
+	residual2_detailed -> mha_v3_0
+	residual2_detailed -> mha_q3_1
+	residual2_detailed -> mha_k3_1
+	residual2_detailed -> mha_v3_1
+	residual2_detailed -> mha_q3_2
+	residual2_detailed -> mha_k3_2
+	residual2_detailed -> mha_v3_2
+	residual2_detailed -> mha_q3_3
+	residual2_detailed -> mha_k3_3
+	residual2_detailed -> mha_v3_3
+	residual2_detailed -> mha_q3_4
+	residual2_detailed -> mha_k3_4
+	residual2_detailed -> mha_v3_4
+	residual2_detailed -> mha_q3_5
+	residual2_detailed -> mha_k3_5
+	residual2_detailed -> mha_v3_5
+	residual2_detailed -> mha_q3_6
+	residual2_detailed -> mha_k3_6
+	residual2_detailed -> mha_v3_6
+	residual2_detailed -> mha_q3_7
+	residual2_detailed -> mha_k3_7
+	residual2_detailed -> mha_v3_7
+	residual2_detailed -> mha_q3_8
+	residual2_detailed -> mha_k3_8
+	residual2_detailed -> mha_v3_8
+	residual2_detailed -> mha_q3_9
+	residual2_detailed -> mha_k3_9
+	residual2_detailed -> mha_v3_9
+	residual2_detailed -> mha_q3_10
+	residual2_detailed -> mha_k3_10
+	residual2_detailed -> mha_v3_10
+	residual2_detailed -> mha_q3_11
+	residual2_detailed -> mha_k3_11
+	residual2_detailed -> mha_v3_11
+	residual2_detailed -> mha_q3_12
+	residual2_detailed -> mha_k3_12
+	residual2_detailed -> mha_v3_12
+	residual2_detailed -> mha_q3_13
+	residual2_detailed -> mha_k3_13
+	residual2_detailed -> mha_v3_13
+	residual2_detailed -> mha_q3_14
+	residual2_detailed -> mha_k3_14
+	residual2_detailed -> mha_v3_14
+	residual2_detailed -> mha_q3_15
+	residual2_detailed -> mha_k3_15
+	residual2_detailed -> mha_v3_15
+	mha_q3_0 -> mha_out3_0
+	mha_k3_0 -> mha_out3_0
+	mha_v3_0 -> mha_out3_0
+	mha_out3_0 -> gate3_detailed
+	mha_q3_1 -> mha_out3_1
+	mha_k3_1 -> mha_out3_1
+	mha_v3_1 -> mha_out3_1
+	mha_out3_1 -> gate3_detailed
+	mha_q3_2 -> mha_out3_2
+	mha_k3_2 -> mha_out3_2
+	mha_v3_2 -> mha_out3_2
+	mha_out3_2 -> gate3_detailed
+	mha_q3_3 -> mha_out3_3
+	mha_k3_3 -> mha_out3_3
+	mha_v3_3 -> mha_out3_3
+	mha_out3_3 -> gate3_detailed
+	mha_q3_4 -> mha_out3_4
+	mha_k3_4 -> mha_out3_4
+	mha_v3_4 -> mha_out3_4
+	mha_out3_4 -> gate3_detailed
+	mha_q3_5 -> mha_out3_5
+	mha_k3_5 -> mha_out3_5
+	mha_v3_5 -> mha_out3_5
+	mha_out3_5 -> gate3_detailed
+	mha_q3_6 -> mha_out3_6
+	mha_k3_6 -> mha_out3_6
+	mha_v3_6 -> mha_out3_6
+	mha_out3_6 -> gate3_detailed
+	mha_q3_7 -> mha_out3_7
+	mha_k3_7 -> mha_out3_7
+	mha_v3_7 -> mha_out3_7
+	mha_out3_7 -> gate3_detailed
+	mha_q3_8 -> mha_out3_8
+	mha_k3_8 -> mha_out3_8
+	mha_v3_8 -> mha_out3_8
+	mha_out3_8 -> gate3_detailed
+	mha_q3_9 -> mha_out3_9
+	mha_k3_9 -> mha_out3_9
+	mha_v3_9 -> mha_out3_9
+	mha_out3_9 -> gate3_detailed
+	mha_q3_10 -> mha_out3_10
+	mha_k3_10 -> mha_out3_10
+	mha_v3_10 -> mha_out3_10
+	mha_out3_10 -> gate3_detailed
+	mha_q3_11 -> mha_out3_11
+	mha_k3_11 -> mha_out3_11
+	mha_v3_11 -> mha_out3_11
+	mha_out3_11 -> gate3_detailed
+	mha_q3_12 -> mha_out3_12
+	mha_k3_12 -> mha_out3_12
+	mha_v3_12 -> mha_out3_12
+	mha_out3_12 -> gate3_detailed
+	mha_q3_13 -> mha_out3_13
+	mha_k3_13 -> mha_out3_13
+	mha_v3_13 -> mha_out3_13
+	mha_out3_13 -> gate3_detailed
+	mha_q3_14 -> mha_out3_14
+	mha_k3_14 -> mha_out3_14
+	mha_v3_14 -> mha_out3_14
+	mha_out3_14 -> gate3_detailed
+	mha_q3_15 -> mha_out3_15
+	mha_k3_15 -> mha_out3_15
+	mha_v3_15 -> mha_out3_15
+	mha_out3_15 -> gate3_detailed
+	gate3_detailed -> expert3_gpu0_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu1_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu2_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu3_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu4_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu5_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu6_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu7_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu8_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu9_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu10_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu11_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu12_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu13_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu14_fc1 [style=dashed]
+	gate3_detailed -> expert3_gpu15_fc1 [style=dashed]
+	expert3_gpu0_fc1 -> expert3_gpu0_gelu
+	expert3_gpu0_gelu -> expert3_gpu0_fc2
+	expert3_gpu0_fc2 -> agg3_detailed
+	expert3_gpu1_fc1 -> expert3_gpu1_gelu
+	expert3_gpu1_gelu -> expert3_gpu1_fc2
+	expert3_gpu1_fc2 -> agg3_detailed
+	expert3_gpu2_fc1 -> expert3_gpu2_gelu
+	expert3_gpu2_gelu -> expert3_gpu2_fc2
+	expert3_gpu2_fc2 -> agg3_detailed
+	expert3_gpu3_fc1 -> expert3_gpu3_gelu
+	expert3_gpu3_gelu -> expert3_gpu3_fc2
+	expert3_gpu3_fc2 -> agg3_detailed
+	expert3_gpu4_fc1 -> expert3_gpu4_gelu
+	expert3_gpu4_gelu -> expert3_gpu4_fc2
+	expert3_gpu4_fc2 -> agg3_detailed
+	expert3_gpu5_fc1 -> expert3_gpu5_gelu
+	expert3_gpu5_gelu -> expert3_gpu5_fc2
+	expert3_gpu5_fc2 -> agg3_detailed
+	expert3_gpu6_fc1 -> expert3_gpu6_gelu
+	expert3_gpu6_gelu -> expert3_gpu6_fc2
+	expert3_gpu6_fc2 -> agg3_detailed
+	expert3_gpu7_fc1 -> expert3_gpu7_gelu
+	expert3_gpu7_gelu -> expert3_gpu7_fc2
+	expert3_gpu7_fc2 -> agg3_detailed
+	expert3_gpu8_fc1 -> expert3_gpu8_gelu
+	expert3_gpu8_gelu -> expert3_gpu8_fc2
+	expert3_gpu8_fc2 -> agg3_detailed
+	expert3_gpu9_fc1 -> expert3_gpu9_gelu
+	expert3_gpu9_gelu -> expert3_gpu9_fc2
+	expert3_gpu9_fc2 -> agg3_detailed
+	expert3_gpu10_fc1 -> expert3_gpu10_gelu
+	expert3_gpu10_gelu -> expert3_gpu10_fc2
+	expert3_gpu10_fc2 -> agg3_detailed
+	expert3_gpu11_fc1 -> expert3_gpu11_gelu
+	expert3_gpu11_gelu -> expert3_gpu11_fc2
+	expert3_gpu11_fc2 -> agg3_detailed
+	expert3_gpu12_fc1 -> expert3_gpu12_gelu
+	expert3_gpu12_gelu -> expert3_gpu12_fc2
+	expert3_gpu12_fc2 -> agg3_detailed
+	expert3_gpu13_fc1 -> expert3_gpu13_gelu
+	expert3_gpu13_gelu -> expert3_gpu13_fc2
+	expert3_gpu13_fc2 -> agg3_detailed
+	expert3_gpu14_fc1 -> expert3_gpu14_gelu
+	expert3_gpu14_gelu -> expert3_gpu14_fc2
+	expert3_gpu14_fc2 -> agg3_detailed
+	expert3_gpu15_fc1 -> expert3_gpu15_gelu
+	expert3_gpu15_gelu -> expert3_gpu15_fc2
+	expert3_gpu15_fc2 -> agg3_detailed
+	gate3_detailed -> residual3_detailed [style=dashed]
+	agg3_detailed -> residual3_detailed
+	residual3_detailed -> output_detailed
+}
