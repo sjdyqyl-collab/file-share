@@ -1,0 +1,30 @@
+{
+  "generated_dags": [
+    {
+      "name": "Baseline MoE Deployment",
+      "description": "16 GPUs with TP=8, PP=2, 4 experts per GPU",
+      "configuration": {
+        "total_gpus": 16,
+        "experts_per_gpu": 4,
+        "total_experts": 64
+      },
+      "files": {
+        "svg": "/home/wzc/data/file-share/2025-09-08-16-15-08/baseline_final.svg",
+        "dot": "/home/wzc/data/file-share/2025-09-08-16-15-08/baseline_final.dot"
+      }
+    },
+    {
+      "name": "Proposed Large-Scale Expert Parallelism",
+      "description": "64 GPUs with EP=16, 1 expert per GPU",
+      "configuration": {
+        "total_gpus": 64,
+        "experts_per_gpu": 1,
+        "total_experts": 64
+      },
+      "files": {
+        "svg": "/home/wzc/data/file-share/2025-09-08-16-15-08/proposed_final.svg",
+        "dot": "/home/wzc/data/file-share/2025-09-08-16-15-08/proposed_final.dot"
+      }
+    }
+  ]
+}

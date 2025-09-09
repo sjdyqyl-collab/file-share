@@ -1,0 +1,382 @@
+{
+  "models": {
+    "baseline": {
+      "name": "baseline_moe_tp8_pp2",
+      "description": "Baseline MoE with TP=8, PP=2, 16 GPUs total",
+      "parallel_strategy": {
+        "tensor_parallelism": {
+          "degree": 8,
+          "type": "column_and_row_parallel"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "type": "gpipe"
+        },
+        "expert_parallelism": {
+          "degree": 1,
+          "type": "colocated_experts"
+        }
+      },
+      "modules": {
+        "moe_layer_1": {
+          "type": "moe_layer",
+          "experts": 16,
+          "experts_per_gpu": 4,
+          "expert_architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          },
+          "attention": {
+            "num_heads": 16,
+            "head_dim": 512,
+            "total_dim": 8192
+          }
+        },
+        "moe_layer_2": {
+          "type": "moe_layer",
+          "experts": 16,
+          "experts_per_gpu": 4,
+          "expert_architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          },
+          "attention": {
+            "num_heads": 16,
+            "head_dim": 512,
+            "total_dim": 8192
+          }
+        },
+        "moe_layer_3": {
+          "type": "moe_layer",
+          "experts": 16,
+          "experts_per_gpu": 4,
+          "expert_architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          },
+          "attention": {
+            "num_heads": 16,
+            "head_dim": 512,
+            "total_dim": 8192
+          }
+        },
+        "moe_layer_4": {
+          "type": "moe_layer",
+          "experts": 16,
+          "experts_per_gpu": 4,
+          "expert_architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          },
+          "attention": {
+            "num_heads": 16,
+            "head_dim": 512,
+            "total_dim": 8192
+          }
+        }
+      },
+      "device_mapping": {
+        "pipeline_stage_0": {
+          "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+          "layers": ["moe_layer_1", "moe_layer_2"],
+          "experts_per_gpu": 4,
+          "tensor_parallel_group": [0, 1, 2, 3, 4, 5, 6, 7]
+        },
+        "pipeline_stage_1": {
+          "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+          "layers": ["moe_layer_3", "moe_layer_4"],
+          "experts_per_gpu": 4,
+          "tensor_parallel_group": [8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      },
+      "batch_config": {
+        "sequences_per_batch": 1024,
+        "tokens_per_sequence": 10000,
+        "total_tokens_per_batch": 10240000,
+        "precision": "fp16"
+      }
+    },
+    "proposed": {
+      "name": "proposed_cross_node_ep64",
+      "description": "Proposed cross-node expert parallelism with EP=64, one expert per GPU",
+      "parallel_strategy": {
+        "expert_parallelism": {
+          "degree": 64,
+          "type": "one_expert_per_gpu",
+          "cross_node": true
+        },
+        "tensor_parallelism": {
+          "degree": 1,
+          "type": "optional_within_expert",
+          "max_degree": 2
+        },
+        "pipeline_parallelism": {
+          "degree": 4,
+          "type": "layer_wise_micro_stages"
+        }
+      },
+      "modules": {
+        "moe_layer_1_expert_1": {
+          "type": "expert_mlp",
+          "gpu_id": 0,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_2": {
+          "type": "expert_mlp",
+          "gpu_id": 1,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_3": {
+          "type": "expert_mlp",
+          "gpu_id": 2,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_4": {
+          "type": "expert_mlp",
+          "gpu_id": 3,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_5": {
+          "type": "expert_mlp",
+          "gpu_id": 4,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_6": {
+          "type": "expert_mlp",
+          "gpu_id": 5,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_7": {
+          "type": "expert_mlp",
+          "gpu_id": 6,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_8": {
+          "type": "expert_mlp",
+          "gpu_id": 7,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_9": {
+          "type": "expert_mlp",
+          "gpu_id": 8,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_10": {
+          "type": "expert_mlp",
+          "gpu_id": 9,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_11": {
+          "type": "expert_mlp",
+          "gpu_id": 10,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_12": {
+          "type": "expert_mlp",
+          "gpu_id": 11,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_13": {
+          "type": "expert_mlp",
+          "gpu_id": 12,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_14": {
+          "type": "expert_mlp",
+          "gpu_id": 13,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_15": {
+          "type": "expert_mlp",
+          "gpu_id": 14,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        },
+        "moe_layer_1_expert_16": {
+          "type": "expert_mlp",
+          "gpu_id": 15,
+          "architecture": {
+            "input_dim": 8192,
+            "hidden_dim": 32768,
+            "output_dim": 8192,
+            "activation": "gelu"
+          }
+        }
+      },
+      "device_mapping": {
+        "layer_1_experts": {
+          "expert_1": {"gpu": 0, "node": 0},
+          "expert_2": {"gpu": 1, "node": 0},
+          "expert_3": {"gpu": 2, "node": 0},
+          "expert_4": {"gpu": 3, "node": 0},
+          "expert_5": {"gpu": 4, "node": 1},
+          "expert_6": {"gpu": 5, "node": 1},
+          "expert_7": {"gpu": 6, "node": 1},
+          "expert_8": {"gpu": 7, "node": 1},
+          "expert_9": {"gpu": 8, "node": 2},
+          "expert_10": {"gpu": 9, "node": 2},
+          "expert_11": {"gpu": 10, "node": 2},
+          "expert_12": {"gpu": 11, "node": 2},
+          "expert_13": {"gpu": 12, "node": 3},
+          "expert_14": {"gpu": 13, "node": 3},
+          "expert_15": {"gpu": 14, "node": 3},
+          "expert_16": {"gpu": 15, "node": 3}
+        },
+        "layer_2_experts": {
+          "expert_1": {"gpu": 16, "node": 4},
+          "expert_2": {"gpu": 17, "node": 4},
+          "expert_3": {"gpu": 18, "node": 4},
+          "expert_4": {"gpu": 19, "node": 4},
+          "expert_5": {"gpu": 20, "node": 5},
+          "expert_6": {"gpu": 21, "node": 5},
+          "expert_7": {"gpu": 22, "node": 5},
+          "expert_8": {"gpu": 23, "node": 5},
+          "expert_9": {"gpu": 24, "node": 6},
+          "expert_10": {"gpu": 25, "node": 6},
+          "expert_11": {"gpu": 26, "node": 6},
+          "expert_12": {"gpu": 27, "node": 6},
+          "expert_13": {"gpu": 28, "node": 7},
+          "expert_14": {"gpu": 29, "node": 7},
+          "expert_15": {"gpu": 30, "node": 7},
+          "expert_16": {"gpu": 31, "node": 7}
+        },
+        "layer_3_experts": {
+          "expert_1": {"gpu": 32, "node": 8},
+          "expert_2": {"gpu": 33, "node": 8},
+          "expert_3": {"gpu": 34, "node": 8},
+          "expert_4": {"gpu": 35, "node": 8},
+          "expert_5": {"gpu": 36, "node": 9},
+          "expert_6": {"gpu": 37, "node": 9},
+          "expert_7": {"gpu": 38, "node": 9},
+          "expert_8": {"gpu": 39, "node": 9},
+          "expert_9": {"gpu": 40, "node": 10},
+          "expert_10": {"gpu": 41, "node": 10},
+          "expert_11": {"gpu": 42, "node": 10},
+          "expert_12": {"gpu": 43, "node": 10},
+          "expert_13": {"gpu": 44, "node": 11},
+          "expert_14": {"gpu": 45, "node": 11},
+          "expert_15": {"gpu": 46, "node": 11},
+          "expert_16": {"gpu": 47, "node": 11}
+        },
+        "layer_4_experts": {
+          "expert_1": {"gpu": 48, "node": 12},
+          "expert_2": {"gpu": 49, "node": 12},
+          "expert_3": {"gpu": 50, "node": 12},
+          "expert_4": {"gpu": 51, "node": 12},
+          "expert_5": {"gpu": 52, "node": 13},
+          "expert_6": {"gpu": 53, "node": 13},
+          "expert_7": {"gpu": 54, "node": 13},
+          "expert_8": {"gpu": 55, "node": 13},
+          "expert_9": {"gpu": 56, "node": 14},
+          "expert_10": {"gpu": 57, "node": 14},
+          "expert_11": {"gpu": 58, "node": 14},
+          "expert_12": {"gpu": 59, "node": 14},
+          "expert_13": {"gpu": 60, "node": 15},
+          "expert_14": {"gpu": 61, "node": 15},
+          "expert_15": {"gpu": 62, "node": 15},
+          "expert_16": {"gpu": 63, "node": 15}
+        }
+      },
+      "communication": {
+        "token_routing": {
+          "type": "asynchronous",
+          "batching": "destination_expert_grouped",
+          "overlap": "cuda_streams"
+        },
+        "cross_node": {
+          "bandwidth_aware": true,
+          "topology_aware": true,
+          "load_balancing": "dynamic"
+        }
+      },
+      "batch_config": {
+        "sequences_per_batch": 1024,
+        "tokens_per_sequence": 10000,
+        "total_tokens_per_batch": 10240000,
+        "precision": "fp16"
+      }
+    }
+  }
+}

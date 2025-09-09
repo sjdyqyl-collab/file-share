@@ -1,0 +1,26 @@
+{
+  "baseline_dag": {
+    "dot_path": "/home/wzc/data/file-share/2025-09-08-11-10-54/baseline_moe.dot",
+    "svg_path": "/home/wzc/data/file-share/2025-09-08-11-10-54/baseline_moe.svg"
+  },
+  "proposed_dag": {
+    "dot_path": "/home/wzc/data/file-share/2025-09-08-11-10-54/proposed_moe.dot",
+    "svg_path": "/home/wzc/data/file-share/2025-09-08-11-10-54/proposed_moe.svg"
+  },
+  "deployment_summary": {
+    "baseline": {
+      "gpus": 16,
+      "configuration": "TP=8, PP=2, 4 experts/GPU",
+      "experts_per_layer": 16,
+      "total_experts": 64,
+      "experts_per_gpu": 4
+    },
+    "proposed": {
+      "gpus": 64,
+      "configuration": "EP=64, 1 expert/GPU, optional TP=2",
+      "experts_per_layer": 16,
+      "total_experts": 64,
+      "experts_per_gpu": 1
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "baseline_dag": {
+    "graphviz_code_path": "/home/wzc/data/file-share/2025-09-08-18-57-30/baseline_dag.dot",
+    "svg_image_path": "/home/wzc/data/file-share/2025-09-08-18-57-30/baseline_dag.svg"
+  },
+  "proposed_dag": {
+    "graphviz_code_path": "/home/wzc/data/file-share/2025-09-08-18-57-30/proposed_dag.dot",
+    "svg_image_path": "/home/wzc/data/file-share/2025-09-08-18-57-30/proposed_dag.svg"
+  },
+  "description": "Complete DAGs generated for both baseline (TP=8, PP=2) and proposed layer-wise deployment strategies",
+  "generated_files": [
+    "/home/wzc/data/file-share/2025-09-08-18-57-30/baseline_dag.dot",
+    "/home/wzc/data/file-share/2025-09-08-18-57-30/baseline_dag.svg",
+    "/home/wzc/data/file-share/2025-09-08-18-57-30/proposed_dag.dot",
+    "/home/wzc/data/file-share/2025-09-08-18-57-30/proposed_dag.svg"
+  ]
+}

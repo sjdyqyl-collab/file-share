@@ -1,0 +1,1750 @@
+// Proposed MoE with EP=64, 1 expert/GPU
+digraph proposed_moe {
+	rankdir=TB size="100,100"
+	input [label="Total Input\nShape: [1024, 10000, 8192]" fillcolor=lightgray shape=ellipse style=filled]
+	mha_0_0 [label="MHA\nGPU:0\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_0 [label="Residual Add\nGPU:0\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_0 [label="LayerNorm\nGPU:0\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_0 [label="Gate\nGPU:0\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_0 [label="Token Sharding\nGPU:0\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_0 [label="Send Tokens\nFrom GPU:0\nTo Expert GPU:0\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_0 [label="Expert 0\nLinear1 (Col-TP2)\nGPU:0\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_0 [label="GELU\nGPU:0\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_0 [label="Linear2 (Row-TP2)\nGPU:0\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_0 [label="Receive Results\nFrom Expert GPU:0\nTo GPU:0\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_0 [label="Combine Results\nGPU:0\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_0 [label="Residual Add\nGPU:0\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_0 [label="LayerNorm\nGPU:0\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_1 [label="MHA\nGPU:1\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_1 [label="Residual Add\nGPU:1\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_1 [label="LayerNorm\nGPU:1\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_1 [label="Gate\nGPU:1\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_1 [label="Token Sharding\nGPU:1\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_1 [label="Send Tokens\nFrom GPU:1\nTo Expert GPU:1\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_1 [label="Expert 1\nLinear1 (Col-TP2)\nGPU:1\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_1 [label="GELU\nGPU:1\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_1 [label="Linear2 (Row-TP2)\nGPU:1\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_1 [label="Receive Results\nFrom Expert GPU:1\nTo GPU:1\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_1 [label="Combine Results\nGPU:1\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_1 [label="Residual Add\nGPU:1\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_1 [label="LayerNorm\nGPU:1\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_2 [label="MHA\nGPU:2\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_2 [label="Residual Add\nGPU:2\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_2 [label="LayerNorm\nGPU:2\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_2 [label="Gate\nGPU:2\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_2 [label="Token Sharding\nGPU:2\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_2 [label="Send Tokens\nFrom GPU:2\nTo Expert GPU:2\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_2 [label="Expert 2\nLinear1 (Col-TP2)\nGPU:2\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_2 [label="GELU\nGPU:2\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_2 [label="Linear2 (Row-TP2)\nGPU:2\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_2 [label="Receive Results\nFrom Expert GPU:2\nTo GPU:2\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_2 [label="Combine Results\nGPU:2\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_2 [label="Residual Add\nGPU:2\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_2 [label="LayerNorm\nGPU:2\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_3 [label="MHA\nGPU:3\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_3 [label="Residual Add\nGPU:3\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_3 [label="LayerNorm\nGPU:3\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_3 [label="Gate\nGPU:3\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_3 [label="Token Sharding\nGPU:3\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_3 [label="Send Tokens\nFrom GPU:3\nTo Expert GPU:3\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_3 [label="Expert 3\nLinear1 (Col-TP2)\nGPU:3\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_3 [label="GELU\nGPU:3\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_3 [label="Linear2 (Row-TP2)\nGPU:3\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_3 [label="Receive Results\nFrom Expert GPU:3\nTo GPU:3\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_3 [label="Combine Results\nGPU:3\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_3 [label="Residual Add\nGPU:3\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_3 [label="LayerNorm\nGPU:3\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_4 [label="MHA\nGPU:4\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_4 [label="Residual Add\nGPU:4\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_4 [label="LayerNorm\nGPU:4\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_4 [label="Gate\nGPU:4\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_4 [label="Token Sharding\nGPU:4\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_4 [label="Send Tokens\nFrom GPU:4\nTo Expert GPU:4\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_4 [label="Expert 4\nLinear1 (Col-TP2)\nGPU:4\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_4 [label="GELU\nGPU:4\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_4 [label="Linear2 (Row-TP2)\nGPU:4\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_4 [label="Receive Results\nFrom Expert GPU:4\nTo GPU:4\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_4 [label="Combine Results\nGPU:4\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_4 [label="Residual Add\nGPU:4\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_4 [label="LayerNorm\nGPU:4\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_5 [label="MHA\nGPU:5\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_5 [label="Residual Add\nGPU:5\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_5 [label="LayerNorm\nGPU:5\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_5 [label="Gate\nGPU:5\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_5 [label="Token Sharding\nGPU:5\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_5 [label="Send Tokens\nFrom GPU:5\nTo Expert GPU:5\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_5 [label="Expert 5\nLinear1 (Col-TP2)\nGPU:5\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_5 [label="GELU\nGPU:5\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_5 [label="Linear2 (Row-TP2)\nGPU:5\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_5 [label="Receive Results\nFrom Expert GPU:5\nTo GPU:5\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_5 [label="Combine Results\nGPU:5\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_5 [label="Residual Add\nGPU:5\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_5 [label="LayerNorm\nGPU:5\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_6 [label="MHA\nGPU:6\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_6 [label="Residual Add\nGPU:6\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_6 [label="LayerNorm\nGPU:6\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_6 [label="Gate\nGPU:6\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_6 [label="Token Sharding\nGPU:6\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_6 [label="Send Tokens\nFrom GPU:6\nTo Expert GPU:6\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_6 [label="Expert 6\nLinear1 (Col-TP2)\nGPU:6\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_6 [label="GELU\nGPU:6\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_6 [label="Linear2 (Row-TP2)\nGPU:6\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_6 [label="Receive Results\nFrom Expert GPU:6\nTo GPU:6\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_6 [label="Combine Results\nGPU:6\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_6 [label="Residual Add\nGPU:6\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_6 [label="LayerNorm\nGPU:6\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_7 [label="MHA\nGPU:7\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_7 [label="Residual Add\nGPU:7\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_7 [label="LayerNorm\nGPU:7\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_7 [label="Gate\nGPU:7\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_7 [label="Token Sharding\nGPU:7\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_7 [label="Send Tokens\nFrom GPU:7\nTo Expert GPU:7\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_7 [label="Expert 7\nLinear1 (Col-TP2)\nGPU:7\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_7 [label="GELU\nGPU:7\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_7 [label="Linear2 (Row-TP2)\nGPU:7\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_7 [label="Receive Results\nFrom Expert GPU:7\nTo GPU:7\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_7 [label="Combine Results\nGPU:7\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_7 [label="Residual Add\nGPU:7\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_7 [label="LayerNorm\nGPU:7\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_8 [label="MHA\nGPU:8\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_8 [label="Residual Add\nGPU:8\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_8 [label="LayerNorm\nGPU:8\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_8 [label="Gate\nGPU:8\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_8 [label="Token Sharding\nGPU:8\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_8 [label="Send Tokens\nFrom GPU:8\nTo Expert GPU:8\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_8 [label="Expert 8\nLinear1 (Col-TP2)\nGPU:8\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_8 [label="GELU\nGPU:8\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_8 [label="Linear2 (Row-TP2)\nGPU:8\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_8 [label="Receive Results\nFrom Expert GPU:8\nTo GPU:8\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_8 [label="Combine Results\nGPU:8\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_8 [label="Residual Add\nGPU:8\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_8 [label="LayerNorm\nGPU:8\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_9 [label="MHA\nGPU:9\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_9 [label="Residual Add\nGPU:9\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_9 [label="LayerNorm\nGPU:9\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_9 [label="Gate\nGPU:9\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_9 [label="Token Sharding\nGPU:9\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_9 [label="Send Tokens\nFrom GPU:9\nTo Expert GPU:9\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_9 [label="Expert 9\nLinear1 (Col-TP2)\nGPU:9\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_9 [label="GELU\nGPU:9\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_9 [label="Linear2 (Row-TP2)\nGPU:9\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_9 [label="Receive Results\nFrom Expert GPU:9\nTo GPU:9\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_9 [label="Combine Results\nGPU:9\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_9 [label="Residual Add\nGPU:9\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_9 [label="LayerNorm\nGPU:9\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_10 [label="MHA\nGPU:10\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_10 [label="Residual Add\nGPU:10\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_10 [label="LayerNorm\nGPU:10\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_10 [label="Gate\nGPU:10\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_10 [label="Token Sharding\nGPU:10\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_10 [label="Send Tokens\nFrom GPU:10\nTo Expert GPU:10\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_10 [label="Expert 10\nLinear1 (Col-TP2)\nGPU:10\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_10 [label="GELU\nGPU:10\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_10 [label="Linear2 (Row-TP2)\nGPU:10\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_10 [label="Receive Results\nFrom Expert GPU:10\nTo GPU:10\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_10 [label="Combine Results\nGPU:10\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_10 [label="Residual Add\nGPU:10\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_10 [label="LayerNorm\nGPU:10\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_11 [label="MHA\nGPU:11\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_11 [label="Residual Add\nGPU:11\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_11 [label="LayerNorm\nGPU:11\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_11 [label="Gate\nGPU:11\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_11 [label="Token Sharding\nGPU:11\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_11 [label="Send Tokens\nFrom GPU:11\nTo Expert GPU:11\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_11 [label="Expert 11\nLinear1 (Col-TP2)\nGPU:11\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_11 [label="GELU\nGPU:11\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_11 [label="Linear2 (Row-TP2)\nGPU:11\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_11 [label="Receive Results\nFrom Expert GPU:11\nTo GPU:11\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_11 [label="Combine Results\nGPU:11\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_11 [label="Residual Add\nGPU:11\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_11 [label="LayerNorm\nGPU:11\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_12 [label="MHA\nGPU:12\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_12 [label="Residual Add\nGPU:12\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_12 [label="LayerNorm\nGPU:12\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_12 [label="Gate\nGPU:12\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_12 [label="Token Sharding\nGPU:12\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_12 [label="Send Tokens\nFrom GPU:12\nTo Expert GPU:12\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_12 [label="Expert 12\nLinear1 (Col-TP2)\nGPU:12\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_12 [label="GELU\nGPU:12\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_12 [label="Linear2 (Row-TP2)\nGPU:12\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_12 [label="Receive Results\nFrom Expert GPU:12\nTo GPU:12\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_12 [label="Combine Results\nGPU:12\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_12 [label="Residual Add\nGPU:12\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_12 [label="LayerNorm\nGPU:12\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_13 [label="MHA\nGPU:13\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_13 [label="Residual Add\nGPU:13\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_13 [label="LayerNorm\nGPU:13\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_13 [label="Gate\nGPU:13\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_13 [label="Token Sharding\nGPU:13\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_13 [label="Send Tokens\nFrom GPU:13\nTo Expert GPU:13\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_13 [label="Expert 13\nLinear1 (Col-TP2)\nGPU:13\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_13 [label="GELU\nGPU:13\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_13 [label="Linear2 (Row-TP2)\nGPU:13\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_13 [label="Receive Results\nFrom Expert GPU:13\nTo GPU:13\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_13 [label="Combine Results\nGPU:13\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_13 [label="Residual Add\nGPU:13\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_13 [label="LayerNorm\nGPU:13\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_14 [label="MHA\nGPU:14\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_14 [label="Residual Add\nGPU:14\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_14 [label="LayerNorm\nGPU:14\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_14 [label="Gate\nGPU:14\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_14 [label="Token Sharding\nGPU:14\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_14 [label="Send Tokens\nFrom GPU:14\nTo Expert GPU:14\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_14 [label="Expert 14\nLinear1 (Col-TP2)\nGPU:14\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_14 [label="GELU\nGPU:14\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_14 [label="Linear2 (Row-TP2)\nGPU:14\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_14 [label="Receive Results\nFrom Expert GPU:14\nTo GPU:14\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_14 [label="Combine Results\nGPU:14\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_14 [label="Residual Add\nGPU:14\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_14 [label="LayerNorm\nGPU:14\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_0_15 [label="MHA\nGPU:15\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	residual1_0_15 [label="Residual Add\nGPU:15\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_0_15 [label="LayerNorm\nGPU:15\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	gate_0_15 [label="Gate\nGPU:15\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightblue shape=diamond style=filled]
+	shard_0_15 [label="Token Sharding\nGPU:15\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightblue shape=parallelogram style=filled]
+	send_0_15 [label="Send Tokens\nFrom GPU:15\nTo Expert GPU:15\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_0_15 [label="Expert 15\nLinear1 (Col-TP2)\nGPU:15\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	activation_0_15 [label="GELU\nGPU:15\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightblue shape=rectangle style=filled]
+	linear2_0_15 [label="Linear2 (Row-TP2)\nGPU:15\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	recv_0_15 [label="Receive Results\nFrom Expert GPU:15\nTo GPU:15\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_0_15 [label="Combine Results\nGPU:15\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	residual2_0_15 [label="Residual Add\nGPU:15\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln2_0_15 [label="LayerNorm\nGPU:15\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightblue shape=rectangle style=filled]
+	mha_1_0 [label="MHA\nGPU:16\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_0 [label="Residual Add\nGPU:16\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_0 [label="LayerNorm\nGPU:16\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_0 [label="Gate\nGPU:16\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_0 [label="Token Sharding\nGPU:16\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_0 [label="Send Tokens\nFrom GPU:16\nTo Expert GPU:16\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_0 [label="Expert 0\nLinear1 (Col-TP2)\nGPU:16\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_0 [label="GELU\nGPU:16\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_0 [label="Linear2 (Row-TP2)\nGPU:16\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_0 [label="Receive Results\nFrom Expert GPU:16\nTo GPU:16\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_0 [label="Combine Results\nGPU:16\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_0 [label="Residual Add\nGPU:16\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_0 [label="LayerNorm\nGPU:16\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_1 [label="MHA\nGPU:17\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_1 [label="Residual Add\nGPU:17\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_1 [label="LayerNorm\nGPU:17\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_1 [label="Gate\nGPU:17\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_1 [label="Token Sharding\nGPU:17\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_1 [label="Send Tokens\nFrom GPU:17\nTo Expert GPU:17\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_1 [label="Expert 1\nLinear1 (Col-TP2)\nGPU:17\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_1 [label="GELU\nGPU:17\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_1 [label="Linear2 (Row-TP2)\nGPU:17\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_1 [label="Receive Results\nFrom Expert GPU:17\nTo GPU:17\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_1 [label="Combine Results\nGPU:17\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_1 [label="Residual Add\nGPU:17\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_1 [label="LayerNorm\nGPU:17\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_2 [label="MHA\nGPU:18\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_2 [label="Residual Add\nGPU:18\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_2 [label="LayerNorm\nGPU:18\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_2 [label="Gate\nGPU:18\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_2 [label="Token Sharding\nGPU:18\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_2 [label="Send Tokens\nFrom GPU:18\nTo Expert GPU:18\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_2 [label="Expert 2\nLinear1 (Col-TP2)\nGPU:18\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_2 [label="GELU\nGPU:18\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_2 [label="Linear2 (Row-TP2)\nGPU:18\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_2 [label="Receive Results\nFrom Expert GPU:18\nTo GPU:18\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_2 [label="Combine Results\nGPU:18\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_2 [label="Residual Add\nGPU:18\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_2 [label="LayerNorm\nGPU:18\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_3 [label="MHA\nGPU:19\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_3 [label="Residual Add\nGPU:19\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_3 [label="LayerNorm\nGPU:19\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_3 [label="Gate\nGPU:19\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_3 [label="Token Sharding\nGPU:19\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_3 [label="Send Tokens\nFrom GPU:19\nTo Expert GPU:19\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_3 [label="Expert 3\nLinear1 (Col-TP2)\nGPU:19\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_3 [label="GELU\nGPU:19\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_3 [label="Linear2 (Row-TP2)\nGPU:19\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_3 [label="Receive Results\nFrom Expert GPU:19\nTo GPU:19\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_3 [label="Combine Results\nGPU:19\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_3 [label="Residual Add\nGPU:19\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_3 [label="LayerNorm\nGPU:19\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_4 [label="MHA\nGPU:20\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_4 [label="Residual Add\nGPU:20\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_4 [label="LayerNorm\nGPU:20\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_4 [label="Gate\nGPU:20\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_4 [label="Token Sharding\nGPU:20\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_4 [label="Send Tokens\nFrom GPU:20\nTo Expert GPU:20\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_4 [label="Expert 4\nLinear1 (Col-TP2)\nGPU:20\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_4 [label="GELU\nGPU:20\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_4 [label="Linear2 (Row-TP2)\nGPU:20\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_4 [label="Receive Results\nFrom Expert GPU:20\nTo GPU:20\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_4 [label="Combine Results\nGPU:20\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_4 [label="Residual Add\nGPU:20\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_4 [label="LayerNorm\nGPU:20\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_5 [label="MHA\nGPU:21\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_5 [label="Residual Add\nGPU:21\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_5 [label="LayerNorm\nGPU:21\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_5 [label="Gate\nGPU:21\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_5 [label="Token Sharding\nGPU:21\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_5 [label="Send Tokens\nFrom GPU:21\nTo Expert GPU:21\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_5 [label="Expert 5\nLinear1 (Col-TP2)\nGPU:21\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_5 [label="GELU\nGPU:21\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_5 [label="Linear2 (Row-TP2)\nGPU:21\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_5 [label="Receive Results\nFrom Expert GPU:21\nTo GPU:21\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_5 [label="Combine Results\nGPU:21\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_5 [label="Residual Add\nGPU:21\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_5 [label="LayerNorm\nGPU:21\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_6 [label="MHA\nGPU:22\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_6 [label="Residual Add\nGPU:22\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_6 [label="LayerNorm\nGPU:22\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_6 [label="Gate\nGPU:22\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_6 [label="Token Sharding\nGPU:22\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_6 [label="Send Tokens\nFrom GPU:22\nTo Expert GPU:22\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_6 [label="Expert 6\nLinear1 (Col-TP2)\nGPU:22\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_6 [label="GELU\nGPU:22\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_6 [label="Linear2 (Row-TP2)\nGPU:22\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_6 [label="Receive Results\nFrom Expert GPU:22\nTo GPU:22\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_6 [label="Combine Results\nGPU:22\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_6 [label="Residual Add\nGPU:22\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_6 [label="LayerNorm\nGPU:22\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_7 [label="MHA\nGPU:23\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_7 [label="Residual Add\nGPU:23\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_7 [label="LayerNorm\nGPU:23\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_7 [label="Gate\nGPU:23\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_7 [label="Token Sharding\nGPU:23\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_7 [label="Send Tokens\nFrom GPU:23\nTo Expert GPU:23\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_7 [label="Expert 7\nLinear1 (Col-TP2)\nGPU:23\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_7 [label="GELU\nGPU:23\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_7 [label="Linear2 (Row-TP2)\nGPU:23\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_7 [label="Receive Results\nFrom Expert GPU:23\nTo GPU:23\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_7 [label="Combine Results\nGPU:23\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_7 [label="Residual Add\nGPU:23\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_7 [label="LayerNorm\nGPU:23\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_8 [label="MHA\nGPU:24\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_8 [label="Residual Add\nGPU:24\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_8 [label="LayerNorm\nGPU:24\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_8 [label="Gate\nGPU:24\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_8 [label="Token Sharding\nGPU:24\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_8 [label="Send Tokens\nFrom GPU:24\nTo Expert GPU:24\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_8 [label="Expert 8\nLinear1 (Col-TP2)\nGPU:24\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_8 [label="GELU\nGPU:24\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_8 [label="Linear2 (Row-TP2)\nGPU:24\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_8 [label="Receive Results\nFrom Expert GPU:24\nTo GPU:24\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_8 [label="Combine Results\nGPU:24\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_8 [label="Residual Add\nGPU:24\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_8 [label="LayerNorm\nGPU:24\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_9 [label="MHA\nGPU:25\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_9 [label="Residual Add\nGPU:25\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_9 [label="LayerNorm\nGPU:25\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_9 [label="Gate\nGPU:25\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_9 [label="Token Sharding\nGPU:25\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_9 [label="Send Tokens\nFrom GPU:25\nTo Expert GPU:25\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_9 [label="Expert 9\nLinear1 (Col-TP2)\nGPU:25\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_9 [label="GELU\nGPU:25\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_9 [label="Linear2 (Row-TP2)\nGPU:25\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_9 [label="Receive Results\nFrom Expert GPU:25\nTo GPU:25\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_9 [label="Combine Results\nGPU:25\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_9 [label="Residual Add\nGPU:25\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_9 [label="LayerNorm\nGPU:25\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_10 [label="MHA\nGPU:26\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_10 [label="Residual Add\nGPU:26\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_10 [label="LayerNorm\nGPU:26\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_10 [label="Gate\nGPU:26\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_10 [label="Token Sharding\nGPU:26\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_10 [label="Send Tokens\nFrom GPU:26\nTo Expert GPU:26\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_10 [label="Expert 10\nLinear1 (Col-TP2)\nGPU:26\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_10 [label="GELU\nGPU:26\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_10 [label="Linear2 (Row-TP2)\nGPU:26\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_10 [label="Receive Results\nFrom Expert GPU:26\nTo GPU:26\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_10 [label="Combine Results\nGPU:26\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_10 [label="Residual Add\nGPU:26\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_10 [label="LayerNorm\nGPU:26\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_11 [label="MHA\nGPU:27\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_11 [label="Residual Add\nGPU:27\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_11 [label="LayerNorm\nGPU:27\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_11 [label="Gate\nGPU:27\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_11 [label="Token Sharding\nGPU:27\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_11 [label="Send Tokens\nFrom GPU:27\nTo Expert GPU:27\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_11 [label="Expert 11\nLinear1 (Col-TP2)\nGPU:27\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_11 [label="GELU\nGPU:27\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_11 [label="Linear2 (Row-TP2)\nGPU:27\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_11 [label="Receive Results\nFrom Expert GPU:27\nTo GPU:27\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_11 [label="Combine Results\nGPU:27\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_11 [label="Residual Add\nGPU:27\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_11 [label="LayerNorm\nGPU:27\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_12 [label="MHA\nGPU:28\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_12 [label="Residual Add\nGPU:28\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_12 [label="LayerNorm\nGPU:28\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_12 [label="Gate\nGPU:28\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_12 [label="Token Sharding\nGPU:28\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_12 [label="Send Tokens\nFrom GPU:28\nTo Expert GPU:28\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_12 [label="Expert 12\nLinear1 (Col-TP2)\nGPU:28\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_12 [label="GELU\nGPU:28\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_12 [label="Linear2 (Row-TP2)\nGPU:28\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_12 [label="Receive Results\nFrom Expert GPU:28\nTo GPU:28\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_12 [label="Combine Results\nGPU:28\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_12 [label="Residual Add\nGPU:28\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_12 [label="LayerNorm\nGPU:28\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_13 [label="MHA\nGPU:29\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_13 [label="Residual Add\nGPU:29\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_13 [label="LayerNorm\nGPU:29\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_13 [label="Gate\nGPU:29\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_13 [label="Token Sharding\nGPU:29\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_13 [label="Send Tokens\nFrom GPU:29\nTo Expert GPU:29\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_13 [label="Expert 13\nLinear1 (Col-TP2)\nGPU:29\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_13 [label="GELU\nGPU:29\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_13 [label="Linear2 (Row-TP2)\nGPU:29\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_13 [label="Receive Results\nFrom Expert GPU:29\nTo GPU:29\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_13 [label="Combine Results\nGPU:29\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_13 [label="Residual Add\nGPU:29\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_13 [label="LayerNorm\nGPU:29\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_14 [label="MHA\nGPU:30\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_14 [label="Residual Add\nGPU:30\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_14 [label="LayerNorm\nGPU:30\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_14 [label="Gate\nGPU:30\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_14 [label="Token Sharding\nGPU:30\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_14 [label="Send Tokens\nFrom GPU:30\nTo Expert GPU:30\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_14 [label="Expert 14\nLinear1 (Col-TP2)\nGPU:30\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_14 [label="GELU\nGPU:30\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_14 [label="Linear2 (Row-TP2)\nGPU:30\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_14 [label="Receive Results\nFrom Expert GPU:30\nTo GPU:30\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_14 [label="Combine Results\nGPU:30\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_14 [label="Residual Add\nGPU:30\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_14 [label="LayerNorm\nGPU:30\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_1_15 [label="MHA\nGPU:31\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	residual1_1_15 [label="Residual Add\nGPU:31\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln1_1_15 [label="LayerNorm\nGPU:31\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	gate_1_15 [label="Gate\nGPU:31\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightgreen shape=diamond style=filled]
+	shard_1_15 [label="Token Sharding\nGPU:31\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightgreen shape=parallelogram style=filled]
+	send_1_15 [label="Send Tokens\nFrom GPU:31\nTo Expert GPU:31\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_1_15 [label="Expert 15\nLinear1 (Col-TP2)\nGPU:31\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	activation_1_15 [label="GELU\nGPU:31\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightgreen shape=rectangle style=filled]
+	linear2_1_15 [label="Linear2 (Row-TP2)\nGPU:31\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	recv_1_15 [label="Receive Results\nFrom Expert GPU:31\nTo GPU:31\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_1_15 [label="Combine Results\nGPU:31\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	residual2_1_15 [label="Residual Add\nGPU:31\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	ln2_1_15 [label="LayerNorm\nGPU:31\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightgreen shape=rectangle style=filled]
+	mha_2_0 [label="MHA\nGPU:32\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_0 [label="Residual Add\nGPU:32\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_0 [label="LayerNorm\nGPU:32\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_0 [label="Gate\nGPU:32\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_0 [label="Token Sharding\nGPU:32\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_0 [label="Send Tokens\nFrom GPU:32\nTo Expert GPU:32\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_0 [label="Expert 0\nLinear1 (Col-TP2)\nGPU:32\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_0 [label="GELU\nGPU:32\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_0 [label="Linear2 (Row-TP2)\nGPU:32\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_0 [label="Receive Results\nFrom Expert GPU:32\nTo GPU:32\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_0 [label="Combine Results\nGPU:32\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_0 [label="Residual Add\nGPU:32\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_0 [label="LayerNorm\nGPU:32\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_1 [label="MHA\nGPU:33\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_1 [label="Residual Add\nGPU:33\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_1 [label="LayerNorm\nGPU:33\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_1 [label="Gate\nGPU:33\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_1 [label="Token Sharding\nGPU:33\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_1 [label="Send Tokens\nFrom GPU:33\nTo Expert GPU:33\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_1 [label="Expert 1\nLinear1 (Col-TP2)\nGPU:33\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_1 [label="GELU\nGPU:33\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_1 [label="Linear2 (Row-TP2)\nGPU:33\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_1 [label="Receive Results\nFrom Expert GPU:33\nTo GPU:33\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_1 [label="Combine Results\nGPU:33\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_1 [label="Residual Add\nGPU:33\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_1 [label="LayerNorm\nGPU:33\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_2 [label="MHA\nGPU:34\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_2 [label="Residual Add\nGPU:34\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_2 [label="LayerNorm\nGPU:34\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_2 [label="Gate\nGPU:34\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_2 [label="Token Sharding\nGPU:34\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_2 [label="Send Tokens\nFrom GPU:34\nTo Expert GPU:34\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_2 [label="Expert 2\nLinear1 (Col-TP2)\nGPU:34\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_2 [label="GELU\nGPU:34\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_2 [label="Linear2 (Row-TP2)\nGPU:34\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_2 [label="Receive Results\nFrom Expert GPU:34\nTo GPU:34\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_2 [label="Combine Results\nGPU:34\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_2 [label="Residual Add\nGPU:34\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_2 [label="LayerNorm\nGPU:34\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_3 [label="MHA\nGPU:35\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_3 [label="Residual Add\nGPU:35\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_3 [label="LayerNorm\nGPU:35\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_3 [label="Gate\nGPU:35\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_3 [label="Token Sharding\nGPU:35\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_3 [label="Send Tokens\nFrom GPU:35\nTo Expert GPU:35\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_3 [label="Expert 3\nLinear1 (Col-TP2)\nGPU:35\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_3 [label="GELU\nGPU:35\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_3 [label="Linear2 (Row-TP2)\nGPU:35\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_3 [label="Receive Results\nFrom Expert GPU:35\nTo GPU:35\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_3 [label="Combine Results\nGPU:35\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_3 [label="Residual Add\nGPU:35\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_3 [label="LayerNorm\nGPU:35\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_4 [label="MHA\nGPU:36\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_4 [label="Residual Add\nGPU:36\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_4 [label="LayerNorm\nGPU:36\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_4 [label="Gate\nGPU:36\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_4 [label="Token Sharding\nGPU:36\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_4 [label="Send Tokens\nFrom GPU:36\nTo Expert GPU:36\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_4 [label="Expert 4\nLinear1 (Col-TP2)\nGPU:36\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_4 [label="GELU\nGPU:36\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_4 [label="Linear2 (Row-TP2)\nGPU:36\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_4 [label="Receive Results\nFrom Expert GPU:36\nTo GPU:36\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_4 [label="Combine Results\nGPU:36\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_4 [label="Residual Add\nGPU:36\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_4 [label="LayerNorm\nGPU:36\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_5 [label="MHA\nGPU:37\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_5 [label="Residual Add\nGPU:37\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_5 [label="LayerNorm\nGPU:37\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_5 [label="Gate\nGPU:37\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_5 [label="Token Sharding\nGPU:37\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_5 [label="Send Tokens\nFrom GPU:37\nTo Expert GPU:37\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_5 [label="Expert 5\nLinear1 (Col-TP2)\nGPU:37\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_5 [label="GELU\nGPU:37\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_5 [label="Linear2 (Row-TP2)\nGPU:37\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_5 [label="Receive Results\nFrom Expert GPU:37\nTo GPU:37\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_5 [label="Combine Results\nGPU:37\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_5 [label="Residual Add\nGPU:37\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_5 [label="LayerNorm\nGPU:37\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_6 [label="MHA\nGPU:38\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_6 [label="Residual Add\nGPU:38\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_6 [label="LayerNorm\nGPU:38\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_6 [label="Gate\nGPU:38\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_6 [label="Token Sharding\nGPU:38\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_6 [label="Send Tokens\nFrom GPU:38\nTo Expert GPU:38\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_6 [label="Expert 6\nLinear1 (Col-TP2)\nGPU:38\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_6 [label="GELU\nGPU:38\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_6 [label="Linear2 (Row-TP2)\nGPU:38\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_6 [label="Receive Results\nFrom Expert GPU:38\nTo GPU:38\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_6 [label="Combine Results\nGPU:38\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_6 [label="Residual Add\nGPU:38\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_6 [label="LayerNorm\nGPU:38\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_7 [label="MHA\nGPU:39\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_7 [label="Residual Add\nGPU:39\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_7 [label="LayerNorm\nGPU:39\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_7 [label="Gate\nGPU:39\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_7 [label="Token Sharding\nGPU:39\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_7 [label="Send Tokens\nFrom GPU:39\nTo Expert GPU:39\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_7 [label="Expert 7\nLinear1 (Col-TP2)\nGPU:39\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_7 [label="GELU\nGPU:39\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_7 [label="Linear2 (Row-TP2)\nGPU:39\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_7 [label="Receive Results\nFrom Expert GPU:39\nTo GPU:39\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_7 [label="Combine Results\nGPU:39\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_7 [label="Residual Add\nGPU:39\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_7 [label="LayerNorm\nGPU:39\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_8 [label="MHA\nGPU:40\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_8 [label="Residual Add\nGPU:40\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_8 [label="LayerNorm\nGPU:40\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_8 [label="Gate\nGPU:40\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_8 [label="Token Sharding\nGPU:40\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_8 [label="Send Tokens\nFrom GPU:40\nTo Expert GPU:40\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_8 [label="Expert 8\nLinear1 (Col-TP2)\nGPU:40\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_8 [label="GELU\nGPU:40\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_8 [label="Linear2 (Row-TP2)\nGPU:40\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_8 [label="Receive Results\nFrom Expert GPU:40\nTo GPU:40\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_8 [label="Combine Results\nGPU:40\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_8 [label="Residual Add\nGPU:40\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_8 [label="LayerNorm\nGPU:40\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_9 [label="MHA\nGPU:41\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_9 [label="Residual Add\nGPU:41\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_9 [label="LayerNorm\nGPU:41\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_9 [label="Gate\nGPU:41\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_9 [label="Token Sharding\nGPU:41\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_9 [label="Send Tokens\nFrom GPU:41\nTo Expert GPU:41\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_9 [label="Expert 9\nLinear1 (Col-TP2)\nGPU:41\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_9 [label="GELU\nGPU:41\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_9 [label="Linear2 (Row-TP2)\nGPU:41\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_9 [label="Receive Results\nFrom Expert GPU:41\nTo GPU:41\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_9 [label="Combine Results\nGPU:41\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_9 [label="Residual Add\nGPU:41\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_9 [label="LayerNorm\nGPU:41\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_10 [label="MHA\nGPU:42\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_10 [label="Residual Add\nGPU:42\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_10 [label="LayerNorm\nGPU:42\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_10 [label="Gate\nGPU:42\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_10 [label="Token Sharding\nGPU:42\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_10 [label="Send Tokens\nFrom GPU:42\nTo Expert GPU:42\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_10 [label="Expert 10\nLinear1 (Col-TP2)\nGPU:42\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_10 [label="GELU\nGPU:42\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_10 [label="Linear2 (Row-TP2)\nGPU:42\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_10 [label="Receive Results\nFrom Expert GPU:42\nTo GPU:42\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_10 [label="Combine Results\nGPU:42\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_10 [label="Residual Add\nGPU:42\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_10 [label="LayerNorm\nGPU:42\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_11 [label="MHA\nGPU:43\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_11 [label="Residual Add\nGPU:43\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_11 [label="LayerNorm\nGPU:43\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_11 [label="Gate\nGPU:43\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_11 [label="Token Sharding\nGPU:43\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_11 [label="Send Tokens\nFrom GPU:43\nTo Expert GPU:43\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_11 [label="Expert 11\nLinear1 (Col-TP2)\nGPU:43\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_11 [label="GELU\nGPU:43\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_11 [label="Linear2 (Row-TP2)\nGPU:43\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_11 [label="Receive Results\nFrom Expert GPU:43\nTo GPU:43\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_11 [label="Combine Results\nGPU:43\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_11 [label="Residual Add\nGPU:43\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_11 [label="LayerNorm\nGPU:43\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_12 [label="MHA\nGPU:44\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_12 [label="Residual Add\nGPU:44\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_12 [label="LayerNorm\nGPU:44\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_12 [label="Gate\nGPU:44\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_12 [label="Token Sharding\nGPU:44\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_12 [label="Send Tokens\nFrom GPU:44\nTo Expert GPU:44\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_12 [label="Expert 12\nLinear1 (Col-TP2)\nGPU:44\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_12 [label="GELU\nGPU:44\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_12 [label="Linear2 (Row-TP2)\nGPU:44\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_12 [label="Receive Results\nFrom Expert GPU:44\nTo GPU:44\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_12 [label="Combine Results\nGPU:44\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_12 [label="Residual Add\nGPU:44\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_12 [label="LayerNorm\nGPU:44\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_13 [label="MHA\nGPU:45\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_13 [label="Residual Add\nGPU:45\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_13 [label="LayerNorm\nGPU:45\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_13 [label="Gate\nGPU:45\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_13 [label="Token Sharding\nGPU:45\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_13 [label="Send Tokens\nFrom GPU:45\nTo Expert GPU:45\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_13 [label="Expert 13\nLinear1 (Col-TP2)\nGPU:45\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_13 [label="GELU\nGPU:45\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_13 [label="Linear2 (Row-TP2)\nGPU:45\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_13 [label="Receive Results\nFrom Expert GPU:45\nTo GPU:45\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_13 [label="Combine Results\nGPU:45\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_13 [label="Residual Add\nGPU:45\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_13 [label="LayerNorm\nGPU:45\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_14 [label="MHA\nGPU:46\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_14 [label="Residual Add\nGPU:46\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_14 [label="LayerNorm\nGPU:46\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_14 [label="Gate\nGPU:46\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_14 [label="Token Sharding\nGPU:46\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_14 [label="Send Tokens\nFrom GPU:46\nTo Expert GPU:46\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_14 [label="Expert 14\nLinear1 (Col-TP2)\nGPU:46\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_14 [label="GELU\nGPU:46\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_14 [label="Linear2 (Row-TP2)\nGPU:46\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_14 [label="Receive Results\nFrom Expert GPU:46\nTo GPU:46\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_14 [label="Combine Results\nGPU:46\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_14 [label="Residual Add\nGPU:46\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_14 [label="LayerNorm\nGPU:46\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_2_15 [label="MHA\nGPU:47\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	residual1_2_15 [label="Residual Add\nGPU:47\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln1_2_15 [label="LayerNorm\nGPU:47\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	gate_2_15 [label="Gate\nGPU:47\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightyellow shape=diamond style=filled]
+	shard_2_15 [label="Token Sharding\nGPU:47\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightyellow shape=parallelogram style=filled]
+	send_2_15 [label="Send Tokens\nFrom GPU:47\nTo Expert GPU:47\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_2_15 [label="Expert 15\nLinear1 (Col-TP2)\nGPU:47\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	activation_2_15 [label="GELU\nGPU:47\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightyellow shape=rectangle style=filled]
+	linear2_2_15 [label="Linear2 (Row-TP2)\nGPU:47\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	recv_2_15 [label="Receive Results\nFrom Expert GPU:47\nTo GPU:47\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_2_15 [label="Combine Results\nGPU:47\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	residual2_2_15 [label="Residual Add\nGPU:47\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=parallelogram style=filled]
+	ln2_2_15 [label="LayerNorm\nGPU:47\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightyellow shape=rectangle style=filled]
+	mha_3_0 [label="MHA\nGPU:48\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_0 [label="Residual Add\nGPU:48\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_0 [label="LayerNorm\nGPU:48\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_0 [label="Gate\nGPU:48\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_0 [label="Token Sharding\nGPU:48\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_0 [label="Send Tokens\nFrom GPU:48\nTo Expert GPU:48\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_0 [label="Expert 0\nLinear1 (Col-TP2)\nGPU:48\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_0 [label="GELU\nGPU:48\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_0 [label="Linear2 (Row-TP2)\nGPU:48\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_0 [label="Receive Results\nFrom Expert GPU:48\nTo GPU:48\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_0 [label="Combine Results\nGPU:48\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_0 [label="Residual Add\nGPU:48\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_0 [label="LayerNorm\nGPU:48\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_1 [label="MHA\nGPU:49\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_1 [label="Residual Add\nGPU:49\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_1 [label="LayerNorm\nGPU:49\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_1 [label="Gate\nGPU:49\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_1 [label="Token Sharding\nGPU:49\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_1 [label="Send Tokens\nFrom GPU:49\nTo Expert GPU:49\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_1 [label="Expert 1\nLinear1 (Col-TP2)\nGPU:49\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_1 [label="GELU\nGPU:49\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_1 [label="Linear2 (Row-TP2)\nGPU:49\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_1 [label="Receive Results\nFrom Expert GPU:49\nTo GPU:49\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_1 [label="Combine Results\nGPU:49\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_1 [label="Residual Add\nGPU:49\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_1 [label="LayerNorm\nGPU:49\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_2 [label="MHA\nGPU:50\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_2 [label="Residual Add\nGPU:50\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_2 [label="LayerNorm\nGPU:50\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_2 [label="Gate\nGPU:50\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_2 [label="Token Sharding\nGPU:50\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_2 [label="Send Tokens\nFrom GPU:50\nTo Expert GPU:50\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_2 [label="Expert 2\nLinear1 (Col-TP2)\nGPU:50\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_2 [label="GELU\nGPU:50\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_2 [label="Linear2 (Row-TP2)\nGPU:50\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_2 [label="Receive Results\nFrom Expert GPU:50\nTo GPU:50\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_2 [label="Combine Results\nGPU:50\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_2 [label="Residual Add\nGPU:50\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_2 [label="LayerNorm\nGPU:50\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_3 [label="MHA\nGPU:51\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_3 [label="Residual Add\nGPU:51\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_3 [label="LayerNorm\nGPU:51\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_3 [label="Gate\nGPU:51\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_3 [label="Token Sharding\nGPU:51\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_3 [label="Send Tokens\nFrom GPU:51\nTo Expert GPU:51\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_3 [label="Expert 3\nLinear1 (Col-TP2)\nGPU:51\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_3 [label="GELU\nGPU:51\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_3 [label="Linear2 (Row-TP2)\nGPU:51\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_3 [label="Receive Results\nFrom Expert GPU:51\nTo GPU:51\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_3 [label="Combine Results\nGPU:51\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_3 [label="Residual Add\nGPU:51\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_3 [label="LayerNorm\nGPU:51\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_4 [label="MHA\nGPU:52\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_4 [label="Residual Add\nGPU:52\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_4 [label="LayerNorm\nGPU:52\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_4 [label="Gate\nGPU:52\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_4 [label="Token Sharding\nGPU:52\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_4 [label="Send Tokens\nFrom GPU:52\nTo Expert GPU:52\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_4 [label="Expert 4\nLinear1 (Col-TP2)\nGPU:52\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_4 [label="GELU\nGPU:52\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_4 [label="Linear2 (Row-TP2)\nGPU:52\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_4 [label="Receive Results\nFrom Expert GPU:52\nTo GPU:52\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_4 [label="Combine Results\nGPU:52\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_4 [label="Residual Add\nGPU:52\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_4 [label="LayerNorm\nGPU:52\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_5 [label="MHA\nGPU:53\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_5 [label="Residual Add\nGPU:53\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_5 [label="LayerNorm\nGPU:53\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_5 [label="Gate\nGPU:53\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_5 [label="Token Sharding\nGPU:53\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_5 [label="Send Tokens\nFrom GPU:53\nTo Expert GPU:53\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_5 [label="Expert 5\nLinear1 (Col-TP2)\nGPU:53\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_5 [label="GELU\nGPU:53\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_5 [label="Linear2 (Row-TP2)\nGPU:53\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_5 [label="Receive Results\nFrom Expert GPU:53\nTo GPU:53\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_5 [label="Combine Results\nGPU:53\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_5 [label="Residual Add\nGPU:53\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_5 [label="LayerNorm\nGPU:53\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_6 [label="MHA\nGPU:54\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_6 [label="Residual Add\nGPU:54\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_6 [label="LayerNorm\nGPU:54\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_6 [label="Gate\nGPU:54\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_6 [label="Token Sharding\nGPU:54\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_6 [label="Send Tokens\nFrom GPU:54\nTo Expert GPU:54\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_6 [label="Expert 6\nLinear1 (Col-TP2)\nGPU:54\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_6 [label="GELU\nGPU:54\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_6 [label="Linear2 (Row-TP2)\nGPU:54\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_6 [label="Receive Results\nFrom Expert GPU:54\nTo GPU:54\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_6 [label="Combine Results\nGPU:54\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_6 [label="Residual Add\nGPU:54\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_6 [label="LayerNorm\nGPU:54\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_7 [label="MHA\nGPU:55\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_7 [label="Residual Add\nGPU:55\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_7 [label="LayerNorm\nGPU:55\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_7 [label="Gate\nGPU:55\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_7 [label="Token Sharding\nGPU:55\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_7 [label="Send Tokens\nFrom GPU:55\nTo Expert GPU:55\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_7 [label="Expert 7\nLinear1 (Col-TP2)\nGPU:55\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_7 [label="GELU\nGPU:55\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_7 [label="Linear2 (Row-TP2)\nGPU:55\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_7 [label="Receive Results\nFrom Expert GPU:55\nTo GPU:55\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_7 [label="Combine Results\nGPU:55\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_7 [label="Residual Add\nGPU:55\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_7 [label="LayerNorm\nGPU:55\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_8 [label="MHA\nGPU:56\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_8 [label="Residual Add\nGPU:56\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_8 [label="LayerNorm\nGPU:56\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_8 [label="Gate\nGPU:56\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_8 [label="Token Sharding\nGPU:56\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_8 [label="Send Tokens\nFrom GPU:56\nTo Expert GPU:56\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_8 [label="Expert 8\nLinear1 (Col-TP2)\nGPU:56\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_8 [label="GELU\nGPU:56\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_8 [label="Linear2 (Row-TP2)\nGPU:56\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_8 [label="Receive Results\nFrom Expert GPU:56\nTo GPU:56\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_8 [label="Combine Results\nGPU:56\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_8 [label="Residual Add\nGPU:56\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_8 [label="LayerNorm\nGPU:56\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_9 [label="MHA\nGPU:57\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_9 [label="Residual Add\nGPU:57\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_9 [label="LayerNorm\nGPU:57\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_9 [label="Gate\nGPU:57\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_9 [label="Token Sharding\nGPU:57\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_9 [label="Send Tokens\nFrom GPU:57\nTo Expert GPU:57\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_9 [label="Expert 9\nLinear1 (Col-TP2)\nGPU:57\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_9 [label="GELU\nGPU:57\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_9 [label="Linear2 (Row-TP2)\nGPU:57\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_9 [label="Receive Results\nFrom Expert GPU:57\nTo GPU:57\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_9 [label="Combine Results\nGPU:57\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_9 [label="Residual Add\nGPU:57\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_9 [label="LayerNorm\nGPU:57\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_10 [label="MHA\nGPU:58\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_10 [label="Residual Add\nGPU:58\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_10 [label="LayerNorm\nGPU:58\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_10 [label="Gate\nGPU:58\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_10 [label="Token Sharding\nGPU:58\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_10 [label="Send Tokens\nFrom GPU:58\nTo Expert GPU:58\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_10 [label="Expert 10\nLinear1 (Col-TP2)\nGPU:58\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_10 [label="GELU\nGPU:58\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_10 [label="Linear2 (Row-TP2)\nGPU:58\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_10 [label="Receive Results\nFrom Expert GPU:58\nTo GPU:58\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_10 [label="Combine Results\nGPU:58\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_10 [label="Residual Add\nGPU:58\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_10 [label="LayerNorm\nGPU:58\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_11 [label="MHA\nGPU:59\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_11 [label="Residual Add\nGPU:59\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_11 [label="LayerNorm\nGPU:59\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_11 [label="Gate\nGPU:59\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_11 [label="Token Sharding\nGPU:59\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_11 [label="Send Tokens\nFrom GPU:59\nTo Expert GPU:59\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_11 [label="Expert 11\nLinear1 (Col-TP2)\nGPU:59\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_11 [label="GELU\nGPU:59\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_11 [label="Linear2 (Row-TP2)\nGPU:59\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_11 [label="Receive Results\nFrom Expert GPU:59\nTo GPU:59\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_11 [label="Combine Results\nGPU:59\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_11 [label="Residual Add\nGPU:59\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_11 [label="LayerNorm\nGPU:59\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_12 [label="MHA\nGPU:60\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_12 [label="Residual Add\nGPU:60\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_12 [label="LayerNorm\nGPU:60\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_12 [label="Gate\nGPU:60\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_12 [label="Token Sharding\nGPU:60\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_12 [label="Send Tokens\nFrom GPU:60\nTo Expert GPU:60\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_12 [label="Expert 12\nLinear1 (Col-TP2)\nGPU:60\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_12 [label="GELU\nGPU:60\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_12 [label="Linear2 (Row-TP2)\nGPU:60\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_12 [label="Receive Results\nFrom Expert GPU:60\nTo GPU:60\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_12 [label="Combine Results\nGPU:60\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_12 [label="Residual Add\nGPU:60\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_12 [label="LayerNorm\nGPU:60\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_13 [label="MHA\nGPU:61\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_13 [label="Residual Add\nGPU:61\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_13 [label="LayerNorm\nGPU:61\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_13 [label="Gate\nGPU:61\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_13 [label="Token Sharding\nGPU:61\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_13 [label="Send Tokens\nFrom GPU:61\nTo Expert GPU:61\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_13 [label="Expert 13\nLinear1 (Col-TP2)\nGPU:61\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_13 [label="GELU\nGPU:61\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_13 [label="Linear2 (Row-TP2)\nGPU:61\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_13 [label="Receive Results\nFrom Expert GPU:61\nTo GPU:61\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_13 [label="Combine Results\nGPU:61\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_13 [label="Residual Add\nGPU:61\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_13 [label="LayerNorm\nGPU:61\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_14 [label="MHA\nGPU:62\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_14 [label="Residual Add\nGPU:62\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_14 [label="LayerNorm\nGPU:62\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_14 [label="Gate\nGPU:62\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_14 [label="Token Sharding\nGPU:62\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_14 [label="Send Tokens\nFrom GPU:62\nTo Expert GPU:62\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_14 [label="Expert 14\nLinear1 (Col-TP2)\nGPU:62\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_14 [label="GELU\nGPU:62\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_14 [label="Linear2 (Row-TP2)\nGPU:62\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_14 [label="Receive Results\nFrom Expert GPU:62\nTo GPU:62\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_14 [label="Combine Results\nGPU:62\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_14 [label="Residual Add\nGPU:62\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_14 [label="LayerNorm\nGPU:62\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	mha_3_15 [label="MHA\nGPU:63\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	residual1_3_15 [label="Residual Add\nGPU:63\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln1_3_15 [label="LayerNorm\nGPU:63\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	gate_3_15 [label="Gate\nGPU:63\nIn: [1024, 10000, 8192]\nOut: routing weights" fillcolor=lightcoral shape=diamond style=filled]
+	shard_3_15 [label="Token Sharding\nGPU:63\nIn: [1024, 10000, 8192]\nOut: selected tokens" fillcolor=lightcoral shape=parallelogram style=filled]
+	send_3_15 [label="Send Tokens\nFrom GPU:63\nTo Expert GPU:63\nShape: [selected_tokens, 8192]" fillcolor=orange shape=ellipse style=filled]
+	linear1_3_15 [label="Expert 15\nLinear1 (Col-TP2)\nGPU:63\nIn: [tokens, 8192]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	activation_3_15 [label="GELU\nGPU:63\nIn: [tokens, 16384]\nOut: [tokens, 16384]" fillcolor=lightcoral shape=rectangle style=filled]
+	linear2_3_15 [label="Linear2 (Row-TP2)\nGPU:63\nIn: [tokens, 16384]\nOut: [tokens, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	recv_3_15 [label="Receive Results\nFrom Expert GPU:63\nTo GPU:63\nShape: [tokens, 8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	combine_3_15 [label="Combine Results\nGPU:63\nIn: multiple [tokens, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	residual2_3_15 [label="Residual Add\nGPU:63\nIn1: [1024, 10000, 8192]\nIn2: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=parallelogram style=filled]
+	ln2_3_15 [label="LayerNorm\nGPU:63\nIn: [1024, 10000, 8192]\nOut: [1024, 10000, 8192]" fillcolor=lightcoral shape=rectangle style=filled]
+	input -> mha_0_0
+	mha_0_0 -> residual1_0_0
+	residual1_0_0 -> ln1_0_0
+	ln1_0_0 -> gate_0_0
+	ln1_0_0 -> shard_0_0
+	gate_0_0 -> shard_0_0 [style=dashed]
+	shard_0_0 -> send_0_0
+	send_0_0 -> linear1_0_0
+	linear1_0_0 -> activation_0_0
+	activation_0_0 -> linear2_0_0
+	linear2_0_0 -> recv_0_0
+	recv_0_0 -> combine_0_0
+	combine_0_0 -> residual2_0_0
+	residual2_0_0 -> ln2_0_0
+	input -> mha_0_1
+	mha_0_1 -> residual1_0_1
+	residual1_0_1 -> ln1_0_1
+	ln1_0_1 -> gate_0_1
+	ln1_0_1 -> shard_0_1
+	gate_0_1 -> shard_0_1 [style=dashed]
+	shard_0_1 -> send_0_1
+	send_0_1 -> linear1_0_1
+	linear1_0_1 -> activation_0_1
+	activation_0_1 -> linear2_0_1
+	linear2_0_1 -> recv_0_1
+	recv_0_1 -> combine_0_1
+	combine_0_1 -> residual2_0_1
+	residual2_0_1 -> ln2_0_1
+	input -> mha_0_2
+	mha_0_2 -> residual1_0_2
+	residual1_0_2 -> ln1_0_2
+	ln1_0_2 -> gate_0_2
+	ln1_0_2 -> shard_0_2
+	gate_0_2 -> shard_0_2 [style=dashed]
+	shard_0_2 -> send_0_2
+	send_0_2 -> linear1_0_2
+	linear1_0_2 -> activation_0_2
+	activation_0_2 -> linear2_0_2
+	linear2_0_2 -> recv_0_2
+	recv_0_2 -> combine_0_2
+	combine_0_2 -> residual2_0_2
+	residual2_0_2 -> ln2_0_2
+	input -> mha_0_3
+	mha_0_3 -> residual1_0_3
+	residual1_0_3 -> ln1_0_3
+	ln1_0_3 -> gate_0_3
+	ln1_0_3 -> shard_0_3
+	gate_0_3 -> shard_0_3 [style=dashed]
+	shard_0_3 -> send_0_3
+	send_0_3 -> linear1_0_3
+	linear1_0_3 -> activation_0_3
+	activation_0_3 -> linear2_0_3
+	linear2_0_3 -> recv_0_3
+	recv_0_3 -> combine_0_3
+	combine_0_3 -> residual2_0_3
+	residual2_0_3 -> ln2_0_3
+	input -> mha_0_4
+	mha_0_4 -> residual1_0_4
+	residual1_0_4 -> ln1_0_4
+	ln1_0_4 -> gate_0_4
+	ln1_0_4 -> shard_0_4
+	gate_0_4 -> shard_0_4 [style=dashed]
+	shard_0_4 -> send_0_4
+	send_0_4 -> linear1_0_4
+	linear1_0_4 -> activation_0_4
+	activation_0_4 -> linear2_0_4
+	linear2_0_4 -> recv_0_4
+	recv_0_4 -> combine_0_4
+	combine_0_4 -> residual2_0_4
+	residual2_0_4 -> ln2_0_4
+	input -> mha_0_5
+	mha_0_5 -> residual1_0_5
+	residual1_0_5 -> ln1_0_5
+	ln1_0_5 -> gate_0_5
+	ln1_0_5 -> shard_0_5
+	gate_0_5 -> shard_0_5 [style=dashed]
+	shard_0_5 -> send_0_5
+	send_0_5 -> linear1_0_5
+	linear1_0_5 -> activation_0_5
+	activation_0_5 -> linear2_0_5
+	linear2_0_5 -> recv_0_5
+	recv_0_5 -> combine_0_5
+	combine_0_5 -> residual2_0_5
+	residual2_0_5 -> ln2_0_5
+	input -> mha_0_6
+	mha_0_6 -> residual1_0_6
+	residual1_0_6 -> ln1_0_6
+	ln1_0_6 -> gate_0_6
+	ln1_0_6 -> shard_0_6
+	gate_0_6 -> shard_0_6 [style=dashed]
+	shard_0_6 -> send_0_6
+	send_0_6 -> linear1_0_6
+	linear1_0_6 -> activation_0_6
+	activation_0_6 -> linear2_0_6
+	linear2_0_6 -> recv_0_6
+	recv_0_6 -> combine_0_6
+	combine_0_6 -> residual2_0_6
+	residual2_0_6 -> ln2_0_6
+	input -> mha_0_7
+	mha_0_7 -> residual1_0_7
+	residual1_0_7 -> ln1_0_7
+	ln1_0_7 -> gate_0_7
+	ln1_0_7 -> shard_0_7
+	gate_0_7 -> shard_0_7 [style=dashed]
+	shard_0_7 -> send_0_7
+	send_0_7 -> linear1_0_7
+	linear1_0_7 -> activation_0_7
+	activation_0_7 -> linear2_0_7
+	linear2_0_7 -> recv_0_7
+	recv_0_7 -> combine_0_7
+	combine_0_7 -> residual2_0_7
+	residual2_0_7 -> ln2_0_7
+	input -> mha_0_8
+	mha_0_8 -> residual1_0_8
+	residual1_0_8 -> ln1_0_8
+	ln1_0_8 -> gate_0_8
+	ln1_0_8 -> shard_0_8
+	gate_0_8 -> shard_0_8 [style=dashed]
+	shard_0_8 -> send_0_8
+	send_0_8 -> linear1_0_8
+	linear1_0_8 -> activation_0_8
+	activation_0_8 -> linear2_0_8
+	linear2_0_8 -> recv_0_8
+	recv_0_8 -> combine_0_8
+	combine_0_8 -> residual2_0_8
+	residual2_0_8 -> ln2_0_8
+	input -> mha_0_9
+	mha_0_9 -> residual1_0_9
+	residual1_0_9 -> ln1_0_9
+	ln1_0_9 -> gate_0_9
+	ln1_0_9 -> shard_0_9
+	gate_0_9 -> shard_0_9 [style=dashed]
+	shard_0_9 -> send_0_9
+	send_0_9 -> linear1_0_9
+	linear1_0_9 -> activation_0_9
+	activation_0_9 -> linear2_0_9
+	linear2_0_9 -> recv_0_9
+	recv_0_9 -> combine_0_9
+	combine_0_9 -> residual2_0_9
+	residual2_0_9 -> ln2_0_9
+	input -> mha_0_10
+	mha_0_10 -> residual1_0_10
+	residual1_0_10 -> ln1_0_10
+	ln1_0_10 -> gate_0_10
+	ln1_0_10 -> shard_0_10
+	gate_0_10 -> shard_0_10 [style=dashed]
+	shard_0_10 -> send_0_10
+	send_0_10 -> linear1_0_10
+	linear1_0_10 -> activation_0_10
+	activation_0_10 -> linear2_0_10
+	linear2_0_10 -> recv_0_10
+	recv_0_10 -> combine_0_10
+	combine_0_10 -> residual2_0_10
+	residual2_0_10 -> ln2_0_10
+	input -> mha_0_11
+	mha_0_11 -> residual1_0_11
+	residual1_0_11 -> ln1_0_11
+	ln1_0_11 -> gate_0_11
+	ln1_0_11 -> shard_0_11
+	gate_0_11 -> shard_0_11 [style=dashed]
+	shard_0_11 -> send_0_11
+	send_0_11 -> linear1_0_11
+	linear1_0_11 -> activation_0_11
+	activation_0_11 -> linear2_0_11
+	linear2_0_11 -> recv_0_11
+	recv_0_11 -> combine_0_11
+	combine_0_11 -> residual2_0_11
+	residual2_0_11 -> ln2_0_11
+	input -> mha_0_12
+	mha_0_12 -> residual1_0_12
+	residual1_0_12 -> ln1_0_12
+	ln1_0_12 -> gate_0_12
+	ln1_0_12 -> shard_0_12
+	gate_0_12 -> shard_0_12 [style=dashed]
+	shard_0_12 -> send_0_12
+	send_0_12 -> linear1_0_12
+	linear1_0_12 -> activation_0_12
+	activation_0_12 -> linear2_0_12
+	linear2_0_12 -> recv_0_12
+	recv_0_12 -> combine_0_12
+	combine_0_12 -> residual2_0_12
+	residual2_0_12 -> ln2_0_12
+	input -> mha_0_13
+	mha_0_13 -> residual1_0_13
+	residual1_0_13 -> ln1_0_13
+	ln1_0_13 -> gate_0_13
+	ln1_0_13 -> shard_0_13
+	gate_0_13 -> shard_0_13 [style=dashed]
+	shard_0_13 -> send_0_13
+	send_0_13 -> linear1_0_13
+	linear1_0_13 -> activation_0_13
+	activation_0_13 -> linear2_0_13
+	linear2_0_13 -> recv_0_13
+	recv_0_13 -> combine_0_13
+	combine_0_13 -> residual2_0_13
+	residual2_0_13 -> ln2_0_13
+	input -> mha_0_14
+	mha_0_14 -> residual1_0_14
+	residual1_0_14 -> ln1_0_14
+	ln1_0_14 -> gate_0_14
+	ln1_0_14 -> shard_0_14
+	gate_0_14 -> shard_0_14 [style=dashed]
+	shard_0_14 -> send_0_14
+	send_0_14 -> linear1_0_14
+	linear1_0_14 -> activation_0_14
+	activation_0_14 -> linear2_0_14
+	linear2_0_14 -> recv_0_14
+	recv_0_14 -> combine_0_14
+	combine_0_14 -> residual2_0_14
+	residual2_0_14 -> ln2_0_14
+	input -> mha_0_15
+	mha_0_15 -> residual1_0_15
+	residual1_0_15 -> ln1_0_15
+	ln1_0_15 -> gate_0_15
+	ln1_0_15 -> shard_0_15
+	gate_0_15 -> shard_0_15 [style=dashed]
+	shard_0_15 -> send_0_15
+	send_0_15 -> linear1_0_15
+	linear1_0_15 -> activation_0_15
+	activation_0_15 -> linear2_0_15
+	linear2_0_15 -> recv_0_15
+	recv_0_15 -> combine_0_15
+	combine_0_15 -> residual2_0_15
+	residual2_0_15 -> ln2_0_15
+	ln2_0_0 -> mha_1_0
+	mha_1_0 -> residual1_1_0
+	residual1_1_0 -> ln1_1_0
+	ln1_1_0 -> gate_1_0
+	ln1_1_0 -> shard_1_0
+	gate_1_0 -> shard_1_0 [style=dashed]
+	shard_1_0 -> send_1_0
+	send_1_0 -> linear1_1_0
+	linear1_1_0 -> activation_1_0
+	activation_1_0 -> linear2_1_0
+	linear2_1_0 -> recv_1_0
+	recv_1_0 -> combine_1_0
+	combine_1_0 -> residual2_1_0
+	residual2_1_0 -> ln2_1_0
+	ln2_0_1 -> mha_1_1
+	mha_1_1 -> residual1_1_1
+	residual1_1_1 -> ln1_1_1
+	ln1_1_1 -> gate_1_1
+	ln1_1_1 -> shard_1_1
+	gate_1_1 -> shard_1_1 [style=dashed]
+	shard_1_1 -> send_1_1
+	send_1_1 -> linear1_1_1
+	linear1_1_1 -> activation_1_1
+	activation_1_1 -> linear2_1_1
+	linear2_1_1 -> recv_1_1
+	recv_1_1 -> combine_1_1
+	combine_1_1 -> residual2_1_1
+	residual2_1_1 -> ln2_1_1
+	ln2_0_2 -> mha_1_2
+	mha_1_2 -> residual1_1_2
+	residual1_1_2 -> ln1_1_2
+	ln1_1_2 -> gate_1_2
+	ln1_1_2 -> shard_1_2
+	gate_1_2 -> shard_1_2 [style=dashed]
+	shard_1_2 -> send_1_2
+	send_1_2 -> linear1_1_2
+	linear1_1_2 -> activation_1_2
+	activation_1_2 -> linear2_1_2
+	linear2_1_2 -> recv_1_2
+	recv_1_2 -> combine_1_2
+	combine_1_2 -> residual2_1_2
+	residual2_1_2 -> ln2_1_2
+	ln2_0_3 -> mha_1_3
+	mha_1_3 -> residual1_1_3
+	residual1_1_3 -> ln1_1_3
+	ln1_1_3 -> gate_1_3
+	ln1_1_3 -> shard_1_3
+	gate_1_3 -> shard_1_3 [style=dashed]
+	shard_1_3 -> send_1_3
+	send_1_3 -> linear1_1_3
+	linear1_1_3 -> activation_1_3
+	activation_1_3 -> linear2_1_3
+	linear2_1_3 -> recv_1_3
+	recv_1_3 -> combine_1_3
+	combine_1_3 -> residual2_1_3
+	residual2_1_3 -> ln2_1_3
+	ln2_0_4 -> mha_1_4
+	mha_1_4 -> residual1_1_4
+	residual1_1_4 -> ln1_1_4
+	ln1_1_4 -> gate_1_4
+	ln1_1_4 -> shard_1_4
+	gate_1_4 -> shard_1_4 [style=dashed]
+	shard_1_4 -> send_1_4
+	send_1_4 -> linear1_1_4
+	linear1_1_4 -> activation_1_4
+	activation_1_4 -> linear2_1_4
+	linear2_1_4 -> recv_1_4
+	recv_1_4 -> combine_1_4
+	combine_1_4 -> residual2_1_4
+	residual2_1_4 -> ln2_1_4
+	ln2_0_5 -> mha_1_5
+	mha_1_5 -> residual1_1_5
+	residual1_1_5 -> ln1_1_5
+	ln1_1_5 -> gate_1_5
+	ln1_1_5 -> shard_1_5
+	gate_1_5 -> shard_1_5 [style=dashed]
+	shard_1_5 -> send_1_5
+	send_1_5 -> linear1_1_5
+	linear1_1_5 -> activation_1_5
+	activation_1_5 -> linear2_1_5
+	linear2_1_5 -> recv_1_5
+	recv_1_5 -> combine_1_5
+	combine_1_5 -> residual2_1_5
+	residual2_1_5 -> ln2_1_5
+	ln2_0_6 -> mha_1_6
+	mha_1_6 -> residual1_1_6
+	residual1_1_6 -> ln1_1_6
+	ln1_1_6 -> gate_1_6
+	ln1_1_6 -> shard_1_6
+	gate_1_6 -> shard_1_6 [style=dashed]
+	shard_1_6 -> send_1_6
+	send_1_6 -> linear1_1_6
+	linear1_1_6 -> activation_1_6
+	activation_1_6 -> linear2_1_6
+	linear2_1_6 -> recv_1_6
+	recv_1_6 -> combine_1_6
+	combine_1_6 -> residual2_1_6
+	residual2_1_6 -> ln2_1_6
+	ln2_0_7 -> mha_1_7
+	mha_1_7 -> residual1_1_7
+	residual1_1_7 -> ln1_1_7
+	ln1_1_7 -> gate_1_7
+	ln1_1_7 -> shard_1_7
+	gate_1_7 -> shard_1_7 [style=dashed]
+	shard_1_7 -> send_1_7
+	send_1_7 -> linear1_1_7
+	linear1_1_7 -> activation_1_7
+	activation_1_7 -> linear2_1_7
+	linear2_1_7 -> recv_1_7
+	recv_1_7 -> combine_1_7
+	combine_1_7 -> residual2_1_7
+	residual2_1_7 -> ln2_1_7
+	ln2_0_8 -> mha_1_8
+	mha_1_8 -> residual1_1_8
+	residual1_1_8 -> ln1_1_8
+	ln1_1_8 -> gate_1_8
+	ln1_1_8 -> shard_1_8
+	gate_1_8 -> shard_1_8 [style=dashed]
+	shard_1_8 -> send_1_8
+	send_1_8 -> linear1_1_8
+	linear1_1_8 -> activation_1_8
+	activation_1_8 -> linear2_1_8
+	linear2_1_8 -> recv_1_8
+	recv_1_8 -> combine_1_8
+	combine_1_8 -> residual2_1_8
+	residual2_1_8 -> ln2_1_8
+	ln2_0_9 -> mha_1_9
+	mha_1_9 -> residual1_1_9
+	residual1_1_9 -> ln1_1_9
+	ln1_1_9 -> gate_1_9
+	ln1_1_9 -> shard_1_9
+	gate_1_9 -> shard_1_9 [style=dashed]
+	shard_1_9 -> send_1_9
+	send_1_9 -> linear1_1_9
+	linear1_1_9 -> activation_1_9
+	activation_1_9 -> linear2_1_9
+	linear2_1_9 -> recv_1_9
+	recv_1_9 -> combine_1_9
+	combine_1_9 -> residual2_1_9
+	residual2_1_9 -> ln2_1_9
+	ln2_0_10 -> mha_1_10
+	mha_1_10 -> residual1_1_10
+	residual1_1_10 -> ln1_1_10
+	ln1_1_10 -> gate_1_10
+	ln1_1_10 -> shard_1_10
+	gate_1_10 -> shard_1_10 [style=dashed]
+	shard_1_10 -> send_1_10
+	send_1_10 -> linear1_1_10
+	linear1_1_10 -> activation_1_10
+	activation_1_10 -> linear2_1_10
+	linear2_1_10 -> recv_1_10
+	recv_1_10 -> combine_1_10
+	combine_1_10 -> residual2_1_10
+	residual2_1_10 -> ln2_1_10
+	ln2_0_11 -> mha_1_11
+	mha_1_11 -> residual1_1_11
+	residual1_1_11 -> ln1_1_11
+	ln1_1_11 -> gate_1_11
+	ln1_1_11 -> shard_1_11
+	gate_1_11 -> shard_1_11 [style=dashed]
+	shard_1_11 -> send_1_11
+	send_1_11 -> linear1_1_11
+	linear1_1_11 -> activation_1_11
+	activation_1_11 -> linear2_1_11
+	linear2_1_11 -> recv_1_11
+	recv_1_11 -> combine_1_11
+	combine_1_11 -> residual2_1_11
+	residual2_1_11 -> ln2_1_11
+	ln2_0_12 -> mha_1_12
+	mha_1_12 -> residual1_1_12
+	residual1_1_12 -> ln1_1_12
+	ln1_1_12 -> gate_1_12
+	ln1_1_12 -> shard_1_12
+	gate_1_12 -> shard_1_12 [style=dashed]
+	shard_1_12 -> send_1_12
+	send_1_12 -> linear1_1_12
+	linear1_1_12 -> activation_1_12
+	activation_1_12 -> linear2_1_12
+	linear2_1_12 -> recv_1_12
+	recv_1_12 -> combine_1_12
+	combine_1_12 -> residual2_1_12
+	residual2_1_12 -> ln2_1_12
+	ln2_0_13 -> mha_1_13
+	mha_1_13 -> residual1_1_13
+	residual1_1_13 -> ln1_1_13
+	ln1_1_13 -> gate_1_13
+	ln1_1_13 -> shard_1_13
+	gate_1_13 -> shard_1_13 [style=dashed]
+	shard_1_13 -> send_1_13
+	send_1_13 -> linear1_1_13
+	linear1_1_13 -> activation_1_13
+	activation_1_13 -> linear2_1_13
+	linear2_1_13 -> recv_1_13
+	recv_1_13 -> combine_1_13
+	combine_1_13 -> residual2_1_13
+	residual2_1_13 -> ln2_1_13
+	ln2_0_14 -> mha_1_14
+	mha_1_14 -> residual1_1_14
+	residual1_1_14 -> ln1_1_14
+	ln1_1_14 -> gate_1_14
+	ln1_1_14 -> shard_1_14
+	gate_1_14 -> shard_1_14 [style=dashed]
+	shard_1_14 -> send_1_14
+	send_1_14 -> linear1_1_14
+	linear1_1_14 -> activation_1_14
+	activation_1_14 -> linear2_1_14
+	linear2_1_14 -> recv_1_14
+	recv_1_14 -> combine_1_14
+	combine_1_14 -> residual2_1_14
+	residual2_1_14 -> ln2_1_14
+	ln2_0_15 -> mha_1_15
+	mha_1_15 -> residual1_1_15
+	residual1_1_15 -> ln1_1_15
+	ln1_1_15 -> gate_1_15
+	ln1_1_15 -> shard_1_15
+	gate_1_15 -> shard_1_15 [style=dashed]
+	shard_1_15 -> send_1_15
+	send_1_15 -> linear1_1_15
+	linear1_1_15 -> activation_1_15
+	activation_1_15 -> linear2_1_15
+	linear2_1_15 -> recv_1_15
+	recv_1_15 -> combine_1_15
+	combine_1_15 -> residual2_1_15
+	residual2_1_15 -> ln2_1_15
+	ln2_1_0 -> mha_2_0
+	mha_2_0 -> residual1_2_0
+	residual1_2_0 -> ln1_2_0
+	ln1_2_0 -> gate_2_0
+	ln1_2_0 -> shard_2_0
+	gate_2_0 -> shard_2_0 [style=dashed]
+	shard_2_0 -> send_2_0
+	send_2_0 -> linear1_2_0
+	linear1_2_0 -> activation_2_0
+	activation_2_0 -> linear2_2_0
+	linear2_2_0 -> recv_2_0
+	recv_2_0 -> combine_2_0
+	combine_2_0 -> residual2_2_0
+	residual2_2_0 -> ln2_2_0
+	ln2_1_1 -> mha_2_1
+	mha_2_1 -> residual1_2_1
+	residual1_2_1 -> ln1_2_1
+	ln1_2_1 -> gate_2_1
+	ln1_2_1 -> shard_2_1
+	gate_2_1 -> shard_2_1 [style=dashed]
+	shard_2_1 -> send_2_1
+	send_2_1 -> linear1_2_1
+	linear1_2_1 -> activation_2_1
+	activation_2_1 -> linear2_2_1
+	linear2_2_1 -> recv_2_1
+	recv_2_1 -> combine_2_1
+	combine_2_1 -> residual2_2_1
+	residual2_2_1 -> ln2_2_1
+	ln2_1_2 -> mha_2_2
+	mha_2_2 -> residual1_2_2
+	residual1_2_2 -> ln1_2_2
+	ln1_2_2 -> gate_2_2
+	ln1_2_2 -> shard_2_2
+	gate_2_2 -> shard_2_2 [style=dashed]
+	shard_2_2 -> send_2_2
+	send_2_2 -> linear1_2_2
+	linear1_2_2 -> activation_2_2
+	activation_2_2 -> linear2_2_2
+	linear2_2_2 -> recv_2_2
+	recv_2_2 -> combine_2_2
+	combine_2_2 -> residual2_2_2
+	residual2_2_2 -> ln2_2_2
+	ln2_1_3 -> mha_2_3
+	mha_2_3 -> residual1_2_3
+	residual1_2_3 -> ln1_2_3
+	ln1_2_3 -> gate_2_3
+	ln1_2_3 -> shard_2_3
+	gate_2_3 -> shard_2_3 [style=dashed]
+	shard_2_3 -> send_2_3
+	send_2_3 -> linear1_2_3
+	linear1_2_3 -> activation_2_3
+	activation_2_3 -> linear2_2_3
+	linear2_2_3 -> recv_2_3
+	recv_2_3 -> combine_2_3
+	combine_2_3 -> residual2_2_3
+	residual2_2_3 -> ln2_2_3
+	ln2_1_4 -> mha_2_4
+	mha_2_4 -> residual1_2_4
+	residual1_2_4 -> ln1_2_4
+	ln1_2_4 -> gate_2_4
+	ln1_2_4 -> shard_2_4
+	gate_2_4 -> shard_2_4 [style=dashed]
+	shard_2_4 -> send_2_4
+	send_2_4 -> linear1_2_4
+	linear1_2_4 -> activation_2_4
+	activation_2_4 -> linear2_2_4
+	linear2_2_4 -> recv_2_4
+	recv_2_4 -> combine_2_4
+	combine_2_4 -> residual2_2_4
+	residual2_2_4 -> ln2_2_4
+	ln2_1_5 -> mha_2_5
+	mha_2_5 -> residual1_2_5
+	residual1_2_5 -> ln1_2_5
+	ln1_2_5 -> gate_2_5
+	ln1_2_5 -> shard_2_5
+	gate_2_5 -> shard_2_5 [style=dashed]
+	shard_2_5 -> send_2_5
+	send_2_5 -> linear1_2_5
+	linear1_2_5 -> activation_2_5
+	activation_2_5 -> linear2_2_5
+	linear2_2_5 -> recv_2_5
+	recv_2_5 -> combine_2_5
+	combine_2_5 -> residual2_2_5
+	residual2_2_5 -> ln2_2_5
+	ln2_1_6 -> mha_2_6
+	mha_2_6 -> residual1_2_6
+	residual1_2_6 -> ln1_2_6
+	ln1_2_6 -> gate_2_6
+	ln1_2_6 -> shard_2_6
+	gate_2_6 -> shard_2_6 [style=dashed]
+	shard_2_6 -> send_2_6
+	send_2_6 -> linear1_2_6
+	linear1_2_6 -> activation_2_6
+	activation_2_6 -> linear2_2_6
+	linear2_2_6 -> recv_2_6
+	recv_2_6 -> combine_2_6
+	combine_2_6 -> residual2_2_6
+	residual2_2_6 -> ln2_2_6
+	ln2_1_7 -> mha_2_7
+	mha_2_7 -> residual1_2_7
+	residual1_2_7 -> ln1_2_7
+	ln1_2_7 -> gate_2_7
+	ln1_2_7 -> shard_2_7
+	gate_2_7 -> shard_2_7 [style=dashed]
+	shard_2_7 -> send_2_7
+	send_2_7 -> linear1_2_7
+	linear1_2_7 -> activation_2_7
+	activation_2_7 -> linear2_2_7
+	linear2_2_7 -> recv_2_7
+	recv_2_7 -> combine_2_7
+	combine_2_7 -> residual2_2_7
+	residual2_2_7 -> ln2_2_7
+	ln2_1_8 -> mha_2_8
+	mha_2_8 -> residual1_2_8
+	residual1_2_8 -> ln1_2_8
+	ln1_2_8 -> gate_2_8
+	ln1_2_8 -> shard_2_8
+	gate_2_8 -> shard_2_8 [style=dashed]
+	shard_2_8 -> send_2_8
+	send_2_8 -> linear1_2_8
+	linear1_2_8 -> activation_2_8
+	activation_2_8 -> linear2_2_8
+	linear2_2_8 -> recv_2_8
+	recv_2_8 -> combine_2_8
+	combine_2_8 -> residual2_2_8
+	residual2_2_8 -> ln2_2_8
+	ln2_1_9 -> mha_2_9
+	mha_2_9 -> residual1_2_9
+	residual1_2_9 -> ln1_2_9
+	ln1_2_9 -> gate_2_9
+	ln1_2_9 -> shard_2_9
+	gate_2_9 -> shard_2_9 [style=dashed]
+	shard_2_9 -> send_2_9
+	send_2_9 -> linear1_2_9
+	linear1_2_9 -> activation_2_9
+	activation_2_9 -> linear2_2_9
+	linear2_2_9 -> recv_2_9
+	recv_2_9 -> combine_2_9
+	combine_2_9 -> residual2_2_9
+	residual2_2_9 -> ln2_2_9
+	ln2_1_10 -> mha_2_10
+	mha_2_10 -> residual1_2_10
+	residual1_2_10 -> ln1_2_10
+	ln1_2_10 -> gate_2_10
+	ln1_2_10 -> shard_2_10
+	gate_2_10 -> shard_2_10 [style=dashed]
+	shard_2_10 -> send_2_10
+	send_2_10 -> linear1_2_10
+	linear1_2_10 -> activation_2_10
+	activation_2_10 -> linear2_2_10
+	linear2_2_10 -> recv_2_10
+	recv_2_10 -> combine_2_10
+	combine_2_10 -> residual2_2_10
+	residual2_2_10 -> ln2_2_10
+	ln2_1_11 -> mha_2_11
+	mha_2_11 -> residual1_2_11
+	residual1_2_11 -> ln1_2_11
+	ln1_2_11 -> gate_2_11
+	ln1_2_11 -> shard_2_11
+	gate_2_11 -> shard_2_11 [style=dashed]
+	shard_2_11 -> send_2_11
+	send_2_11 -> linear1_2_11
+	linear1_2_11 -> activation_2_11
+	activation_2_11 -> linear2_2_11
+	linear2_2_11 -> recv_2_11
+	recv_2_11 -> combine_2_11
+	combine_2_11 -> residual2_2_11
+	residual2_2_11 -> ln2_2_11
+	ln2_1_12 -> mha_2_12
+	mha_2_12 -> residual1_2_12
+	residual1_2_12 -> ln1_2_12
+	ln1_2_12 -> gate_2_12
+	ln1_2_12 -> shard_2_12
+	gate_2_12 -> shard_2_12 [style=dashed]
+	shard_2_12 -> send_2_12
+	send_2_12 -> linear1_2_12
+	linear1_2_12 -> activation_2_12
+	activation_2_12 -> linear2_2_12
+	linear2_2_12 -> recv_2_12
+	recv_2_12 -> combine_2_12
+	combine_2_12 -> residual2_2_12
+	residual2_2_12 -> ln2_2_12
+	ln2_1_13 -> mha_2_13
+	mha_2_13 -> residual1_2_13
+	residual1_2_13 -> ln1_2_13
+	ln1_2_13 -> gate_2_13
+	ln1_2_13 -> shard_2_13
+	gate_2_13 -> shard_2_13 [style=dashed]
+	shard_2_13 -> send_2_13
+	send_2_13 -> linear1_2_13
+	linear1_2_13 -> activation_2_13
+	activation_2_13 -> linear2_2_13
+	linear2_2_13 -> recv_2_13
+	recv_2_13 -> combine_2_13
+	combine_2_13 -> residual2_2_13
+	residual2_2_13 -> ln2_2_13
+	ln2_1_14 -> mha_2_14
+	mha_2_14 -> residual1_2_14
+	residual1_2_14 -> ln1_2_14
+	ln1_2_14 -> gate_2_14
+	ln1_2_14 -> shard_2_14
+	gate_2_14 -> shard_2_14 [style=dashed]
+	shard_2_14 -> send_2_14
+	send_2_14 -> linear1_2_14
+	linear1_2_14 -> activation_2_14
+	activation_2_14 -> linear2_2_14
+	linear2_2_14 -> recv_2_14
+	recv_2_14 -> combine_2_14
+	combine_2_14 -> residual2_2_14
+	residual2_2_14 -> ln2_2_14
+	ln2_1_15 -> mha_2_15
+	mha_2_15 -> residual1_2_15
+	residual1_2_15 -> ln1_2_15
+	ln1_2_15 -> gate_2_15
+	ln1_2_15 -> shard_2_15
+	gate_2_15 -> shard_2_15 [style=dashed]
+	shard_2_15 -> send_2_15
+	send_2_15 -> linear1_2_15
+	linear1_2_15 -> activation_2_15
+	activation_2_15 -> linear2_2_15
+	linear2_2_15 -> recv_2_15
+	recv_2_15 -> combine_2_15
+	combine_2_15 -> residual2_2_15
+	residual2_2_15 -> ln2_2_15
+	ln2_2_0 -> mha_3_0
+	mha_3_0 -> residual1_3_0
+	residual1_3_0 -> ln1_3_0
+	ln1_3_0 -> gate_3_0
+	ln1_3_0 -> shard_3_0
+	gate_3_0 -> shard_3_0 [style=dashed]
+	shard_3_0 -> send_3_0
+	send_3_0 -> linear1_3_0
+	linear1_3_0 -> activation_3_0
+	activation_3_0 -> linear2_3_0
+	linear2_3_0 -> recv_3_0
+	recv_3_0 -> combine_3_0
+	combine_3_0 -> residual2_3_0
+	residual2_3_0 -> ln2_3_0
+	ln2_2_1 -> mha_3_1
+	mha_3_1 -> residual1_3_1
+	residual1_3_1 -> ln1_3_1
+	ln1_3_1 -> gate_3_1
+	ln1_3_1 -> shard_3_1
+	gate_3_1 -> shard_3_1 [style=dashed]
+	shard_3_1 -> send_3_1
+	send_3_1 -> linear1_3_1
+	linear1_3_1 -> activation_3_1
+	activation_3_1 -> linear2_3_1
+	linear2_3_1 -> recv_3_1
+	recv_3_1 -> combine_3_1
+	combine_3_1 -> residual2_3_1
+	residual2_3_1 -> ln2_3_1
+	ln2_2_2 -> mha_3_2
+	mha_3_2 -> residual1_3_2
+	residual1_3_2 -> ln1_3_2
+	ln1_3_2 -> gate_3_2
+	ln1_3_2 -> shard_3_2
+	gate_3_2 -> shard_3_2 [style=dashed]
+	shard_3_2 -> send_3_2
+	send_3_2 -> linear1_3_2
+	linear1_3_2 -> activation_3_2
+	activation_3_2 -> linear2_3_2
+	linear2_3_2 -> recv_3_2
+	recv_3_2 -> combine_3_2
+	combine_3_2 -> residual2_3_2
+	residual2_3_2 -> ln2_3_2
+	ln2_2_3 -> mha_3_3
+	mha_3_3 -> residual1_3_3
+	residual1_3_3 -> ln1_3_3
+	ln1_3_3 -> gate_3_3
+	ln1_3_3 -> shard_3_3
+	gate_3_3 -> shard_3_3 [style=dashed]
+	shard_3_3 -> send_3_3
+	send_3_3 -> linear1_3_3
+	linear1_3_3 -> activation_3_3
+	activation_3_3 -> linear2_3_3
+	linear2_3_3 -> recv_3_3
+	recv_3_3 -> combine_3_3
+	combine_3_3 -> residual2_3_3
+	residual2_3_3 -> ln2_3_3
+	ln2_2_4 -> mha_3_4
+	mha_3_4 -> residual1_3_4
+	residual1_3_4 -> ln1_3_4
+	ln1_3_4 -> gate_3_4
+	ln1_3_4 -> shard_3_4
+	gate_3_4 -> shard_3_4 [style=dashed]
+	shard_3_4 -> send_3_4
+	send_3_4 -> linear1_3_4
+	linear1_3_4 -> activation_3_4
+	activation_3_4 -> linear2_3_4
+	linear2_3_4 -> recv_3_4
+	recv_3_4 -> combine_3_4
+	combine_3_4 -> residual2_3_4
+	residual2_3_4 -> ln2_3_4
+	ln2_2_5 -> mha_3_5
+	mha_3_5 -> residual1_3_5
+	residual1_3_5 -> ln1_3_5
+	ln1_3_5 -> gate_3_5
+	ln1_3_5 -> shard_3_5
+	gate_3_5 -> shard_3_5 [style=dashed]
+	shard_3_5 -> send_3_5
+	send_3_5 -> linear1_3_5
+	linear1_3_5 -> activation_3_5
+	activation_3_5 -> linear2_3_5
+	linear2_3_5 -> recv_3_5
+	recv_3_5 -> combine_3_5
+	combine_3_5 -> residual2_3_5
+	residual2_3_5 -> ln2_3_5
+	ln2_2_6 -> mha_3_6
+	mha_3_6 -> residual1_3_6
+	residual1_3_6 -> ln1_3_6
+	ln1_3_6 -> gate_3_6
+	ln1_3_6 -> shard_3_6
+	gate_3_6 -> shard_3_6 [style=dashed]
+	shard_3_6 -> send_3_6
+	send_3_6 -> linear1_3_6
+	linear1_3_6 -> activation_3_6
+	activation_3_6 -> linear2_3_6
+	linear2_3_6 -> recv_3_6
+	recv_3_6 -> combine_3_6
+	combine_3_6 -> residual2_3_6
+	residual2_3_6 -> ln2_3_6
+	ln2_2_7 -> mha_3_7
+	mha_3_7 -> residual1_3_7
+	residual1_3_7 -> ln1_3_7
+	ln1_3_7 -> gate_3_7
+	ln1_3_7 -> shard_3_7
+	gate_3_7 -> shard_3_7 [style=dashed]
+	shard_3_7 -> send_3_7
+	send_3_7 -> linear1_3_7
+	linear1_3_7 -> activation_3_7
+	activation_3_7 -> linear2_3_7
+	linear2_3_7 -> recv_3_7
+	recv_3_7 -> combine_3_7
+	combine_3_7 -> residual2_3_7
+	residual2_3_7 -> ln2_3_7
+	ln2_2_8 -> mha_3_8
+	mha_3_8 -> residual1_3_8
+	residual1_3_8 -> ln1_3_8
+	ln1_3_8 -> gate_3_8
+	ln1_3_8 -> shard_3_8
+	gate_3_8 -> shard_3_8 [style=dashed]
+	shard_3_8 -> send_3_8
+	send_3_8 -> linear1_3_8
+	linear1_3_8 -> activation_3_8
+	activation_3_8 -> linear2_3_8
+	linear2_3_8 -> recv_3_8
+	recv_3_8 -> combine_3_8
+	combine_3_8 -> residual2_3_8
+	residual2_3_8 -> ln2_3_8
+	ln2_2_9 -> mha_3_9
+	mha_3_9 -> residual1_3_9
+	residual1_3_9 -> ln1_3_9
+	ln1_3_9 -> gate_3_9
+	ln1_3_9 -> shard_3_9
+	gate_3_9 -> shard_3_9 [style=dashed]
+	shard_3_9 -> send_3_9
+	send_3_9 -> linear1_3_9
+	linear1_3_9 -> activation_3_9
+	activation_3_9 -> linear2_3_9
+	linear2_3_9 -> recv_3_9
+	recv_3_9 -> combine_3_9
+	combine_3_9 -> residual2_3_9
+	residual2_3_9 -> ln2_3_9
+	ln2_2_10 -> mha_3_10
+	mha_3_10 -> residual1_3_10
+	residual1_3_10 -> ln1_3_10
+	ln1_3_10 -> gate_3_10
+	ln1_3_10 -> shard_3_10
+	gate_3_10 -> shard_3_10 [style=dashed]
+	shard_3_10 -> send_3_10
+	send_3_10 -> linear1_3_10
+	linear1_3_10 -> activation_3_10
+	activation_3_10 -> linear2_3_10
+	linear2_3_10 -> recv_3_10
+	recv_3_10 -> combine_3_10
+	combine_3_10 -> residual2_3_10
+	residual2_3_10 -> ln2_3_10
+	ln2_2_11 -> mha_3_11
+	mha_3_11 -> residual1_3_11
+	residual1_3_11 -> ln1_3_11
+	ln1_3_11 -> gate_3_11
+	ln1_3_11 -> shard_3_11
+	gate_3_11 -> shard_3_11 [style=dashed]
+	shard_3_11 -> send_3_11
+	send_3_11 -> linear1_3_11
+	linear1_3_11 -> activation_3_11
+	activation_3_11 -> linear2_3_11
+	linear2_3_11 -> recv_3_11
+	recv_3_11 -> combine_3_11
+	combine_3_11 -> residual2_3_11
+	residual2_3_11 -> ln2_3_11
+	ln2_2_12 -> mha_3_12
+	mha_3_12 -> residual1_3_12
+	residual1_3_12 -> ln1_3_12
+	ln1_3_12 -> gate_3_12
+	ln1_3_12 -> shard_3_12
+	gate_3_12 -> shard_3_12 [style=dashed]
+	shard_3_12 -> send_3_12
+	send_3_12 -> linear1_3_12
+	linear1_3_12 -> activation_3_12
+	activation_3_12 -> linear2_3_12
+	linear2_3_12 -> recv_3_12
+	recv_3_12 -> combine_3_12
+	combine_3_12 -> residual2_3_12
+	residual2_3_12 -> ln2_3_12
+	ln2_2_13 -> mha_3_13
+	mha_3_13 -> residual1_3_13
+	residual1_3_13 -> ln1_3_13
+	ln1_3_13 -> gate_3_13
+	ln1_3_13 -> shard_3_13
+	gate_3_13 -> shard_3_13 [style=dashed]
+	shard_3_13 -> send_3_13
+	send_3_13 -> linear1_3_13
+	linear1_3_13 -> activation_3_13
+	activation_3_13 -> linear2_3_13
+	linear2_3_13 -> recv_3_13
+	recv_3_13 -> combine_3_13
+	combine_3_13 -> residual2_3_13
+	residual2_3_13 -> ln2_3_13
+	ln2_2_14 -> mha_3_14
+	mha_3_14 -> residual1_3_14
+	residual1_3_14 -> ln1_3_14
+	ln1_3_14 -> gate_3_14
+	ln1_3_14 -> shard_3_14
+	gate_3_14 -> shard_3_14 [style=dashed]
+	shard_3_14 -> send_3_14
+	send_3_14 -> linear1_3_14
+	linear1_3_14 -> activation_3_14
+	activation_3_14 -> linear2_3_14
+	linear2_3_14 -> recv_3_14
+	recv_3_14 -> combine_3_14
+	combine_3_14 -> residual2_3_14
+	residual2_3_14 -> ln2_3_14
+	ln2_2_15 -> mha_3_15
+	mha_3_15 -> residual1_3_15
+	residual1_3_15 -> ln1_3_15
+	ln1_3_15 -> gate_3_15
+	ln1_3_15 -> shard_3_15
+	gate_3_15 -> shard_3_15 [style=dashed]
+	shard_3_15 -> send_3_15
+	send_3_15 -> linear1_3_15
+	linear1_3_15 -> activation_3_15
+	activation_3_15 -> linear2_3_15
+	linear2_3_15 -> recv_3_15
+	recv_3_15 -> combine_3_15
+	combine_3_15 -> residual2_3_15
+	residual2_3_15 -> ln2_3_15
+	output [label="Total Output\nShape: [1024, 10000, 8192]" fillcolor=lightgray shape=ellipse style=filled]
+	ln2_3_0 -> output
+	ln2_3_1 -> output
+	ln2_3_2 -> output
+	ln2_3_3 -> output
+	ln2_3_4 -> output
+	ln2_3_5 -> output
+	ln2_3_6 -> output
+	ln2_3_7 -> output
+	ln2_3_8 -> output
+	ln2_3_9 -> output
+	ln2_3_10 -> output
+	ln2_3_11 -> output
+	ln2_3_12 -> output
+	ln2_3_13 -> output
+	ln2_3_14 -> output
+	ln2_3_15 -> output
+}

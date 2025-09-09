@@ -1,0 +1,42 @@
+{
+  "generated_dags": {
+    "baseline_moe": {
+      "name": "Baseline MoE DAG (TP=8, PP=2)",
+      "description": "Traditional MoE deployment with Tensor Parallelism=8 and Pipeline Parallelism=2 on 16 GPUs",
+      "files": {
+        "dot_file": "/home/wzc/data/file-share/2025-09-09-10-35-11/baseline_moe_dag.dot",
+        "svg_file": "/home/wzc/data/file-share/2025-09-09-10-35-11/baseline_moe_dag.svg"
+      },
+      "configuration": {
+        "gpus_used": 16,
+        "tensor_parallelism": 8,
+        "pipeline_parallelism": 2,
+        "experts_per_layer": 16,
+        "experts_per_gpu": 4,
+        "deployment_strategy": "colocated"
+      }
+    },
+    "proposed_moe": {
+      "name": "Proposed Cross-Node Expert Parallelism DAG (EP=64)",
+      "description": "Cross-node expert parallelism with one expert per GPU across 64 GPUs",
+      "files": {
+        "dot_file": "/home/wzc/data/file-share/2025-09-09-10-35-11/proposed_moe_dag.dot",
+        "svg_file": "/home/wzc/data/file-share/2025-09-09-10-35-11/proposed_moe_dag.svg"
+      },
+      "configuration": {
+        "gpus_used": 64,
+        "expert_parallelism": 64,
+        "experts_per_layer": 16,
+        "experts_per_gpu": 1,
+        "deployment_strategy": "distributed"
+      }
+    }
+  },
+  "generation_metadata": {
+    "timestamp": "2025-09-09T10:51:00Z",
+    "generator": "assistant",
+    "models_analyzed": ["baseline_moe", "proposed_moe"],
+    "total_files_generated": 4,
+    "formats": ["dot", "svg"]
+  }
+}

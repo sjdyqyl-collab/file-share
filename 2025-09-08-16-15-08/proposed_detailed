@@ -1,0 +1,685 @@
+digraph proposed_moe_64gpus {
+	nodesep=1.0 rankdir=TB ranksep=2.0 size="60,50"
+	input [label="Total Input\n[Batch: 1024×10000,\nHidden: 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	subgraph cluster_expert_0_0 {
+		color=red label="Expert 0\nGPU 0" style=rounded
+		expert_0_0_linear1 [label="Linear 1\n[8192→32768]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_0_gelu [label="GELU\n[32768]\nGPU 0" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_0_linear2 [label="Linear 2\n[32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_0_linear1 -> expert_0_0_gelu
+		expert_0_0_gelu -> expert_0_0_linear2
+	}
+	subgraph cluster_expert_0_1 {
+		color=red label="Expert 1\nGPU 1" style=rounded
+		expert_0_1_linear1 [label="Linear 1\n[8192→32768]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_1_gelu [label="GELU\n[32768]\nGPU 1" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_1_linear2 [label="Linear 2\n[32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_1_linear1 -> expert_0_1_gelu
+		expert_0_1_gelu -> expert_0_1_linear2
+	}
+	subgraph cluster_expert_0_2 {
+		color=red label="Expert 2\nGPU 2" style=rounded
+		expert_0_2_linear1 [label="Linear 1\n[8192→32768]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_2_gelu [label="GELU\n[32768]\nGPU 2" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_2_linear2 [label="Linear 2\n[32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_2_linear1 -> expert_0_2_gelu
+		expert_0_2_gelu -> expert_0_2_linear2
+	}
+	subgraph cluster_expert_0_3 {
+		color=red label="Expert 3\nGPU 3" style=rounded
+		expert_0_3_linear1 [label="Linear 1\n[8192→32768]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_3_gelu [label="GELU\n[32768]\nGPU 3" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_3_linear2 [label="Linear 2\n[32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_3_linear1 -> expert_0_3_gelu
+		expert_0_3_gelu -> expert_0_3_linear2
+	}
+	subgraph cluster_expert_0_4 {
+		color=red label="Expert 4\nGPU 4" style=rounded
+		expert_0_4_linear1 [label="Linear 1\n[8192→32768]\nGPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_4_gelu [label="GELU\n[32768]\nGPU 4" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_4_linear2 [label="Linear 2\n[32768→8192]\nGPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_4_linear1 -> expert_0_4_gelu
+		expert_0_4_gelu -> expert_0_4_linear2
+	}
+	subgraph cluster_expert_0_5 {
+		color=red label="Expert 5\nGPU 5" style=rounded
+		expert_0_5_linear1 [label="Linear 1\n[8192→32768]\nGPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_5_gelu [label="GELU\n[32768]\nGPU 5" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_5_linear2 [label="Linear 2\n[32768→8192]\nGPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_5_linear1 -> expert_0_5_gelu
+		expert_0_5_gelu -> expert_0_5_linear2
+	}
+	subgraph cluster_expert_0_6 {
+		color=red label="Expert 6\nGPU 6" style=rounded
+		expert_0_6_linear1 [label="Linear 1\n[8192→32768]\nGPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_6_gelu [label="GELU\n[32768]\nGPU 6" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_6_linear2 [label="Linear 2\n[32768→8192]\nGPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_6_linear1 -> expert_0_6_gelu
+		expert_0_6_gelu -> expert_0_6_linear2
+	}
+	subgraph cluster_expert_0_7 {
+		color=red label="Expert 7\nGPU 7" style=rounded
+		expert_0_7_linear1 [label="Linear 1\n[8192→32768]\nGPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_7_gelu [label="GELU\n[32768]\nGPU 7" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_7_linear2 [label="Linear 2\n[32768→8192]\nGPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_7_linear1 -> expert_0_7_gelu
+		expert_0_7_gelu -> expert_0_7_linear2
+	}
+	subgraph cluster_expert_0_8 {
+		color=red label="Expert 8\nGPU 8" style=rounded
+		expert_0_8_linear1 [label="Linear 1\n[8192→32768]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_8_gelu [label="GELU\n[32768]\nGPU 8" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_8_linear2 [label="Linear 2\n[32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_8_linear1 -> expert_0_8_gelu
+		expert_0_8_gelu -> expert_0_8_linear2
+	}
+	subgraph cluster_expert_0_9 {
+		color=red label="Expert 9\nGPU 9" style=rounded
+		expert_0_9_linear1 [label="Linear 1\n[8192→32768]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_9_gelu [label="GELU\n[32768]\nGPU 9" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_9_linear2 [label="Linear 2\n[32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_9_linear1 -> expert_0_9_gelu
+		expert_0_9_gelu -> expert_0_9_linear2
+	}
+	subgraph cluster_expert_0_10 {
+		color=red label="Expert 10\nGPU 10" style=rounded
+		expert_0_10_linear1 [label="Linear 1\n[8192→32768]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_10_gelu [label="GELU\n[32768]\nGPU 10" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_10_linear2 [label="Linear 2\n[32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_10_linear1 -> expert_0_10_gelu
+		expert_0_10_gelu -> expert_0_10_linear2
+	}
+	subgraph cluster_expert_0_11 {
+		color=red label="Expert 11\nGPU 11" style=rounded
+		expert_0_11_linear1 [label="Linear 1\n[8192→32768]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_11_gelu [label="GELU\n[32768]\nGPU 11" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_11_linear2 [label="Linear 2\n[32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_11_linear1 -> expert_0_11_gelu
+		expert_0_11_gelu -> expert_0_11_linear2
+	}
+	subgraph cluster_expert_0_12 {
+		color=red label="Expert 12\nGPU 12" style=rounded
+		expert_0_12_linear1 [label="Linear 1\n[8192→32768]\nGPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_12_gelu [label="GELU\n[32768]\nGPU 12" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_12_linear2 [label="Linear 2\n[32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_12_linear1 -> expert_0_12_gelu
+		expert_0_12_gelu -> expert_0_12_linear2
+	}
+	subgraph cluster_expert_0_13 {
+		color=red label="Expert 13\nGPU 13" style=rounded
+		expert_0_13_linear1 [label="Linear 1\n[8192→32768]\nGPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_13_gelu [label="GELU\n[32768]\nGPU 13" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_13_linear2 [label="Linear 2\n[32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_13_linear1 -> expert_0_13_gelu
+		expert_0_13_gelu -> expert_0_13_linear2
+	}
+	subgraph cluster_expert_0_14 {
+		color=red label="Expert 14\nGPU 14" style=rounded
+		expert_0_14_linear1 [label="Linear 1\n[8192→32768]\nGPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_14_gelu [label="GELU\n[32768]\nGPU 14" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_14_linear2 [label="Linear 2\n[32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_14_linear1 -> expert_0_14_gelu
+		expert_0_14_gelu -> expert_0_14_linear2
+	}
+	subgraph cluster_expert_0_15 {
+		color=red label="Expert 15\nGPU 15" style=rounded
+		expert_0_15_linear1 [label="Linear 1\n[8192→32768]\nGPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_15_gelu [label="GELU\n[32768]\nGPU 15" fillcolor=lightblue shape=ellipse style=filled]
+		expert_0_15_linear2 [label="Linear 2\n[32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_0_15_linear1 -> expert_0_15_gelu
+		expert_0_15_gelu -> expert_0_15_linear2
+	}
+	subgraph cluster_layer_0 {
+		color=blue fillcolor=aliceblue label="MoE Layer 0\n(Pipeline Stage 0, GPUs 0-15)" style=dashed
+		gate_0 [label="Gating Network\nLayer 0\n[Input: 8192,\nOutput: 16 experts]\nGPU 0" fillcolor=yellow shape=diamond style=filled]
+		router_0 [label="Token Router\nLayer 0\n[Cross-node routing]" fillcolor=orange shape=parallelogram style=filled]
+		aggregator_0 [label="Token Aggregator\nLayer 0\n[Collect from 16 GPUs]" fillcolor=purple shape=parallelogram style=filled]
+		layer_norm_0 [label="Layer Norm\nLayer 0\n[8192]" fillcolor=lightgreen shape=ellipse style=filled]
+		gate_0 -> router_0
+		router_0 -> expert_0_0_linear1 [label="to GPU 0" style=dashed]
+		expert_0_0_linear2 -> aggregator_0
+		router_0 -> expert_0_1_linear1 [label="to GPU 1" style=dashed]
+		expert_0_1_linear2 -> aggregator_0
+		router_0 -> expert_0_2_linear1 [label="to GPU 2" style=dashed]
+		expert_0_2_linear2 -> aggregator_0
+		router_0 -> expert_0_3_linear1 [label="to GPU 3" style=dashed]
+		expert_0_3_linear2 -> aggregator_0
+		router_0 -> expert_0_4_linear1 [label="to GPU 4" style=dashed]
+		expert_0_4_linear2 -> aggregator_0
+		router_0 -> expert_0_5_linear1 [label="to GPU 5" style=dashed]
+		expert_0_5_linear2 -> aggregator_0
+		router_0 -> expert_0_6_linear1 [label="to GPU 6" style=dashed]
+		expert_0_6_linear2 -> aggregator_0
+		router_0 -> expert_0_7_linear1 [label="to GPU 7" style=dashed]
+		expert_0_7_linear2 -> aggregator_0
+		router_0 -> expert_0_8_linear1 [label="to GPU 8" style=dashed]
+		expert_0_8_linear2 -> aggregator_0
+		router_0 -> expert_0_9_linear1 [label="to GPU 9" style=dashed]
+		expert_0_9_linear2 -> aggregator_0
+		router_0 -> expert_0_10_linear1 [label="to GPU 10" style=dashed]
+		expert_0_10_linear2 -> aggregator_0
+		router_0 -> expert_0_11_linear1 [label="to GPU 11" style=dashed]
+		expert_0_11_linear2 -> aggregator_0
+		router_0 -> expert_0_12_linear1 [label="to GPU 12" style=dashed]
+		expert_0_12_linear2 -> aggregator_0
+		router_0 -> expert_0_13_linear1 [label="to GPU 13" style=dashed]
+		expert_0_13_linear2 -> aggregator_0
+		router_0 -> expert_0_14_linear1 [label="to GPU 14" style=dashed]
+		expert_0_14_linear2 -> aggregator_0
+		router_0 -> expert_0_15_linear1 [label="to GPU 15" style=dashed]
+		expert_0_15_linear2 -> aggregator_0
+		aggregator_0 -> layer_norm_0
+	}
+	subgraph cluster_expert_1_0 {
+		color=red label="Expert 0\nGPU 16" style=rounded
+		expert_1_0_linear1 [label="Linear 1\n[8192→32768]\nGPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_0_gelu [label="GELU\n[32768]\nGPU 16" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_0_linear2 [label="Linear 2\n[32768→8192]\nGPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_0_linear1 -> expert_1_0_gelu
+		expert_1_0_gelu -> expert_1_0_linear2
+	}
+	subgraph cluster_expert_1_1 {
+		color=red label="Expert 1\nGPU 17" style=rounded
+		expert_1_1_linear1 [label="Linear 1\n[8192→32768]\nGPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_1_gelu [label="GELU\n[32768]\nGPU 17" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_1_linear2 [label="Linear 2\n[32768→8192]\nGPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_1_linear1 -> expert_1_1_gelu
+		expert_1_1_gelu -> expert_1_1_linear2
+	}
+	subgraph cluster_expert_1_2 {
+		color=red label="Expert 2\nGPU 18" style=rounded
+		expert_1_2_linear1 [label="Linear 1\n[8192→32768]\nGPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_2_gelu [label="GELU\n[32768]\nGPU 18" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_2_linear2 [label="Linear 2\n[32768→8192]\nGPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_2_linear1 -> expert_1_2_gelu
+		expert_1_2_gelu -> expert_1_2_linear2
+	}
+	subgraph cluster_expert_1_3 {
+		color=red label="Expert 3\nGPU 19" style=rounded
+		expert_1_3_linear1 [label="Linear 1\n[8192→32768]\nGPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_3_gelu [label="GELU\n[32768]\nGPU 19" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_3_linear2 [label="Linear 2\n[32768→8192]\nGPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_3_linear1 -> expert_1_3_gelu
+		expert_1_3_gelu -> expert_1_3_linear2
+	}
+	subgraph cluster_expert_1_4 {
+		color=red label="Expert 4\nGPU 20" style=rounded
+		expert_1_4_linear1 [label="Linear 1\n[8192→32768]\nGPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_4_gelu [label="GELU\n[32768]\nGPU 20" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_4_linear2 [label="Linear 2\n[32768→8192]\nGPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_4_linear1 -> expert_1_4_gelu
+		expert_1_4_gelu -> expert_1_4_linear2
+	}
+	subgraph cluster_expert_1_5 {
+		color=red label="Expert 5\nGPU 21" style=rounded
+		expert_1_5_linear1 [label="Linear 1\n[8192→32768]\nGPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_5_gelu [label="GELU\n[32768]\nGPU 21" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_5_linear2 [label="Linear 2\n[32768→8192]\nGPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_5_linear1 -> expert_1_5_gelu
+		expert_1_5_gelu -> expert_1_5_linear2
+	}
+	subgraph cluster_expert_1_6 {
+		color=red label="Expert 6\nGPU 22" style=rounded
+		expert_1_6_linear1 [label="Linear 1\n[8192→32768]\nGPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_6_gelu [label="GELU\n[32768]\nGPU 22" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_6_linear2 [label="Linear 2\n[32768→8192]\nGPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_6_linear1 -> expert_1_6_gelu
+		expert_1_6_gelu -> expert_1_6_linear2
+	}
+	subgraph cluster_expert_1_7 {
+		color=red label="Expert 7\nGPU 23" style=rounded
+		expert_1_7_linear1 [label="Linear 1\n[8192→32768]\nGPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_7_gelu [label="GELU\n[32768]\nGPU 23" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_7_linear2 [label="Linear 2\n[32768→8192]\nGPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_7_linear1 -> expert_1_7_gelu
+		expert_1_7_gelu -> expert_1_7_linear2
+	}
+	subgraph cluster_expert_1_8 {
+		color=red label="Expert 8\nGPU 24" style=rounded
+		expert_1_8_linear1 [label="Linear 1\n[8192→32768]\nGPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_8_gelu [label="GELU\n[32768]\nGPU 24" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_8_linear2 [label="Linear 2\n[32768→8192]\nGPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_8_linear1 -> expert_1_8_gelu
+		expert_1_8_gelu -> expert_1_8_linear2
+	}
+	subgraph cluster_expert_1_9 {
+		color=red label="Expert 9\nGPU 25" style=rounded
+		expert_1_9_linear1 [label="Linear 1\n[8192→32768]\nGPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_9_gelu [label="GELU\n[32768]\nGPU 25" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_9_linear2 [label="Linear 2\n[32768→8192]\nGPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_9_linear1 -> expert_1_9_gelu
+		expert_1_9_gelu -> expert_1_9_linear2
+	}
+	subgraph cluster_expert_1_10 {
+		color=red label="Expert 10\nGPU 26" style=rounded
+		expert_1_10_linear1 [label="Linear 1\n[8192→32768]\nGPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_10_gelu [label="GELU\n[32768]\nGPU 26" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_10_linear2 [label="Linear 2\n[32768→8192]\nGPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_10_linear1 -> expert_1_10_gelu
+		expert_1_10_gelu -> expert_1_10_linear2
+	}
+	subgraph cluster_expert_1_11 {
+		color=red label="Expert 11\nGPU 27" style=rounded
+		expert_1_11_linear1 [label="Linear 1\n[8192→32768]\nGPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_11_gelu [label="GELU\n[32768]\nGPU 27" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_11_linear2 [label="Linear 2\n[32768→8192]\nGPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_11_linear1 -> expert_1_11_gelu
+		expert_1_11_gelu -> expert_1_11_linear2
+	}
+	subgraph cluster_expert_1_12 {
+		color=red label="Expert 12\nGPU 28" style=rounded
+		expert_1_12_linear1 [label="Linear 1\n[8192→32768]\nGPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_12_gelu [label="GELU\n[32768]\nGPU 28" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_12_linear2 [label="Linear 2\n[32768→8192]\nGPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_12_linear1 -> expert_1_12_gelu
+		expert_1_12_gelu -> expert_1_12_linear2
+	}
+	subgraph cluster_expert_1_13 {
+		color=red label="Expert 13\nGPU 29" style=rounded
+		expert_1_13_linear1 [label="Linear 1\n[8192→32768]\nGPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_13_gelu [label="GELU\n[32768]\nGPU 29" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_13_linear2 [label="Linear 2\n[32768→8192]\nGPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_13_linear1 -> expert_1_13_gelu
+		expert_1_13_gelu -> expert_1_13_linear2
+	}
+	subgraph cluster_expert_1_14 {
+		color=red label="Expert 14\nGPU 30" style=rounded
+		expert_1_14_linear1 [label="Linear 1\n[8192→32768]\nGPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_14_gelu [label="GELU\n[32768]\nGPU 30" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_14_linear2 [label="Linear 2\n[32768→8192]\nGPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_14_linear1 -> expert_1_14_gelu
+		expert_1_14_gelu -> expert_1_14_linear2
+	}
+	subgraph cluster_expert_1_15 {
+		color=red label="Expert 15\nGPU 31" style=rounded
+		expert_1_15_linear1 [label="Linear 1\n[8192→32768]\nGPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_15_gelu [label="GELU\n[32768]\nGPU 31" fillcolor=lightblue shape=ellipse style=filled]
+		expert_1_15_linear2 [label="Linear 2\n[32768→8192]\nGPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_1_15_linear1 -> expert_1_15_gelu
+		expert_1_15_gelu -> expert_1_15_linear2
+	}
+	subgraph cluster_layer_1 {
+		color=blue fillcolor=aliceblue label="MoE Layer 1\n(Pipeline Stage 1, GPUs 16-31)" style=dashed
+		gate_1 [label="Gating Network\nLayer 1\n[Input: 8192,\nOutput: 16 experts]\nGPU 16" fillcolor=yellow shape=diamond style=filled]
+		router_1 [label="Token Router\nLayer 1\n[Cross-node routing]" fillcolor=orange shape=parallelogram style=filled]
+		aggregator_1 [label="Token Aggregator\nLayer 1\n[Collect from 16 GPUs]" fillcolor=purple shape=parallelogram style=filled]
+		layer_norm_1 [label="Layer Norm\nLayer 1\n[8192]" fillcolor=lightgreen shape=ellipse style=filled]
+		gate_1 -> router_1
+		router_1 -> expert_1_0_linear1 [label="to GPU 16" style=dashed]
+		expert_1_0_linear2 -> aggregator_1
+		router_1 -> expert_1_1_linear1 [label="to GPU 17" style=dashed]
+		expert_1_1_linear2 -> aggregator_1
+		router_1 -> expert_1_2_linear1 [label="to GPU 18" style=dashed]
+		expert_1_2_linear2 -> aggregator_1
+		router_1 -> expert_1_3_linear1 [label="to GPU 19" style=dashed]
+		expert_1_3_linear2 -> aggregator_1
+		router_1 -> expert_1_4_linear1 [label="to GPU 20" style=dashed]
+		expert_1_4_linear2 -> aggregator_1
+		router_1 -> expert_1_5_linear1 [label="to GPU 21" style=dashed]
+		expert_1_5_linear2 -> aggregator_1
+		router_1 -> expert_1_6_linear1 [label="to GPU 22" style=dashed]
+		expert_1_6_linear2 -> aggregator_1
+		router_1 -> expert_1_7_linear1 [label="to GPU 23" style=dashed]
+		expert_1_7_linear2 -> aggregator_1
+		router_1 -> expert_1_8_linear1 [label="to GPU 24" style=dashed]
+		expert_1_8_linear2 -> aggregator_1
+		router_1 -> expert_1_9_linear1 [label="to GPU 25" style=dashed]
+		expert_1_9_linear2 -> aggregator_1
+		router_1 -> expert_1_10_linear1 [label="to GPU 26" style=dashed]
+		expert_1_10_linear2 -> aggregator_1
+		router_1 -> expert_1_11_linear1 [label="to GPU 27" style=dashed]
+		expert_1_11_linear2 -> aggregator_1
+		router_1 -> expert_1_12_linear1 [label="to GPU 28" style=dashed]
+		expert_1_12_linear2 -> aggregator_1
+		router_1 -> expert_1_13_linear1 [label="to GPU 29" style=dashed]
+		expert_1_13_linear2 -> aggregator_1
+		router_1 -> expert_1_14_linear1 [label="to GPU 30" style=dashed]
+		expert_1_14_linear2 -> aggregator_1
+		router_1 -> expert_1_15_linear1 [label="to GPU 31" style=dashed]
+		expert_1_15_linear2 -> aggregator_1
+		aggregator_1 -> layer_norm_1
+	}
+	subgraph cluster_expert_2_0 {
+		color=red label="Expert 0\nGPU 32" style=rounded
+		expert_2_0_linear1 [label="Linear 1\n[8192→32768]\nGPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_0_gelu [label="GELU\n[32768]\nGPU 32" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_0_linear2 [label="Linear 2\n[32768→8192]\nGPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_0_linear1 -> expert_2_0_gelu
+		expert_2_0_gelu -> expert_2_0_linear2
+	}
+	subgraph cluster_expert_2_1 {
+		color=red label="Expert 1\nGPU 33" style=rounded
+		expert_2_1_linear1 [label="Linear 1\n[8192→32768]\nGPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_1_gelu [label="GELU\n[32768]\nGPU 33" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_1_linear2 [label="Linear 2\n[32768→8192]\nGPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_1_linear1 -> expert_2_1_gelu
+		expert_2_1_gelu -> expert_2_1_linear2
+	}
+	subgraph cluster_expert_2_2 {
+		color=red label="Expert 2\nGPU 34" style=rounded
+		expert_2_2_linear1 [label="Linear 1\n[8192→32768]\nGPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_2_gelu [label="GELU\n[32768]\nGPU 34" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_2_linear2 [label="Linear 2\n[32768→8192]\nGPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_2_linear1 -> expert_2_2_gelu
+		expert_2_2_gelu -> expert_2_2_linear2
+	}
+	subgraph cluster_expert_2_3 {
+		color=red label="Expert 3\nGPU 35" style=rounded
+		expert_2_3_linear1 [label="Linear 1\n[8192→32768]\nGPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_3_gelu [label="GELU\n[32768]\nGPU 35" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_3_linear2 [label="Linear 2\n[32768→8192]\nGPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_3_linear1 -> expert_2_3_gelu
+		expert_2_3_gelu -> expert_2_3_linear2
+	}
+	subgraph cluster_expert_2_4 {
+		color=red label="Expert 4\nGPU 36" style=rounded
+		expert_2_4_linear1 [label="Linear 1\n[8192→32768]\nGPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_4_gelu [label="GELU\n[32768]\nGPU 36" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_4_linear2 [label="Linear 2\n[32768→8192]\nGPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_4_linear1 -> expert_2_4_gelu
+		expert_2_4_gelu -> expert_2_4_linear2
+	}
+	subgraph cluster_expert_2_5 {
+		color=red label="Expert 5\nGPU 37" style=rounded
+		expert_2_5_linear1 [label="Linear 1\n[8192→32768]\nGPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_5_gelu [label="GELU\n[32768]\nGPU 37" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_5_linear2 [label="Linear 2\n[32768→8192]\nGPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_5_linear1 -> expert_2_5_gelu
+		expert_2_5_gelu -> expert_2_5_linear2
+	}
+	subgraph cluster_expert_2_6 {
+		color=red label="Expert 6\nGPU 38" style=rounded
+		expert_2_6_linear1 [label="Linear 1\n[8192→32768]\nGPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_6_gelu [label="GELU\n[32768]\nGPU 38" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_6_linear2 [label="Linear 2\n[32768→8192]\nGPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_6_linear1 -> expert_2_6_gelu
+		expert_2_6_gelu -> expert_2_6_linear2
+	}
+	subgraph cluster_expert_2_7 {
+		color=red label="Expert 7\nGPU 39" style=rounded
+		expert_2_7_linear1 [label="Linear 1\n[8192→32768]\nGPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_7_gelu [label="GELU\n[32768]\nGPU 39" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_7_linear2 [label="Linear 2\n[32768→8192]\nGPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_7_linear1 -> expert_2_7_gelu
+		expert_2_7_gelu -> expert_2_7_linear2
+	}
+	subgraph cluster_expert_2_8 {
+		color=red label="Expert 8\nGPU 40" style=rounded
+		expert_2_8_linear1 [label="Linear 1\n[8192→32768]\nGPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_8_gelu [label="GELU\n[32768]\nGPU 40" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_8_linear2 [label="Linear 2\n[32768→8192]\nGPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_8_linear1 -> expert_2_8_gelu
+		expert_2_8_gelu -> expert_2_8_linear2
+	}
+	subgraph cluster_expert_2_9 {
+		color=red label="Expert 9\nGPU 41" style=rounded
+		expert_2_9_linear1 [label="Linear 1\n[8192→32768]\nGPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_9_gelu [label="GELU\n[32768]\nGPU 41" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_9_linear2 [label="Linear 2\n[32768→8192]\nGPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_9_linear1 -> expert_2_9_gelu
+		expert_2_9_gelu -> expert_2_9_linear2
+	}
+	subgraph cluster_expert_2_10 {
+		color=red label="Expert 10\nGPU 42" style=rounded
+		expert_2_10_linear1 [label="Linear 1\n[8192→32768]\nGPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_10_gelu [label="GELU\n[32768]\nGPU 42" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_10_linear2 [label="Linear 2\n[32768→8192]\nGPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_10_linear1 -> expert_2_10_gelu
+		expert_2_10_gelu -> expert_2_10_linear2
+	}
+	subgraph cluster_expert_2_11 {
+		color=red label="Expert 11\nGPU 43" style=rounded
+		expert_2_11_linear1 [label="Linear 1\n[8192→32768]\nGPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_11_gelu [label="GELU\n[32768]\nGPU 43" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_11_linear2 [label="Linear 2\n[32768→8192]\nGPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_11_linear1 -> expert_2_11_gelu
+		expert_2_11_gelu -> expert_2_11_linear2
+	}
+	subgraph cluster_expert_2_12 {
+		color=red label="Expert 12\nGPU 44" style=rounded
+		expert_2_12_linear1 [label="Linear 1\n[8192→32768]\nGPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_12_gelu [label="GELU\n[32768]\nGPU 44" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_12_linear2 [label="Linear 2\n[32768→8192]\nGPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_12_linear1 -> expert_2_12_gelu
+		expert_2_12_gelu -> expert_2_12_linear2
+	}
+	subgraph cluster_expert_2_13 {
+		color=red label="Expert 13\nGPU 45" style=rounded
+		expert_2_13_linear1 [label="Linear 1\n[8192→32768]\nGPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_13_gelu [label="GELU\n[32768]\nGPU 45" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_13_linear2 [label="Linear 2\n[32768→8192]\nGPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_13_linear1 -> expert_2_13_gelu
+		expert_2_13_gelu -> expert_2_13_linear2
+	}
+	subgraph cluster_expert_2_14 {
+		color=red label="Expert 14\nGPU 46" style=rounded
+		expert_2_14_linear1 [label="Linear 1\n[8192→32768]\nGPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_14_gelu [label="GELU\n[32768]\nGPU 46" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_14_linear2 [label="Linear 2\n[32768→8192]\nGPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_14_linear1 -> expert_2_14_gelu
+		expert_2_14_gelu -> expert_2_14_linear2
+	}
+	subgraph cluster_expert_2_15 {
+		color=red label="Expert 15\nGPU 47" style=rounded
+		expert_2_15_linear1 [label="Linear 1\n[8192→32768]\nGPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_15_gelu [label="GELU\n[32768]\nGPU 47" fillcolor=lightblue shape=ellipse style=filled]
+		expert_2_15_linear2 [label="Linear 2\n[32768→8192]\nGPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_2_15_linear1 -> expert_2_15_gelu
+		expert_2_15_gelu -> expert_2_15_linear2
+	}
+	subgraph cluster_layer_2 {
+		color=blue fillcolor=aliceblue label="MoE Layer 2\n(Pipeline Stage 2, GPUs 32-47)" style=dashed
+		gate_2 [label="Gating Network\nLayer 2\n[Input: 8192,\nOutput: 16 experts]\nGPU 32" fillcolor=yellow shape=diamond style=filled]
+		router_2 [label="Token Router\nLayer 2\n[Cross-node routing]" fillcolor=orange shape=parallelogram style=filled]
+		aggregator_2 [label="Token Aggregator\nLayer 2\n[Collect from 16 GPUs]" fillcolor=purple shape=parallelogram style=filled]
+		layer_norm_2 [label="Layer Norm\nLayer 2\n[8192]" fillcolor=lightgreen shape=ellipse style=filled]
+		gate_2 -> router_2
+		router_2 -> expert_2_0_linear1 [label="to GPU 32" style=dashed]
+		expert_2_0_linear2 -> aggregator_2
+		router_2 -> expert_2_1_linear1 [label="to GPU 33" style=dashed]
+		expert_2_1_linear2 -> aggregator_2
+		router_2 -> expert_2_2_linear1 [label="to GPU 34" style=dashed]
+		expert_2_2_linear2 -> aggregator_2
+		router_2 -> expert_2_3_linear1 [label="to GPU 35" style=dashed]
+		expert_2_3_linear2 -> aggregator_2
+		router_2 -> expert_2_4_linear1 [label="to GPU 36" style=dashed]
+		expert_2_4_linear2 -> aggregator_2
+		router_2 -> expert_2_5_linear1 [label="to GPU 37" style=dashed]
+		expert_2_5_linear2 -> aggregator_2
+		router_2 -> expert_2_6_linear1 [label="to GPU 38" style=dashed]
+		expert_2_6_linear2 -> aggregator_2
+		router_2 -> expert_2_7_linear1 [label="to GPU 39" style=dashed]
+		expert_2_7_linear2 -> aggregator_2
+		router_2 -> expert_2_8_linear1 [label="to GPU 40" style=dashed]
+		expert_2_8_linear2 -> aggregator_2
+		router_2 -> expert_2_9_linear1 [label="to GPU 41" style=dashed]
+		expert_2_9_linear2 -> aggregator_2
+		router_2 -> expert_2_10_linear1 [label="to GPU 42" style=dashed]
+		expert_2_10_linear2 -> aggregator_2
+		router_2 -> expert_2_11_linear1 [label="to GPU 43" style=dashed]
+		expert_2_11_linear2 -> aggregator_2
+		router_2 -> expert_2_12_linear1 [label="to GPU 44" style=dashed]
+		expert_2_12_linear2 -> aggregator_2
+		router_2 -> expert_2_13_linear1 [label="to GPU 45" style=dashed]
+		expert_2_13_linear2 -> aggregator_2
+		router_2 -> expert_2_14_linear1 [label="to GPU 46" style=dashed]
+		expert_2_14_linear2 -> aggregator_2
+		router_2 -> expert_2_15_linear1 [label="to GPU 47" style=dashed]
+		expert_2_15_linear2 -> aggregator_2
+		aggregator_2 -> layer_norm_2
+	}
+	subgraph cluster_expert_3_0 {
+		color=red label="Expert 0\nGPU 48" style=rounded
+		expert_3_0_linear1 [label="Linear 1\n[8192→32768]\nGPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_0_gelu [label="GELU\n[32768]\nGPU 48" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_0_linear2 [label="Linear 2\n[32768→8192]\nGPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_0_linear1 -> expert_3_0_gelu
+		expert_3_0_gelu -> expert_3_0_linear2
+	}
+	subgraph cluster_expert_3_1 {
+		color=red label="Expert 1\nGPU 49" style=rounded
+		expert_3_1_linear1 [label="Linear 1\n[8192→32768]\nGPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_1_gelu [label="GELU\n[32768]\nGPU 49" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_1_linear2 [label="Linear 2\n[32768→8192]\nGPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_1_linear1 -> expert_3_1_gelu
+		expert_3_1_gelu -> expert_3_1_linear2
+	}
+	subgraph cluster_expert_3_2 {
+		color=red label="Expert 2\nGPU 50" style=rounded
+		expert_3_2_linear1 [label="Linear 1\n[8192→32768]\nGPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_2_gelu [label="GELU\n[32768]\nGPU 50" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_2_linear2 [label="Linear 2\n[32768→8192]\nGPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_2_linear1 -> expert_3_2_gelu
+		expert_3_2_gelu -> expert_3_2_linear2
+	}
+	subgraph cluster_expert_3_3 {
+		color=red label="Expert 3\nGPU 51" style=rounded
+		expert_3_3_linear1 [label="Linear 1\n[8192→32768]\nGPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_3_gelu [label="GELU\n[32768]\nGPU 51" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_3_linear2 [label="Linear 2\n[32768→8192]\nGPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_3_linear1 -> expert_3_3_gelu
+		expert_3_3_gelu -> expert_3_3_linear2
+	}
+	subgraph cluster_expert_3_4 {
+		color=red label="Expert 4\nGPU 52" style=rounded
+		expert_3_4_linear1 [label="Linear 1\n[8192→32768]\nGPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_4_gelu [label="GELU\n[32768]\nGPU 52" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_4_linear2 [label="Linear 2\n[32768→8192]\nGPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_4_linear1 -> expert_3_4_gelu
+		expert_3_4_gelu -> expert_3_4_linear2
+	}
+	subgraph cluster_expert_3_5 {
+		color=red label="Expert 5\nGPU 53" style=rounded
+		expert_3_5_linear1 [label="Linear 1\n[8192→32768]\nGPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_5_gelu [label="GELU\n[32768]\nGPU 53" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_5_linear2 [label="Linear 2\n[32768→8192]\nGPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_5_linear1 -> expert_3_5_gelu
+		expert_3_5_gelu -> expert_3_5_linear2
+	}
+	subgraph cluster_expert_3_6 {
+		color=red label="Expert 6\nGPU 54" style=rounded
+		expert_3_6_linear1 [label="Linear 1\n[8192→32768]\nGPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_6_gelu [label="GELU\n[32768]\nGPU 54" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_6_linear2 [label="Linear 2\n[32768→8192]\nGPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_6_linear1 -> expert_3_6_gelu
+		expert_3_6_gelu -> expert_3_6_linear2
+	}
+	subgraph cluster_expert_3_7 {
+		color=red label="Expert 7\nGPU 55" style=rounded
+		expert_3_7_linear1 [label="Linear 1\n[8192→32768]\nGPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_7_gelu [label="GELU\n[32768]\nGPU 55" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_7_linear2 [label="Linear 2\n[32768→8192]\nGPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_7_linear1 -> expert_3_7_gelu
+		expert_3_7_gelu -> expert_3_7_linear2
+	}
+	subgraph cluster_expert_3_8 {
+		color=red label="Expert 8\nGPU 56" style=rounded
+		expert_3_8_linear1 [label="Linear 1\n[8192→32768]\nGPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_8_gelu [label="GELU\n[32768]\nGPU 56" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_8_linear2 [label="Linear 2\n[32768→8192]\nGPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_8_linear1 -> expert_3_8_gelu
+		expert_3_8_gelu -> expert_3_8_linear2
+	}
+	subgraph cluster_expert_3_9 {
+		color=red label="Expert 9\nGPU 57" style=rounded
+		expert_3_9_linear1 [label="Linear 1\n[8192→32768]\nGPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_9_gelu [label="GELU\n[32768]\nGPU 57" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_9_linear2 [label="Linear 2\n[32768→8192]\nGPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_9_linear1 -> expert_3_9_gelu
+		expert_3_9_gelu -> expert_3_9_linear2
+	}
+	subgraph cluster_expert_3_10 {
+		color=red label="Expert 10\nGPU 58" style=rounded
+		expert_3_10_linear1 [label="Linear 1\n[8192→32768]\nGPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_10_gelu [label="GELU\n[32768]\nGPU 58" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_10_linear2 [label="Linear 2\n[32768→8192]\nGPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_10_linear1 -> expert_3_10_gelu
+		expert_3_10_gelu -> expert_3_10_linear2
+	}
+	subgraph cluster_expert_3_11 {
+		color=red label="Expert 11\nGPU 59" style=rounded
+		expert_3_11_linear1 [label="Linear 1\n[8192→32768]\nGPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_11_gelu [label="GELU\n[32768]\nGPU 59" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_11_linear2 [label="Linear 2\n[32768→8192]\nGPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_11_linear1 -> expert_3_11_gelu
+		expert_3_11_gelu -> expert_3_11_linear2
+	}
+	subgraph cluster_expert_3_12 {
+		color=red label="Expert 12\nGPU 60" style=rounded
+		expert_3_12_linear1 [label="Linear 1\n[8192→32768]\nGPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_12_gelu [label="GELU\n[32768]\nGPU 60" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_12_linear2 [label="Linear 2\n[32768→8192]\nGPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_12_linear1 -> expert_3_12_gelu
+		expert_3_12_gelu -> expert_3_12_linear2
+	}
+	subgraph cluster_expert_3_13 {
+		color=red label="Expert 13\nGPU 61" style=rounded
+		expert_3_13_linear1 [label="Linear 1\n[8192→32768]\nGPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_13_gelu [label="GELU\n[32768]\nGPU 61" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_13_linear2 [label="Linear 2\n[32768→8192]\nGPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_13_linear1 -> expert_3_13_gelu
+		expert_3_13_gelu -> expert_3_13_linear2
+	}
+	subgraph cluster_expert_3_14 {
+		color=red label="Expert 14\nGPU 62" style=rounded
+		expert_3_14_linear1 [label="Linear 1\n[8192→32768]\nGPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_14_gelu [label="GELU\n[32768]\nGPU 62" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_14_linear2 [label="Linear 2\n[32768→8192]\nGPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_14_linear1 -> expert_3_14_gelu
+		expert_3_14_gelu -> expert_3_14_linear2
+	}
+	subgraph cluster_expert_3_15 {
+		color=red label="Expert 15\nGPU 63" style=rounded
+		expert_3_15_linear1 [label="Linear 1\n[8192→32768]\nGPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_15_gelu [label="GELU\n[32768]\nGPU 63" fillcolor=lightblue shape=ellipse style=filled]
+		expert_3_15_linear2 [label="Linear 2\n[32768→8192]\nGPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+		expert_3_15_linear1 -> expert_3_15_gelu
+		expert_3_15_gelu -> expert_3_15_linear2
+	}
+	subgraph cluster_layer_3 {
+		color=blue fillcolor=aliceblue label="MoE Layer 3\n(Pipeline Stage 3, GPUs 48-63)" style=dashed
+		gate_3 [label="Gating Network\nLayer 3\n[Input: 8192,\nOutput: 16 experts]\nGPU 48" fillcolor=yellow shape=diamond style=filled]
+		router_3 [label="Token Router\nLayer 3\n[Cross-node routing]" fillcolor=orange shape=parallelogram style=filled]
+		aggregator_3 [label="Token Aggregator\nLayer 3\n[Collect from 16 GPUs]" fillcolor=purple shape=parallelogram style=filled]
+		layer_norm_3 [label="Layer Norm\nLayer 3\n[8192]" fillcolor=lightgreen shape=ellipse style=filled]
+		gate_3 -> router_3
+		router_3 -> expert_3_0_linear1 [label="to GPU 48" style=dashed]
+		expert_3_0_linear2 -> aggregator_3
+		router_3 -> expert_3_1_linear1 [label="to GPU 49" style=dashed]
+		expert_3_1_linear2 -> aggregator_3
+		router_3 -> expert_3_2_linear1 [label="to GPU 50" style=dashed]
+		expert_3_2_linear2 -> aggregator_3
+		router_3 -> expert_3_3_linear1 [label="to GPU 51" style=dashed]
+		expert_3_3_linear2 -> aggregator_3
+		router_3 -> expert_3_4_linear1 [label="to GPU 52" style=dashed]
+		expert_3_4_linear2 -> aggregator_3
+		router_3 -> expert_3_5_linear1 [label="to GPU 53" style=dashed]
+		expert_3_5_linear2 -> aggregator_3
+		router_3 -> expert_3_6_linear1 [label="to GPU 54" style=dashed]
+		expert_3_6_linear2 -> aggregator_3
+		router_3 -> expert_3_7_linear1 [label="to GPU 55" style=dashed]
+		expert_3_7_linear2 -> aggregator_3
+		router_3 -> expert_3_8_linear1 [label="to GPU 56" style=dashed]
+		expert_3_8_linear2 -> aggregator_3
+		router_3 -> expert_3_9_linear1 [label="to GPU 57" style=dashed]
+		expert_3_9_linear2 -> aggregator_3
+		router_3 -> expert_3_10_linear1 [label="to GPU 58" style=dashed]
+		expert_3_10_linear2 -> aggregator_3
+		router_3 -> expert_3_11_linear1 [label="to GPU 59" style=dashed]
+		expert_3_11_linear2 -> aggregator_3
+		router_3 -> expert_3_12_linear1 [label="to GPU 60" style=dashed]
+		expert_3_12_linear2 -> aggregator_3
+		router_3 -> expert_3_13_linear1 [label="to GPU 61" style=dashed]
+		expert_3_13_linear2 -> aggregator_3
+		router_3 -> expert_3_14_linear1 [label="to GPU 62" style=dashed]
+		expert_3_14_linear2 -> aggregator_3
+		router_3 -> expert_3_15_linear1 [label="to GPU 63" style=dashed]
+		expert_3_15_linear2 -> aggregator_3
+		aggregator_3 -> layer_norm_3
+	}
+	layer_norm_0 -> gate_1
+	layer_norm_1 -> gate_2
+	layer_norm_2 -> gate_3
+	output [label="Final Output\n[Batch: 1024×10000,\nHidden: 8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_norm_3 -> output
+}

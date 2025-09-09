@@ -1,0 +1,56 @@
+digraph G {
+    rankdir=TB;
+    node [shape=rectangle];
+    
+    // Input node
+    input [label="Input\n[INPUT DIMENSION=1x1024x4096]\nGPU: all", shape=ellipse];
+    
+    // Pipeline Stage 1 (Layers 1-8 on GPUs 0-7)
+    subgraph cluster_stage1 {
+        label="Pipeline Stage 1 (GPUs 0-7)";
+        style=dashed;
+        
+        // Layer 1 - Tensor Parallel across GPUs 0-7
+        layer1_input [label="Layer1 Input\n[INPUT DIMENSION=1x1024x4096]\nGPU: 0-7", shape=ellipse];
+        layer1_attn_q [label="Layer1 Attention Q\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer1_attn_k [label="Layer1 Attention K\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer1_attn_v [label="Layer1 Attention V\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer1_attn_out [label="Layer1 Attention Output\n[INPUT DIMENSION=1x1024x512, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer1_res1 [label="Layer1 Residual Add 1\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer1_mlp_fc1 [label="Layer1 MLP FC1\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x16384]\nGPU: 0-7"];
+        layer1_mlp_fc2 [label="Layer1 MLP FC2\n[INPUT DIMENSION=1x1024x16384, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer1_res2 [label="Layer1 Residual Add 2\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer1_output [label="Layer1 Output\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        
+        // Layer 2 - Tensor Parallel across GPUs 0-7
+        layer2_input [label="Layer2 Input\n[INPUT DIMENSION=1x1024x4096]\nGPU: 0-7", shape=ellipse];
+        layer2_attn_q [label="Layer2 Attention Q\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer2_attn_k [label="Layer2 Attention K\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer2_attn_v [label="Layer2 Attention V\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer2_attn_out [label="Layer2 Attention Output\n[INPUT DIMENSION=1x1024x512, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer2_res1 [label="Layer2 Residual Add 1\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer2_mlp_fc1 [label="Layer2 MLP FC1\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x16384]\nGPU: 0-7"];
+        layer2_mlp_fc2 [label="Layer2 MLP FC2\n[INPUT DIMENSION=1x1024x16384, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer2_res2 [label="Layer2 Residual Add 2\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer2_output [label="Layer2 Output\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        
+        // Layer 3 - Tensor Parallel across GPUs 0-7
+        layer3_input [label="Layer3 Input\n[INPUT DIMENSION=1x1024x4096]\nGPU: 0-7", shape=ellipse];
+        layer3_attn_q [label="Layer3 Attention Q\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer3_attn_k [label="Layer3 Attention K\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer3_attn_v [label="Layer3 Attention V\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer3_attn_out [label="Layer3 Attention Output\n[INPUT DIMENSION=1x1024x512, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer3_res1 [label="Layer3 Residual Add 1\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer3_mlp_fc1 [label="Layer3 MLP FC1\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x16384]\nGPU: 0-7"];
+        layer3_mlp_fc2 [label="Layer3 MLP FC2\n[INPUT DIMENSION=1x1024x16384, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer3_res2 [label="Layer3 Residual Add 2\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer3_output [label="Layer3 Output\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        
+        // Layer 4 - Tensor Parallel across GPUs 0-7
+        layer4_input [label="Layer4 Input\n[INPUT DIMENSION=1x1024x4096]\nGPU: 0-7", shape=ellipse];
+        layer4_attn_q [label="Layer4 Attention Q\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer4_attn_k [label="Layer4 Attention K\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer4_attn_v [label="Layer4 Attention V\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x512]\nGPU: 0-7"];
+        layer4_attn_out [label="Layer4 Attention Output\n[INPUT DIMENSION=1x1024x512, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer4_res1 [label="Layer4 Residual Add 1\n[INPUT DIMENSION=1x1024x4096, OUTPUT DIMENSION=1x1024x4096]\nGPU: 0-7"];
+        layer4_mlp_fc1 [label="Layer4 MLP FC1\n[INPUT DIMENSION=1x1024x

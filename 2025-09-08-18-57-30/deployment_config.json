@@ -1,0 +1,161 @@
+{
+  "deployment_configurations": {
+    "baseline_tensor_pipeline_parallel": {
+      "name": "Baseline TP=8, PP=2",
+      "model_type": "dense_16_layer",
+      "parallel_strategy": {
+        "type": "hybrid_parallel",
+        "tensor_parallelism": {
+          "degree": 8,
+          "strategy": "column_and_row_parallel",
+          "parameters": {
+            "attention_qkv": "column_parallel",
+            "attention_output": "row_parallel", 
+            "mlp_first_linear": "column_parallel",
+            "mlp_second_linear": "row_parallel"
+          }
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2,
+          "layers_per_stage": 8
+        }
+      },
+      "hardware_mapping": {
+        "total_gpus": 16,
+        "gpu_type": "NVIDIA_H100",
+        "mapping_strategy": "grid",
+        "device_grid": {
+          "tensor_parallel_group": 8,
+          "pipeline_parallel_group": 2
+        }
+      },
+      "memory_requirements": {
+        "per_layer_memory_mb": 901,
+        "total_model_memory_mb": 14416,
+        "per_device_memory_mb": 1802,
+        "cache_capacity_required_mb": 901,
+        "precision": "FP16",
+        "batch_size": 1024
+      },
+      "communication_pattern": {
+        "tensor_parallel_comm": "all_reduce_within_groups",
+        "pipeline_parallel_comm": "send_recv_between_stages",
+        "bandwidth_gb_s": 600
+      }
+    },
+    "proposed_layer_wise": {
+      "name": "Proposed Layer-wise Deployment",
+      "model_type": "dense_16_layer",
+      "parallel_strategy": {
+        "type": "layer_wise_parallel",
+        "partitioning_algorithm": "greedy_layer_aggregation",
+        "cache_constraint_mb": 901,
+        "partitions": 16,
+        "layers_per_partition": 1,
+        "partition_boundaries": [
+          {"partition_id": 0, "layers": [0], "size_mb": 901},
+          {"partition_id": 1, "layers": [1], "size_mb": 901},
+          {"partition_id": 2, "layers": [2], "size_mb": 901},
+          {"partition_id": 3, "layers": [3], "size_mb": 901},
+          {"partition_id": 4, "layers": [4], "size_mb": 901},
+          {"partition_id": 5, "layers": [5], "size_mb": 901},
+          {"partition_id": 6, "layers": [6], "size_mb": 901},
+          {"partition_id": 7, "layers": [7], "size_mb": 901},
+          {"partition_id": 8, "layers": [8], "size_mb": 901},
+          {"partition_id": 9, "layers": [9], "size_mb": 901},
+          {"partition_id": 10, "layers": [10], "size_mb": 901},
+          {"partition_id": 11, "layers": [11], "size_mb": 901},
+          {"partition_id": 12, "layers": [12], "size_mb": 901},
+          {"partition_id": 13, "layers": [13], "size_mb": 901},
+          {"partition_id": 14, "layers": [14], "size_mb": 901},
+          {"partition_id": 15, "layers": [15], "size_mb": 901}
+        ]
+      },
+      "hardware_mapping": {
+        "total_gpus": 16,
+        "gpu_type": "NVIDIA_H100",
+        "mapping_strategy": "linear_assignment",
+        "device_assignment": {
+          "gpu_0": {"partition_id": 0, "layers": [0]},
+          "gpu_1": {"partition_id": 1, "layers": [1]},
+          "gpu_2": {"partition_id": 2, "layers": [2]},
+          "gpu_3": {"partition_id": 3, "layers": [3]},
+          "gpu_4": {"partition_id": 4, "layers": [4]},
+          "gpu_5": {"partition_id": 5, "layers": [5]},
+          "gpu_6": {"partition_id": 6, "layers": [6]},
+          "gpu_7": {"partition_id": 7, "layers": [7]},
+          "gpu_8": {"partition_id": 8, "layers": [8]},
+          "gpu_9": {"partition_id": 9, "layers": [9]},
+          "gpu_10": {"partition_id": 10, "layers": [10]},
+          "gpu_11": {"partition_id": 11, "layers": [11]},
+          "gpu_12": {"partition_id": 12, "layers": [12]},
+          "gpu_13": {"partition_id": 13, "layers": [13]},
+          "gpu_14": {"partition_id": 14, "layers": [14]},
+          "gpu_15": {"partition_id": 15, "layers": [15]}
+        }
+      },
+      "memory_requirements": {
+        "per_layer_memory_mb": 901,
+        "total_model_memory_mb": 14416,
+        "per_device_memory_mb": 901,
+        "cache_capacity_required_mb": 901,
+        "precision": "FP16",
+        "batch_size": 1024,
+        "memory_breakdown": {
+          "weights_mb": 805,
+          "activations_mb": 16,
+          "buffers_mb": 80
+        }
+      },
+      "communication_pattern": {
+        "type": "pipeline_communication",
+        "pattern": "sequential_layer_transfer",
+        "bandwidth_gb_s": 600,
+        "transfer_size_mb": 16,
+        "communication_points": [
+          {"from_gpu": 0, "to_gpu": 1, "transfer_layer": 0, "size_mb": 16},
+          {"from_gpu": 1, "to_gpu": 2, "transfer_layer": 1, "size_mb": 16},
+          {"from_gpu": 2, "to_gpu": 3, "transfer_layer": 2, "size_mb": 16},
+          {"from_gpu": 3, "to_gpu": 4, "transfer_layer": 3, "size_mb": 16},
+          {"from_gpu": 4, "to_gpu": 5, "transfer_layer": 4, "size_mb": 16},
+          {"from_gpu": 5, "to_gpu": 6, "transfer_layer": 5, "size_mb": 16},
+          {"from_gpu": 6, "to_gpu": 7, "transfer_layer": 6, "size_mb": 16},
+          {"from_gpu": 7, "to_gpu": 8, "transfer_layer": 7, "size_mb": 16},
+          {"from_gpu": 8, "to_gpu": 9, "transfer_layer": 8, "size_mb": 16},
+          {"from_gpu": 9, "to_gpu": 10, "transfer_layer": 9, "size_mb": 16},
+          {"from_gpu": 10, "to_gpu": 11, "transfer_layer": 10, "size_mb": 16},
+          {"from_gpu": 11, "to_gpu": 12, "transfer_layer": 11, "size_mb": 16},
+          {"from_gpu": 12, "to_gpu": 13, "transfer_layer": 12, "size_mb": 16},
+          {"from_gpu": 13, "to_gpu": 14, "transfer_layer": 13, "size_mb": 16},
+          {"from_gpu": 14, "to_gpu": 15, "transfer_layer": 14, "size_mb": 16}
+        ]
+      },
+      "performance_metrics": {
+        "expected_tps": 15360,
+        "expected_tpot_ms": 0.065,
+        "improvement_over_baseline": {
+          "tps_increase_percent": 20,
+          "tpot_decrease_percent": 17
+        }
+      }
+    }
+  },
+  "model_architecture": {
+    "type": "dense_transformer",
+    "layers": 16,
+    "hidden_size": 8192,
+    "attention_heads": 16,
+    "head_dimension": 512,
+    "mlp_hidden_size": 32768,
+    "precision": "FP16",
+    "vocab_size": 51200,
+    "max_sequence_length": 2048
+  },
+  "deployment_validation": {
+    "cache_capacity_check": true,
+    "memory_footprint_verified": 901,
+    "partition_sizes_balanced": true,
+    "communication_overhead_minimized": true
+  }
+}

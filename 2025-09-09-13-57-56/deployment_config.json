@@ -1,0 +1,234 @@
+{
+  "baseline_deployment": {
+    "name": "Baseline_TP8_PP2",
+    "total_gpus": 16,
+    "parallel_strategy": {
+      "tensor_parallelism": {
+        "tp_degree": 8,
+        "tp_method": "column_row_parallel"
+      },
+      "pipeline_parallelism": {
+        "pp_degree": 2,
+        "pp_stages": 2
+      },
+      "expert_parallelism": {
+        "ep_degree": 1,
+        "experts_per_gpu": 4
+      }
+    },
+    "model_modules": {
+      "moe_layers": 4,
+      "experts_per_layer": 16,
+      "total_experts": 64,
+      "expert_architecture": {
+        "type": "MLP",
+        "input_dim": 8192,
+        "hidden_dim": 32768,
+        "output_dim": 8192,
+        "activation": "GELU"
+      },
+      "attention_module": {
+        "num_heads": 16,
+        "head_dim": 512,
+        "total_dim": 8192
+      }
+    },
+    "device_mapping": {
+      "pipeline_stage_0": {
+        "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+        "layers": [0, 1],
+        "experts_per_gpu": 4,
+        "experts_distribution": {
+          "gpu_0": ["layer0_expert0", "layer0_expert1", "layer0_expert2", "layer0_expert3"],
+          "gpu_1": ["layer0_expert4", "layer0_expert5", "layer0_expert6", "layer0_expert7"],
+          "gpu_2": ["layer0_expert8", "layer0_expert9", "layer0_expert10", "layer0_expert11"],
+          "gpu_3": ["layer0_expert12", "layer0_expert13", "layer0_expert14", "layer0_expert15"],
+          "gpu_4": ["layer1_expert0", "layer1_expert1", "layer1_expert2", "layer1_expert3"],
+          "gpu_5": ["layer1_expert4", "layer1_expert5", "layer1_expert6", "layer1_expert7"],
+          "gpu_6": ["layer1_expert8", "layer1_expert9", "layer1_expert10", "layer1_expert11"],
+          "gpu_7": ["layer1_expert12", "layer1_expert13", "layer1_expert14", "layer1_expert15"]
+        }
+      },
+      "pipeline_stage_1": {
+        "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+        "layers": [2, 3],
+        "experts_per_gpu": 4,
+        "experts_distribution": {
+          "gpu_8": ["layer2_expert0", "layer2_expert1", "layer2_expert2", "layer2_expert3"],
+          "gpu_9": ["layer2_expert4", "layer2_expert5", "layer2_expert6", "layer2_expert7"],
+          "gpu_10": ["layer2_expert8", "layer2_expert9", "layer2_expert10", "layer2_expert11"],
+          "gpu_11": ["layer2_expert12", "layer2_expert13", "layer2_expert14", "layer2_expert15"],
+          "gpu_12": ["layer3_expert0", "layer3_expert1", "layer3_expert2", "layer3_expert3"],
+          "gpu_13": ["layer3_expert4", "layer3_expert5", "layer3_expert6", "layer3_expert7"],
+          "gpu_14": ["layer3_expert8", "layer3_expert9", "layer3_expert10", "layer3_expert11"],
+          "gpu_15": ["layer3_expert12", "layer3_expert13", "layer3_expert14", "layer3_expert15"]
+        }
+      }
+    },
+    "communication_pattern": {
+      "tensor_parallel_comm": "all_reduce_within_tp_group",
+      "pipeline_parallel_comm": "send_recv_between_stages",
+      "expert_communication": "none_due_to_colocation"
+    }
+  },
+  "proposed_deployment": {
+    "name": "Large_EP_Cross_Node",
+    "total_gpus": 64,
+    "parallel_strategy": {
+      "expert_parallelism": {
+        "ep_degree": 64,
+        "experts_per_gpu": 1,
+        "cross_node": true
+      },
+      "tensor_parallelism": {
+        "tp_degree": 1,
+        "tp_optional": {
+          "condition": "expert_exceeds_memory",
+          "tp_degree": 2,
+          "apply_within_expert": true
+        }
+      },
+      "pipeline_parallelism": {
+        "pp_degree": 4,
+        "pp_method": "layer_as_micro_stage"
+      }
+    },
+    "model_modules": {
+      "moe_layers": 4,
+      "experts_per_layer": 16,
+      "total_experts": 64,
+      "expert_architecture": {
+        "type": "MLP",
+        "input_dim": 8192,
+        "hidden_dim": 32768,
+        "output_dim": 8192,
+        "activation": "GELU"
+      },
+      "attention_module": {
+        "num_heads": 16,
+        "head_dim": 512,
+        "total_dim": 8192
+      }
+    },
+    "device_mapping": {
+      "layer_0_experts": {
+        "gpus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        "expert_distribution": {
+          "gpu_0": "layer0_expert0",
+          "gpu_1": "layer0_expert1",
+          "gpu_2": "layer0_expert2",
+          "gpu_3": "layer0_expert3",
+          "gpu_4": "layer0_expert4",
+          "gpu_5": "layer0_expert5",
+          "gpu_6": "layer0_expert6",
+          "gpu_7": "layer0_expert7",
+          "gpu_8": "layer0_expert8",
+          "gpu_9": "layer0_expert9",
+          "gpu_10": "layer0_expert10",
+          "gpu_11": "layer0_expert11",
+          "gpu_12": "layer0_expert12",
+          "gpu_13": "layer0_expert13",
+          "gpu_14": "layer0_expert14",
+          "gpu_15": "layer0_expert15"
+        }
+      },
+      "layer_1_experts": {
+        "gpus": [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+        "expert_distribution": {
+          "gpu_16": "layer1_expert0",
+          "gpu_17": "layer1_expert1",
+          "gpu_18": "layer1_expert2",
+          "gpu_19": "layer1_expert3",
+          "gpu_20": "layer1_expert4",
+          "gpu_21": "layer1_expert5",
+          "gpu_22": "layer1_expert6",
+          "gpu_23": "layer1_expert7",
+          "gpu_24": "layer1_expert8",
+          "gpu_25": "layer1_expert9",
+          "gpu_26": "layer1_expert10",
+          "gpu_27": "layer1_expert11",
+          "gpu_28": "layer1_expert12",
+          "gpu_29": "layer1_expert13",
+          "gpu_30": "layer1_expert14",
+          "gpu_31": "layer1_expert15"
+        }
+      },
+      "layer_2_experts": {
+        "gpus": [32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47],
+        "expert_distribution": {
+          "gpu_32": "layer2_expert0",
+          "gpu_33": "layer2_expert1",
+          "gpu_34": "layer2_expert2",
+          "gpu_35": "layer2_expert3",
+          "gpu_36": "layer2_expert4",
+          "gpu_37": "layer2_expert5",
+          "gpu_38": "layer2_expert6",
+          "gpu_39": "layer2_expert7",
+          "gpu_40": "layer2_expert8",
+          "gpu_41": "layer2_expert9",
+          "gpu_42": "layer2_expert10",
+          "gpu_43": "layer2_expert11",
+          "gpu_44": "layer2_expert12",
+          "gpu_45": "layer2_expert13",
+          "gpu_46": "layer2_expert14",
+          "gpu_47": "layer2_expert15"
+        }
+      },
+      "layer_3_experts": {
+        "gpus": [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63],
+        "expert_distribution": {
+          "gpu_48": "layer3_expert0",
+          "gpu_49": "layer3_expert1",
+          "gpu_50": "layer3_expert2",
+          "gpu_51": "layer3_expert3",
+          "gpu_52": "layer3_expert4",
+          "gpu_53": "layer3_expert5",
+          "gpu_54": "layer3_expert6",
+          "gpu_55": "layer3_expert7",
+          "gpu_56": "layer3_expert8",
+          "gpu_57": "layer3_expert9",
+          "gpu_58": "layer3_expert10",
+          "gpu_59": "layer3_expert11",
+          "gpu_60": "layer3_expert12",
+          "gpu_61": "layer3_expert13",
+          "gpu_62": "layer3_expert14",
+          "gpu_63": "layer3_expert15"
+        }
+      }
+    },
+    "communication_pattern": {
+      "expert_parallel_comm": {
+        "type": "async_token_routing",
+        "mechanism": "nccl_p2p",
+        "overlap": "cuda_streams",
+        "batching": "destination_expert_grouping"
+      },
+      "pipeline_parallel_comm": {
+        "type": "layer_to_layer",
+        "mechanism": "async_send_recv",
+        "overlap": "with_computation"
+      },
+      "tensor_parallel_comm": {
+        "type": "all_reduce",
+        "condition": "if_tp_enabled",
+        "mechanism": "nccl_all_reduce"
+      }
+    },
+    "topology_aware_placement": {
+      "considerations": ["node_bandwidth", "latency_matrix", "gpu_memory_capacity"],
+      "optimization": "minimize_max_link_utilization"
+    }
+  },
+  "runtime_parameters": {
+    "batch_size": 1024,
+    "sequence_length": 10000,
+    "precision": "fp16",
+    "token_dimension": 8192,
+    "mlp_hidden_dimension": 32768,
+    "attention_heads": 16,
+    "attention_head_dimension": 512,
+    "gating_mechanism": "top_k",
+    "communication_backend": "nccl",
+    "overlap_strategy": "cuda_streams"
+  }
+}

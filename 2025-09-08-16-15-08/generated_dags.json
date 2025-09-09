@@ -1,0 +1,58 @@
+{
+  "generated_dags": [
+    {
+      "name": "Baseline MoE DAG (16 GPUs)",
+      "description": "Traditional deployment with TP=8, PP=2, 4 experts per GPU",
+      "configuration": {
+        "total_gpus": 16,
+        "tensor_parallelism": 8,
+        "pipeline_parallelism": 2,
+        "expert_parallelism": 1,
+        "experts_per_gpu": 4,
+        "total_experts": 64
+      },
+      "files": {
+        "svg": "/home/wzc/data/file-share/2025-09-08-16-15-08/baseline_moe_dag.svg",
+        "dot": "/home/wzc/data/file-share/2025-09-08-16-15-08/baseline_moe_dag.dot"
+      }
+    },
+    {
+      "name": "Detailed Baseline MoE DAG (16 GPUs)",
+      "description": "Detailed view showing expert placement and tensor parallelism operations",
+      "configuration": {
+        "total_gpus": 16,
+        "tensor_parallelism": 8,
+        "pipeline_parallelism": 2,
+        "expert_parallelism": 1,
+        "experts_per_gpu": 4,
+        "total_experts": 64
+      },
+      "files": {
+        "svg": "/home/wzc/data/file-share/2025-09-08-16-15-08/detailed_baseline_moe_dag.svg",
+        "dot": "/home/wzc/data/file-share/2025-09-08-16-15-08/detailed_baseline_moe_dag.dot"
+      }
+    },
+    {
+      "name": "Proposed Large-Scale Expert Parallelism DAG (64 GPUs)",
+      "description": "Cross-node expert parallelism with 1 expert per GPU, EP=16",
+      "configuration": {
+        "total_gpus": 64,
+        "tensor_parallelism": 1,
+        "pipeline_parallelism": 4,
+        "expert_parallelism": 16,
+        "experts_per_gpu": 1,
+        "total_experts": 64
+      },
+      "files": {
+        "svg": "/home/wzc/data/file-share/2025-09-08-16-15-08/proposed_moe_dag.svg",
+        "dot": "/home/wzc/data/file-share/2025-09-08-16-15-08/proposed_moe_dag.dot"
+      }
+    }
+  ],
+  "summary": {
+    "total_dags_generated": 3,
+    "baseline_configs": 2,
+    "proposed_configs": 1,
+    "all_files_created": true
+  }
+}

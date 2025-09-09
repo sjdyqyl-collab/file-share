@@ -1,0 +1,1064 @@
+// Baseline MoE Deployment DAG
+digraph baseline_moe_deployment {
+	nodesep=0.8 rankdir=TB ranksep=1.2 splines=ortho
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	input [label="Input Tokens
+[1024, 10000, 8192]" fillcolor=lightgreen shape=ellipse]
+	subgraph cluster_stage0 {
+		label="Stage 0 (Layers 0-1)
+GPUs 0-7" style=rounded
+		layer0_attn_gpu0 [label="Attention
+[1024, 10000, 8192]
+TP shard 0
+GPU 0" fillcolor=lightcoral]
+		layer0_moe_gpu0 [label="MoE Layer 0
+[1024, 10000, 8192]
+Experts 0-3
+GPU 0" fillcolor=lightyellow]
+		layer0_expert0_gpu0 [label="Expert 0
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 0" fillcolor=lightsteelblue]
+		layer0_expert1_gpu0 [label="Expert 1
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 0" fillcolor=lightsteelblue]
+		layer0_expert2_gpu0 [label="Expert 2
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 0" fillcolor=lightsteelblue]
+		layer0_expert3_gpu0 [label="Expert 3
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 0" fillcolor=lightsteelblue]
+		layer0_attn_gpu1 [label="Attention
+[1024, 10000, 8192]
+TP shard 1
+GPU 1" fillcolor=lightcoral]
+		layer0_moe_gpu1 [label="MoE Layer 0
+[1024, 10000, 8192]
+Experts 4-7
+GPU 1" fillcolor=lightyellow]
+		layer0_expert4_gpu1 [label="Expert 4
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 1" fillcolor=lightsteelblue]
+		layer0_expert5_gpu1 [label="Expert 5
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 1" fillcolor=lightsteelblue]
+		layer0_expert6_gpu1 [label="Expert 6
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 1" fillcolor=lightsteelblue]
+		layer0_expert7_gpu1 [label="Expert 7
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 1" fillcolor=lightsteelblue]
+		layer0_attn_gpu2 [label="Attention
+[1024, 10000, 8192]
+TP shard 2
+GPU 2" fillcolor=lightcoral]
+		layer0_moe_gpu2 [label="MoE Layer 0
+[1024, 10000, 8192]
+Experts 8-11
+GPU 2" fillcolor=lightyellow]
+		layer0_expert8_gpu2 [label="Expert 8
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 2" fillcolor=lightsteelblue]
+		layer0_expert9_gpu2 [label="Expert 9
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 2" fillcolor=lightsteelblue]
+		layer0_expert10_gpu2 [label="Expert 10
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 2" fillcolor=lightsteelblue]
+		layer0_expert11_gpu2 [label="Expert 11
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 2" fillcolor=lightsteelblue]
+		layer0_attn_gpu3 [label="Attention
+[1024, 10000, 8192]
+TP shard 3
+GPU 3" fillcolor=lightcoral]
+		layer0_moe_gpu3 [label="MoE Layer 0
+[1024, 10000, 8192]
+Experts 12-15
+GPU 3" fillcolor=lightyellow]
+		layer0_expert12_gpu3 [label="Expert 12
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 3" fillcolor=lightsteelblue]
+		layer0_expert13_gpu3 [label="Expert 13
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 3" fillcolor=lightsteelblue]
+		layer0_expert14_gpu3 [label="Expert 14
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 3" fillcolor=lightsteelblue]
+		layer0_expert15_gpu3 [label="Expert 15
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 3" fillcolor=lightsteelblue]
+		layer0_attn_gpu4 [label="Attention
+[1024, 10000, 8192]
+TP shard 4
+GPU 4" fillcolor=lightcoral]
+		layer0_moe_gpu4 [label="MoE Layer 0
+[1024, 10000, 8192]
+Experts 16-19
+GPU 4" fillcolor=lightyellow]
+		layer0_expert16_gpu4 [label="Expert 16
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 4" fillcolor=lightsteelblue]
+		layer0_expert17_gpu4 [label="Expert 17
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 4" fillcolor=lightsteelblue]
+		layer0_expert18_gpu4 [label="Expert 18
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 4" fillcolor=lightsteelblue]
+		layer0_expert19_gpu4 [label="Expert 19
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 4" fillcolor=lightsteelblue]
+		layer0_attn_gpu5 [label="Attention
+[1024, 10000, 8192]
+TP shard 5
+GPU 5" fillcolor=lightcoral]
+		layer0_moe_gpu5 [label="MoE Layer 0
+[1024, 10000, 8192]
+Experts 20-23
+GPU 5" fillcolor=lightyellow]
+		layer0_expert20_gpu5 [label="Expert 20
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 5" fillcolor=lightsteelblue]
+		layer0_expert21_gpu5 [label="Expert 21
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 5" fillcolor=lightsteelblue]
+		layer0_expert22_gpu5 [label="Expert 22
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 5" fillcolor=lightsteelblue]
+		layer0_expert23_gpu5 [label="Expert 23
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 5" fillcolor=lightsteelblue]
+		layer0_attn_gpu6 [label="Attention
+[1024, 10000, 8192]
+TP shard 6
+GPU 6" fillcolor=lightcoral]
+		layer0_moe_gpu6 [label="MoE Layer 0
+[1024, 10000, 8192]
+Experts 24-27
+GPU 6" fillcolor=lightyellow]
+		layer0_expert24_gpu6 [label="Expert 24
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 6" fillcolor=lightsteelblue]
+		layer0_expert25_gpu6 [label="Expert 25
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 6" fillcolor=lightsteelblue]
+		layer0_expert26_gpu6 [label="Expert 26
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 6" fillcolor=lightsteelblue]
+		layer0_expert27_gpu6 [label="Expert 27
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 6" fillcolor=lightsteelblue]
+		layer0_attn_gpu7 [label="Attention
+[1024, 10000, 8192]
+TP shard 7
+GPU 7" fillcolor=lightcoral]
+		layer0_moe_gpu7 [label="MoE Layer 0
+[1024, 10000, 8192]
+Experts 28-31
+GPU 7" fillcolor=lightyellow]
+		layer0_expert28_gpu7 [label="Expert 28
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 7" fillcolor=lightsteelblue]
+		layer0_expert29_gpu7 [label="Expert 29
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 7" fillcolor=lightsteelblue]
+		layer0_expert30_gpu7 [label="Expert 30
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 7" fillcolor=lightsteelblue]
+		layer0_expert31_gpu7 [label="Expert 31
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 7" fillcolor=lightsteelblue]
+	}
+	subgraph cluster_stage1 {
+		label="Stage 1 (Layers 2-3)
+GPUs 8-15" style=rounded
+		layer2_attn_gpu8 [label="Attention
+[1024, 10000, 8192]
+TP shard 0
+GPU 8" fillcolor=lightcoral]
+		layer2_moe_gpu8 [label="MoE Layer 2
+[1024, 10000, 8192]
+Experts 0-3
+GPU 8" fillcolor=lightyellow]
+		layer2_expert0_gpu8 [label="Expert 0
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 8" fillcolor=lightsteelblue]
+		layer2_expert1_gpu8 [label="Expert 1
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 8" fillcolor=lightsteelblue]
+		layer2_expert2_gpu8 [label="Expert 2
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 8" fillcolor=lightsteelblue]
+		layer2_expert3_gpu8 [label="Expert 3
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 8" fillcolor=lightsteelblue]
+		layer2_attn_gpu9 [label="Attention
+[1024, 10000, 8192]
+TP shard 1
+GPU 9" fillcolor=lightcoral]
+		layer2_moe_gpu9 [label="MoE Layer 2
+[1024, 10000, 8192]
+Experts 4-7
+GPU 9" fillcolor=lightyellow]
+		layer2_expert4_gpu9 [label="Expert 4
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 9" fillcolor=lightsteelblue]
+		layer2_expert5_gpu9 [label="Expert 5
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 9" fillcolor=lightsteelblue]
+		layer2_expert6_gpu9 [label="Expert 6
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 9" fillcolor=lightsteelblue]
+		layer2_expert7_gpu9 [label="Expert 7
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 9" fillcolor=lightsteelblue]
+		layer2_attn_gpu10 [label="Attention
+[1024, 10000, 8192]
+TP shard 2
+GPU 10" fillcolor=lightcoral]
+		layer2_moe_gpu10 [label="MoE Layer 2
+[1024, 10000, 8192]
+Experts 8-11
+GPU 10" fillcolor=lightyellow]
+		layer2_expert8_gpu10 [label="Expert 8
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 10" fillcolor=lightsteelblue]
+		layer2_expert9_gpu10 [label="Expert 9
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 10" fillcolor=lightsteelblue]
+		layer2_expert10_gpu10 [label="Expert 10
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 10" fillcolor=lightsteelblue]
+		layer2_expert11_gpu10 [label="Expert 11
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 10" fillcolor=lightsteelblue]
+		layer2_attn_gpu11 [label="Attention
+[1024, 10000, 8192]
+TP shard 3
+GPU 11" fillcolor=lightcoral]
+		layer2_moe_gpu11 [label="MoE Layer 2
+[1024, 10000, 8192]
+Experts 12-15
+GPU 11" fillcolor=lightyellow]
+		layer2_expert12_gpu11 [label="Expert 12
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 11" fillcolor=lightsteelblue]
+		layer2_expert13_gpu11 [label="Expert 13
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 11" fillcolor=lightsteelblue]
+		layer2_expert14_gpu11 [label="Expert 14
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 11" fillcolor=lightsteelblue]
+		layer2_expert15_gpu11 [label="Expert 15
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 11" fillcolor=lightsteelblue]
+		layer2_attn_gpu12 [label="Attention
+[1024, 10000, 8192]
+TP shard 4
+GPU 12" fillcolor=lightcoral]
+		layer2_moe_gpu12 [label="MoE Layer 2
+[1024, 10000, 8192]
+Experts 16-19
+GPU 12" fillcolor=lightyellow]
+		layer2_expert16_gpu12 [label="Expert 16
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 12" fillcolor=lightsteelblue]
+		layer2_expert17_gpu12 [label="Expert 17
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 12" fillcolor=lightsteelblue]
+		layer2_expert18_gpu12 [label="Expert 18
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 12" fillcolor=lightsteelblue]
+		layer2_expert19_gpu12 [label="Expert 19
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 12" fillcolor=lightsteelblue]
+		layer2_attn_gpu13 [label="Attention
+[1024, 10000, 8192]
+TP shard 5
+GPU 13" fillcolor=lightcoral]
+		layer2_moe_gpu13 [label="MoE Layer 2
+[1024, 10000, 8192]
+Experts 20-23
+GPU 13" fillcolor=lightyellow]
+		layer2_expert20_gpu13 [label="Expert 20
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 13" fillcolor=lightsteelblue]
+		layer2_expert21_gpu13 [label="Expert 21
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 13" fillcolor=lightsteelblue]
+		layer2_expert22_gpu13 [label="Expert 22
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 13" fillcolor=lightsteelblue]
+		layer2_expert23_gpu13 [label="Expert 23
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 13" fillcolor=lightsteelblue]
+		layer2_attn_gpu14 [label="Attention
+[1024, 10000, 8192]
+TP shard 6
+GPU 14" fillcolor=lightcoral]
+		layer2_moe_gpu14 [label="MoE Layer 2
+[1024, 10000, 8192]
+Experts 24-27
+GPU 14" fillcolor=lightyellow]
+		layer2_expert24_gpu14 [label="Expert 24
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 14" fillcolor=lightsteelblue]
+		layer2_expert25_gpu14 [label="Expert 25
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 14" fillcolor=lightsteelblue]
+		layer2_expert26_gpu14 [label="Expert 26
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 14" fillcolor=lightsteelblue]
+		layer2_expert27_gpu14 [label="Expert 27
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 14" fillcolor=lightsteelblue]
+		layer2_attn_gpu15 [label="Attention
+[1024, 10000, 8192]
+TP shard 7
+GPU 15" fillcolor=lightcoral]
+		layer2_moe_gpu15 [label="MoE Layer 2
+[1024, 10000, 8192]
+Experts 28-31
+GPU 15" fillcolor=lightyellow]
+		layer2_expert28_gpu15 [label="Expert 28
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 15" fillcolor=lightsteelblue]
+		layer2_expert29_gpu15 [label="Expert 29
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 15" fillcolor=lightsteelblue]
+		layer2_expert30_gpu15 [label="Expert 30
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 15" fillcolor=lightsteelblue]
+		layer2_expert31_gpu15 [label="Expert 31
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 15" fillcolor=lightsteelblue]
+	}
+	layer1_attn_gpu0 [label="Attention
+[1024, 10000, 8192]
+TP shard 0
+GPU 0" fillcolor=lightcoral]
+	layer1_moe_gpu0 [label="MoE Layer 1
+[1024, 10000, 8192]
+Experts 16-19
+GPU 0" fillcolor=lightyellow]
+	layer1_expert16_gpu0 [label="Expert 16
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 0" fillcolor=lightsteelblue]
+	layer1_expert17_gpu0 [label="Expert 17
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 0" fillcolor=lightsteelblue]
+	layer1_expert18_gpu0 [label="Expert 18
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 0" fillcolor=lightsteelblue]
+	layer1_expert19_gpu0 [label="Expert 19
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 0" fillcolor=lightsteelblue]
+	layer1_attn_gpu1 [label="Attention
+[1024, 10000, 8192]
+TP shard 1
+GPU 1" fillcolor=lightcoral]
+	layer1_moe_gpu1 [label="MoE Layer 1
+[1024, 10000, 8192]
+Experts 20-23
+GPU 1" fillcolor=lightyellow]
+	layer1_expert20_gpu1 [label="Expert 20
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 1" fillcolor=lightsteelblue]
+	layer1_expert21_gpu1 [label="Expert 21
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 1" fillcolor=lightsteelblue]
+	layer1_expert22_gpu1 [label="Expert 22
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 1" fillcolor=lightsteelblue]
+	layer1_expert23_gpu1 [label="Expert 23
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 1" fillcolor=lightsteelblue]
+	layer1_attn_gpu2 [label="Attention
+[1024, 10000, 8192]
+TP shard 2
+GPU 2" fillcolor=lightcoral]
+	layer1_moe_gpu2 [label="MoE Layer 1
+[1024, 10000, 8192]
+Experts 24-27
+GPU 2" fillcolor=lightyellow]
+	layer1_expert24_gpu2 [label="Expert 24
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 2" fillcolor=lightsteelblue]
+	layer1_expert25_gpu2 [label="Expert 25
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 2" fillcolor=lightsteelblue]
+	layer1_expert26_gpu2 [label="Expert 26
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 2" fillcolor=lightsteelblue]
+	layer1_expert27_gpu2 [label="Expert 27
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 2" fillcolor=lightsteelblue]
+	layer1_attn_gpu3 [label="Attention
+[1024, 10000, 8192]
+TP shard 3
+GPU 3" fillcolor=lightcoral]
+	layer1_moe_gpu3 [label="MoE Layer 1
+[1024, 10000, 8192]
+Experts 28-31
+GPU 3" fillcolor=lightyellow]
+	layer1_expert28_gpu3 [label="Expert 28
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 3" fillcolor=lightsteelblue]
+	layer1_expert29_gpu3 [label="Expert 29
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 3" fillcolor=lightsteelblue]
+	layer1_expert30_gpu3 [label="Expert 30
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 3" fillcolor=lightsteelblue]
+	layer1_expert31_gpu3 [label="Expert 31
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 3" fillcolor=lightsteelblue]
+	layer1_attn_gpu4 [label="Attention
+[1024, 10000, 8192]
+TP shard 4
+GPU 4" fillcolor=lightcoral]
+	layer1_moe_gpu4 [label="MoE Layer 1
+[1024, 10000, 8192]
+Experts 32-35
+GPU 4" fillcolor=lightyellow]
+	layer1_expert32_gpu4 [label="Expert 32
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 4" fillcolor=lightsteelblue]
+	layer1_expert33_gpu4 [label="Expert 33
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 4" fillcolor=lightsteelblue]
+	layer1_expert34_gpu4 [label="Expert 34
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 4" fillcolor=lightsteelblue]
+	layer1_expert35_gpu4 [label="Expert 35
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 4" fillcolor=lightsteelblue]
+	layer1_attn_gpu5 [label="Attention
+[1024, 10000, 8192]
+TP shard 5
+GPU 5" fillcolor=lightcoral]
+	layer1_moe_gpu5 [label="MoE Layer 1
+[1024, 10000, 8192]
+Experts 36-39
+GPU 5" fillcolor=lightyellow]
+	layer1_expert36_gpu5 [label="Expert 36
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 5" fillcolor=lightsteelblue]
+	layer1_expert37_gpu5 [label="Expert 37
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 5" fillcolor=lightsteelblue]
+	layer1_expert38_gpu5 [label="Expert 38
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 5" fillcolor=lightsteelblue]
+	layer1_expert39_gpu5 [label="Expert 39
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 5" fillcolor=lightsteelblue]
+	layer1_attn_gpu6 [label="Attention
+[1024, 10000, 8192]
+TP shard 6
+GPU 6" fillcolor=lightcoral]
+	layer1_moe_gpu6 [label="MoE Layer 1
+[1024, 10000, 8192]
+Experts 40-43
+GPU 6" fillcolor=lightyellow]
+	layer1_expert40_gpu6 [label="Expert 40
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 6" fillcolor=lightsteelblue]
+	layer1_expert41_gpu6 [label="Expert 41
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 6" fillcolor=lightsteelblue]
+	layer1_expert42_gpu6 [label="Expert 42
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 6" fillcolor=lightsteelblue]
+	layer1_expert43_gpu6 [label="Expert 43
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 6" fillcolor=lightsteelblue]
+	layer1_attn_gpu7 [label="Attention
+[1024, 10000, 8192]
+TP shard 7
+GPU 7" fillcolor=lightcoral]
+	layer1_moe_gpu7 [label="MoE Layer 1
+[1024, 10000, 8192]
+Experts 44-47
+GPU 7" fillcolor=lightyellow]
+	layer1_expert44_gpu7 [label="Expert 44
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 7" fillcolor=lightsteelblue]
+	layer1_expert45_gpu7 [label="Expert 45
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 7" fillcolor=lightsteelblue]
+	layer1_expert46_gpu7 [label="Expert 46
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 7" fillcolor=lightsteelblue]
+	layer1_expert47_gpu7 [label="Expert 47
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 7" fillcolor=lightsteelblue]
+	layer3_attn_gpu8 [label="Attention
+[1024, 10000, 8192]
+TP shard 0
+GPU 8" fillcolor=lightcoral]
+	layer3_moe_gpu8 [label="MoE Layer 3
+[1024, 10000, 8192]
+Experts 48-51
+GPU 8" fillcolor=lightyellow]
+	layer3_expert48_gpu8 [label="Expert 48
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 8" fillcolor=lightsteelblue]
+	layer3_expert49_gpu8 [label="Expert 49
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 8" fillcolor=lightsteelblue]
+	layer3_expert50_gpu8 [label="Expert 50
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 8" fillcolor=lightsteelblue]
+	layer3_expert51_gpu8 [label="Expert 51
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 8" fillcolor=lightsteelblue]
+	layer3_attn_gpu9 [label="Attention
+[1024, 10000, 8192]
+TP shard 1
+GPU 9" fillcolor=lightcoral]
+	layer3_moe_gpu9 [label="MoE Layer 3
+[1024, 10000, 8192]
+Experts 52-55
+GPU 9" fillcolor=lightyellow]
+	layer3_expert52_gpu9 [label="Expert 52
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 9" fillcolor=lightsteelblue]
+	layer3_expert53_gpu9 [label="Expert 53
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 9" fillcolor=lightsteelblue]
+	layer3_expert54_gpu9 [label="Expert 54
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 9" fillcolor=lightsteelblue]
+	layer3_expert55_gpu9 [label="Expert 55
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 9" fillcolor=lightsteelblue]
+	layer3_attn_gpu10 [label="Attention
+[1024, 10000, 8192]
+TP shard 2
+GPU 10" fillcolor=lightcoral]
+	layer3_moe_gpu10 [label="MoE Layer 3
+[1024, 10000, 8192]
+Experts 56-59
+GPU 10" fillcolor=lightyellow]
+	layer3_expert56_gpu10 [label="Expert 56
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 10" fillcolor=lightsteelblue]
+	layer3_expert57_gpu10 [label="Expert 57
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 10" fillcolor=lightsteelblue]
+	layer3_expert58_gpu10 [label="Expert 58
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 10" fillcolor=lightsteelblue]
+	layer3_expert59_gpu10 [label="Expert 59
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 10" fillcolor=lightsteelblue]
+	layer3_attn_gpu11 [label="Attention
+[1024, 10000, 8192]
+TP shard 3
+GPU 11" fillcolor=lightcoral]
+	layer3_moe_gpu11 [label="MoE Layer 3
+[1024, 10000, 8192]
+Experts 60-63
+GPU 11" fillcolor=lightyellow]
+	layer3_expert60_gpu11 [label="Expert 60
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 11" fillcolor=lightsteelblue]
+	layer3_expert61_gpu11 [label="Expert 61
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 11" fillcolor=lightsteelblue]
+	layer3_expert62_gpu11 [label="Expert 62
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 11" fillcolor=lightsteelblue]
+	layer3_expert63_gpu11 [label="Expert 63
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 11" fillcolor=lightsteelblue]
+	layer3_attn_gpu12 [label="Attention
+[1024, 10000, 8192]
+TP shard 4
+GPU 12" fillcolor=lightcoral]
+	layer3_moe_gpu12 [label="MoE Layer 3
+[1024, 10000, 8192]
+Experts 64-67
+GPU 12" fillcolor=lightyellow]
+	layer3_expert64_gpu12 [label="Expert 64
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 12" fillcolor=lightsteelblue]
+	layer3_expert65_gpu12 [label="Expert 65
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 12" fillcolor=lightsteelblue]
+	layer3_expert66_gpu12 [label="Expert 66
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 12" fillcolor=lightsteelblue]
+	layer3_expert67_gpu12 [label="Expert 67
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 12" fillcolor=lightsteelblue]
+	layer3_attn_gpu13 [label="Attention
+[1024, 10000, 8192]
+TP shard 5
+GPU 13" fillcolor=lightcoral]
+	layer3_moe_gpu13 [label="MoE Layer 3
+[1024, 10000, 8192]
+Experts 68-71
+GPU 13" fillcolor=lightyellow]
+	layer3_expert68_gpu13 [label="Expert 68
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 13" fillcolor=lightsteelblue]
+	layer3_expert69_gpu13 [label="Expert 69
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 13" fillcolor=lightsteelblue]
+	layer3_expert70_gpu13 [label="Expert 70
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 13" fillcolor=lightsteelblue]
+	layer3_expert71_gpu13 [label="Expert 71
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 13" fillcolor=lightsteelblue]
+	layer3_attn_gpu14 [label="Attention
+[1024, 10000, 8192]
+TP shard 6
+GPU 14" fillcolor=lightcoral]
+	layer3_moe_gpu14 [label="MoE Layer 3
+[1024, 10000, 8192]
+Experts 72-75
+GPU 14" fillcolor=lightyellow]
+	layer3_expert72_gpu14 [label="Expert 72
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 14" fillcolor=lightsteelblue]
+	layer3_expert73_gpu14 [label="Expert 73
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 14" fillcolor=lightsteelblue]
+	layer3_expert74_gpu14 [label="Expert 74
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 14" fillcolor=lightsteelblue]
+	layer3_expert75_gpu14 [label="Expert 75
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 14" fillcolor=lightsteelblue]
+	layer3_attn_gpu15 [label="Attention
+[1024, 10000, 8192]
+TP shard 7
+GPU 15" fillcolor=lightcoral]
+	layer3_moe_gpu15 [label="MoE Layer 3
+[1024, 10000, 8192]
+Experts 76-79
+GPU 15" fillcolor=lightyellow]
+	layer3_expert76_gpu15 [label="Expert 76
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 15" fillcolor=lightsteelblue]
+	layer3_expert77_gpu15 [label="Expert 77
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 15" fillcolor=lightsteelblue]
+	layer3_expert78_gpu15 [label="Expert 78
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 15" fillcolor=lightsteelblue]
+	layer3_expert79_gpu15 [label="Expert 79
+[1024, 10000, 8192]→[1024, 10000, 32768]→[1024, 10000, 8192]
+GPU 15" fillcolor=lightsteelblue]
+	node [fillcolor=lightpink shape=parallelogram]
+	tp_allreduce_layer0_group0 [label="TP All-Reduce
+Layer 0
+GPUs 0-7" fillcolor=lightpink]
+	tp_allreduce_layer0_group1 [label="TP All-Reduce
+Layer 0
+GPUs 8-15" fillcolor=lightpink]
+	tp_allreduce_layer1_group0 [label="TP All-Reduce
+Layer 1
+GPUs 0-7" fillcolor=lightpink]
+	tp_allreduce_layer1_group1 [label="TP All-Reduce
+Layer 1
+GPUs 8-15" fillcolor=lightpink]
+	tp_allreduce_layer2_group0 [label="TP All-Reduce
+Layer 2
+GPUs 0-7" fillcolor=lightpink]
+	tp_allreduce_layer2_group1 [label="TP All-Reduce
+Layer 2
+GPUs 8-15" fillcolor=lightpink]
+	tp_allreduce_layer3_group0 [label="TP All-Reduce
+Layer 3
+GPUs 0-7" fillcolor=lightpink]
+	tp_allreduce_layer3_group1 [label="TP All-Reduce
+Layer 3
+GPUs 8-15" fillcolor=lightpink]
+	pp_send_stage0_to_stage1 [label="Pipeline Send
+Stage 0 → Stage 1
+[1024, 10000, 8192]" fillcolor=lightgreen]
+	pp_recv_stage0_to_stage1 [label="Pipeline Recv
+Stage 0 → Stage 1
+[1024, 10000, 8192]" fillcolor=lightgreen]
+	node [fillcolor=orange shape=diamond]
+	gating_layer0 [label="Top-K Gating
+Layer 0
+Select 2 experts
+from 16 total" fillcolor=orange]
+	gating_layer1 [label="Top-K Gating
+Layer 1
+Select 2 experts
+from 16 total" fillcolor=orange]
+	gating_layer2 [label="Top-K Gating
+Layer 2
+Select 2 experts
+from 16 total" fillcolor=orange]
+	gating_layer3 [label="Top-K Gating
+Layer 3
+Select 2 experts
+from 16 total" fillcolor=orange]
+	output [label="Output Tokens
+[1024, 10000, 8192]" fillcolor=lightgreen shape=ellipse]
+	input -> gating_layer0
+	gating_layer0 -> layer0_attn_gpu0
+	layer0_attn_gpu0 -> layer0_moe_gpu0
+	layer0_moe_gpu0 -> layer0_expert0_gpu0
+	layer0_expert0_gpu0 -> layer0_moe_gpu0
+	layer0_moe_gpu0 -> layer0_expert1_gpu0
+	layer0_expert1_gpu0 -> layer0_moe_gpu0
+	layer0_moe_gpu0 -> layer0_expert2_gpu0
+	layer0_expert2_gpu0 -> layer0_moe_gpu0
+	layer0_moe_gpu0 -> layer0_expert3_gpu0
+	layer0_expert3_gpu0 -> layer0_moe_gpu0
+	gating_layer0 -> layer0_attn_gpu1
+	layer0_attn_gpu1 -> layer0_moe_gpu1
+	layer0_moe_gpu1 -> layer0_expert4_gpu1
+	layer0_expert4_gpu1 -> layer0_moe_gpu1
+	layer0_moe_gpu1 -> layer0_expert5_gpu1
+	layer0_expert5_gpu1 -> layer0_moe_gpu1
+	layer0_moe_gpu1 -> layer0_expert6_gpu1
+	layer0_expert6_gpu1 -> layer0_moe_gpu1
+	layer0_moe_gpu1 -> layer0_expert7_gpu1
+	layer0_expert7_gpu1 -> layer0_moe_gpu1
+	gating_layer0 -> layer0_attn_gpu2
+	layer0_attn_gpu2 -> layer0_moe_gpu2
+	layer0_moe_gpu2 -> layer0_expert8_gpu2
+	layer0_expert8_gpu2 -> layer0_moe_gpu2
+	layer0_moe_gpu2 -> layer0_expert9_gpu2
+	layer0_expert9_gpu2 -> layer0_moe_gpu2
+	layer0_moe_gpu2 -> layer0_expert10_gpu2
+	layer0_expert10_gpu2 -> layer0_moe_gpu2
+	layer0_moe_gpu2 -> layer0_expert11_gpu2
+	layer0_expert11_gpu2 -> layer0_moe_gpu2
+	gating_layer0 -> layer0_attn_gpu3
+	layer0_attn_gpu3 -> layer0_moe_gpu3
+	layer0_moe_gpu3 -> layer0_expert12_gpu3
+	layer0_expert12_gpu3 -> layer0_moe_gpu3
+	layer0_moe_gpu3 -> layer0_expert13_gpu3
+	layer0_expert13_gpu3 -> layer0_moe_gpu3
+	layer0_moe_gpu3 -> layer0_expert14_gpu3
+	layer0_expert14_gpu3 -> layer0_moe_gpu3
+	layer0_moe_gpu3 -> layer0_expert15_gpu3
+	layer0_expert15_gpu3 -> layer0_moe_gpu3
+	gating_layer0 -> layer0_attn_gpu4
+	layer0_attn_gpu4 -> layer0_moe_gpu4
+	layer0_moe_gpu4 -> layer0_expert16_gpu4
+	layer0_expert16_gpu4 -> layer0_moe_gpu4
+	layer0_moe_gpu4 -> layer0_expert17_gpu4
+	layer0_expert17_gpu4 -> layer0_moe_gpu4
+	layer0_moe_gpu4 -> layer0_expert18_gpu4
+	layer0_expert18_gpu4 -> layer0_moe_gpu4
+	layer0_moe_gpu4 -> layer0_expert19_gpu4
+	layer0_expert19_gpu4 -> layer0_moe_gpu4
+	gating_layer0 -> layer0_attn_gpu5
+	layer0_attn_gpu5 -> layer0_moe_gpu5
+	layer0_moe_gpu5 -> layer0_expert20_gpu5
+	layer0_expert20_gpu5 -> layer0_moe_gpu5
+	layer0_moe_gpu5 -> layer0_expert21_gpu5
+	layer0_expert21_gpu5 -> layer0_moe_gpu5
+	layer0_moe_gpu5 -> layer0_expert22_gpu5
+	layer0_expert22_gpu5 -> layer0_moe_gpu5
+	layer0_moe_gpu5 -> layer0_expert23_gpu5
+	layer0_expert23_gpu5 -> layer0_moe_gpu5
+	gating_layer0 -> layer0_attn_gpu6
+	layer0_attn_gpu6 -> layer0_moe_gpu6
+	layer0_moe_gpu6 -> layer0_expert24_gpu6
+	layer0_expert24_gpu6 -> layer0_moe_gpu6
+	layer0_moe_gpu6 -> layer0_expert25_gpu6
+	layer0_expert25_gpu6 -> layer0_moe_gpu6
+	layer0_moe_gpu6 -> layer0_expert26_gpu6
+	layer0_expert26_gpu6 -> layer0_moe_gpu6
+	layer0_moe_gpu6 -> layer0_expert27_gpu6
+	layer0_expert27_gpu6 -> layer0_moe_gpu6
+	gating_layer0 -> layer0_attn_gpu7
+	layer0_attn_gpu7 -> layer0_moe_gpu7
+	layer0_moe_gpu7 -> layer0_expert28_gpu7
+	layer0_expert28_gpu7 -> layer0_moe_gpu7
+	layer0_moe_gpu7 -> layer0_expert29_gpu7
+	layer0_expert29_gpu7 -> layer0_moe_gpu7
+	layer0_moe_gpu7 -> layer0_expert30_gpu7
+	layer0_expert30_gpu7 -> layer0_moe_gpu7
+	layer0_moe_gpu7 -> layer0_expert31_gpu7
+	layer0_expert31_gpu7 -> layer0_moe_gpu7
+	layer0_moe_gpu0 -> tp_allreduce_layer0_group0
+	layer0_moe_gpu1 -> tp_allreduce_layer0_group0
+	layer0_moe_gpu2 -> tp_allreduce_layer0_group0
+	layer0_moe_gpu3 -> tp_allreduce_layer0_group0
+	layer0_moe_gpu4 -> tp_allreduce_layer0_group0
+	layer0_moe_gpu5 -> tp_allreduce_layer0_group0
+	layer0_moe_gpu6 -> tp_allreduce_layer0_group0
+	layer0_moe_gpu7 -> tp_allreduce_layer0_group0
+	tp_allreduce_layer0_group0 -> gating_layer1
+	gating_layer1 -> layer1_attn_gpu0
+	layer1_attn_gpu0 -> layer1_moe_gpu0
+	layer1_moe_gpu0 -> layer1_expert16_gpu0
+	layer1_expert16_gpu0 -> layer1_moe_gpu0
+	layer1_moe_gpu0 -> layer1_expert17_gpu0
+	layer1_expert17_gpu0 -> layer1_moe_gpu0
+	layer1_moe_gpu0 -> layer1_expert18_gpu0
+	layer1_expert18_gpu0 -> layer1_moe_gpu0
+	layer1_moe_gpu0 -> layer1_expert19_gpu0
+	layer1_expert19_gpu0 -> layer1_moe_gpu0
+	gating_layer1 -> layer1_attn_gpu1
+	layer1_attn_gpu1 -> layer1_moe_gpu1
+	layer1_moe_gpu1 -> layer1_expert20_gpu1
+	layer1_expert20_gpu1 -> layer1_moe_gpu1
+	layer1_moe_gpu1 -> layer1_expert21_gpu1
+	layer1_expert21_gpu1 -> layer1_moe_gpu1
+	layer1_moe_gpu1 -> layer1_expert22_gpu1
+	layer1_expert22_gpu1 -> layer1_moe_gpu1
+	layer1_moe_gpu1 -> layer1_expert23_gpu1
+	layer1_expert23_gpu1 -> layer1_moe_gpu1
+	gating_layer1 -> layer1_attn_gpu2
+	layer1_attn_gpu2 -> layer1_moe_gpu2
+	layer1_moe_gpu2 -> layer1_expert24_gpu2
+	layer1_expert24_gpu2 -> layer1_moe_gpu2
+	layer1_moe_gpu2 -> layer1_expert25_gpu2
+	layer1_expert25_gpu2 -> layer1_moe_gpu2
+	layer1_moe_gpu2 -> layer1_expert26_gpu2
+	layer1_expert26_gpu2 -> layer1_moe_gpu2
+	layer1_moe_gpu2 -> layer1_expert27_gpu2
+	layer1_expert27_gpu2 -> layer1_moe_gpu2
+	gating_layer1 -> layer1_attn_gpu3
+	layer1_attn_gpu3 -> layer1_moe_gpu3
+	layer1_moe_gpu3 -> layer1_expert28_gpu3
+	layer1_expert28_gpu3 -> layer1_moe_gpu3
+	layer1_moe_gpu3 -> layer1_expert29_gpu3
+	layer1_expert29_gpu3 -> layer1_moe_gpu3
+	layer1_moe_gpu3 -> layer1_expert30_gpu3
+	layer1_expert30_gpu3 -> layer1_moe_gpu3
+	layer1_moe_gpu3 -> layer1_expert31_gpu3
+	layer1_expert31_gpu3 -> layer1_moe_gpu3
+	gating_layer1 -> layer1_attn_gpu4
+	layer1_attn_gpu4 -> layer1_moe_gpu4
+	layer1_moe_gpu4 -> layer1_expert32_gpu4
+	layer1_expert32_gpu4 -> layer1_moe_gpu4
+	layer1_moe_gpu4 -> layer1_expert33_gpu4
+	layer1_expert33_gpu4 -> layer1_moe_gpu4
+	layer1_moe_gpu4 -> layer1_expert34_gpu4
+	layer1_expert34_gpu4 -> layer1_moe_gpu4
+	layer1_moe_gpu4 -> layer1_expert35_gpu4
+	layer1_expert35_gpu4 -> layer1_moe_gpu4
+	gating_layer1 -> layer1_attn_gpu5
+	layer1_attn_gpu5 -> layer1_moe_gpu5
+	layer1_moe_gpu5 -> layer1_expert36_gpu5
+	layer1_expert36_gpu5 -> layer1_moe_gpu5
+	layer1_moe_gpu5 -> layer1_expert37_gpu5
+	layer1_expert37_gpu5 -> layer1_moe_gpu5
+	layer1_moe_gpu5 -> layer1_expert38_gpu5
+	layer1_expert38_gpu5 -> layer1_moe_gpu5
+	layer1_moe_gpu5 -> layer1_expert39_gpu5
+	layer1_expert39_gpu5 -> layer1_moe_gpu5
+	gating_layer1 -> layer1_attn_gpu6
+	layer1_attn_gpu6 -> layer1_moe_gpu6
+	layer1_moe_gpu6 -> layer1_expert40_gpu6
+	layer1_expert40_gpu6 -> layer1_moe_gpu6
+	layer1_moe_gpu6 -> layer1_expert41_gpu6
+	layer1_expert41_gpu6 -> layer1_moe_gpu6
+	layer1_moe_gpu6 -> layer1_expert42_gpu6
+	layer1_expert42_gpu6 -> layer1_moe_gpu6
+	layer1_moe_gpu6 -> layer1_expert43_gpu6
+	layer1_expert43_gpu6 -> layer1_moe_gpu6
+	gating_layer1 -> layer1_attn_gpu7
+	layer1_attn_gpu7 -> layer1_moe_gpu7
+	layer1_moe_gpu7 -> layer1_expert44_gpu7
+	layer1_expert44_gpu7 -> layer1_moe_gpu7
+	layer1_moe_gpu7 -> layer1_expert45_gpu7
+	layer1_expert45_gpu7 -> layer1_moe_gpu7
+	layer1_moe_gpu7 -> layer1_expert46_gpu7
+	layer1_expert46_gpu7 -> layer1_moe_gpu7
+	layer1_moe_gpu7 -> layer1_expert47_gpu7
+	layer1_expert47_gpu7 -> layer1_moe_gpu7
+	layer1_moe_gpu0 -> tp_allreduce_layer1_group0
+	layer1_moe_gpu1 -> tp_allreduce_layer1_group0
+	layer1_moe_gpu2 -> tp_allreduce_layer1_group0
+	layer1_moe_gpu3 -> tp_allreduce_layer1_group0
+	layer1_moe_gpu4 -> tp_allreduce_layer1_group0
+	layer1_moe_gpu5 -> tp_allreduce_layer1_group0
+	layer1_moe_gpu6 -> tp_allreduce_layer1_group0
+	layer1_moe_gpu7 -> tp_allreduce_layer1_group0
+	tp_allreduce_layer1_group0 -> pp_send_stage0_to_stage1
+	pp_send_stage0_to_stage1 -> pp_recv_stage0_to_stage1
+	pp_recv_stage0_to_stage1 -> gating_layer2
+	gating_layer2 -> layer2_attn_gpu8
+	layer2_attn_gpu8 -> layer2_moe_gpu8
+	layer2_moe_gpu8 -> layer2_expert0_gpu8
+	layer2_expert0_gpu8 -> layer2_moe_gpu8
+	layer2_moe_gpu8 -> layer2_expert1_gpu8
+	layer2_expert1_gpu8 -> layer2_moe_gpu8
+	layer2_moe_gpu8 -> layer2_expert2_gpu8
+	layer2_expert2_gpu8 -> layer2_moe_gpu8
+	layer2_moe_gpu8 -> layer2_expert3_gpu8
+	layer2_expert3_gpu8 -> layer2_moe_gpu8
+	gating_layer2 -> layer2_attn_gpu9
+	layer2_attn_gpu9 -> layer2_moe_gpu9
+	layer2_moe_gpu9 -> layer2_expert4_gpu9
+	layer2_expert4_gpu9 -> layer2_moe_gpu9
+	layer2_moe_gpu9 -> layer2_expert5_gpu9
+	layer2_expert5_gpu9 -> layer2_moe_gpu9
+	layer2_moe_gpu9 -> layer2_expert6_gpu9
+	layer2_expert6_gpu9 -> layer2_moe_gpu9
+	layer2_moe_gpu9 -> layer2_expert7_gpu9
+	layer2_expert7_gpu9 -> layer2_moe_gpu9
+	gating_layer2 -> layer2_attn_gpu10
+	layer2_attn_gpu10 -> layer2_moe_gpu10
+	layer2_moe_gpu10 -> layer2_expert8_gpu10
+	layer2_expert8_gpu10 -> layer2_moe_gpu10
+	layer2_moe_gpu10 -> layer2_expert9_gpu10
+	layer2_expert9_gpu10 -> layer2_moe_gpu10
+	layer2_moe_gpu10 -> layer2_expert10_gpu10
+	layer2_expert10_gpu10 -> layer2_moe_gpu10
+	layer2_moe_gpu10 -> layer2_expert11_gpu10
+	layer2_expert11_gpu10 -> layer2_moe_gpu10
+	gating_layer2 -> layer2_attn_gpu11
+	layer2_attn_gpu11 -> layer2_moe_gpu11
+	layer2_moe_gpu11 -> layer2_expert12_gpu11
+	layer2_expert12_gpu11 -> layer2_moe_gpu11
+	layer2_moe_gpu11 -> layer2_expert13_gpu11
+	layer2_expert13_gpu11 -> layer2_moe_gpu11
+	layer2_moe_gpu11 -> layer2_expert14_gpu11
+	layer2_expert14_gpu11 -> layer2_moe_gpu11
+	layer2_moe_gpu11 -> layer2_expert15_gpu11
+	layer2_expert15_gpu11 -> layer2_moe_gpu11
+	gating_layer2 -> layer2_attn_gpu12
+	layer2_attn_gpu12 -> layer2_moe_gpu12
+	layer2_moe_gpu12 -> layer2_expert16_gpu12
+	layer2_expert16_gpu12 -> layer2_moe_gpu12
+	layer2_moe_gpu12 -> layer2_expert17_gpu12
+	layer2_expert17_gpu12 -> layer2_moe_gpu12
+	layer2_moe_gpu12 -> layer2_expert18_gpu12
+	layer2_expert18_gpu12 -> layer2_moe_gpu12
+	layer2_moe_gpu12 -> layer2_expert19_gpu12
+	layer2_expert19_gpu12 -> layer2_moe_gpu12
+	gating_layer2 -> layer2_attn_gpu13
+	layer2_attn_gpu13 -> layer2_moe_gpu13
+	layer2_moe_gpu13 -> layer2_expert20_gpu13
+	layer2_expert20_gpu13 -> layer2_moe_gpu13
+	layer2_moe_gpu13 -> layer2_expert21_gpu13
+	layer2_expert21_gpu13 -> layer2_moe_gpu13
+	layer2_moe_gpu13 -> layer2_expert22_gpu13
+	layer2_expert22_gpu13 -> layer2_moe_gpu13
+	layer2_moe_gpu13 -> layer2_expert23_gpu13
+	layer2_expert23_gpu13 -> layer2_moe_gpu13
+	gating_layer2 -> layer2_attn_gpu14
+	layer2_attn_gpu14 -> layer2_moe_gpu14
+	layer2_moe_gpu14 -> layer2_expert24_gpu14
+	layer2_expert24_gpu14 -> layer2_moe_gpu14
+	layer2_moe_gpu14 -> layer2_expert25_gpu14
+	layer2_expert25_gpu14 -> layer2_moe_gpu14
+	layer2_moe_gpu14 -> layer2_expert26_gpu14
+	layer2_expert26_gpu14 -> layer2_moe_gpu14
+	layer2_moe_gpu14 -> layer2_expert27_gpu14
+	layer2_expert27_gpu14 -> layer2_moe_gpu14
+	gating_layer2 -> layer2_attn_gpu15
+	layer2_attn_gpu15 -> layer2_moe_gpu15
+	layer2_moe_gpu15 -> layer2_expert28_gpu15
+	layer2_expert28_gpu15 -> layer2_moe_gpu15
+	layer2_moe_gpu15 -> layer2_expert29_gpu15
+	layer2_expert29_gpu15 -> layer2_moe_gpu15
+	layer2_moe_gpu15 -> layer2_expert30_gpu15
+	layer2_expert30_gpu15 -> layer2_moe_gpu15
+	layer2_moe_gpu15 -> layer2_expert31_gpu15
+	layer2_expert31_gpu15 -> layer2_moe_gpu15
+	layer2_moe_gpu8 -> tp_allreduce_layer2_group1
+	layer2_moe_gpu9 -> tp_allreduce_layer2_group1
+	layer2_moe_gpu10 -> tp_allreduce_layer2_group1
+	layer2_moe_gpu11 -> tp_allreduce_layer2_group1
+	layer2_moe_gpu12 -> tp_allreduce_layer2_group1
+	layer2_moe_gpu13 -> tp_allreduce_layer2_group1
+	layer2_moe_gpu14 -> tp_allreduce_layer2_group1
+	layer2_moe_gpu15 -> tp_allreduce_layer2_group1
+	tp_allreduce_layer2_group1 -> gating_layer3
+	gating_layer3 -> layer3_attn_gpu8
+	layer3_attn_gpu8 -> layer3_moe_gpu8
+	layer3_moe_gpu8 -> layer3_expert48_gpu8
+	layer3_expert48_gpu8 -> layer3_moe_gpu8
+	layer3_moe_gpu8 -> layer3_expert49_gpu8
+	layer3_expert49_gpu8 -> layer3_moe_gpu8
+	layer3_moe_gpu8 -> layer3_expert50_gpu8
+	layer3_expert50_gpu8 -> layer3_moe_gpu8
+	layer3_moe_gpu8 -> layer3_expert51_gpu8
+	layer3_expert51_gpu8 -> layer3_moe_gpu8
+	gating_layer3 -> layer3_attn_gpu9
+	layer3_attn_gpu9 -> layer3_moe_gpu9
+	layer3_moe_gpu9 -> layer3_expert52_gpu9
+	layer3_expert52_gpu9 -> layer3_moe_gpu9
+	layer3_moe_gpu9 -> layer3_expert53_gpu9
+	layer3_expert53_gpu9 -> layer3_moe_gpu9
+	layer3_moe_gpu9 -> layer3_expert54_gpu9
+	layer3_expert54_gpu9 -> layer3_moe_gpu9
+	layer3_moe_gpu9 -> layer3_expert55_gpu9
+	layer3_expert55_gpu9 -> layer3_moe_gpu9
+	gating_layer3 -> layer3_attn_gpu10
+	layer3_attn_gpu10 -> layer3_moe_gpu10
+	layer3_moe_gpu10 -> layer3_expert56_gpu10
+	layer3_expert56_gpu10 -> layer3_moe_gpu10
+	layer3_moe_gpu10 -> layer3_expert57_gpu10
+	layer3_expert57_gpu10 -> layer3_moe_gpu10
+	layer3_moe_gpu10 -> layer3_expert58_gpu10
+	layer3_expert58_gpu10 -> layer3_moe_gpu10
+	layer3_moe_gpu10 -> layer3_expert59_gpu10
+	layer3_expert59_gpu10 -> layer3_moe_gpu10
+	gating_layer3 -> layer3_attn_gpu11
+	layer3_attn_gpu11 -> layer3_moe_gpu11
+	layer3_moe_gpu11 -> layer3_expert60_gpu11
+	layer3_expert60_gpu11 -> layer3_moe_gpu11
+	layer3_moe_gpu11 -> layer3_expert61_gpu11
+	layer3_expert61_gpu11 -> layer3_moe_gpu11
+	layer3_moe_gpu11 -> layer3_expert62_gpu11
+	layer3_expert62_gpu11 -> layer3_moe_gpu11
+	layer3_moe_gpu11 -> layer3_expert63_gpu11
+	layer3_expert63_gpu11 -> layer3_moe_gpu11
+	gating_layer3 -> layer3_attn_gpu12
+	layer3_attn_gpu12 -> layer3_moe_gpu12
+	layer3_moe_gpu12 -> layer3_expert64_gpu12
+	layer3_expert64_gpu12 -> layer3_moe_gpu12
+	layer3_moe_gpu12 -> layer3_expert65_gpu12
+	layer3_expert65_gpu12 -> layer3_moe_gpu12
+	layer3_moe_gpu12 -> layer3_expert66_gpu12
+	layer3_expert66_gpu12 -> layer3_moe_gpu12
+	layer3_moe_gpu12 -> layer3_expert67_gpu12
+	layer3_expert67_gpu12 -> layer3_moe_gpu12
+	gating_layer3 -> layer3_attn_gpu13
+	layer3_attn_gpu13 -> layer3_moe_gpu13
+	layer3_moe_gpu13 -> layer3_expert68_gpu13
+	layer3_expert68_gpu13 -> layer3_moe_gpu13
+	layer3_moe_gpu13 -> layer3_expert69_gpu13
+	layer3_expert69_gpu13 -> layer3_moe_gpu13
+	layer3_moe_gpu13 -> layer3_expert70_gpu13
+	layer3_expert70_gpu13 -> layer3_moe_gpu13
+	layer3_moe_gpu13 -> layer3_expert71_gpu13
+	layer3_expert71_gpu13 -> layer3_moe_gpu13
+	gating_layer3 -> layer3_attn_gpu14
+	layer3_attn_gpu14 -> layer3_moe_gpu14
+	layer3_moe_gpu14 -> layer3_expert72_gpu14
+	layer3_expert72_gpu14 -> layer3_moe_gpu14
+	layer3_moe_gpu14 -> layer3_expert73_gpu14
+	layer3_expert73_gpu14 -> layer3_moe_gpu14
+	layer3_moe_gpu14 -> layer3_expert74_gpu14
+	layer3_expert74_gpu14 -> layer3_moe_gpu14
+	layer3_moe_gpu14 -> layer3_expert75_gpu14
+	layer3_expert75_gpu14 -> layer3_moe_gpu14
+	gating_layer3 -> layer3_attn_gpu15
+	layer3_attn_gpu15 -> layer3_moe_gpu15
+	layer3_moe_gpu15 -> layer3_expert76_gpu15
+	layer3_expert76_gpu15 -> layer3_moe_gpu15
+	layer3_moe_gpu15 -> layer3_expert77_gpu15
+	layer3_expert77_gpu15 -> layer3_moe_gpu15
+	layer3_moe_gpu15 -> layer3_expert78_gpu15
+	layer3_expert78_gpu15 -> layer3_moe_gpu15
+	layer3_moe_gpu15 -> layer3_expert79_gpu15
+	layer3_expert79_gpu15 -> layer3_moe_gpu15
+	layer3_moe_gpu8 -> tp_allreduce_layer3_group1
+	layer3_moe_gpu9 -> tp_allreduce_layer3_group1
+	layer3_moe_gpu10 -> tp_allreduce_layer3_group1
+	layer3_moe_gpu11 -> tp_allreduce_layer3_group1
+	layer3_moe_gpu12 -> tp_allreduce_layer3_group1
+	layer3_moe_gpu13 -> tp_allreduce_layer3_group1
+	layer3_moe_gpu14 -> tp_allreduce_layer3_group1
+	layer3_moe_gpu15 -> tp_allreduce_layer3_group1
+	tp_allreduce_layer3_group1 -> output
+}

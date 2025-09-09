@@ -1,0 +1,677 @@
+// Proposed Layer-wise DAG
+digraph {
+	rankdir=TB size="30,30"
+	input [label="Total Input\nINPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightblue shape=ellipse style=filled]
+	layer0_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightyellow shape=rectangle style=filled]
+	input -> layer0_ln1
+	layer0_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_ln1 -> layer0_q
+	layer0_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_ln1 -> layer0_k
+	layer0_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_ln1 -> layer0_v
+	layer0_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_q -> layer0_q_reshape
+	layer0_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_k -> layer0_k_reshape
+	layer0_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_v -> layer0_v_reshape
+	layer0_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_q_reshape -> layer0_attn_scores
+	layer0_k_reshape -> layer0_attn_scores
+	layer0_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 0" fillcolor=lightyellow shape=rectangle style=filled]
+	layer0_attn_scores -> layer0_softmax
+	layer0_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_softmax -> layer0_attn_out
+	layer0_v_reshape -> layer0_attn_out
+	layer0_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_attn_out -> layer0_attn_reshape
+	layer0_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_attn_reshape -> layer0_out_proj
+	layer0_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightcoral shape=rectangle style=filled]
+	input -> layer0_res1
+	layer0_out_proj -> layer0_res1
+	layer0_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightyellow shape=rectangle style=filled]
+	layer0_res1 -> layer0_ln2
+	layer0_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_ln2 -> layer0_fc1
+	layer0_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 0" fillcolor=lightyellow shape=rectangle style=filled]
+	layer0_fc1 -> layer0_gelu
+	layer0_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer0_gelu -> layer0_fc2
+	layer0_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0" fillcolor=lightcoral shape=rectangle style=filled]
+	layer0_res1 -> layer0_res2
+	layer0_fc2 -> layer0_res2
+	layer0_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0→1" fillcolor=purple shape=parallelogram style=filled]
+	layer0_res2 -> layer0_send
+	layer1_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightyellow shape=rectangle style=filled]
+	layer0_send -> layer1_ln1
+	layer1_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_ln1 -> layer1_q
+	layer1_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_ln1 -> layer1_k
+	layer1_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_ln1 -> layer1_v
+	layer1_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_q -> layer1_q_reshape
+	layer1_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_k -> layer1_k_reshape
+	layer1_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_v -> layer1_v_reshape
+	layer1_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_q_reshape -> layer1_attn_scores
+	layer1_k_reshape -> layer1_attn_scores
+	layer1_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 1" fillcolor=lightyellow shape=rectangle style=filled]
+	layer1_attn_scores -> layer1_softmax
+	layer1_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_softmax -> layer1_attn_out
+	layer1_v_reshape -> layer1_attn_out
+	layer1_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_attn_out -> layer1_attn_reshape
+	layer1_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_attn_reshape -> layer1_out_proj
+	layer1_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightcoral shape=rectangle style=filled]
+	layer0_send -> layer1_res1
+	layer1_out_proj -> layer1_res1
+	layer1_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightyellow shape=rectangle style=filled]
+	layer1_res1 -> layer1_ln2
+	layer1_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_ln2 -> layer1_fc1
+	layer1_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 1" fillcolor=lightyellow shape=rectangle style=filled]
+	layer1_fc1 -> layer1_gelu
+	layer1_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer1_gelu -> layer1_fc2
+	layer1_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1" fillcolor=lightcoral shape=rectangle style=filled]
+	layer1_res1 -> layer1_res2
+	layer1_fc2 -> layer1_res2
+	layer1_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 1→2" fillcolor=purple shape=parallelogram style=filled]
+	layer1_res2 -> layer1_send
+	layer2_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer1_send -> layer2_ln1
+	layer2_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_ln1 -> layer2_q
+	layer2_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_ln1 -> layer2_k
+	layer2_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_ln1 -> layer2_v
+	layer2_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_q -> layer2_q_reshape
+	layer2_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_k -> layer2_k_reshape
+	layer2_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_v -> layer2_v_reshape
+	layer2_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_q_reshape -> layer2_attn_scores
+	layer2_k_reshape -> layer2_attn_scores
+	layer2_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer2_attn_scores -> layer2_softmax
+	layer2_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_softmax -> layer2_attn_out
+	layer2_v_reshape -> layer2_attn_out
+	layer2_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_attn_out -> layer2_attn_reshape
+	layer2_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_attn_reshape -> layer2_out_proj
+	layer2_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightcoral shape=rectangle style=filled]
+	layer1_send -> layer2_res1
+	layer2_out_proj -> layer2_res1
+	layer2_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer2_res1 -> layer2_ln2
+	layer2_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_ln2 -> layer2_fc1
+	layer2_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+	layer2_fc1 -> layer2_gelu
+	layer2_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer2_gelu -> layer2_fc2
+	layer2_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2" fillcolor=lightcoral shape=rectangle style=filled]
+	layer2_res1 -> layer2_res2
+	layer2_fc2 -> layer2_res2
+	layer2_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 2→3" fillcolor=purple shape=parallelogram style=filled]
+	layer2_res2 -> layer2_send
+	layer3_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightyellow shape=rectangle style=filled]
+	layer2_send -> layer3_ln1
+	layer3_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_ln1 -> layer3_q
+	layer3_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_ln1 -> layer3_k
+	layer3_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_ln1 -> layer3_v
+	layer3_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_q -> layer3_q_reshape
+	layer3_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_k -> layer3_k_reshape
+	layer3_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_v -> layer3_v_reshape
+	layer3_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_q_reshape -> layer3_attn_scores
+	layer3_k_reshape -> layer3_attn_scores
+	layer3_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 3" fillcolor=lightyellow shape=rectangle style=filled]
+	layer3_attn_scores -> layer3_softmax
+	layer3_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_softmax -> layer3_attn_out
+	layer3_v_reshape -> layer3_attn_out
+	layer3_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_attn_out -> layer3_attn_reshape
+	layer3_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_attn_reshape -> layer3_out_proj
+	layer3_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer2_send -> layer3_res1
+	layer3_out_proj -> layer3_res1
+	layer3_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightyellow shape=rectangle style=filled]
+	layer3_res1 -> layer3_ln2
+	layer3_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_ln2 -> layer3_fc1
+	layer3_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 3" fillcolor=lightyellow shape=rectangle style=filled]
+	layer3_fc1 -> layer3_gelu
+	layer3_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer3_gelu -> layer3_fc2
+	layer3_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer3_res1 -> layer3_res2
+	layer3_fc2 -> layer3_res2
+	layer3_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 3→4" fillcolor=purple shape=parallelogram style=filled]
+	layer3_res2 -> layer3_send
+	layer4_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightyellow shape=rectangle style=filled]
+	layer3_send -> layer4_ln1
+	layer4_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_ln1 -> layer4_q
+	layer4_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_ln1 -> layer4_k
+	layer4_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_ln1 -> layer4_v
+	layer4_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_q -> layer4_q_reshape
+	layer4_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_k -> layer4_k_reshape
+	layer4_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_v -> layer4_v_reshape
+	layer4_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_q_reshape -> layer4_attn_scores
+	layer4_k_reshape -> layer4_attn_scores
+	layer4_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 4" fillcolor=lightyellow shape=rectangle style=filled]
+	layer4_attn_scores -> layer4_softmax
+	layer4_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_softmax -> layer4_attn_out
+	layer4_v_reshape -> layer4_attn_out
+	layer4_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_attn_out -> layer4_attn_reshape
+	layer4_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_attn_reshape -> layer4_out_proj
+	layer4_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightcoral shape=rectangle style=filled]
+	layer3_send -> layer4_res1
+	layer4_out_proj -> layer4_res1
+	layer4_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightyellow shape=rectangle style=filled]
+	layer4_res1 -> layer4_ln2
+	layer4_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_ln2 -> layer4_fc1
+	layer4_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 4" fillcolor=lightyellow shape=rectangle style=filled]
+	layer4_fc1 -> layer4_gelu
+	layer4_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer4_gelu -> layer4_fc2
+	layer4_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4" fillcolor=lightcoral shape=rectangle style=filled]
+	layer4_res1 -> layer4_res2
+	layer4_fc2 -> layer4_res2
+	layer4_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 4→5" fillcolor=purple shape=parallelogram style=filled]
+	layer4_res2 -> layer4_send
+	layer5_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightyellow shape=rectangle style=filled]
+	layer4_send -> layer5_ln1
+	layer5_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_ln1 -> layer5_q
+	layer5_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_ln1 -> layer5_k
+	layer5_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_ln1 -> layer5_v
+	layer5_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_q -> layer5_q_reshape
+	layer5_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_k -> layer5_k_reshape
+	layer5_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_v -> layer5_v_reshape
+	layer5_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_q_reshape -> layer5_attn_scores
+	layer5_k_reshape -> layer5_attn_scores
+	layer5_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 5" fillcolor=lightyellow shape=rectangle style=filled]
+	layer5_attn_scores -> layer5_softmax
+	layer5_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_softmax -> layer5_attn_out
+	layer5_v_reshape -> layer5_attn_out
+	layer5_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_attn_out -> layer5_attn_reshape
+	layer5_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_attn_reshape -> layer5_out_proj
+	layer5_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightcoral shape=rectangle style=filled]
+	layer4_send -> layer5_res1
+	layer5_out_proj -> layer5_res1
+	layer5_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightyellow shape=rectangle style=filled]
+	layer5_res1 -> layer5_ln2
+	layer5_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_ln2 -> layer5_fc1
+	layer5_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 5" fillcolor=lightyellow shape=rectangle style=filled]
+	layer5_fc1 -> layer5_gelu
+	layer5_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer5_gelu -> layer5_fc2
+	layer5_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5" fillcolor=lightcoral shape=rectangle style=filled]
+	layer5_res1 -> layer5_res2
+	layer5_fc2 -> layer5_res2
+	layer5_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 5→6" fillcolor=purple shape=parallelogram style=filled]
+	layer5_res2 -> layer5_send
+	layer6_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightyellow shape=rectangle style=filled]
+	layer5_send -> layer6_ln1
+	layer6_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_ln1 -> layer6_q
+	layer6_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_ln1 -> layer6_k
+	layer6_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_ln1 -> layer6_v
+	layer6_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_q -> layer6_q_reshape
+	layer6_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_k -> layer6_k_reshape
+	layer6_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_v -> layer6_v_reshape
+	layer6_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_q_reshape -> layer6_attn_scores
+	layer6_k_reshape -> layer6_attn_scores
+	layer6_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 6" fillcolor=lightyellow shape=rectangle style=filled]
+	layer6_attn_scores -> layer6_softmax
+	layer6_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_softmax -> layer6_attn_out
+	layer6_v_reshape -> layer6_attn_out
+	layer6_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_attn_out -> layer6_attn_reshape
+	layer6_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_attn_reshape -> layer6_out_proj
+	layer6_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightcoral shape=rectangle style=filled]
+	layer5_send -> layer6_res1
+	layer6_out_proj -> layer6_res1
+	layer6_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightyellow shape=rectangle style=filled]
+	layer6_res1 -> layer6_ln2
+	layer6_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_ln2 -> layer6_fc1
+	layer6_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 6" fillcolor=lightyellow shape=rectangle style=filled]
+	layer6_fc1 -> layer6_gelu
+	layer6_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer6_gelu -> layer6_fc2
+	layer6_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6" fillcolor=lightcoral shape=rectangle style=filled]
+	layer6_res1 -> layer6_res2
+	layer6_fc2 -> layer6_res2
+	layer6_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 6→7" fillcolor=purple shape=parallelogram style=filled]
+	layer6_res2 -> layer6_send
+	layer7_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer6_send -> layer7_ln1
+	layer7_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_ln1 -> layer7_q
+	layer7_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_ln1 -> layer7_k
+	layer7_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_ln1 -> layer7_v
+	layer7_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_q -> layer7_q_reshape
+	layer7_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_k -> layer7_k_reshape
+	layer7_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_v -> layer7_v_reshape
+	layer7_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_q_reshape -> layer7_attn_scores
+	layer7_k_reshape -> layer7_attn_scores
+	layer7_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer7_attn_scores -> layer7_softmax
+	layer7_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_softmax -> layer7_attn_out
+	layer7_v_reshape -> layer7_attn_out
+	layer7_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_attn_out -> layer7_attn_reshape
+	layer7_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_attn_reshape -> layer7_out_proj
+	layer7_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightcoral shape=rectangle style=filled]
+	layer6_send -> layer7_res1
+	layer7_out_proj -> layer7_res1
+	layer7_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer7_res1 -> layer7_ln2
+	layer7_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_ln2 -> layer7_fc1
+	layer7_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer7_fc1 -> layer7_gelu
+	layer7_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer7_gelu -> layer7_fc2
+	layer7_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7" fillcolor=lightcoral shape=rectangle style=filled]
+	layer7_res1 -> layer7_res2
+	layer7_fc2 -> layer7_res2
+	layer7_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7→8" fillcolor=purple shape=parallelogram style=filled]
+	layer7_res2 -> layer7_send
+	layer8_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightyellow shape=rectangle style=filled]
+	layer7_send -> layer8_ln1
+	layer8_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_ln1 -> layer8_q
+	layer8_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_ln1 -> layer8_k
+	layer8_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_ln1 -> layer8_v
+	layer8_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_q -> layer8_q_reshape
+	layer8_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_k -> layer8_k_reshape
+	layer8_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_v -> layer8_v_reshape
+	layer8_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_q_reshape -> layer8_attn_scores
+	layer8_k_reshape -> layer8_attn_scores
+	layer8_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 8" fillcolor=lightyellow shape=rectangle style=filled]
+	layer8_attn_scores -> layer8_softmax
+	layer8_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_softmax -> layer8_attn_out
+	layer8_v_reshape -> layer8_attn_out
+	layer8_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_attn_out -> layer8_attn_reshape
+	layer8_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_attn_reshape -> layer8_out_proj
+	layer8_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightcoral shape=rectangle style=filled]
+	layer7_send -> layer8_res1
+	layer8_out_proj -> layer8_res1
+	layer8_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightyellow shape=rectangle style=filled]
+	layer8_res1 -> layer8_ln2
+	layer8_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_ln2 -> layer8_fc1
+	layer8_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 8" fillcolor=lightyellow shape=rectangle style=filled]
+	layer8_fc1 -> layer8_gelu
+	layer8_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer8_gelu -> layer8_fc2
+	layer8_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8" fillcolor=lightcoral shape=rectangle style=filled]
+	layer8_res1 -> layer8_res2
+	layer8_fc2 -> layer8_res2
+	layer8_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8→9" fillcolor=purple shape=parallelogram style=filled]
+	layer8_res2 -> layer8_send
+	layer9_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightyellow shape=rectangle style=filled]
+	layer8_send -> layer9_ln1
+	layer9_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_ln1 -> layer9_q
+	layer9_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_ln1 -> layer9_k
+	layer9_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_ln1 -> layer9_v
+	layer9_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_q -> layer9_q_reshape
+	layer9_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_k -> layer9_k_reshape
+	layer9_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_v -> layer9_v_reshape
+	layer9_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_q_reshape -> layer9_attn_scores
+	layer9_k_reshape -> layer9_attn_scores
+	layer9_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 9" fillcolor=lightyellow shape=rectangle style=filled]
+	layer9_attn_scores -> layer9_softmax
+	layer9_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_softmax -> layer9_attn_out
+	layer9_v_reshape -> layer9_attn_out
+	layer9_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_attn_out -> layer9_attn_reshape
+	layer9_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_attn_reshape -> layer9_out_proj
+	layer9_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightcoral shape=rectangle style=filled]
+	layer8_send -> layer9_res1
+	layer9_out_proj -> layer9_res1
+	layer9_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightyellow shape=rectangle style=filled]
+	layer9_res1 -> layer9_ln2
+	layer9_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_ln2 -> layer9_fc1
+	layer9_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 9" fillcolor=lightyellow shape=rectangle style=filled]
+	layer9_fc1 -> layer9_gelu
+	layer9_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer9_gelu -> layer9_fc2
+	layer9_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9" fillcolor=lightcoral shape=rectangle style=filled]
+	layer9_res1 -> layer9_res2
+	layer9_fc2 -> layer9_res2
+	layer9_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 9→10" fillcolor=purple shape=parallelogram style=filled]
+	layer9_res2 -> layer9_send
+	layer10_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer9_send -> layer10_ln1
+	layer10_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_ln1 -> layer10_q
+	layer10_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_ln1 -> layer10_k
+	layer10_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_ln1 -> layer10_v
+	layer10_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_q -> layer10_q_reshape
+	layer10_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_k -> layer10_k_reshape
+	layer10_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_v -> layer10_v_reshape
+	layer10_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_q_reshape -> layer10_attn_scores
+	layer10_k_reshape -> layer10_attn_scores
+	layer10_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer10_attn_scores -> layer10_softmax
+	layer10_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_softmax -> layer10_attn_out
+	layer10_v_reshape -> layer10_attn_out
+	layer10_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_attn_out -> layer10_attn_reshape
+	layer10_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_attn_reshape -> layer10_out_proj
+	layer10_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightcoral shape=rectangle style=filled]
+	layer9_send -> layer10_res1
+	layer10_out_proj -> layer10_res1
+	layer10_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer10_res1 -> layer10_ln2
+	layer10_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_ln2 -> layer10_fc1
+	layer10_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+	layer10_fc1 -> layer10_gelu
+	layer10_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer10_gelu -> layer10_fc2
+	layer10_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10" fillcolor=lightcoral shape=rectangle style=filled]
+	layer10_res1 -> layer10_res2
+	layer10_fc2 -> layer10_res2
+	layer10_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 10→11" fillcolor=purple shape=parallelogram style=filled]
+	layer10_res2 -> layer10_send
+	layer11_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightyellow shape=rectangle style=filled]
+	layer10_send -> layer11_ln1
+	layer11_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_ln1 -> layer11_q
+	layer11_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_ln1 -> layer11_k
+	layer11_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_ln1 -> layer11_v
+	layer11_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_q -> layer11_q_reshape
+	layer11_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_k -> layer11_k_reshape
+	layer11_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_v -> layer11_v_reshape
+	layer11_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_q_reshape -> layer11_attn_scores
+	layer11_k_reshape -> layer11_attn_scores
+	layer11_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 11" fillcolor=lightyellow shape=rectangle style=filled]
+	layer11_attn_scores -> layer11_softmax
+	layer11_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_softmax -> layer11_attn_out
+	layer11_v_reshape -> layer11_attn_out
+	layer11_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_attn_out -> layer11_attn_reshape
+	layer11_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_attn_reshape -> layer11_out_proj
+	layer11_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer10_send -> layer11_res1
+	layer11_out_proj -> layer11_res1
+	layer11_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightyellow shape=rectangle style=filled]
+	layer11_res1 -> layer11_ln2
+	layer11_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_ln2 -> layer11_fc1
+	layer11_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 11" fillcolor=lightyellow shape=rectangle style=filled]
+	layer11_fc1 -> layer11_gelu
+	layer11_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer11_gelu -> layer11_fc2
+	layer11_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer11_res1 -> layer11_res2
+	layer11_fc2 -> layer11_res2
+	layer11_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 11→12" fillcolor=purple shape=parallelogram style=filled]
+	layer11_res2 -> layer11_send
+	layer12_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightyellow shape=rectangle style=filled]
+	layer11_send -> layer12_ln1
+	layer12_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_ln1 -> layer12_q
+	layer12_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_ln1 -> layer12_k
+	layer12_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_ln1 -> layer12_v
+	layer12_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_q -> layer12_q_reshape
+	layer12_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_k -> layer12_k_reshape
+	layer12_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_v -> layer12_v_reshape
+	layer12_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_q_reshape -> layer12_attn_scores
+	layer12_k_reshape -> layer12_attn_scores
+	layer12_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 12" fillcolor=lightyellow shape=rectangle style=filled]
+	layer12_attn_scores -> layer12_softmax
+	layer12_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_softmax -> layer12_attn_out
+	layer12_v_reshape -> layer12_attn_out
+	layer12_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_attn_out -> layer12_attn_reshape
+	layer12_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_attn_reshape -> layer12_out_proj
+	layer12_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightcoral shape=rectangle style=filled]
+	layer11_send -> layer12_res1
+	layer12_out_proj -> layer12_res1
+	layer12_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightyellow shape=rectangle style=filled]
+	layer12_res1 -> layer12_ln2
+	layer12_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_ln2 -> layer12_fc1
+	layer12_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 12" fillcolor=lightyellow shape=rectangle style=filled]
+	layer12_fc1 -> layer12_gelu
+	layer12_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer12_gelu -> layer12_fc2
+	layer12_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12" fillcolor=lightcoral shape=rectangle style=filled]
+	layer12_res1 -> layer12_res2
+	layer12_fc2 -> layer12_res2
+	layer12_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 12→13" fillcolor=purple shape=parallelogram style=filled]
+	layer12_res2 -> layer12_send
+	layer13_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightyellow shape=rectangle style=filled]
+	layer12_send -> layer13_ln1
+	layer13_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_ln1 -> layer13_q
+	layer13_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_ln1 -> layer13_k
+	layer13_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_ln1 -> layer13_v
+	layer13_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_q -> layer13_q_reshape
+	layer13_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_k -> layer13_k_reshape
+	layer13_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_v -> layer13_v_reshape
+	layer13_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_q_reshape -> layer13_attn_scores
+	layer13_k_reshape -> layer13_attn_scores
+	layer13_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 13" fillcolor=lightyellow shape=rectangle style=filled]
+	layer13_attn_scores -> layer13_softmax
+	layer13_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_softmax -> layer13_attn_out
+	layer13_v_reshape -> layer13_attn_out
+	layer13_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_attn_out -> layer13_attn_reshape
+	layer13_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_attn_reshape -> layer13_out_proj
+	layer13_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightcoral shape=rectangle style=filled]
+	layer12_send -> layer13_res1
+	layer13_out_proj -> layer13_res1
+	layer13_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightyellow shape=rectangle style=filled]
+	layer13_res1 -> layer13_ln2
+	layer13_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_ln2 -> layer13_fc1
+	layer13_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 13" fillcolor=lightyellow shape=rectangle style=filled]
+	layer13_fc1 -> layer13_gelu
+	layer13_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer13_gelu -> layer13_fc2
+	layer13_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13" fillcolor=lightcoral shape=rectangle style=filled]
+	layer13_res1 -> layer13_res2
+	layer13_fc2 -> layer13_res2
+	layer13_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 13→14" fillcolor=purple shape=parallelogram style=filled]
+	layer13_res2 -> layer13_send
+	layer14_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightyellow shape=rectangle style=filled]
+	layer13_send -> layer14_ln1
+	layer14_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_ln1 -> layer14_q
+	layer14_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_ln1 -> layer14_k
+	layer14_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_ln1 -> layer14_v
+	layer14_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_q -> layer14_q_reshape
+	layer14_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_k -> layer14_k_reshape
+	layer14_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_v -> layer14_v_reshape
+	layer14_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_q_reshape -> layer14_attn_scores
+	layer14_k_reshape -> layer14_attn_scores
+	layer14_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 14" fillcolor=lightyellow shape=rectangle style=filled]
+	layer14_attn_scores -> layer14_softmax
+	layer14_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_softmax -> layer14_attn_out
+	layer14_v_reshape -> layer14_attn_out
+	layer14_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_attn_out -> layer14_attn_reshape
+	layer14_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_attn_reshape -> layer14_out_proj
+	layer14_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightcoral shape=rectangle style=filled]
+	layer13_send -> layer14_res1
+	layer14_out_proj -> layer14_res1
+	layer14_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightyellow shape=rectangle style=filled]
+	layer14_res1 -> layer14_ln2
+	layer14_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_ln2 -> layer14_fc1
+	layer14_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 14" fillcolor=lightyellow shape=rectangle style=filled]
+	layer14_fc1 -> layer14_gelu
+	layer14_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer14_gelu -> layer14_fc2
+	layer14_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14" fillcolor=lightcoral shape=rectangle style=filled]
+	layer14_res1 -> layer14_res2
+	layer14_fc2 -> layer14_res2
+	layer14_send [label="Inter-GPU Transfer\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 14→15" fillcolor=purple shape=parallelogram style=filled]
+	layer14_res2 -> layer14_send
+	layer15_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightyellow shape=rectangle style=filled]
+	layer14_send -> layer15_ln1
+	layer15_q [label="Q Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_ln1 -> layer15_q
+	layer15_k [label="K Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_ln1 -> layer15_k
+	layer15_v [label="V Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_ln1 -> layer15_v
+	layer15_q_reshape [label="Reshape Q\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_q -> layer15_q_reshape
+	layer15_k_reshape [label="Reshape K\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_k -> layer15_k_reshape
+	layer15_v_reshape [label="Reshape V\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_v -> layer15_v_reshape
+	layer15_attn_scores [label="Attention Scores\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_q_reshape -> layer15_attn_scores
+	layer15_k_reshape -> layer15_attn_scores
+	layer15_softmax [label="Softmax\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, seq_len)\nGPU: 15" fillcolor=lightyellow shape=rectangle style=filled]
+	layer15_attn_scores -> layer15_softmax
+	layer15_attn_out [label="Attention Output\nINPUT: (1024, 16, seq_len, seq_len)\nOUTPUT: (1024, 16, seq_len, 512)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_softmax -> layer15_attn_out
+	layer15_v_reshape -> layer15_attn_out
+	layer15_attn_reshape [label="Reshape Attention\nINPUT: (1024, 16, seq_len, 512)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_attn_out -> layer15_attn_reshape
+	layer15_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_attn_reshape -> layer15_out_proj
+	layer15_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightcoral shape=rectangle style=filled]
+	layer14_send -> layer15_res1
+	layer15_out_proj -> layer15_res1
+	layer15_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightyellow shape=rectangle style=filled]
+	layer15_res1 -> layer15_ln2
+	layer15_fc1 [label="FC1\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_ln2 -> layer15_fc1
+	layer15_gelu [label="GELU\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 32768)\nGPU: 15" fillcolor=lightyellow shape=rectangle style=filled]
+	layer15_fc1 -> layer15_gelu
+	layer15_fc2 [label="FC2\nINPUT: (1024, seq_len, 32768)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer15_gelu -> layer15_fc2
+	layer15_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightcoral shape=rectangle style=filled]
+	layer15_res1 -> layer15_res2
+	layer15_fc2 -> layer15_res2
+	output [label="Total Output\nINPUT: (1024, seq_len, 8192)\nGPU: 15" fillcolor=lightblue shape=ellipse style=filled]
+	layer15_res2 -> output
+}

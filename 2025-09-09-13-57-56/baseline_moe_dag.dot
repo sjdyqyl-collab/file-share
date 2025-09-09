@@ -1,0 +1,840 @@
+// Baseline MoE with TP=8, PP=2
+digraph Baseline_MoE_TP8_PP2 {
+	rankdir=TB size="20,30"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	node [fillcolor=lightcoral shape=diamond style=filled]
+	input [label="Input\nInput: [batch_size=1024, seq_len=10000, dim=8192]\nGPU: All GPUs" fillcolor=lightblue shape=ellipse]
+	stage_0_layer_0_attention_qkv [label="QKV Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_attention_split [label="Split Heads\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_attention_matmul_qk [label="QK^T Matmul\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 16, 10000, 10000]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_attention_softmax [label="Softmax\nInput: [1024, 16, 10000, 10000]\nOutput: [1024, 16, 10000, 10000]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_attention_matmul_v [label="Attention Output\nInput: [1024, 16, 10000, 10000], [1024, 10000, 16, 512]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_attention_concat [label="Concat Heads\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_attention_linear [label="Output Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_attention_residual [label="Residual Add\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_attention_layernorm [label="LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 0" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_0_gpu0_expert0_linear1 [label="Expert 0 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert0_gelu [label="Expert 0 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert0_linear2 [label="Expert 0 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert1_linear1 [label="Expert 1 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert1_gelu [label="Expert 1 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert1_linear2 [label="Expert 1 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert2_linear1 [label="Expert 2 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert2_gelu [label="Expert 2 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert2_linear2 [label="Expert 2 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert3_linear1 [label="Expert 3 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert3_gelu [label="Expert 3 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu0_expert3_linear2 [label="Expert 3 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 1" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_0_gpu1_expert0_linear1 [label="Expert 4 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert0_gelu [label="Expert 4 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert0_linear2 [label="Expert 4 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert1_linear1 [label="Expert 5 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert1_gelu [label="Expert 5 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert1_linear2 [label="Expert 5 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert2_linear1 [label="Expert 6 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert2_gelu [label="Expert 6 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert2_linear2 [label="Expert 6 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert3_linear1 [label="Expert 7 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert3_gelu [label="Expert 7 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu1_expert3_linear2 [label="Expert 7 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 2" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_0_gpu2_expert0_linear1 [label="Expert 8 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert0_gelu [label="Expert 8 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert0_linear2 [label="Expert 8 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert1_linear1 [label="Expert 9 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert1_gelu [label="Expert 9 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert1_linear2 [label="Expert 9 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert2_linear1 [label="Expert 10 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert2_gelu [label="Expert 10 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert2_linear2 [label="Expert 10 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert3_linear1 [label="Expert 11 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert3_gelu [label="Expert 11 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu2_expert3_linear2 [label="Expert 11 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 3" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_0_gpu3_expert0_linear1 [label="Expert 12 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert0_gelu [label="Expert 12 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert0_linear2 [label="Expert 12 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert1_linear1 [label="Expert 13 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert1_gelu [label="Expert 13 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert1_linear2 [label="Expert 13 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert2_linear1 [label="Expert 14 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert2_gelu [label="Expert 14 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert2_linear2 [label="Expert 14 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert3_linear1 [label="Expert 15 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert3_gelu [label="Expert 15 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu3_expert3_linear2 [label="Expert 15 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 4" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_0_gpu4_expert0_linear1 [label="Expert 16 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert0_gelu [label="Expert 16 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert0_linear2 [label="Expert 16 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert1_linear1 [label="Expert 17 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert1_gelu [label="Expert 17 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert1_linear2 [label="Expert 17 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert2_linear1 [label="Expert 18 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert2_gelu [label="Expert 18 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert2_linear2 [label="Expert 18 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert3_linear1 [label="Expert 19 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert3_gelu [label="Expert 19 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu4_expert3_linear2 [label="Expert 19 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 5" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_0_gpu5_expert0_linear1 [label="Expert 20 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert0_gelu [label="Expert 20 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert0_linear2 [label="Expert 20 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert1_linear1 [label="Expert 21 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert1_gelu [label="Expert 21 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert1_linear2 [label="Expert 21 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert2_linear1 [label="Expert 22 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert2_gelu [label="Expert 22 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert2_linear2 [label="Expert 22 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert3_linear1 [label="Expert 23 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert3_gelu [label="Expert 23 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu5_expert3_linear2 [label="Expert 23 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 6" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_0_gpu6_expert0_linear1 [label="Expert 24 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert0_gelu [label="Expert 24 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert0_linear2 [label="Expert 24 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert1_linear1 [label="Expert 25 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert1_gelu [label="Expert 25 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert1_linear2 [label="Expert 25 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert2_linear1 [label="Expert 26 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert2_gelu [label="Expert 26 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert2_linear2 [label="Expert 26 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert3_linear1 [label="Expert 27 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert3_gelu [label="Expert 27 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu6_expert3_linear2 [label="Expert 27 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 7" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_0_gpu7_expert0_linear1 [label="Expert 28 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert0_gelu [label="Expert 28 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert0_linear2 [label="Expert 28 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert1_linear1 [label="Expert 29 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert1_gelu [label="Expert 29 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert1_linear2 [label="Expert 29 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert2_linear1 [label="Expert 30 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert2_gelu [label="Expert 30 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert2_linear2 [label="Expert 30 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert3_linear1 [label="Expert 31 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert3_gelu [label="Expert 31 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_gpu7_expert3_linear2 [label="Expert 31 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_0_aggregation [label="Expert Aggregation\nInput: [1024, 10000, 8192] × 4\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+	layer_0_final_residual [label="Final Residual\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	layer_0_final_layernorm [label="Final LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_qkv [label="QKV Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_split [label="Split Heads\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_matmul_qk [label="QK^T Matmul\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 16, 10000, 10000]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_softmax [label="Softmax\nInput: [1024, 16, 10000, 10000]\nOutput: [1024, 16, 10000, 10000]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_matmul_v [label="Attention Output\nInput: [1024, 16, 10000, 10000], [1024, 10000, 16, 512]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_concat [label="Concat Heads\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_linear [label="Output Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_residual [label="Residual Add\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_attention_layernorm [label="LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 0" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_1_gpu0_expert0_linear1 [label="Expert 0 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert0_gelu [label="Expert 0 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert0_linear2 [label="Expert 0 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert1_linear1 [label="Expert 1 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert1_gelu [label="Expert 1 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert1_linear2 [label="Expert 1 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert2_linear1 [label="Expert 2 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert2_gelu [label="Expert 2 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert2_linear2 [label="Expert 2 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert3_linear1 [label="Expert 3 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert3_gelu [label="Expert 3 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu0_expert3_linear2 [label="Expert 3 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 1" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_1_gpu1_expert0_linear1 [label="Expert 4 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert0_gelu [label="Expert 4 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert0_linear2 [label="Expert 4 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert1_linear1 [label="Expert 5 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert1_gelu [label="Expert 5 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert1_linear2 [label="Expert 5 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert2_linear1 [label="Expert 6 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert2_gelu [label="Expert 6 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert2_linear2 [label="Expert 6 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert3_linear1 [label="Expert 7 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert3_gelu [label="Expert 7 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu1_expert3_linear2 [label="Expert 7 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 2" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_1_gpu2_expert0_linear1 [label="Expert 8 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert0_gelu [label="Expert 8 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert0_linear2 [label="Expert 8 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert1_linear1 [label="Expert 9 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert1_gelu [label="Expert 9 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert1_linear2 [label="Expert 9 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert2_linear1 [label="Expert 10 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert2_gelu [label="Expert 10 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert2_linear2 [label="Expert 10 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert3_linear1 [label="Expert 11 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert3_gelu [label="Expert 11 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu2_expert3_linear2 [label="Expert 11 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 3" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_1_gpu3_expert0_linear1 [label="Expert 12 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert0_gelu [label="Expert 12 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert0_linear2 [label="Expert 12 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert1_linear1 [label="Expert 13 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert1_gelu [label="Expert 13 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert1_linear2 [label="Expert 13 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert2_linear1 [label="Expert 14 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert2_gelu [label="Expert 14 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert2_linear2 [label="Expert 14 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert3_linear1 [label="Expert 15 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert3_gelu [label="Expert 15 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu3_expert3_linear2 [label="Expert 15 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 4" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_1_gpu4_expert0_linear1 [label="Expert 16 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert0_gelu [label="Expert 16 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert0_linear2 [label="Expert 16 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert1_linear1 [label="Expert 17 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert1_gelu [label="Expert 17 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert1_linear2 [label="Expert 17 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert2_linear1 [label="Expert 18 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert2_gelu [label="Expert 18 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert2_linear2 [label="Expert 18 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert3_linear1 [label="Expert 19 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert3_gelu [label="Expert 19 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu4_expert3_linear2 [label="Expert 19 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 5" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_1_gpu5_expert0_linear1 [label="Expert 20 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert0_gelu [label="Expert 20 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert0_linear2 [label="Expert 20 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert1_linear1 [label="Expert 21 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert1_gelu [label="Expert 21 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert1_linear2 [label="Expert 21 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert2_linear1 [label="Expert 22 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert2_gelu [label="Expert 22 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert2_linear2 [label="Expert 22 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert3_linear1 [label="Expert 23 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert3_gelu [label="Expert 23 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu5_expert3_linear2 [label="Expert 23 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 6" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_1_gpu6_expert0_linear1 [label="Expert 24 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert0_gelu [label="Expert 24 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert0_linear2 [label="Expert 24 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert1_linear1 [label="Expert 25 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert1_gelu [label="Expert 25 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert1_linear2 [label="Expert 25 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert2_linear1 [label="Expert 26 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert2_gelu [label="Expert 26 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert2_linear2 [label="Expert 26 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert3_linear1 [label="Expert 27 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert3_gelu [label="Expert 27 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu6_expert3_linear2 [label="Expert 27 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 7" fillcolor=lightcoral shape=diamond]
+	stage_0_layer_1_gpu7_expert0_linear1 [label="Expert 28 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert0_gelu [label="Expert 28 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert0_linear2 [label="Expert 28 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert1_linear1 [label="Expert 29 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert1_gelu [label="Expert 29 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert1_linear2 [label="Expert 29 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert2_linear1 [label="Expert 30 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert2_gelu [label="Expert 30 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert2_linear2 [label="Expert 30 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert3_linear1 [label="Expert 31 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert3_gelu [label="Expert 31 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_gpu7_expert3_linear2 [label="Expert 31 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	stage_0_layer_1_aggregation [label="Expert Aggregation\nInput: [1024, 10000, 8192] × 4\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightyellow shape=parallelogram]
+	layer_1_final_residual [label="Final Residual\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	layer_1_final_layernorm [label="Final LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_qkv [label="QKV Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_split [label="Split Heads\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_matmul_qk [label="QK^T Matmul\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 16, 10000, 10000]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_softmax [label="Softmax\nInput: [1024, 16, 10000, 10000]\nOutput: [1024, 16, 10000, 10000]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_matmul_v [label="Attention Output\nInput: [1024, 16, 10000, 10000], [1024, 10000, 16, 512]\nOutput: [1024, 10000, 16, 512]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_concat [label="Concat Heads\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_linear [label="Output Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_residual [label="Residual Add\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_attention_layernorm [label="LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 8" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_2_gpu0_expert0_linear1 [label="Expert 0 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert0_gelu [label="Expert 0 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert0_linear2 [label="Expert 0 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert1_linear1 [label="Expert 1 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert1_gelu [label="Expert 1 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert1_linear2 [label="Expert 1 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert2_linear1 [label="Expert 2 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert2_gelu [label="Expert 2 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert2_linear2 [label="Expert 2 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert3_linear1 [label="Expert 3 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert3_gelu [label="Expert 3 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu0_expert3_linear2 [label="Expert 3 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 9" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_2_gpu1_expert0_linear1 [label="Expert 4 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert0_gelu [label="Expert 4 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert0_linear2 [label="Expert 4 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert1_linear1 [label="Expert 5 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert1_gelu [label="Expert 5 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert1_linear2 [label="Expert 5 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert2_linear1 [label="Expert 6 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert2_gelu [label="Expert 6 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert2_linear2 [label="Expert 6 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert3_linear1 [label="Expert 7 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert3_gelu [label="Expert 7 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu1_expert3_linear2 [label="Expert 7 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 10" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_2_gpu2_expert0_linear1 [label="Expert 8 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert0_gelu [label="Expert 8 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert0_linear2 [label="Expert 8 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert1_linear1 [label="Expert 9 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert1_gelu [label="Expert 9 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert1_linear2 [label="Expert 9 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert2_linear1 [label="Expert 10 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert2_gelu [label="Expert 10 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert2_linear2 [label="Expert 10 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert3_linear1 [label="Expert 11 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert3_gelu [label="Expert 11 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu2_expert3_linear2 [label="Expert 11 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 11" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_2_gpu3_expert0_linear1 [label="Expert 12 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert0_gelu [label="Expert 12 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert0_linear2 [label="Expert 12 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert1_linear1 [label="Expert 13 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert1_gelu [label="Expert 13 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert1_linear2 [label="Expert 13 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert2_linear1 [label="Expert 14 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert2_gelu [label="Expert 14 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert2_linear2 [label="Expert 14 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert3_linear1 [label="Expert 15 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert3_gelu [label="Expert 15 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu3_expert3_linear2 [label="Expert 15 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 12" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_2_gpu4_expert0_linear1 [label="Expert 16 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert0_gelu [label="Expert 16 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert0_linear2 [label="Expert 16 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert1_linear1 [label="Expert 17 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert1_gelu [label="Expert 17 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert1_linear2 [label="Expert 17 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert2_linear1 [label="Expert 18 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert2_gelu [label="Expert 18 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert2_linear2 [label="Expert 18 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert3_linear1 [label="Expert 19 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert3_gelu [label="Expert 19 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu4_expert3_linear2 [label="Expert 19 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 13" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_2_gpu5_expert0_linear1 [label="Expert 20 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert0_gelu [label="Expert 20 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert0_linear2 [label="Expert 20 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert1_linear1 [label="Expert 21 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert1_gelu [label="Expert 21 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert1_linear2 [label="Expert 21 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert2_linear1 [label="Expert 22 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert2_gelu [label="Expert 22 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert2_linear2 [label="Expert 22 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert3_linear1 [label="Expert 23 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert3_gelu [label="Expert 23 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu5_expert3_linear2 [label="Expert 23 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 14" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_2_gpu6_expert0_linear1 [label="Expert 24 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert0_gelu [label="Expert 24 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert0_linear2 [label="Expert 24 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert1_linear1 [label="Expert 25 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert1_gelu [label="Expert 25 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert1_linear2 [label="Expert 25 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert2_linear1 [label="Expert 26 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert2_gelu [label="Expert 26 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert2_linear2 [label="Expert 26 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert3_linear1 [label="Expert 27 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert3_gelu [label="Expert 27 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu6_expert3_linear2 [label="Expert 27 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 15" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_2_gpu7_expert0_linear1 [label="Expert 28 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert0_gelu [label="Expert 28 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert0_linear2 [label="Expert 28 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert1_linear1 [label="Expert 29 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert1_gelu [label="Expert 29 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert1_linear2 [label="Expert 29 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert2_linear1 [label="Expert 30 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert2_gelu [label="Expert 30 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert2_linear2 [label="Expert 30 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert3_linear1 [label="Expert 31 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert3_gelu [label="Expert 31 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_gpu7_expert3_linear2 [label="Expert 31 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_2_aggregation [label="Expert Aggregation\nInput: [1024, 10000, 8192] × 4\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+	layer_2_final_residual [label="Final Residual\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	layer_2_final_layernorm [label="Final LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_qkv [label="QKV Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_split [label="Split Heads\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_matmul_qk [label="QK^T Matmul\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 16, 10000, 10000]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_softmax [label="Softmax\nInput: [1024, 16, 10000, 10000]\nOutput: [1024, 16, 10000, 10000]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_matmul_v [label="Attention Output\nInput: [1024, 16, 10000, 10000], [1024, 10000, 16, 512]\nOutput: [1024, 10000, 16, 512]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_concat [label="Concat Heads\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_linear [label="Output Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_residual [label="Residual Add\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_attention_layernorm [label="LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 8" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_3_gpu0_expert0_linear1 [label="Expert 0 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert0_gelu [label="Expert 0 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert0_linear2 [label="Expert 0 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert1_linear1 [label="Expert 1 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert1_gelu [label="Expert 1 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert1_linear2 [label="Expert 1 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert2_linear1 [label="Expert 2 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert2_gelu [label="Expert 2 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert2_linear2 [label="Expert 2 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert3_linear1 [label="Expert 3 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert3_gelu [label="Expert 3 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu0_expert3_linear2 [label="Expert 3 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 9" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_3_gpu1_expert0_linear1 [label="Expert 4 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert0_gelu [label="Expert 4 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert0_linear2 [label="Expert 4 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert1_linear1 [label="Expert 5 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert1_gelu [label="Expert 5 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert1_linear2 [label="Expert 5 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert2_linear1 [label="Expert 6 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert2_gelu [label="Expert 6 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert2_linear2 [label="Expert 6 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert3_linear1 [label="Expert 7 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert3_gelu [label="Expert 7 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu1_expert3_linear2 [label="Expert 7 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 10" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_3_gpu2_expert0_linear1 [label="Expert 8 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert0_gelu [label="Expert 8 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert0_linear2 [label="Expert 8 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert1_linear1 [label="Expert 9 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert1_gelu [label="Expert 9 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert1_linear2 [label="Expert 9 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert2_linear1 [label="Expert 10 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert2_gelu [label="Expert 10 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert2_linear2 [label="Expert 10 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert3_linear1 [label="Expert 11 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert3_gelu [label="Expert 11 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu2_expert3_linear2 [label="Expert 11 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 11" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_3_gpu3_expert0_linear1 [label="Expert 12 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert0_gelu [label="Expert 12 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert0_linear2 [label="Expert 12 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert1_linear1 [label="Expert 13 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert1_gelu [label="Expert 13 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert1_linear2 [label="Expert 13 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert2_linear1 [label="Expert 14 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert2_gelu [label="Expert 14 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert2_linear2 [label="Expert 14 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert3_linear1 [label="Expert 15 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert3_gelu [label="Expert 15 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu3_expert3_linear2 [label="Expert 15 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 12" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_3_gpu4_expert0_linear1 [label="Expert 16 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert0_gelu [label="Expert 16 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert0_linear2 [label="Expert 16 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert1_linear1 [label="Expert 17 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert1_gelu [label="Expert 17 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert1_linear2 [label="Expert 17 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert2_linear1 [label="Expert 18 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert2_gelu [label="Expert 18 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert2_linear2 [label="Expert 18 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert3_linear1 [label="Expert 19 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert3_gelu [label="Expert 19 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu4_expert3_linear2 [label="Expert 19 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 13" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_3_gpu5_expert0_linear1 [label="Expert 20 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert0_gelu [label="Expert 20 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert0_linear2 [label="Expert 20 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert1_linear1 [label="Expert 21 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert1_gelu [label="Expert 21 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert1_linear2 [label="Expert 21 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert2_linear1 [label="Expert 22 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert2_gelu [label="Expert 22 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert2_linear2 [label="Expert 22 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert3_linear1 [label="Expert 23 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert3_gelu [label="Expert 23 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu5_expert3_linear2 [label="Expert 23 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 14" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_3_gpu6_expert0_linear1 [label="Expert 24 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert0_gelu [label="Expert 24 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert0_linear2 [label="Expert 24 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert1_linear1 [label="Expert 25 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert1_gelu [label="Expert 25 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert1_linear2 [label="Expert 25 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert2_linear1 [label="Expert 26 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert2_gelu [label="Expert 26 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert2_linear2 [label="Expert 26 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert3_linear1 [label="Expert 27 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert3_gelu [label="Expert 27 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu6_expert3_linear2 [label="Expert 27 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_gating [label="Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 4]\nGPU: 15" fillcolor=lightcoral shape=diamond]
+	stage_1_layer_3_gpu7_expert0_linear1 [label="Expert 28 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert0_gelu [label="Expert 28 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert0_linear2 [label="Expert 28 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert1_linear1 [label="Expert 29 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert1_gelu [label="Expert 29 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert1_linear2 [label="Expert 29 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert2_linear1 [label="Expert 30 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert2_gelu [label="Expert 30 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert2_linear2 [label="Expert 30 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert3_linear1 [label="Expert 31 Linear1\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert3_gelu [label="Expert 31 GELU\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_gpu7_expert3_linear2 [label="Expert 31 Linear2\nInput: [1024, 10000, 32768]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	stage_1_layer_3_aggregation [label="Expert Aggregation\nInput: [1024, 10000, 8192] × 4\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightyellow shape=parallelogram]
+	layer_3_final_residual [label="Final Residual\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	layer_3_final_layernorm [label="Final LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	pipeline_comm_0_1 [label="Pipeline Communication\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 7→8" fillcolor=lightyellow shape=parallelogram]
+	output [label="Output\nInput: [batch_size=1024, seq_len=10000, dim=8192]\nGPU: All GPUs" fillcolor=lightblue shape=ellipse]
+	input -> stage_0_layer_0_attention_qkv
+	stage_0_layer_0_attention_qkv -> stage_0_layer_0_attention_split
+	stage_0_layer_0_attention_split -> stage_0_layer_0_attention_matmul_qk
+	stage_0_layer_0_attention_matmul_qk -> stage_0_layer_0_attention_softmax
+	stage_0_layer_0_attention_softmax -> stage_0_layer_0_attention_matmul_v
+	stage_0_layer_0_attention_matmul_v -> stage_0_layer_0_attention_concat
+	stage_0_layer_0_attention_concat -> stage_0_layer_0_attention_linear
+	stage_0_layer_0_attention_linear -> stage_0_layer_0_attention_residual
+	input -> stage_0_layer_0_attention_residual
+	stage_0_layer_0_attention_residual -> stage_0_layer_0_attention_layernorm
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu0_gating
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu0_expert0_linear1 [style=dashed]
+	stage_0_layer_0_gpu0_expert0_linear1 -> stage_0_layer_0_gpu0_expert0_gelu
+	stage_0_layer_0_gpu0_expert0_gelu -> stage_0_layer_0_gpu0_expert0_linear2
+	stage_0_layer_0_gpu0_expert0_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu0_gating -> stage_0_layer_0_gpu0_expert0_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu0_expert1_linear1 [style=dashed]
+	stage_0_layer_0_gpu0_expert1_linear1 -> stage_0_layer_0_gpu0_expert1_gelu
+	stage_0_layer_0_gpu0_expert1_gelu -> stage_0_layer_0_gpu0_expert1_linear2
+	stage_0_layer_0_gpu0_expert1_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu0_gating -> stage_0_layer_0_gpu0_expert1_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu0_expert2_linear1 [style=dashed]
+	stage_0_layer_0_gpu0_expert2_linear1 -> stage_0_layer_0_gpu0_expert2_gelu
+	stage_0_layer_0_gpu0_expert2_gelu -> stage_0_layer_0_gpu0_expert2_linear2
+	stage_0_layer_0_gpu0_expert2_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu0_gating -> stage_0_layer_0_gpu0_expert2_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu0_expert3_linear1 [style=dashed]
+	stage_0_layer_0_gpu0_expert3_linear1 -> stage_0_layer_0_gpu0_expert3_gelu
+	stage_0_layer_0_gpu0_expert3_gelu -> stage_0_layer_0_gpu0_expert3_linear2
+	stage_0_layer_0_gpu0_expert3_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu0_gating -> stage_0_layer_0_gpu0_expert3_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu1_gating
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu1_expert0_linear1 [style=dashed]
+	stage_0_layer_0_gpu1_expert0_linear1 -> stage_0_layer_0_gpu1_expert0_gelu
+	stage_0_layer_0_gpu1_expert0_gelu -> stage_0_layer_0_gpu1_expert0_linear2
+	stage_0_layer_0_gpu1_expert0_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu1_gating -> stage_0_layer_0_gpu1_expert0_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu1_expert1_linear1 [style=dashed]
+	stage_0_layer_0_gpu1_expert1_linear1 -> stage_0_layer_0_gpu1_expert1_gelu
+	stage_0_layer_0_gpu1_expert1_gelu -> stage_0_layer_0_gpu1_expert1_linear2
+	stage_0_layer_0_gpu1_expert1_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu1_gating -> stage_0_layer_0_gpu1_expert1_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu1_expert2_linear1 [style=dashed]
+	stage_0_layer_0_gpu1_expert2_linear1 -> stage_0_layer_0_gpu1_expert2_gelu
+	stage_0_layer_0_gpu1_expert2_gelu -> stage_0_layer_0_gpu1_expert2_linear2
+	stage_0_layer_0_gpu1_expert2_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu1_gating -> stage_0_layer_0_gpu1_expert2_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu1_expert3_linear1 [style=dashed]
+	stage_0_layer_0_gpu1_expert3_linear1 -> stage_0_layer_0_gpu1_expert3_gelu
+	stage_0_layer_0_gpu1_expert3_gelu -> stage_0_layer_0_gpu1_expert3_linear2
+	stage_0_layer_0_gpu1_expert3_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu1_gating -> stage_0_layer_0_gpu1_expert3_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu2_gating
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu2_expert0_linear1 [style=dashed]
+	stage_0_layer_0_gpu2_expert0_linear1 -> stage_0_layer_0_gpu2_expert0_gelu
+	stage_0_layer_0_gpu2_expert0_gelu -> stage_0_layer_0_gpu2_expert0_linear2
+	stage_0_layer_0_gpu2_expert0_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu2_gating -> stage_0_layer_0_gpu2_expert0_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu2_expert1_linear1 [style=dashed]
+	stage_0_layer_0_gpu2_expert1_linear1 -> stage_0_layer_0_gpu2_expert1_gelu
+	stage_0_layer_0_gpu2_expert1_gelu -> stage_0_layer_0_gpu2_expert1_linear2
+	stage_0_layer_0_gpu2_expert1_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu2_gating -> stage_0_layer_0_gpu2_expert1_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu2_expert2_linear1 [style=dashed]
+	stage_0_layer_0_gpu2_expert2_linear1 -> stage_0_layer_0_gpu2_expert2_gelu
+	stage_0_layer_0_gpu2_expert2_gelu -> stage_0_layer_0_gpu2_expert2_linear2
+	stage_0_layer_0_gpu2_expert2_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu2_gating -> stage_0_layer_0_gpu2_expert2_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu2_expert3_linear1 [style=dashed]
+	stage_0_layer_0_gpu2_expert3_linear1 -> stage_0_layer_0_gpu2_expert3_gelu
+	stage_0_layer_0_gpu2_expert3_gelu -> stage_0_layer_0_gpu2_expert3_linear2
+	stage_0_layer_0_gpu2_expert3_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu2_gating -> stage_0_layer_0_gpu2_expert3_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu3_gating
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu3_expert0_linear1 [style=dashed]
+	stage_0_layer_0_gpu3_expert0_linear1 -> stage_0_layer_0_gpu3_expert0_gelu
+	stage_0_layer_0_gpu3_expert0_gelu -> stage_0_layer_0_gpu3_expert0_linear2
+	stage_0_layer_0_gpu3_expert0_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu3_gating -> stage_0_layer_0_gpu3_expert0_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu3_expert1_linear1 [style=dashed]
+	stage_0_layer_0_gpu3_expert1_linear1 -> stage_0_layer_0_gpu3_expert1_gelu
+	stage_0_layer_0_gpu3_expert1_gelu -> stage_0_layer_0_gpu3_expert1_linear2
+	stage_0_layer_0_gpu3_expert1_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu3_gating -> stage_0_layer_0_gpu3_expert1_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu3_expert2_linear1 [style=dashed]
+	stage_0_layer_0_gpu3_expert2_linear1 -> stage_0_layer_0_gpu3_expert2_gelu
+	stage_0_layer_0_gpu3_expert2_gelu -> stage_0_layer_0_gpu3_expert2_linear2
+	stage_0_layer_0_gpu3_expert2_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu3_gating -> stage_0_layer_0_gpu3_expert2_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu3_expert3_linear1 [style=dashed]
+	stage_0_layer_0_gpu3_expert3_linear1 -> stage_0_layer_0_gpu3_expert3_gelu
+	stage_0_layer_0_gpu3_expert3_gelu -> stage_0_layer_0_gpu3_expert3_linear2
+	stage_0_layer_0_gpu3_expert3_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu3_gating -> stage_0_layer_0_gpu3_expert3_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu4_gating
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu4_expert0_linear1 [style=dashed]
+	stage_0_layer_0_gpu4_expert0_linear1 -> stage_0_layer_0_gpu4_expert0_gelu
+	stage_0_layer_0_gpu4_expert0_gelu -> stage_0_layer_0_gpu4_expert0_linear2
+	stage_0_layer_0_gpu4_expert0_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu4_gating -> stage_0_layer_0_gpu4_expert0_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu4_expert1_linear1 [style=dashed]
+	stage_0_layer_0_gpu4_expert1_linear1 -> stage_0_layer_0_gpu4_expert1_gelu
+	stage_0_layer_0_gpu4_expert1_gelu -> stage_0_layer_0_gpu4_expert1_linear2
+	stage_0_layer_0_gpu4_expert1_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu4_gating -> stage_0_layer_0_gpu4_expert1_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu4_expert2_linear1 [style=dashed]
+	stage_0_layer_0_gpu4_expert2_linear1 -> stage_0_layer_0_gpu4_expert2_gelu
+	stage_0_layer_0_gpu4_expert2_gelu -> stage_0_layer_0_gpu4_expert2_linear2
+	stage_0_layer_0_gpu4_expert2_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu4_gating -> stage_0_layer_0_gpu4_expert2_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu4_expert3_linear1 [style=dashed]
+	stage_0_layer_0_gpu4_expert3_linear1 -> stage_0_layer_0_gpu4_expert3_gelu
+	stage_0_layer_0_gpu4_expert3_gelu -> stage_0_layer_0_gpu4_expert3_linear2
+	stage_0_layer_0_gpu4_expert3_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu4_gating -> stage_0_layer_0_gpu4_expert3_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu5_gating
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu5_expert0_linear1 [style=dashed]
+	stage_0_layer_0_gpu5_expert0_linear1 -> stage_0_layer_0_gpu5_expert0_gelu
+	stage_0_layer_0_gpu5_expert0_gelu -> stage_0_layer_0_gpu5_expert0_linear2
+	stage_0_layer_0_gpu5_expert0_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu5_gating -> stage_0_layer_0_gpu5_expert0_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu5_expert1_linear1 [style=dashed]
+	stage_0_layer_0_gpu5_expert1_linear1 -> stage_0_layer_0_gpu5_expert1_gelu
+	stage_0_layer_0_gpu5_expert1_gelu -> stage_0_layer_0_gpu5_expert1_linear2
+	stage_0_layer_0_gpu5_expert1_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu5_gating -> stage_0_layer_0_gpu5_expert1_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu5_expert2_linear1 [style=dashed]
+	stage_0_layer_0_gpu5_expert2_linear1 -> stage_0_layer_0_gpu5_expert2_gelu
+	stage_0_layer_0_gpu5_expert2_gelu -> stage_0_layer_0_gpu5_expert2_linear2
+	stage_0_layer_0_gpu5_expert2_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu5_gating -> stage_0_layer_0_gpu5_expert2_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu5_expert3_linear1 [style=dashed]
+	stage_0_layer_0_gpu5_expert3_linear1 -> stage_0_layer_0_gpu5_expert3_gelu
+	stage_0_layer_0_gpu5_expert3_gelu -> stage_0_layer_0_gpu5_expert3_linear2
+	stage_0_layer_0_gpu5_expert3_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu5_gating -> stage_0_layer_0_gpu5_expert3_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu6_gating
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu6_expert0_linear1 [style=dashed]
+	stage_0_layer_0_gpu6_expert0_linear1 -> stage_0_layer_0_gpu6_expert0_gelu
+	stage_0_layer_0_gpu6_expert0_gelu -> stage_0_layer_0_gpu6_expert0_linear2
+	stage_0_layer_0_gpu6_expert0_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu6_gating -> stage_0_layer_0_gpu6_expert0_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu6_expert1_linear1 [style=dashed]
+	stage_0_layer_0_gpu6_expert1_linear1 -> stage_0_layer_0_gpu6_expert1_gelu
+	stage_0_layer_0_gpu6_expert1_gelu -> stage_0_layer_0_gpu6_expert1_linear2
+	stage_0_layer_0_gpu6_expert1_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu6_gating -> stage_0_layer_0_gpu6_expert1_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu6_expert2_linear1 [style=dashed]
+	stage_0_layer_0_gpu6_expert2_linear1 -> stage_0_layer_0_gpu6_expert2_gelu
+	stage_0_layer_0_gpu6_expert2_gelu -> stage_0_layer_0_gpu6_expert2_linear2
+	stage_0_layer_0_gpu6_expert2_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu6_gating -> stage_0_layer_0_gpu6_expert2_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu6_expert3_linear1 [style=dashed]
+	stage_0_layer_0_gpu6_expert3_linear1 -> stage_0_layer_0_gpu6_expert3_gelu
+	stage_0_layer_0_gpu6_expert3_gelu -> stage_0_layer_0_gpu6_expert3_linear2
+	stage_0_layer_0_gpu6_expert3_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu6_gating -> stage_0_layer_0_gpu6_expert3_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu7_gating
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu7_expert0_linear1 [style=dashed]
+	stage_0_layer_0_gpu7_expert0_linear1 -> stage_0_layer_0_gpu7_expert0_gelu
+	stage_0_layer_0_gpu7_expert0_gelu -> stage_0_layer_0_gpu7_expert0_linear2
+	stage_0_layer_0_gpu7_expert0_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu7_gating -> stage_0_layer_0_gpu7_expert0_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu7_expert1_linear1 [style=dashed]
+	stage_0_layer_0_gpu7_expert1_linear1 -> stage_0_layer_0_gpu7_expert1_gelu
+	stage_0_layer_0_gpu7_expert1_gelu -> stage_0_layer_0_gpu7_expert1_linear2
+	stage_0_layer_0_gpu7_expert1_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu7_gating -> stage_0_layer_0_gpu7_expert1_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu7_expert2_linear1 [style=dashed]
+	stage_0_layer_0_gpu7_expert2_linear1 -> stage_0_layer_0_gpu7_expert2_gelu
+	stage_0_layer_0_gpu7_expert2_gelu -> stage_0_layer_0_gpu7_expert2_linear2
+	stage_0_layer_0_gpu7_expert2_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu7_gating -> stage_0_layer_0_gpu7_expert2_linear1 [style=dashed]
+	stage_0_layer_0_attention_layernorm -> stage_0_layer_0_gpu7_expert3_linear1 [style=dashed]
+	stage_0_layer_0_gpu7_expert3_linear1 -> stage_0_layer_0_gpu7_expert3_gelu
+	stage_0_layer_0_gpu7_expert3_gelu -> stage_0_layer_0_gpu7_expert3_linear2
+	stage_0_layer_0_gpu7_expert3_linear2 -> stage_0_layer_0_aggregation
+	stage_0_layer_0_gpu7_gating -> stage_0_layer_0_gpu7_expert3_linear1 [style=dashed]
+	stage_0_layer_0_aggregation -> layer_0_final_residual
+	stage_0_layer_0_attention_layernorm -> layer_0_final_residual
+	layer_0_final_residual -> layer_0_final_layernorm
+	layer_0_final_layernorm -> stage_0_layer_1_attention_qkv
+	stage_0_layer_1_attention_qkv -> stage_0_layer_1_attention_split
+	stage_0_layer_1_attention_split -> stage_0_layer_1_attention_matmul_qk
+	stage_0_layer_1_attention_matmul_qk -> stage_0_layer_1_attention_softmax
+	stage_0_layer_1_attention_softmax -> stage_0_layer_1_attention_matmul_v
+	stage_0_layer_1_attention_matmul_v -> stage_0_layer_1_attention_concat
+	stage_0_layer_1_attention_concat -> stage_0_layer_1_attention_linear
+	layer_0_final_layernorm -> stage_0_layer_1_attention_residual
+	stage_0_layer_1_attention_linear -> stage_0_layer_1_attention_residual
+	stage_0_layer_1_attention_residual -> stage_0_layer_1_attention_layernorm
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu0_gating
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu0_expert0_linear1 [style=dashed]
+	stage_0_layer_1_gpu0_expert0_linear1 -> stage_0_layer_1_gpu0_expert0_gelu
+	stage_0_layer_1_gpu0_expert0_gelu -> stage_0_layer_1_gpu0_expert0_linear2
+	stage_0_layer_1_gpu0_expert0_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu0_gating -> stage_0_layer_1_gpu0_expert0_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu0_expert1_linear1 [style=dashed]
+	stage_0_layer_1_gpu0_expert1_linear1 -> stage_0_layer_1_gpu0_expert1_gelu
+	stage_0_layer_1_gpu0_expert1_gelu -> stage_0_layer_1_gpu0_expert1_linear2
+	stage_0_layer_1_gpu0_expert1_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu0_gating -> stage_0_layer_1_gpu0_expert1_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu0_expert2_linear1 [style=dashed]
+	stage_0_layer_1_gpu0_expert2_linear1 -> stage_0_layer_1_gpu0_expert2_gelu
+	stage_0_layer_1_gpu0_expert2_gelu -> stage_0_layer_1_gpu0_expert2_linear2
+	stage_0_layer_1_gpu0_expert2_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu0_gating -> stage_0_layer_1_gpu0_expert2_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu0_expert3_linear1 [style=dashed]
+	stage_0_layer_1_gpu0_expert3_linear1 -> stage_0_layer_1_gpu0_expert3_gelu
+	stage_0_layer_1_gpu0_expert3_gelu -> stage_0_layer_1_gpu0_expert3_linear2
+	stage_0_layer_1_gpu0_expert3_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu0_gating -> stage_0_layer_1_gpu0_expert3_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu1_gating
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu1_expert0_linear1 [style=dashed]
+	stage_0_layer_1_gpu1_expert0_linear1 -> stage_0_layer_1_gpu1_expert0_gelu
+	stage_0_layer_1_gpu1_expert0_gelu -> stage_0_layer_1_gpu1_expert0_linear2
+	stage_0_layer_1_gpu1_expert0_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu1_gating -> stage_0_layer_1_gpu1_expert0_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu1_expert1_linear1 [style=dashed]
+	stage_0_layer_1_gpu1_expert1_linear1 -> stage_0_layer_1_gpu1_expert1_gelu
+	stage_0_layer_1_gpu1_expert1_gelu -> stage_0_layer_1_gpu1_expert1_linear2
+	stage_0_layer_1_gpu1_expert1_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu1_gating -> stage_0_layer_1_gpu1_expert1_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu1_expert2_linear1 [style=dashed]
+	stage_0_layer_1_gpu1_expert2_linear1 -> stage_0_layer_1_gpu1_expert2_gelu
+	stage_0_layer_1_gpu1_expert2_gelu -> stage_0_layer_1_gpu1_expert2_linear2
+	stage_0_layer_1_gpu1_expert2_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu1_gating -> stage_0_layer_1_gpu1_expert2_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu1_expert3_linear1 [style=dashed]
+	stage_0_layer_1_gpu1_expert3_linear1 -> stage_0_layer_1_gpu1_expert3_gelu
+	stage_0_layer_1_gpu1_expert3_gelu -> stage_0_layer_1_gpu1_expert3_linear2
+	stage_0_layer_1_gpu1_expert3_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu1_gating -> stage_0_layer_1_gpu1_expert3_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu2_gating
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu2_expert0_linear1 [style=dashed]
+	stage_0_layer_1_gpu2_expert0_linear1 -> stage_0_layer_1_gpu2_expert0_gelu
+	stage_0_layer_1_gpu2_expert0_gelu -> stage_0_layer_1_gpu2_expert0_linear2
+	stage_0_layer_1_gpu2_expert0_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu2_gating -> stage_0_layer_1_gpu2_expert0_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu2_expert1_linear1 [style=dashed]
+	stage_0_layer_1_gpu2_expert1_linear1 -> stage_0_layer_1_gpu2_expert1_gelu
+	stage_0_layer_1_gpu2_expert1_gelu -> stage_0_layer_1_gpu2_expert1_linear2
+	stage_0_layer_1_gpu2_expert1_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu2_gating -> stage_0_layer_1_gpu2_expert1_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu2_expert2_linear1 [style=dashed]
+	stage_0_layer_1_gpu2_expert2_linear1 -> stage_0_layer_1_gpu2_expert2_gelu
+	stage_0_layer_1_gpu2_expert2_gelu -> stage_0_layer_1_gpu2_expert2_linear2
+	stage_0_layer_1_gpu2_expert2_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu2_gating -> stage_0_layer_1_gpu2_expert2_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu2_expert3_linear1 [style=dashed]
+	stage_0_layer_1_gpu2_expert3_linear1 -> stage_0_layer_1_gpu2_expert3_gelu
+	stage_0_layer_1_gpu2_expert3_gelu -> stage_0_layer_1_gpu2_expert3_linear2
+	stage_0_layer_1_gpu2_expert3_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu2_gating -> stage_0_layer_1_gpu2_expert3_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu3_gating
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu3_expert0_linear1 [style=dashed]
+	stage_0_layer_1_gpu3_expert0_linear1 -> stage_0_layer_1_gpu3_expert0_gelu
+	stage_0_layer_1_gpu3_expert0_gelu -> stage_0_layer_1_gpu3_expert0_linear2
+	stage_0_layer_1_gpu3_expert0_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu3_gating -> stage_0_layer_1_gpu3_expert0_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu3_expert1_linear1 [style=dashed]
+	stage_0_layer_1_gpu3_expert1_linear1 -> stage_0_layer_1_gpu3_expert1_gelu
+	stage_0_layer_1_gpu3_expert1_gelu -> stage_0_layer_1_gpu3_expert1_linear2
+	stage_0_layer_1_gpu3_expert1_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu3_gating -> stage_0_layer_1_gpu3_expert1_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu3_expert2_linear1 [style=dashed]
+	stage_0_layer_1_gpu3_expert2_linear1 -> stage_0_layer_1_gpu3_expert2_gelu
+	stage_0_layer_1_gpu3_expert2_gelu -> stage_0_layer_1_gpu3_expert2_linear2
+	stage_0_layer_1_gpu3_expert2_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu3_gating -> stage_0_layer_1_gpu3_expert2_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu3_expert3_linear1 [style=dashed]
+	stage_0_layer_1_gpu3_expert3_linear1 -> stage_0_layer_1_gpu3_expert3_gelu
+	stage_0_layer_1_gpu3_expert3_gelu -> stage_0_layer_1_gpu3_expert3_linear2
+	stage_0_layer_1_gpu3_expert3_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu3_gating -> stage_0_layer_1_gpu3_expert3_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu4_gating
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu4_expert0_linear1 [style=dashed]
+	stage_0_layer_1_gpu4_expert0_linear1 -> stage_0_layer_1_gpu4_expert0_gelu
+	stage_0_layer_1_gpu4_expert0_gelu -> stage_0_layer_1_gpu4_expert0_linear2
+	stage_0_layer_1_gpu4_expert0_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu4_gating -> stage_0_layer_1_gpu4_expert0_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu4_expert1_linear1 [style=dashed]
+	stage_0_layer_1_gpu4_expert1_linear1 -> stage_0_layer_1_gpu4_expert1_gelu
+	stage_0_layer_1_gpu4_expert1_gelu -> stage_0_layer_1_gpu4_expert1_linear2
+	stage_0_layer_1_gpu4_expert1_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu4_gating -> stage_0_layer_1_gpu4_expert1_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu4_expert2_linear1 [style=dashed]
+	stage_0_layer_1_gpu4_expert2_linear1 -> stage_0_layer_1_gpu4_expert2_gelu
+	stage_0_layer_1_gpu4_expert2_gelu -> stage_0_layer_1_gpu4_expert2_linear2
+	stage_0_layer_1_gpu4_expert2_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu4_gating -> stage_0_layer_1_gpu4_expert2_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu4_expert3_linear1 [style=dashed]
+	stage_0_layer_1_gpu4_expert3_linear1 -> stage_0_layer_1_gpu4_expert3_gelu
+	stage_0_layer_1_gpu4_expert3_gelu -> stage_0_layer_1_gpu4_expert3_linear2
+	stage_0_layer_1_gpu4_expert3_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu4_gating -> stage_0_layer_1_gpu4_expert3_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu5_gating
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu5_expert0_linear1 [style=dashed]
+	stage_0_layer_1_gpu5_expert0_linear1 -> stage_0_layer_1_gpu5_expert0_gelu
+	stage_0_layer_1_gpu5_expert0_gelu -> stage_0_layer_1_gpu5_expert0_linear2
+	stage_0_layer_1_gpu5_expert0_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu5_gating -> stage_0_layer_1_gpu5_expert0_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu5_expert1_linear1 [style=dashed]
+	stage_0_layer_1_gpu5_expert1_linear1 -> stage_0_layer_1_gpu5_expert1_gelu
+	stage_0_layer_1_gpu5_expert1_gelu -> stage_0_layer_1_gpu5_expert1_linear2
+	stage_0_layer_1_gpu5_expert1_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu5_gating -> stage_0_layer_1_gpu5_expert1_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu5_expert2_linear1 [style=dashed]
+	stage_0_layer_1_gpu5_expert2_linear1 -> stage_0_layer_1_gpu5_expert2_gelu
+	stage_0_layer_1_gpu5_expert2_gelu -> stage_0_layer_1_gpu5_expert2_linear2
+	stage_0_layer_1_gpu5_expert2_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu5_gating -> stage_0_layer_1_gpu5_expert2_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu5_expert3_linear1 [style=dashed]
+	stage_0_layer_1_gpu5_expert3_linear1 -> stage_0_layer_1_gpu5_expert3_gelu
+	stage_0_layer_1_gpu5_expert3_gelu -> stage_0_layer_1_gpu5_expert3_linear2
+	stage_0_layer_1_gpu5_expert3_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu5_gating -> stage_0_layer_1_gpu5_expert3_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu6_gating
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu6_expert0_linear1 [style=dashed]
+	stage_0_layer_1_gpu6_expert0_linear1 -> stage_0_layer_1_gpu6_expert0_gelu
+	stage_0_layer_1_gpu6_expert0_gelu -> stage_0_layer_1_gpu6_expert0_linear2
+	stage_0_layer_1_gpu6_expert0_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu6_gating -> stage_0_layer_1_gpu6_expert0_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu6_expert1_linear1 [style=dashed]
+	stage_0_layer_1_gpu6_expert1_linear1 -> stage_0_layer_1_gpu6_expert1_gelu
+	stage_0_layer_1_gpu6_expert1_gelu -> stage_0_layer_1_gpu6_expert1_linear2
+	stage_0_layer_1_gpu6_expert1_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu6_gating -> stage_0_layer_1_gpu6_expert1_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu6_expert2_linear1 [style=dashed]
+	stage_0_layer_1_gpu6_expert2_linear1 -> stage_0_layer_1_gpu6_expert2_gelu
+	stage_0_layer_1_gpu6_expert2_gelu -> stage_0_layer_1_gpu6_expert2_linear2
+	stage_0_layer_1_gpu6_expert2_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu6_gating -> stage_0_layer_1_gpu6_expert2_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu6_expert3_linear1 [style=dashed]
+	stage_0_layer_1_gpu6_expert3_linear1 -> stage_0_layer_1_gpu6_expert3_gelu
+	stage_0_layer_1_gpu6_expert3_gelu -> stage_0_layer_1_gpu6_expert3_linear2
+	stage_0_layer_1_gpu6_expert3_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu6_gating -> stage_0_layer_1_gpu6_expert3_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu7_gating
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu7_expert0_linear1 [style=dashed]
+	stage_0_layer_1_gpu7_expert0_linear1 -> stage_0_layer_1_gpu7_expert0_gelu
+	stage_0_layer_1_gpu7_expert0_gelu -> stage_0_layer_1_gpu7_expert0_linear2
+	stage_0_layer_1_gpu7_expert0_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu7_gating -> stage_0_layer_1_gpu7_expert0_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu7_expert1_linear1 [style=dashed]
+	stage_0_layer_1_gpu7_expert1_linear1 -> stage_0_layer_1_gpu7_expert1_gelu
+	stage_0_layer_1_gpu7_expert1_gelu -> stage_0_layer_1_gpu7_expert1_linear2
+	stage_0_layer_1_gpu7_expert1_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu7_gating -> stage_0_layer_1_gpu7_expert1_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu7_expert2_linear1 [style=dashed]
+	stage_0_layer_1_gpu7_expert2_linear1 -> stage_0_layer_1_gpu7_expert2_gelu
+	stage_0_layer_1_gpu7_expert2_gelu -> stage_0_layer_1_gpu7_expert2_linear2
+	stage_0_layer_1_gpu7_expert2_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu7_gating -> stage_0_layer_1_gpu7_expert2_linear1 [style=dashed]
+	stage_0_layer_1_attention_layernorm -> stage_0_layer_1_gpu7_expert3_linear1 [style=dashed]
+	stage_0_layer_1_gpu7_expert3_linear1 -> stage_0_layer_1_gpu7_expert3_gelu
+	stage_0_layer_1_gpu7_expert3_gelu -> stage_0_layer_1_gpu7_expert3_linear2
+	stage_0_layer_1_gpu7_expert3_linear2 -> stage_0_layer_1_aggregation
+	stage_0_layer_1_gpu7_gating -> stage_0_layer_1_gpu7_expert3_linear1 [style=dashed]
+	stage_0_layer_1_aggregation -> layer_1_final_residual
+	stage_0_layer_1_attention_layernorm -> layer_1_final_residual
+	layer_1_final_residual -> layer_1_final_layernorm
+	layer_1_final_layernorm -> pipeline_comm_0_1
+	pipeline_comm_0_1 -> stage_1_layer_2_attention_qkv
+	layer_3_final_layernorm -> output
+}

@@ -1,0 +1,925 @@
+// Baseline MoE DAG - TP=8, PP=2, 16 GPUs
+digraph baseline_moe_dag {
+	rankdir=TB size="20,30"
+	input [label="Total Input\nbatch=1024, seq=10000, hidden=8192" fillcolor=lightblue shape=ellipse style=filled]
+	subgraph cluster_pipeline_0 {
+		fillcolor=lightgray label="Pipeline Stage 0 (GPUs 0-7)" style=rounded
+		subgraph cluster_gpu_0_layer0 {
+			label="GPU gpu_0 - Layer 0" style=rounded
+			mha_qkv_0_0 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_0_0 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 0" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_0_0 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_0_0 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 0" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_0_0 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_0_0 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=orange shape=ellipse style=filled]
+			residual1_0_0 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=pink shape=diamond style=filled]
+			expert_gate_0_0_0 [label="Expert 0 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 0" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_0_0 [label="Expert 0 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_0_0 [label="Expert 0 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_0_0 [label="Expert 0 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_0_1 [label="Expert 1 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 0" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_0_1 [label="Expert 1 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_0_1 [label="Expert 1 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_0_1 [label="Expert 1 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_0_2 [label="Expert 2 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 0" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_0_2 [label="Expert 2 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_0_2 [label="Expert 2 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_0_2 [label="Expert 2 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_0_3 [label="Expert 3 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 0" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_0_3 [label="Expert 3 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_0_3 [label="Expert 3 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_0_3 [label="Expert 3 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_0_0 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_0_0 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_1_layer0 {
+			label="GPU gpu_1 - Layer 0" style=rounded
+			mha_qkv_0_1 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_0_1 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 1" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_0_1 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_0_1 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 1" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_0_1 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_0_1 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=orange shape=ellipse style=filled]
+			residual1_0_1 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=pink shape=diamond style=filled]
+			expert_gate_0_1_0 [label="Expert 4 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 1" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_1_0 [label="Expert 4 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_1_0 [label="Expert 4 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_1_0 [label="Expert 4 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_1_1 [label="Expert 5 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 1" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_1_1 [label="Expert 5 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_1_1 [label="Expert 5 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_1_1 [label="Expert 5 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_1_2 [label="Expert 6 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 1" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_1_2 [label="Expert 6 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_1_2 [label="Expert 6 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_1_2 [label="Expert 6 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_1_3 [label="Expert 7 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 1" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_1_3 [label="Expert 7 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_1_3 [label="Expert 7 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_1_3 [label="Expert 7 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_0_1 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_0_1 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_2_layer0 {
+			label="GPU gpu_2 - Layer 0" style=rounded
+			mha_qkv_0_2 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_0_2 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 2" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_0_2 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_0_2 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 2" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_0_2 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_0_2 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=orange shape=ellipse style=filled]
+			residual1_0_2 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=pink shape=diamond style=filled]
+			expert_gate_0_2_0 [label="Expert 8 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 2" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_2_0 [label="Expert 8 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_2_0 [label="Expert 8 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_2_0 [label="Expert 8 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_2_1 [label="Expert 9 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 2" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_2_1 [label="Expert 9 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_2_1 [label="Expert 9 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_2_1 [label="Expert 9 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_2_2 [label="Expert 10 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 2" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_2_2 [label="Expert 10 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_2_2 [label="Expert 10 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_2_2 [label="Expert 10 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_2_3 [label="Expert 11 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 2" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_2_3 [label="Expert 11 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_2_3 [label="Expert 11 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_2_3 [label="Expert 11 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_0_2 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_0_2 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_3_layer0 {
+			label="GPU gpu_3 - Layer 0" style=rounded
+			mha_qkv_0_3 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_0_3 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 3" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_0_3 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_0_3 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 3" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_0_3 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_0_3 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=orange shape=ellipse style=filled]
+			residual1_0_3 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=pink shape=diamond style=filled]
+			expert_gate_0_3_0 [label="Expert 12 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 3" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_3_0 [label="Expert 12 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_3_0 [label="Expert 12 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_3_0 [label="Expert 12 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_3_1 [label="Expert 13 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 3" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_3_1 [label="Expert 13 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_3_1 [label="Expert 13 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_3_1 [label="Expert 13 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_3_2 [label="Expert 14 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 3" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_3_2 [label="Expert 14 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_3_2 [label="Expert 14 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_3_2 [label="Expert 14 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_3_3 [label="Expert 15 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 3" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_3_3 [label="Expert 15 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_3_3 [label="Expert 15 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_3_3 [label="Expert 15 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_0_3 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_0_3 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_4_layer0 {
+			label="GPU gpu_4 - Layer 0" style=rounded
+			mha_qkv_0_4 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_0_4 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 4" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_0_4 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_0_4 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 4" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_0_4 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_0_4 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=orange shape=ellipse style=filled]
+			residual1_0_4 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=pink shape=diamond style=filled]
+			expert_gate_0_4_0 [label="Expert 16 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 4" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_4_0 [label="Expert 16 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_4_0 [label="Expert 16 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_4_0 [label="Expert 16 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_4_1 [label="Expert 17 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 4" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_4_1 [label="Expert 17 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_4_1 [label="Expert 17 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_4_1 [label="Expert 17 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_4_2 [label="Expert 18 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 4" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_4_2 [label="Expert 18 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_4_2 [label="Expert 18 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_4_2 [label="Expert 18 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_4_3 [label="Expert 19 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 4" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_4_3 [label="Expert 19 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_4_3 [label="Expert 19 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_4_3 [label="Expert 19 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_0_4 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_0_4 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_5_layer0 {
+			label="GPU gpu_5 - Layer 0" style=rounded
+			mha_qkv_0_5 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_0_5 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 5" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_0_5 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_0_5 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 5" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_0_5 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_0_5 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=orange shape=ellipse style=filled]
+			residual1_0_5 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=pink shape=diamond style=filled]
+			expert_gate_0_5_0 [label="Expert 20 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 5" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_5_0 [label="Expert 20 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_5_0 [label="Expert 20 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_5_0 [label="Expert 20 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_5_1 [label="Expert 21 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 5" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_5_1 [label="Expert 21 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_5_1 [label="Expert 21 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_5_1 [label="Expert 21 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_5_2 [label="Expert 22 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 5" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_5_2 [label="Expert 22 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_5_2 [label="Expert 22 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_5_2 [label="Expert 22 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_5_3 [label="Expert 23 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 5" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_5_3 [label="Expert 23 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_5_3 [label="Expert 23 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_5_3 [label="Expert 23 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_0_5 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_0_5 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_6_layer0 {
+			label="GPU gpu_6 - Layer 0" style=rounded
+			mha_qkv_0_6 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_0_6 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 6" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_0_6 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_0_6 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 6" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_0_6 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_0_6 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=orange shape=ellipse style=filled]
+			residual1_0_6 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=pink shape=diamond style=filled]
+			expert_gate_0_6_0 [label="Expert 24 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 6" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_6_0 [label="Expert 24 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_6_0 [label="Expert 24 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_6_0 [label="Expert 24 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_6_1 [label="Expert 25 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 6" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_6_1 [label="Expert 25 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_6_1 [label="Expert 25 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_6_1 [label="Expert 25 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_6_2 [label="Expert 26 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 6" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_6_2 [label="Expert 26 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_6_2 [label="Expert 26 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_6_2 [label="Expert 26 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_6_3 [label="Expert 27 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 6" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_6_3 [label="Expert 27 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_6_3 [label="Expert 27 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_6_3 [label="Expert 27 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_0_6 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_0_6 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_7_layer0 {
+			label="GPU gpu_7 - Layer 0" style=rounded
+			mha_qkv_0_7 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_0_7 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 7" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_0_7 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_0_7 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 7" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_0_7 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_0_7 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=orange shape=ellipse style=filled]
+			residual1_0_7 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=pink shape=diamond style=filled]
+			expert_gate_0_7_0 [label="Expert 28 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 7" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_7_0 [label="Expert 28 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_7_0 [label="Expert 28 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_7_0 [label="Expert 28 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_7_1 [label="Expert 29 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 7" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_7_1 [label="Expert 29 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_7_1 [label="Expert 29 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_7_1 [label="Expert 29 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_7_2 [label="Expert 30 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 7" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_7_2 [label="Expert 30 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_7_2 [label="Expert 30 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_7_2 [label="Expert 30 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_0_7_3 [label="Expert 31 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 7" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_0_7_3 [label="Expert 31 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_0_7_3 [label="Expert 31 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_0_7_3 [label="Expert 31 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_0_7 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_0_7 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=pink shape=diamond style=filled]
+		}
+	}
+	pipeline_comm_0_1 [label="Pipeline Communication\nStage 0 -> Stage 1\nbatch=1024, seq=10000, hidden=8192\nCross-GPU Transfer" fillcolor=red shape=ellipse style=filled]
+	subgraph cluster_pipeline_1 {
+		fillcolor=lightgray label="Pipeline Stage 1 (GPUs 8-15)" style=rounded
+		subgraph cluster_gpu_8_layer1 {
+			label="GPU gpu_8 - Layer 1" style=rounded
+			mha_qkv_1_8 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_1_8 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 8" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_1_8 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_1_8 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 8" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_1_8 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_1_8 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=orange shape=ellipse style=filled]
+			residual1_1_8 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=pink shape=diamond style=filled]
+			expert_gate_1_8_0 [label="Expert 0 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 8" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_8_0 [label="Expert 0 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_8_0 [label="Expert 0 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_8_0 [label="Expert 0 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_8_1 [label="Expert 1 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 8" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_8_1 [label="Expert 1 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_8_1 [label="Expert 1 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_8_1 [label="Expert 1 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_8_2 [label="Expert 2 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 8" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_8_2 [label="Expert 2 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_8_2 [label="Expert 2 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_8_2 [label="Expert 2 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_8_3 [label="Expert 3 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 8" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_8_3 [label="Expert 3 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_8_3 [label="Expert 3 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_8_3 [label="Expert 3 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_1_8 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_1_8 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_9_layer1 {
+			label="GPU gpu_9 - Layer 1" style=rounded
+			mha_qkv_1_9 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_1_9 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 9" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_1_9 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_1_9 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 9" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_1_9 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_1_9 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=orange shape=ellipse style=filled]
+			residual1_1_9 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=pink shape=diamond style=filled]
+			expert_gate_1_9_0 [label="Expert 4 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 9" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_9_0 [label="Expert 4 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_9_0 [label="Expert 4 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_9_0 [label="Expert 4 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_9_1 [label="Expert 5 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 9" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_9_1 [label="Expert 5 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_9_1 [label="Expert 5 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_9_1 [label="Expert 5 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_9_2 [label="Expert 6 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 9" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_9_2 [label="Expert 6 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_9_2 [label="Expert 6 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_9_2 [label="Expert 6 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_9_3 [label="Expert 7 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 9" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_9_3 [label="Expert 7 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_9_3 [label="Expert 7 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_9_3 [label="Expert 7 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_1_9 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_1_9 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_10_layer1 {
+			label="GPU gpu_10 - Layer 1" style=rounded
+			mha_qkv_1_10 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_1_10 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 10" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_1_10 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_1_10 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 10" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_1_10 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_1_10 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=orange shape=ellipse style=filled]
+			residual1_1_10 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=pink shape=diamond style=filled]
+			expert_gate_1_10_0 [label="Expert 8 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 10" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_10_0 [label="Expert 8 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_10_0 [label="Expert 8 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_10_0 [label="Expert 8 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_10_1 [label="Expert 9 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 10" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_10_1 [label="Expert 9 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_10_1 [label="Expert 9 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_10_1 [label="Expert 9 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_10_2 [label="Expert 10 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 10" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_10_2 [label="Expert 10 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_10_2 [label="Expert 10 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_10_2 [label="Expert 10 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_10_3 [label="Expert 11 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 10" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_10_3 [label="Expert 11 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_10_3 [label="Expert 11 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_10_3 [label="Expert 11 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_1_10 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_1_10 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_11_layer1 {
+			label="GPU gpu_11 - Layer 1" style=rounded
+			mha_qkv_1_11 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_1_11 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 11" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_1_11 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_1_11 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 11" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_1_11 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_1_11 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=orange shape=ellipse style=filled]
+			residual1_1_11 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=pink shape=diamond style=filled]
+			expert_gate_1_11_0 [label="Expert 12 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 11" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_11_0 [label="Expert 12 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_11_0 [label="Expert 12 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_11_0 [label="Expert 12 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_11_1 [label="Expert 13 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 11" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_11_1 [label="Expert 13 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_11_1 [label="Expert 13 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_11_1 [label="Expert 13 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_11_2 [label="Expert 14 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 11" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_11_2 [label="Expert 14 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_11_2 [label="Expert 14 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_11_2 [label="Expert 14 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_11_3 [label="Expert 15 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 11" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_11_3 [label="Expert 15 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_11_3 [label="Expert 15 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_11_3 [label="Expert 15 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_1_11 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_1_11 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_12_layer1 {
+			label="GPU gpu_12 - Layer 1" style=rounded
+			mha_qkv_1_12 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_1_12 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 12" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_1_12 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_1_12 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 12" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_1_12 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_1_12 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=orange shape=ellipse style=filled]
+			residual1_1_12 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=pink shape=diamond style=filled]
+			expert_gate_1_12_0 [label="Expert 16 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 12" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_12_0 [label="Expert 16 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_12_0 [label="Expert 16 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_12_0 [label="Expert 16 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_12_1 [label="Expert 17 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 12" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_12_1 [label="Expert 17 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_12_1 [label="Expert 17 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_12_1 [label="Expert 17 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_12_2 [label="Expert 18 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 12" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_12_2 [label="Expert 18 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_12_2 [label="Expert 18 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_12_2 [label="Expert 18 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_12_3 [label="Expert 19 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 12" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_12_3 [label="Expert 19 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_12_3 [label="Expert 19 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_12_3 [label="Expert 19 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_1_12 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_1_12 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_13_layer1 {
+			label="GPU gpu_13 - Layer 1" style=rounded
+			mha_qkv_1_13 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_1_13 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 13" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_1_13 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_1_13 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 13" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_1_13 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_1_13 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=orange shape=ellipse style=filled]
+			residual1_1_13 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=pink shape=diamond style=filled]
+			expert_gate_1_13_0 [label="Expert 20 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 13" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_13_0 [label="Expert 20 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_13_0 [label="Expert 20 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_13_0 [label="Expert 20 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_13_1 [label="Expert 21 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 13" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_13_1 [label="Expert 21 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_13_1 [label="Expert 21 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_13_1 [label="Expert 21 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_13_2 [label="Expert 22 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 13" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_13_2 [label="Expert 22 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_13_2 [label="Expert 22 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_13_2 [label="Expert 22 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_13_3 [label="Expert 23 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 13" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_13_3 [label="Expert 23 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_13_3 [label="Expert 23 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_13_3 [label="Expert 23 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_1_13 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_1_13 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_14_layer1 {
+			label="GPU gpu_14 - Layer 1" style=rounded
+			mha_qkv_1_14 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_1_14 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 14" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_1_14 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_1_14 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 14" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_1_14 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_1_14 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=orange shape=ellipse style=filled]
+			residual1_1_14 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=pink shape=diamond style=filled]
+			expert_gate_1_14_0 [label="Expert 24 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 14" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_14_0 [label="Expert 24 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_14_0 [label="Expert 24 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_14_0 [label="Expert 24 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_14_1 [label="Expert 25 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 14" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_14_1 [label="Expert 25 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_14_1 [label="Expert 25 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_14_1 [label="Expert 25 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_14_2 [label="Expert 26 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 14" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_14_2 [label="Expert 26 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_14_2 [label="Expert 26 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_14_2 [label="Expert 26 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_14_3 [label="Expert 27 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 14" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_14_3 [label="Expert 27 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_14_3 [label="Expert 27 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_14_3 [label="Expert 27 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_1_14 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_1_14 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=pink shape=diamond style=filled]
+		}
+		subgraph cluster_gpu_15_layer1 {
+			label="GPU gpu_15 - Layer 1" style=rounded
+			mha_qkv_1_15 [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,3072\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_split_1_15 [label="Split Heads\nINPUT: 1024,10000,3072\nOUTPUT: 1024,2,10000,1536\nGPU: 15" fillcolor=yellow shape=parallelogram style=filled]
+			mha_attn_1_15 [label="MHA Attention\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,2,10000,512\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_concat_1_15 [label="Concat Heads\nINPUT: 1024,2,10000,512\nOUTPUT: 1024,10000,1024\nGPU: 15" fillcolor=yellow shape=parallelogram style=filled]
+			mha_out_1_15 [label="MHA Output Linear\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,1024\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			mha_allreduce_1_15 [label="MHA All-Reduce\nINPUT: 1024,10000,1024\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=orange shape=ellipse style=filled]
+			residual1_1_15 [label="Residual Add 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=pink shape=diamond style=filled]
+			expert_gate_1_15_0 [label="Expert 28 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 15" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_15_0 [label="Expert 28 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_15_0 [label="Expert 28 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_15_0 [label="Expert 28 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_15_1 [label="Expert 29 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 15" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_15_1 [label="Expert 29 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_15_1 [label="Expert 29 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_15_1 [label="Expert 29 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_15_2 [label="Expert 30 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 15" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_15_2 [label="Expert 30 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_15_2 [label="Expert 30 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_15_2 [label="Expert 30 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_gate_1_15_3 [label="Expert 31 Gate\nINPUT: 1024,10000,8192\nOUTPUT: routing decisions\nGPU: 15" fillcolor=lightcyan shape=parallelogram style=filled]
+			expert_linear1_1_15_3 [label="Expert 31 Linear 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,32768\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_activation_1_15_3 [label="Expert 31 GELU\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,32768\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_linear2_1_15_3 [label="Expert 31 Linear 2\nINPUT: 1024,10000,32768\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+			expert_aggregate_1_15 [label="Expert Aggregate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=yellow shape=parallelogram style=filled]
+			residual2_1_15 [label="Residual Add 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=pink shape=diamond style=filled]
+		}
+	}
+	output [label="Total Output\nbatch=1024, seq=10000, hidden=8192" fillcolor=lightblue shape=ellipse style=filled]
+	input -> mha_qkv_0_0
+	input -> mha_qkv_0_1
+	input -> mha_qkv_0_2
+	input -> mha_qkv_0_3
+	input -> mha_qkv_0_4
+	input -> mha_qkv_0_5
+	input -> mha_qkv_0_6
+	input -> mha_qkv_0_7
+	mha_qkv_0_0 -> mha_split_0_0
+	mha_split_0_0 -> mha_attn_0_0
+	mha_attn_0_0 -> mha_concat_0_0
+	mha_concat_0_0 -> mha_out_0_0
+	mha_out_0_0 -> mha_allreduce_0_0
+	mha_allreduce_0_0 -> residual1_0_0
+	residual1_0_0 -> expert_gate_0_0_0 [style=dashed]
+	expert_gate_0_0_0 -> expert_linear1_0_0_0
+	expert_linear1_0_0_0 -> expert_activation_0_0_0
+	expert_activation_0_0_0 -> expert_linear2_0_0_0
+	expert_linear2_0_0_0 -> expert_aggregate_0_0
+	residual1_0_0 -> expert_gate_0_0_1 [style=dashed]
+	expert_gate_0_0_1 -> expert_linear1_0_0_1
+	expert_linear1_0_0_1 -> expert_activation_0_0_1
+	expert_activation_0_0_1 -> expert_linear2_0_0_1
+	expert_linear2_0_0_1 -> expert_aggregate_0_0
+	residual1_0_0 -> expert_gate_0_0_2 [style=dashed]
+	expert_gate_0_0_2 -> expert_linear1_0_0_2
+	expert_linear1_0_0_2 -> expert_activation_0_0_2
+	expert_activation_0_0_2 -> expert_linear2_0_0_2
+	expert_linear2_0_0_2 -> expert_aggregate_0_0
+	residual1_0_0 -> expert_gate_0_0_3 [style=dashed]
+	expert_gate_0_0_3 -> expert_linear1_0_0_3
+	expert_linear1_0_0_3 -> expert_activation_0_0_3
+	expert_activation_0_0_3 -> expert_linear2_0_0_3
+	expert_linear2_0_0_3 -> expert_aggregate_0_0
+	expert_aggregate_0_0 -> residual2_0_0
+	residual2_0_0 -> pipeline_comm_0_1
+	mha_qkv_0_1 -> mha_split_0_1
+	mha_split_0_1 -> mha_attn_0_1
+	mha_attn_0_1 -> mha_concat_0_1
+	mha_concat_0_1 -> mha_out_0_1
+	mha_out_0_1 -> mha_allreduce_0_1
+	mha_allreduce_0_1 -> residual1_0_1
+	residual1_0_1 -> expert_gate_0_1_0 [style=dashed]
+	expert_gate_0_1_0 -> expert_linear1_0_1_0
+	expert_linear1_0_1_0 -> expert_activation_0_1_0
+	expert_activation_0_1_0 -> expert_linear2_0_1_0
+	expert_linear2_0_1_0 -> expert_aggregate_0_1
+	residual1_0_1 -> expert_gate_0_1_1 [style=dashed]
+	expert_gate_0_1_1 -> expert_linear1_0_1_1
+	expert_linear1_0_1_1 -> expert_activation_0_1_1
+	expert_activation_0_1_1 -> expert_linear2_0_1_1
+	expert_linear2_0_1_1 -> expert_aggregate_0_1
+	residual1_0_1 -> expert_gate_0_1_2 [style=dashed]
+	expert_gate_0_1_2 -> expert_linear1_0_1_2
+	expert_linear1_0_1_2 -> expert_activation_0_1_2
+	expert_activation_0_1_2 -> expert_linear2_0_1_2
+	expert_linear2_0_1_2 -> expert_aggregate_0_1
+	residual1_0_1 -> expert_gate_0_1_3 [style=dashed]
+	expert_gate_0_1_3 -> expert_linear1_0_1_3
+	expert_linear1_0_1_3 -> expert_activation_0_1_3
+	expert_activation_0_1_3 -> expert_linear2_0_1_3
+	expert_linear2_0_1_3 -> expert_aggregate_0_1
+	expert_aggregate_0_1 -> residual2_0_1
+	residual2_0_1 -> pipeline_comm_0_1
+	mha_qkv_0_2 -> mha_split_0_2
+	mha_split_0_2 -> mha_attn_0_2
+	mha_attn_0_2 -> mha_concat_0_2
+	mha_concat_0_2 -> mha_out_0_2
+	mha_out_0_2 -> mha_allreduce_0_2
+	mha_allreduce_0_2 -> residual1_0_2
+	residual1_0_2 -> expert_gate_0_2_0 [style=dashed]
+	expert_gate_0_2_0 -> expert_linear1_0_2_0
+	expert_linear1_0_2_0 -> expert_activation_0_2_0
+	expert_activation_0_2_0 -> expert_linear2_0_2_0
+	expert_linear2_0_2_0 -> expert_aggregate_0_2
+	residual1_0_2 -> expert_gate_0_2_1 [style=dashed]
+	expert_gate_0_2_1 -> expert_linear1_0_2_1
+	expert_linear1_0_2_1 -> expert_activation_0_2_1
+	expert_activation_0_2_1 -> expert_linear2_0_2_1
+	expert_linear2_0_2_1 -> expert_aggregate_0_2
+	residual1_0_2 -> expert_gate_0_2_2 [style=dashed]
+	expert_gate_0_2_2 -> expert_linear1_0_2_2
+	expert_linear1_0_2_2 -> expert_activation_0_2_2
+	expert_activation_0_2_2 -> expert_linear2_0_2_2
+	expert_linear2_0_2_2 -> expert_aggregate_0_2
+	residual1_0_2 -> expert_gate_0_2_3 [style=dashed]
+	expert_gate_0_2_3 -> expert_linear1_0_2_3
+	expert_linear1_0_2_3 -> expert_activation_0_2_3
+	expert_activation_0_2_3 -> expert_linear2_0_2_3
+	expert_linear2_0_2_3 -> expert_aggregate_0_2
+	expert_aggregate_0_2 -> residual2_0_2
+	residual2_0_2 -> pipeline_comm_0_1
+	mha_qkv_0_3 -> mha_split_0_3
+	mha_split_0_3 -> mha_attn_0_3
+	mha_attn_0_3 -> mha_concat_0_3
+	mha_concat_0_3 -> mha_out_0_3
+	mha_out_0_3 -> mha_allreduce_0_3
+	mha_allreduce_0_3 -> residual1_0_3
+	residual1_0_3 -> expert_gate_0_3_0 [style=dashed]
+	expert_gate_0_3_0 -> expert_linear1_0_3_0
+	expert_linear1_0_3_0 -> expert_activation_0_3_0
+	expert_activation_0_3_0 -> expert_linear2_0_3_0
+	expert_linear2_0_3_0 -> expert_aggregate_0_3
+	residual1_0_3 -> expert_gate_0_3_1 [style=dashed]
+	expert_gate_0_3_1 -> expert_linear1_0_3_1
+	expert_linear1_0_3_1 -> expert_activation_0_3_1
+	expert_activation_0_3_1 -> expert_linear2_0_3_1
+	expert_linear2_0_3_1 -> expert_aggregate_0_3
+	residual1_0_3 -> expert_gate_0_3_2 [style=dashed]
+	expert_gate_0_3_2 -> expert_linear1_0_3_2
+	expert_linear1_0_3_2 -> expert_activation_0_3_2
+	expert_activation_0_3_2 -> expert_linear2_0_3_2
+	expert_linear2_0_3_2 -> expert_aggregate_0_3
+	residual1_0_3 -> expert_gate_0_3_3 [style=dashed]
+	expert_gate_0_3_3 -> expert_linear1_0_3_3
+	expert_linear1_0_3_3 -> expert_activation_0_3_3
+	expert_activation_0_3_3 -> expert_linear2_0_3_3
+	expert_linear2_0_3_3 -> expert_aggregate_0_3
+	expert_aggregate_0_3 -> residual2_0_3
+	residual2_0_3 -> pipeline_comm_0_1
+	mha_qkv_0_4 -> mha_split_0_4
+	mha_split_0_4 -> mha_attn_0_4
+	mha_attn_0_4 -> mha_concat_0_4
+	mha_concat_0_4 -> mha_out_0_4
+	mha_out_0_4 -> mha_allreduce_0_4
+	mha_allreduce_0_4 -> residual1_0_4
+	residual1_0_4 -> expert_gate_0_4_0 [style=dashed]
+	expert_gate_0_4_0 -> expert_linear1_0_4_0
+	expert_linear1_0_4_0 -> expert_activation_0_4_0
+	expert_activation_0_4_0 -> expert_linear2_0_4_0
+	expert_linear2_0_4_0 -> expert_aggregate_0_4
+	residual1_0_4 -> expert_gate_0_4_1 [style=dashed]
+	expert_gate_0_4_1 -> expert_linear1_0_4_1
+	expert_linear1_0_4_1 -> expert_activation_0_4_1
+	expert_activation_0_4_1 -> expert_linear2_0_4_1
+	expert_linear2_0_4_1 -> expert_aggregate_0_4
+	residual1_0_4 -> expert_gate_0_4_2 [style=dashed]
+	expert_gate_0_4_2 -> expert_linear1_0_4_2
+	expert_linear1_0_4_2 -> expert_activation_0_4_2
+	expert_activation_0_4_2 -> expert_linear2_0_4_2
+	expert_linear2_0_4_2 -> expert_aggregate_0_4
+	residual1_0_4 -> expert_gate_0_4_3 [style=dashed]
+	expert_gate_0_4_3 -> expert_linear1_0_4_3
+	expert_linear1_0_4_3 -> expert_activation_0_4_3
+	expert_activation_0_4_3 -> expert_linear2_0_4_3
+	expert_linear2_0_4_3 -> expert_aggregate_0_4
+	expert_aggregate_0_4 -> residual2_0_4
+	residual2_0_4 -> pipeline_comm_0_1
+	mha_qkv_0_5 -> mha_split_0_5
+	mha_split_0_5 -> mha_attn_0_5
+	mha_attn_0_5 -> mha_concat_0_5
+	mha_concat_0_5 -> mha_out_0_5
+	mha_out_0_5 -> mha_allreduce_0_5
+	mha_allreduce_0_5 -> residual1_0_5
+	residual1_0_5 -> expert_gate_0_5_0 [style=dashed]
+	expert_gate_0_5_0 -> expert_linear1_0_5_0
+	expert_linear1_0_5_0 -> expert_activation_0_5_0
+	expert_activation_0_5_0 -> expert_linear2_0_5_0
+	expert_linear2_0_5_0 -> expert_aggregate_0_5
+	residual1_0_5 -> expert_gate_0_5_1 [style=dashed]
+	expert_gate_0_5_1 -> expert_linear1_0_5_1
+	expert_linear1_0_5_1 -> expert_activation_0_5_1
+	expert_activation_0_5_1 -> expert_linear2_0_5_1
+	expert_linear2_0_5_1 -> expert_aggregate_0_5
+	residual1_0_5 -> expert_gate_0_5_2 [style=dashed]
+	expert_gate_0_5_2 -> expert_linear1_0_5_2
+	expert_linear1_0_5_2 -> expert_activation_0_5_2
+	expert_activation_0_5_2 -> expert_linear2_0_5_2
+	expert_linear2_0_5_2 -> expert_aggregate_0_5
+	residual1_0_5 -> expert_gate_0_5_3 [style=dashed]
+	expert_gate_0_5_3 -> expert_linear1_0_5_3
+	expert_linear1_0_5_3 -> expert_activation_0_5_3
+	expert_activation_0_5_3 -> expert_linear2_0_5_3
+	expert_linear2_0_5_3 -> expert_aggregate_0_5
+	expert_aggregate_0_5 -> residual2_0_5
+	residual2_0_5 -> pipeline_comm_0_1
+	mha_qkv_0_6 -> mha_split_0_6
+	mha_split_0_6 -> mha_attn_0_6
+	mha_attn_0_6 -> mha_concat_0_6
+	mha_concat_0_6 -> mha_out_0_6
+	mha_out_0_6 -> mha_allreduce_0_6
+	mha_allreduce_0_6 -> residual1_0_6
+	residual1_0_6 -> expert_gate_0_6_0 [style=dashed]
+	expert_gate_0_6_0 -> expert_linear1_0_6_0
+	expert_linear1_0_6_0 -> expert_activation_0_6_0
+	expert_activation_0_6_0 -> expert_linear2_0_6_0
+	expert_linear2_0_6_0 -> expert_aggregate_0_6
+	residual1_0_6 -> expert_gate_0_6_1 [style=dashed]
+	expert_gate_0_6_1 -> expert_linear1_0_6_1
+	expert_linear1_0_6_1 -> expert_activation_0_6_1
+	expert_activation_0_6_1 -> expert_linear2_0_6_1
+	expert_linear2_0_6_1 -> expert_aggregate_0_6
+	residual1_0_6 -> expert_gate_0_6_2 [style=dashed]
+	expert_gate_0_6_2 -> expert_linear1_0_6_2
+	expert_linear1_0_6_2 -> expert_activation_0_6_2
+	expert_activation_0_6_2 -> expert_linear2_0_6_2
+	expert_linear2_0_6_2 -> expert_aggregate_0_6
+	residual1_0_6 -> expert_gate_0_6_3 [style=dashed]
+	expert_gate_0_6_3 -> expert_linear1_0_6_3
+	expert_linear1_0_6_3 -> expert_activation_0_6_3
+	expert_activation_0_6_3 -> expert_linear2_0_6_3
+	expert_linear2_0_6_3 -> expert_aggregate_0_6
+	expert_aggregate_0_6 -> residual2_0_6
+	residual2_0_6 -> pipeline_comm_0_1
+	mha_qkv_0_7 -> mha_split_0_7
+	mha_split_0_7 -> mha_attn_0_7
+	mha_attn_0_7 -> mha_concat_0_7
+	mha_concat_0_7 -> mha_out_0_7
+	mha_out_0_7 -> mha_allreduce_0_7
+	mha_allreduce_0_7 -> residual1_0_7
+	residual1_0_7 -> expert_gate_0_7_0 [style=dashed]
+	expert_gate_0_7_0 -> expert_linear1_0_7_0
+	expert_linear1_0_7_0 -> expert_activation_0_7_0
+	expert_activation_0_7_0 -> expert_linear2_0_7_0
+	expert_linear2_0_7_0 -> expert_aggregate_0_7
+	residual1_0_7 -> expert_gate_0_7_1 [style=dashed]
+	expert_gate_0_7_1 -> expert_linear1_0_7_1
+	expert_linear1_0_7_1 -> expert_activation_0_7_1
+	expert_activation_0_7_1 -> expert_linear2_0_7_1
+	expert_linear2_0_7_1 -> expert_aggregate_0_7
+	residual1_0_7 -> expert_gate_0_7_2 [style=dashed]
+	expert_gate_0_7_2 -> expert_linear1_0_7_2
+	expert_linear1_0_7_2 -> expert_activation_0_7_2
+	expert_activation_0_7_2 -> expert_linear2_0_7_2
+	expert_linear2_0_7_2 -> expert_aggregate_0_7
+	residual1_0_7 -> expert_gate_0_7_3 [style=dashed]
+	expert_gate_0_7_3 -> expert_linear1_0_7_3
+	expert_linear1_0_7_3 -> expert_activation_0_7_3
+	expert_activation_0_7_3 -> expert_linear2_0_7_3
+	expert_linear2_0_7_3 -> expert_aggregate_0_7
+	expert_aggregate_0_7 -> residual2_0_7
+	residual2_0_7 -> pipeline_comm_0_1
+	pipeline_comm_0_1 -> mha_qkv_1_8
+	pipeline_comm_0_1 -> mha_qkv_1_9
+	pipeline_comm_0_1 -> mha_qkv_1_10
+	pipeline_comm_0_1 -> mha_qkv_1_11
+	pipeline_comm_0_1 -> mha_qkv_1_12
+	pipeline_comm_0_1 -> mha_qkv_1_13
+	pipeline_comm_0_1 -> mha_qkv_1_14
+	pipeline_comm_0_1 -> mha_qkv_1_15
+	mha_qkv_1_8 -> mha_split_1_8
+	mha_split_1_8 -> mha_attn_1_8
+	mha_attn_1_8 -> mha_concat_1_8
+	mha_concat_1_8 -> mha_out_1_8
+	mha_out_1_8 -> mha_allreduce_1_8
+	mha_allreduce_1_8 -> residual1_1_8
+	residual1_1_8 -> expert_gate_1_8_0 [style=dashed]
+	expert_gate_1_8_0 -> expert_linear1_1_8_0
+	expert_linear1_1_8_0 -> expert_activation_1_8_0
+	expert_activation_1_8_0 -> expert_linear2_1_8_0
+	expert_linear2_1_8_0 -> expert_aggregate_1_8
+	residual1_1_8 -> expert_gate_1_8_1 [style=dashed]
+	expert_gate_1_8_1 -> expert_linear1_1_8_1
+	expert_linear1_1_8_1 -> expert_activation_1_8_1
+	expert_activation_1_8_1 -> expert_linear2_1_8_1
+	expert_linear2_1_8_1 -> expert_aggregate_1_8
+	residual1_1_8 -> expert_gate_1_8_2 [style=dashed]
+	expert_gate_1_8_2 -> expert_linear1_1_8_2
+	expert_linear1_1_8_2 -> expert_activation_1_8_2
+	expert_activation_1_8_2 -> expert_linear2_1_8_2
+	expert_linear2_1_8_2 -> expert_aggregate_1_8
+	residual1_1_8 -> expert_gate_1_8_3 [style=dashed]
+	expert_gate_1_8_3 -> expert_linear1_1_8_3
+	expert_linear1_1_8_3 -> expert_activation_1_8_3
+	expert_activation_1_8_3 -> expert_linear2_1_8_3
+	expert_linear2_1_8_3 -> expert_aggregate_1_8
+	expert_aggregate_1_8 -> residual2_1_8
+	residual2_1_8 -> output
+	mha_qkv_1_9 -> mha_split_1_9
+	mha_split_1_9 -> mha_attn_1_9
+	mha_attn_1_9 -> mha_concat_1_9
+	mha_concat_1_9 -> mha_out_1_9
+	mha_out_1_9 -> mha_allreduce_1_9
+	mha_allreduce_1_9 -> residual1_1_9
+	residual1_1_9 -> expert_gate_1_9_0 [style=dashed]
+	expert_gate_1_9_0 -> expert_linear1_1_9_0
+	expert_linear1_1_9_0 -> expert_activation_1_9_0
+	expert_activation_1_9_0 -> expert_linear2_1_9_0
+	expert_linear2_1_9_0 -> expert_aggregate_1_9
+	residual1_1_9 -> expert_gate_1_9_1 [style=dashed]
+	expert_gate_1_9_1 -> expert_linear1_1_9_1
+	expert_linear1_1_9_1 -> expert_activation_1_9_1
+	expert_activation_1_9_1 -> expert_linear2_1_9_1
+	expert_linear2_1_9_1 -> expert_aggregate_1_9
+	residual1_1_9 -> expert_gate_1_9_2 [style=dashed]
+	expert_gate_1_9_2 -> expert_linear1_1_9_2
+	expert_linear1_1_9_2 -> expert_activation_1_9_2
+	expert_activation_1_9_2 -> expert_linear2_1_9_2
+	expert_linear2_1_9_2 -> expert_aggregate_1_9
+	residual1_1_9 -> expert_gate_1_9_3 [style=dashed]
+	expert_gate_1_9_3 -> expert_linear1_1_9_3
+	expert_linear1_1_9_3 -> expert_activation_1_9_3
+	expert_activation_1_9_3 -> expert_linear2_1_9_3
+	expert_linear2_1_9_3 -> expert_aggregate_1_9
+	expert_aggregate_1_9 -> residual2_1_9
+	residual2_1_9 -> output
+	mha_qkv_1_10 -> mha_split_1_10
+	mha_split_1_10 -> mha_attn_1_10
+	mha_attn_1_10 -> mha_concat_1_10
+	mha_concat_1_10 -> mha_out_1_10
+	mha_out_1_10 -> mha_allreduce_1_10
+	mha_allreduce_1_10 -> residual1_1_10
+	residual1_1_10 -> expert_gate_1_10_0 [style=dashed]
+	expert_gate_1_10_0 -> expert_linear1_1_10_0
+	expert_linear1_1_10_0 -> expert_activation_1_10_0
+	expert_activation_1_10_0 -> expert_linear2_1_10_0
+	expert_linear2_1_10_0 -> expert_aggregate_1_10
+	residual1_1_10 -> expert_gate_1_10_1 [style=dashed]
+	expert_gate_1_10_1 -> expert_linear1_1_10_1
+	expert_linear1_1_10_1 -> expert_activation_1_10_1
+	expert_activation_1_10_1 -> expert_linear2_1_10_1
+	expert_linear2_1_10_1 -> expert_aggregate_1_10
+	residual1_1_10 -> expert_gate_1_10_2 [style=dashed]
+	expert_gate_1_10_2 -> expert_linear1_1_10_2
+	expert_linear1_1_10_2 -> expert_activation_1_10_2
+	expert_activation_1_10_2 -> expert_linear2_1_10_2
+	expert_linear2_1_10_2 -> expert_aggregate_1_10
+	residual1_1_10 -> expert_gate_1_10_3 [style=dashed]
+	expert_gate_1_10_3 -> expert_linear1_1_10_3
+	expert_linear1_1_10_3 -> expert_activation_1_10_3
+	expert_activation_1_10_3 -> expert_linear2_1_10_3
+	expert_linear2_1_10_3 -> expert_aggregate_1_10
+	expert_aggregate_1_10 -> residual2_1_10
+	residual2_1_10 -> output
+	mha_qkv_1_11 -> mha_split_1_11
+	mha_split_1_11 -> mha_attn_1_11
+	mha_attn_1_11 -> mha_concat_1_11
+	mha_concat_1_11 -> mha_out_1_11
+	mha_out_1_11 -> mha_allreduce_1_11
+	mha_allreduce_1_11 -> residual1_1_11
+	residual1_1_11 -> expert_gate_1_11_0 [style=dashed]
+	expert_gate_1_11_0 -> expert_linear1_1_11_0
+	expert_linear1_1_11_0 -> expert_activation_1_11_0
+	expert_activation_1_11_0 -> expert_linear2_1_11_0
+	expert_linear2_1_11_0 -> expert_aggregate_1_11
+	residual1_1_11 -> expert_gate_1_11_1 [style=dashed]
+	expert_gate_1_11_1 -> expert_linear1_1_11_1
+	expert_linear1_1_11_1 -> expert_activation_1_11_1
+	expert_activation_1_11_1 -> expert_linear2_1_11_1
+	expert_linear2_1_11_1 -> expert_aggregate_1_11
+	residual1_1_11 -> expert_gate_1_11_2 [style=dashed]
+	expert_gate_1_11_2 -> expert_linear1_1_11_2
+	expert_linear1_1_11_2 -> expert_activation_1_11_2
+	expert_activation_1_11_2 -> expert_linear2_1_11_2
+	expert_linear2_1_11_2 -> expert_aggregate_1_11
+	residual1_1_11 -> expert_gate_1_11_3 [style=dashed]
+	expert_gate_1_11_3 -> expert_linear1_1_11_3
+	expert_linear1_1_11_3 -> expert_activation_1_11_3
+	expert_activation_1_11_3 -> expert_linear2_1_11_3
+	expert_linear2_1_11_3 -> expert_aggregate_1_11
+	expert_aggregate_1_11 -> residual2_1_11
+	residual2_1_11 -> output
+	mha_qkv_1_12 -> mha_split_1_12
+	mha_split_1_12 -> mha_attn_1_12
+	mha_attn_1_12 -> mha_concat_1_12
+	mha_concat_1_12 -> mha_out_1_12
+	mha_out_1_12 -> mha_allreduce_1_12
+	mha_allreduce_1_12 -> residual1_1_12
+	residual1_1_12 -> expert_gate_1_12_0 [style=dashed]
+	expert_gate_1_12_0 -> expert_linear1_1_12_0
+	expert_linear1_1_12_0 -> expert_activation_1_12_0
+	expert_activation_1_12_0 -> expert_linear2_1_12_0
+	expert_linear2_1_12_0 -> expert_aggregate_1_12
+	residual1_1_12 -> expert_gate_1_12_1 [style=dashed]
+	expert_gate_1_12_1 -> expert_linear1_1_12_1
+	expert_linear1_1_12_1 -> expert_activation_1_12_1
+	expert_activation_1_12_1 -> expert_linear2_1_12_1
+	expert_linear2_1_12_1 -> expert_aggregate_1_12
+	residual1_1_12 -> expert_gate_1_12_2 [style=dashed]
+	expert_gate_1_12_2 -> expert_linear1_1_12_2
+	expert_linear1_1_12_2 -> expert_activation_1_12_2
+	expert_activation_1_12_2 -> expert_linear2_1_12_2
+	expert_linear2_1_12_2 -> expert_aggregate_1_12
+	residual1_1_12 -> expert_gate_1_12_3 [style=dashed]
+	expert_gate_1_12_3 -> expert_linear1_1_12_3
+	expert_linear1_1_12_3 -> expert_activation_1_12_3
+	expert_activation_1_12_3 -> expert_linear2_1_12_3
+	expert_linear2_1_12_3 -> expert_aggregate_1_12
+	expert_aggregate_1_12 -> residual2_1_12
+	residual2_1_12 -> output
+	mha_qkv_1_13 -> mha_split_1_13
+	mha_split_1_13 -> mha_attn_1_13
+	mha_attn_1_13 -> mha_concat_1_13
+	mha_concat_1_13 -> mha_out_1_13
+	mha_out_1_13 -> mha_allreduce_1_13
+	mha_allreduce_1_13 -> residual1_1_13
+	residual1_1_13 -> expert_gate_1_13_0 [style=dashed]
+	expert_gate_1_13_0 -> expert_linear1_1_13_0
+	expert_linear1_1_13_0 -> expert_activation_1_13_0
+	expert_activation_1_13_0 -> expert_linear2_1_13_0
+	expert_linear2_1_13_0 -> expert_aggregate_1_13
+	residual1_1_13 -> expert_gate_1_13_1 [style=dashed]
+	expert_gate_1_13_1 -> expert_linear1_1_13_1
+	expert_linear1_1_13_1 -> expert_activation_1_13_1
+	expert_activation_1_13_1 -> expert_linear2_1_13_1
+	expert_linear2_1_13_1 -> expert_aggregate_1_13
+	residual1_1_13 -> expert_gate_1_13_2 [style=dashed]
+	expert_gate_1_13_2 -> expert_linear1_1_13_2
+	expert_linear1_1_13_2 -> expert_activation_1_13_2
+	expert_activation_1_13_2 -> expert_linear2_1_13_2
+	expert_linear2_1_13_2 -> expert_aggregate_1_13
+	residual1_1_13 -> expert_gate_1_13_3 [style=dashed]
+	expert_gate_1_13_3 -> expert_linear1_1_13_3
+	expert_linear1_1_13_3 -> expert_activation_1_13_3
+	expert_activation_1_13_3 -> expert_linear2_1_13_3
+	expert_linear2_1_13_3 -> expert_aggregate_1_13
+	expert_aggregate_1_13 -> residual2_1_13
+	residual2_1_13 -> output
+	mha_qkv_1_14 -> mha_split_1_14
+	mha_split_1_14 -> mha_attn_1_14
+	mha_attn_1_14 -> mha_concat_1_14
+	mha_concat_1_14 -> mha_out_1_14
+	mha_out_1_14 -> mha_allreduce_1_14
+	mha_allreduce_1_14 -> residual1_1_14
+	residual1_1_14 -> expert_gate_1_14_0 [style=dashed]
+	expert_gate_1_14_0 -> expert_linear1_1_14_0
+	expert_linear1_1_14_0 -> expert_activation_1_14_0
+	expert_activation_1_14_0 -> expert_linear2_1_14_0
+	expert_linear2_1_14_0 -> expert_aggregate_1_14
+	residual1_1_14 -> expert_gate_1_14_1 [style=dashed]
+	expert_gate_1_14_1 -> expert_linear1_1_14_1
+	expert_linear1_1_14_1 -> expert_activation_1_14_1
+	expert_activation_1_14_1 -> expert_linear2_1_14_1
+	expert_linear2_1_14_1 -> expert_aggregate_1_14
+	residual1_1_14 -> expert_gate_1_14_2 [style=dashed]
+	expert_gate_1_14_2 -> expert_linear1_1_14_2
+	expert_linear1_1_14_2 -> expert_activation_1_14_2
+	expert_activation_1_14_2 -> expert_linear2_1_14_2
+	expert_linear2_1_14_2 -> expert_aggregate_1_14
+	residual1_1_14 -> expert_gate_1_14_3 [style=dashed]
+	expert_gate_1_14_3 -> expert_linear1_1_14_3
+	expert_linear1_1_14_3 -> expert_activation_1_14_3
+	expert_activation_1_14_3 -> expert_linear2_1_14_3
+	expert_linear2_1_14_3 -> expert_aggregate_1_14
+	expert_aggregate_1_14 -> residual2_1_14
+	residual2_1_14 -> output
+	mha_qkv_1_15 -> mha_split_1_15
+	mha_split_1_15 -> mha_attn_1_15
+	mha_attn_1_15 -> mha_concat_1_15
+	mha_concat_1_15 -> mha_out_1_15
+	mha_out_1_15 -> mha_allreduce_1_15
+	mha_allreduce_1_15 -> residual1_1_15
+	residual1_1_15 -> expert_gate_1_15_0 [style=dashed]
+	expert_gate_1_15_0 -> expert_linear1_1_15_0
+	expert_linear1_1_15_0 -> expert_activation_1_15_0
+	expert_activation_1_15_0 -> expert_linear2_1_15_0
+	expert_linear2_1_15_0 -> expert_aggregate_1_15
+	residual1_1_15 -> expert_gate_1_15_1 [style=dashed]
+	expert_gate_1_15_1 -> expert_linear1_1_15_1
+	expert_linear1_1_15_1 -> expert_activation_1_15_1
+	expert_activation_1_15_1 -> expert_linear2_1_15_1
+	expert_linear2_1_15_1 -> expert_aggregate_1_15
+	residual1_1_15 -> expert_gate_1_15_2 [style=dashed]
+	expert_gate_1_15_2 -> expert_linear1_1_15_2
+	expert_linear1_1_15_2 -> expert_activation_1_15_2
+	expert_activation_1_15_2 -> expert_linear2_1_15_2
+	expert_linear2_1_15_2 -> expert_aggregate_1_15
+	residual1_1_15 -> expert_gate_1_15_3 [style=dashed]
+	expert_gate_1_15_3 -> expert_linear1_1_15_3
+	expert_linear1_1_15_3 -> expert_activation_1_15_3
+	expert_activation_1_15_3 -> expert_linear2_1_15_3
+	expert_linear2_1_15_3 -> expert_aggregate_1_15
+	expert_aggregate_1_15 -> residual2_1_15
+	residual2_1_15 -> output
+}

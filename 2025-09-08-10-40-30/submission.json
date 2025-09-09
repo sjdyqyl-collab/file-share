@@ -1,0 +1,10 @@
+{
+  "baseline_moe": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-08-10-40-30/baseline_moe.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-08-10-40-30/baseline_moe.svg"
+  },
+  "proposed_moe": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-08-10-40-30/proposed_moe.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-08-10-40-30/proposed_moe.svg"
+  }
+}

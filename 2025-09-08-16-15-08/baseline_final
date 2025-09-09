@@ -1,0 +1,222 @@
+digraph baseline_moe {
+	rankdir=TB size="30,20"
+	input [label="Input\n[1024×10000×8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	subgraph layer_0 {
+		label="Layer 0 (Stage 0)"
+		gate_0 [label="Gating\nLayer 0" fillcolor=yellow shape=diamond style=filled]
+		expert_0_0 [label="Expert 0\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_0 [style=dashed]
+		expert_0_1 [label="Expert 1\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_1 [style=dashed]
+		expert_0_2 [label="Expert 2\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_2 [style=dashed]
+		expert_0_3 [label="Expert 3\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_3 [style=dashed]
+		expert_0_4 [label="Expert 4\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_4 [style=dashed]
+		expert_0_5 [label="Expert 5\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_5 [style=dashed]
+		expert_0_6 [label="Expert 6\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_6 [style=dashed]
+		expert_0_7 [label="Expert 7\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_7 [style=dashed]
+		expert_0_8 [label="Expert 8\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_8 [style=dashed]
+		expert_0_9 [label="Expert 9\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_9 [style=dashed]
+		expert_0_10 [label="Expert 10\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_10 [style=dashed]
+		expert_0_11 [label="Expert 11\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_11 [style=dashed]
+		expert_0_12 [label="Expert 12\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_12 [style=dashed]
+		expert_0_13 [label="Expert 13\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_13 [style=dashed]
+		expert_0_14 [label="Expert 14\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_14 [style=dashed]
+		expert_0_15 [label="Expert 15\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_0 -> expert_0_15 [style=dashed]
+		agg_0 [label="Aggregate\nLayer 0" fillcolor=purple shape=parallelogram style=filled]
+		expert_0_0 -> agg_0
+		expert_0_1 -> agg_0
+		expert_0_2 -> agg_0
+		expert_0_3 -> agg_0
+		expert_0_4 -> agg_0
+		expert_0_5 -> agg_0
+		expert_0_6 -> agg_0
+		expert_0_7 -> agg_0
+		expert_0_8 -> agg_0
+		expert_0_9 -> agg_0
+		expert_0_10 -> agg_0
+		expert_0_11 -> agg_0
+		expert_0_12 -> agg_0
+		expert_0_13 -> agg_0
+		expert_0_14 -> agg_0
+		expert_0_15 -> agg_0
+	}
+	subgraph layer_1 {
+		label="Layer 1 (Stage 1)"
+		gate_1 [label="Gating\nLayer 1" fillcolor=yellow shape=diamond style=filled]
+		expert_1_0 [label="Expert 0\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_0 [style=dashed]
+		expert_1_1 [label="Expert 1\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_1 [style=dashed]
+		expert_1_2 [label="Expert 2\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_2 [style=dashed]
+		expert_1_3 [label="Expert 3\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_3 [style=dashed]
+		expert_1_4 [label="Expert 4\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_4 [style=dashed]
+		expert_1_5 [label="Expert 5\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_5 [style=dashed]
+		expert_1_6 [label="Expert 6\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_6 [style=dashed]
+		expert_1_7 [label="Expert 7\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_7 [style=dashed]
+		expert_1_8 [label="Expert 8\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_8 [style=dashed]
+		expert_1_9 [label="Expert 9\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_9 [style=dashed]
+		expert_1_10 [label="Expert 10\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_10 [style=dashed]
+		expert_1_11 [label="Expert 11\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_11 [style=dashed]
+		expert_1_12 [label="Expert 12\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_12 [style=dashed]
+		expert_1_13 [label="Expert 13\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_13 [style=dashed]
+		expert_1_14 [label="Expert 14\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_14 [style=dashed]
+		expert_1_15 [label="Expert 15\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_1 -> expert_1_15 [style=dashed]
+		agg_1 [label="Aggregate\nLayer 1" fillcolor=purple shape=parallelogram style=filled]
+		expert_1_0 -> agg_1
+		expert_1_1 -> agg_1
+		expert_1_2 -> agg_1
+		expert_1_3 -> agg_1
+		expert_1_4 -> agg_1
+		expert_1_5 -> agg_1
+		expert_1_6 -> agg_1
+		expert_1_7 -> agg_1
+		expert_1_8 -> agg_1
+		expert_1_9 -> agg_1
+		expert_1_10 -> agg_1
+		expert_1_11 -> agg_1
+		expert_1_12 -> agg_1
+		expert_1_13 -> agg_1
+		expert_1_14 -> agg_1
+		expert_1_15 -> agg_1
+	}
+	subgraph layer_2 {
+		label="Layer 2 (Stage 0)"
+		gate_2 [label="Gating\nLayer 2" fillcolor=yellow shape=diamond style=filled]
+		expert_2_0 [label="Expert 0\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_0 [style=dashed]
+		expert_2_1 [label="Expert 1\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_1 [style=dashed]
+		expert_2_2 [label="Expert 2\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_2 [style=dashed]
+		expert_2_3 [label="Expert 3\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_3 [style=dashed]
+		expert_2_4 [label="Expert 4\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_4 [style=dashed]
+		expert_2_5 [label="Expert 5\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_5 [style=dashed]
+		expert_2_6 [label="Expert 6\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_6 [style=dashed]
+		expert_2_7 [label="Expert 7\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_7 [style=dashed]
+		expert_2_8 [label="Expert 8\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_8 [style=dashed]
+		expert_2_9 [label="Expert 9\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_9 [style=dashed]
+		expert_2_10 [label="Expert 10\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_10 [style=dashed]
+		expert_2_11 [label="Expert 11\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_11 [style=dashed]
+		expert_2_12 [label="Expert 12\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_12 [style=dashed]
+		expert_2_13 [label="Expert 13\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_13 [style=dashed]
+		expert_2_14 [label="Expert 14\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_14 [style=dashed]
+		expert_2_15 [label="Expert 15\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_2 -> expert_2_15 [style=dashed]
+		agg_2 [label="Aggregate\nLayer 2" fillcolor=purple shape=parallelogram style=filled]
+		expert_2_0 -> agg_2
+		expert_2_1 -> agg_2
+		expert_2_2 -> agg_2
+		expert_2_3 -> agg_2
+		expert_2_4 -> agg_2
+		expert_2_5 -> agg_2
+		expert_2_6 -> agg_2
+		expert_2_7 -> agg_2
+		expert_2_8 -> agg_2
+		expert_2_9 -> agg_2
+		expert_2_10 -> agg_2
+		expert_2_11 -> agg_2
+		expert_2_12 -> agg_2
+		expert_2_13 -> agg_2
+		expert_2_14 -> agg_2
+		expert_2_15 -> agg_2
+	}
+	subgraph layer_3 {
+		label="Layer 3 (Stage 1)"
+		gate_3 [label="Gating\nLayer 3" fillcolor=yellow shape=diamond style=filled]
+		expert_3_0 [label="Expert 0\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_0 [style=dashed]
+		expert_3_1 [label="Expert 1\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_1 [style=dashed]
+		expert_3_2 [label="Expert 2\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_2 [style=dashed]
+		expert_3_3 [label="Expert 3\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_3 [style=dashed]
+		expert_3_4 [label="Expert 4\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_4 [style=dashed]
+		expert_3_5 [label="Expert 5\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_5 [style=dashed]
+		expert_3_6 [label="Expert 6\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_6 [style=dashed]
+		expert_3_7 [label="Expert 7\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_7 [style=dashed]
+		expert_3_8 [label="Expert 8\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_8 [style=dashed]
+		expert_3_9 [label="Expert 9\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_9 [style=dashed]
+		expert_3_10 [label="Expert 10\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_10 [style=dashed]
+		expert_3_11 [label="Expert 11\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_11 [style=dashed]
+		expert_3_12 [label="Expert 12\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_12 [style=dashed]
+		expert_3_13 [label="Expert 13\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_13 [style=dashed]
+		expert_3_14 [label="Expert 14\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_14 [style=dashed]
+		expert_3_15 [label="Expert 15\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		gate_3 -> expert_3_15 [style=dashed]
+		agg_3 [label="Aggregate\nLayer 3" fillcolor=purple shape=parallelogram style=filled]
+		expert_3_0 -> agg_3
+		expert_3_1 -> agg_3
+		expert_3_2 -> agg_3
+		expert_3_3 -> agg_3
+		expert_3_4 -> agg_3
+		expert_3_5 -> agg_3
+		expert_3_6 -> agg_3
+		expert_3_7 -> agg_3
+		expert_3_8 -> agg_3
+		expert_3_9 -> agg_3
+		expert_3_10 -> agg_3
+		expert_3_11 -> agg_3
+		expert_3_12 -> agg_3
+		expert_3_13 -> agg_3
+		expert_3_14 -> agg_3
+		expert_3_15 -> agg_3
+	}
+	agg_0 -> gate_1
+	agg_1 -> gate_2
+	agg_2 -> gate_3
+	input -> gate_0
+	agg_3 -> output
+	output [label="Output\n[1024×10000×8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+}

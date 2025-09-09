@@ -1,0 +1,759 @@
+// Proposed: 1 Layer per GPU
+digraph proposed_dag {
+	rankdir=TB size="20,30"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	input [label="Input
+[B=1024, H=8192]" fillcolor=lightgreen shape=ellipse]
+	layer1_input [label="Layer 1 Input
+[B=1024, H=8192]
+GPU0" fillcolor=lightyellow shape=ellipse]
+	input -> layer1_input
+	layer1_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU0" fillcolor=lightcoral]
+	layer1_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU0" fillcolor=lightcoral]
+	layer1_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU0" fillcolor=lightcoral]
+	layer1_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU0" fillcolor=lightcoral]
+	layer1_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU0" fillcolor=lightcyan]
+	layer1_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU0" fillcolor=lightcyan]
+	layer1_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU0" fillcolor=lightpink shape=diamond]
+	layer1_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU0" fillcolor=lightpink shape=diamond]
+	layer1_output [label="Layer 1 Output
+[B=1024, H=8192]
+GPU0" fillcolor=lightyellow shape=ellipse]
+	layer1_input -> layer1_attn_q
+	layer1_input -> layer1_attn_k
+	layer1_input -> layer1_attn_v
+	layer1_attn_q -> layer1_attn_out
+	layer1_attn_k -> layer1_attn_out
+	layer1_attn_v -> layer1_attn_out
+	layer1_attn_out -> layer1_res1
+	layer1_input -> layer1_res1
+	layer1_res1 -> layer1_mlp_fc1
+	layer1_mlp_fc1 -> layer1_mlp_fc2
+	layer1_mlp_fc2 -> layer1_res2
+	layer1_res1 -> layer1_res2
+	layer1_res2 -> layer1_output
+	comm_1_2 [label="GPU0→GPU1
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer2_input [label="Layer 2 Input
+[B=1024, H=8192]
+GPU1" fillcolor=lightyellow shape=ellipse]
+	layer1_output -> comm_1_2
+	comm_1_2 -> layer2_input
+	layer2_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU1" fillcolor=lightcoral]
+	layer2_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU1" fillcolor=lightcoral]
+	layer2_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU1" fillcolor=lightcoral]
+	layer2_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU1" fillcolor=lightcoral]
+	layer2_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU1" fillcolor=lightcyan]
+	layer2_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU1" fillcolor=lightcyan]
+	layer2_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU1" fillcolor=lightpink shape=diamond]
+	layer2_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU1" fillcolor=lightpink shape=diamond]
+	layer2_output [label="Layer 2 Output
+[B=1024, H=8192]
+GPU1" fillcolor=lightyellow shape=ellipse]
+	layer2_input -> layer2_attn_q
+	layer2_input -> layer2_attn_k
+	layer2_input -> layer2_attn_v
+	layer2_attn_q -> layer2_attn_out
+	layer2_attn_k -> layer2_attn_out
+	layer2_attn_v -> layer2_attn_out
+	layer2_attn_out -> layer2_res1
+	layer2_input -> layer2_res1
+	layer2_res1 -> layer2_mlp_fc1
+	layer2_mlp_fc1 -> layer2_mlp_fc2
+	layer2_mlp_fc2 -> layer2_res2
+	layer2_res1 -> layer2_res2
+	layer2_res2 -> layer2_output
+	comm_2_3 [label="GPU1→GPU2
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer3_input [label="Layer 3 Input
+[B=1024, H=8192]
+GPU2" fillcolor=lightyellow shape=ellipse]
+	layer2_output -> comm_2_3
+	comm_2_3 -> layer3_input
+	layer3_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU2" fillcolor=lightcoral]
+	layer3_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU2" fillcolor=lightcoral]
+	layer3_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU2" fillcolor=lightcoral]
+	layer3_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU2" fillcolor=lightcoral]
+	layer3_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU2" fillcolor=lightcyan]
+	layer3_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU2" fillcolor=lightcyan]
+	layer3_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU2" fillcolor=lightpink shape=diamond]
+	layer3_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU2" fillcolor=lightpink shape=diamond]
+	layer3_output [label="Layer 3 Output
+[B=1024, H=8192]
+GPU2" fillcolor=lightyellow shape=ellipse]
+	layer3_input -> layer3_attn_q
+	layer3_input -> layer3_attn_k
+	layer3_input -> layer3_attn_v
+	layer3_attn_q -> layer3_attn_out
+	layer3_attn_k -> layer3_attn_out
+	layer3_attn_v -> layer3_attn_out
+	layer3_attn_out -> layer3_res1
+	layer3_input -> layer3_res1
+	layer3_res1 -> layer3_mlp_fc1
+	layer3_mlp_fc1 -> layer3_mlp_fc2
+	layer3_mlp_fc2 -> layer3_res2
+	layer3_res1 -> layer3_res2
+	layer3_res2 -> layer3_output
+	comm_3_4 [label="GPU2→GPU3
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer4_input [label="Layer 4 Input
+[B=1024, H=8192]
+GPU3" fillcolor=lightyellow shape=ellipse]
+	layer3_output -> comm_3_4
+	comm_3_4 -> layer4_input
+	layer4_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU3" fillcolor=lightcoral]
+	layer4_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU3" fillcolor=lightcoral]
+	layer4_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU3" fillcolor=lightcoral]
+	layer4_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU3" fillcolor=lightcoral]
+	layer4_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU3" fillcolor=lightcyan]
+	layer4_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU3" fillcolor=lightcyan]
+	layer4_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU3" fillcolor=lightpink shape=diamond]
+	layer4_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU3" fillcolor=lightpink shape=diamond]
+	layer4_output [label="Layer 4 Output
+[B=1024, H=8192]
+GPU3" fillcolor=lightyellow shape=ellipse]
+	layer4_input -> layer4_attn_q
+	layer4_input -> layer4_attn_k
+	layer4_input -> layer4_attn_v
+	layer4_attn_q -> layer4_attn_out
+	layer4_attn_k -> layer4_attn_out
+	layer4_attn_v -> layer4_attn_out
+	layer4_attn_out -> layer4_res1
+	layer4_input -> layer4_res1
+	layer4_res1 -> layer4_mlp_fc1
+	layer4_mlp_fc1 -> layer4_mlp_fc2
+	layer4_mlp_fc2 -> layer4_res2
+	layer4_res1 -> layer4_res2
+	layer4_res2 -> layer4_output
+	comm_4_5 [label="GPU3→GPU4
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer5_input [label="Layer 5 Input
+[B=1024, H=8192]
+GPU4" fillcolor=lightyellow shape=ellipse]
+	layer4_output -> comm_4_5
+	comm_4_5 -> layer5_input
+	layer5_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU4" fillcolor=lightcoral]
+	layer5_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU4" fillcolor=lightcoral]
+	layer5_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU4" fillcolor=lightcoral]
+	layer5_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU4" fillcolor=lightcoral]
+	layer5_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU4" fillcolor=lightcyan]
+	layer5_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU4" fillcolor=lightcyan]
+	layer5_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU4" fillcolor=lightpink shape=diamond]
+	layer5_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU4" fillcolor=lightpink shape=diamond]
+	layer5_output [label="Layer 5 Output
+[B=1024, H=8192]
+GPU4" fillcolor=lightyellow shape=ellipse]
+	layer5_input -> layer5_attn_q
+	layer5_input -> layer5_attn_k
+	layer5_input -> layer5_attn_v
+	layer5_attn_q -> layer5_attn_out
+	layer5_attn_k -> layer5_attn_out
+	layer5_attn_v -> layer5_attn_out
+	layer5_attn_out -> layer5_res1
+	layer5_input -> layer5_res1
+	layer5_res1 -> layer5_mlp_fc1
+	layer5_mlp_fc1 -> layer5_mlp_fc2
+	layer5_mlp_fc2 -> layer5_res2
+	layer5_res1 -> layer5_res2
+	layer5_res2 -> layer5_output
+	comm_5_6 [label="GPU4→GPU5
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer6_input [label="Layer 6 Input
+[B=1024, H=8192]
+GPU5" fillcolor=lightyellow shape=ellipse]
+	layer5_output -> comm_5_6
+	comm_5_6 -> layer6_input
+	layer6_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU5" fillcolor=lightcoral]
+	layer6_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU5" fillcolor=lightcoral]
+	layer6_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU5" fillcolor=lightcoral]
+	layer6_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU5" fillcolor=lightcoral]
+	layer6_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU5" fillcolor=lightcyan]
+	layer6_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU5" fillcolor=lightcyan]
+	layer6_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU5" fillcolor=lightpink shape=diamond]
+	layer6_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU5" fillcolor=lightpink shape=diamond]
+	layer6_output [label="Layer 6 Output
+[B=1024, H=8192]
+GPU5" fillcolor=lightyellow shape=ellipse]
+	layer6_input -> layer6_attn_q
+	layer6_input -> layer6_attn_k
+	layer6_input -> layer6_attn_v
+	layer6_attn_q -> layer6_attn_out
+	layer6_attn_k -> layer6_attn_out
+	layer6_attn_v -> layer6_attn_out
+	layer6_attn_out -> layer6_res1
+	layer6_input -> layer6_res1
+	layer6_res1 -> layer6_mlp_fc1
+	layer6_mlp_fc1 -> layer6_mlp_fc2
+	layer6_mlp_fc2 -> layer6_res2
+	layer6_res1 -> layer6_res2
+	layer6_res2 -> layer6_output
+	comm_6_7 [label="GPU5→GPU6
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer7_input [label="Layer 7 Input
+[B=1024, H=8192]
+GPU6" fillcolor=lightyellow shape=ellipse]
+	layer6_output -> comm_6_7
+	comm_6_7 -> layer7_input
+	layer7_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU6" fillcolor=lightcoral]
+	layer7_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU6" fillcolor=lightcoral]
+	layer7_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU6" fillcolor=lightcoral]
+	layer7_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU6" fillcolor=lightcoral]
+	layer7_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU6" fillcolor=lightcyan]
+	layer7_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU6" fillcolor=lightcyan]
+	layer7_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU6" fillcolor=lightpink shape=diamond]
+	layer7_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU6" fillcolor=lightpink shape=diamond]
+	layer7_output [label="Layer 7 Output
+[B=1024, H=8192]
+GPU6" fillcolor=lightyellow shape=ellipse]
+	layer7_input -> layer7_attn_q
+	layer7_input -> layer7_attn_k
+	layer7_input -> layer7_attn_v
+	layer7_attn_q -> layer7_attn_out
+	layer7_attn_k -> layer7_attn_out
+	layer7_attn_v -> layer7_attn_out
+	layer7_attn_out -> layer7_res1
+	layer7_input -> layer7_res1
+	layer7_res1 -> layer7_mlp_fc1
+	layer7_mlp_fc1 -> layer7_mlp_fc2
+	layer7_mlp_fc2 -> layer7_res2
+	layer7_res1 -> layer7_res2
+	layer7_res2 -> layer7_output
+	comm_7_8 [label="GPU6→GPU7
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer8_input [label="Layer 8 Input
+[B=1024, H=8192]
+GPU7" fillcolor=lightyellow shape=ellipse]
+	layer7_output -> comm_7_8
+	comm_7_8 -> layer8_input
+	layer8_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU7" fillcolor=lightcoral]
+	layer8_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU7" fillcolor=lightcoral]
+	layer8_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU7" fillcolor=lightcoral]
+	layer8_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU7" fillcolor=lightcoral]
+	layer8_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU7" fillcolor=lightcyan]
+	layer8_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU7" fillcolor=lightcyan]
+	layer8_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU7" fillcolor=lightpink shape=diamond]
+	layer8_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU7" fillcolor=lightpink shape=diamond]
+	layer8_output [label="Layer 8 Output
+[B=1024, H=8192]
+GPU7" fillcolor=lightyellow shape=ellipse]
+	layer8_input -> layer8_attn_q
+	layer8_input -> layer8_attn_k
+	layer8_input -> layer8_attn_v
+	layer8_attn_q -> layer8_attn_out
+	layer8_attn_k -> layer8_attn_out
+	layer8_attn_v -> layer8_attn_out
+	layer8_attn_out -> layer8_res1
+	layer8_input -> layer8_res1
+	layer8_res1 -> layer8_mlp_fc1
+	layer8_mlp_fc1 -> layer8_mlp_fc2
+	layer8_mlp_fc2 -> layer8_res2
+	layer8_res1 -> layer8_res2
+	layer8_res2 -> layer8_output
+	comm_8_9 [label="GPU7→GPU8
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer9_input [label="Layer 9 Input
+[B=1024, H=8192]
+GPU8" fillcolor=lightyellow shape=ellipse]
+	layer8_output -> comm_8_9
+	comm_8_9 -> layer9_input
+	layer9_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU8" fillcolor=lightcoral]
+	layer9_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU8" fillcolor=lightcoral]
+	layer9_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU8" fillcolor=lightcoral]
+	layer9_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU8" fillcolor=lightcoral]
+	layer9_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU8" fillcolor=lightcyan]
+	layer9_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU8" fillcolor=lightcyan]
+	layer9_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU8" fillcolor=lightpink shape=diamond]
+	layer9_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU8" fillcolor=lightpink shape=diamond]
+	layer9_output [label="Layer 9 Output
+[B=1024, H=8192]
+GPU8" fillcolor=lightyellow shape=ellipse]
+	layer9_input -> layer9_attn_q
+	layer9_input -> layer9_attn_k
+	layer9_input -> layer9_attn_v
+	layer9_attn_q -> layer9_attn_out
+	layer9_attn_k -> layer9_attn_out
+	layer9_attn_v -> layer9_attn_out
+	layer9_attn_out -> layer9_res1
+	layer9_input -> layer9_res1
+	layer9_res1 -> layer9_mlp_fc1
+	layer9_mlp_fc1 -> layer9_mlp_fc2
+	layer9_mlp_fc2 -> layer9_res2
+	layer9_res1 -> layer9_res2
+	layer9_res2 -> layer9_output
+	comm_9_10 [label="GPU8→GPU9
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer10_input [label="Layer 10 Input
+[B=1024, H=8192]
+GPU9" fillcolor=lightyellow shape=ellipse]
+	layer9_output -> comm_9_10
+	comm_9_10 -> layer10_input
+	layer10_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU9" fillcolor=lightcoral]
+	layer10_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU9" fillcolor=lightcoral]
+	layer10_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU9" fillcolor=lightcoral]
+	layer10_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU9" fillcolor=lightcoral]
+	layer10_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU9" fillcolor=lightcyan]
+	layer10_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU9" fillcolor=lightcyan]
+	layer10_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU9" fillcolor=lightpink shape=diamond]
+	layer10_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU9" fillcolor=lightpink shape=diamond]
+	layer10_output [label="Layer 10 Output
+[B=1024, H=8192]
+GPU9" fillcolor=lightyellow shape=ellipse]
+	layer10_input -> layer10_attn_q
+	layer10_input -> layer10_attn_k
+	layer10_input -> layer10_attn_v
+	layer10_attn_q -> layer10_attn_out
+	layer10_attn_k -> layer10_attn_out
+	layer10_attn_v -> layer10_attn_out
+	layer10_attn_out -> layer10_res1
+	layer10_input -> layer10_res1
+	layer10_res1 -> layer10_mlp_fc1
+	layer10_mlp_fc1 -> layer10_mlp_fc2
+	layer10_mlp_fc2 -> layer10_res2
+	layer10_res1 -> layer10_res2
+	layer10_res2 -> layer10_output
+	comm_10_11 [label="GPU9→GPU10
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer11_input [label="Layer 11 Input
+[B=1024, H=8192]
+GPU10" fillcolor=lightyellow shape=ellipse]
+	layer10_output -> comm_10_11
+	comm_10_11 -> layer11_input
+	layer11_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU10" fillcolor=lightcoral]
+	layer11_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU10" fillcolor=lightcoral]
+	layer11_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU10" fillcolor=lightcoral]
+	layer11_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU10" fillcolor=lightcoral]
+	layer11_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU10" fillcolor=lightcyan]
+	layer11_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU10" fillcolor=lightcyan]
+	layer11_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU10" fillcolor=lightpink shape=diamond]
+	layer11_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU10" fillcolor=lightpink shape=diamond]
+	layer11_output [label="Layer 11 Output
+[B=1024, H=8192]
+GPU10" fillcolor=lightyellow shape=ellipse]
+	layer11_input -> layer11_attn_q
+	layer11_input -> layer11_attn_k
+	layer11_input -> layer11_attn_v
+	layer11_attn_q -> layer11_attn_out
+	layer11_attn_k -> layer11_attn_out
+	layer11_attn_v -> layer11_attn_out
+	layer11_attn_out -> layer11_res1
+	layer11_input -> layer11_res1
+	layer11_res1 -> layer11_mlp_fc1
+	layer11_mlp_fc1 -> layer11_mlp_fc2
+	layer11_mlp_fc2 -> layer11_res2
+	layer11_res1 -> layer11_res2
+	layer11_res2 -> layer11_output
+	comm_11_12 [label="GPU10→GPU11
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer12_input [label="Layer 12 Input
+[B=1024, H=8192]
+GPU11" fillcolor=lightyellow shape=ellipse]
+	layer11_output -> comm_11_12
+	comm_11_12 -> layer12_input
+	layer12_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU11" fillcolor=lightcoral]
+	layer12_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU11" fillcolor=lightcoral]
+	layer12_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU11" fillcolor=lightcoral]
+	layer12_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU11" fillcolor=lightcoral]
+	layer12_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU11" fillcolor=lightcyan]
+	layer12_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU11" fillcolor=lightcyan]
+	layer12_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU11" fillcolor=lightpink shape=diamond]
+	layer12_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU11" fillcolor=lightpink shape=diamond]
+	layer12_output [label="Layer 12 Output
+[B=1024, H=8192]
+GPU11" fillcolor=lightyellow shape=ellipse]
+	layer12_input -> layer12_attn_q
+	layer12_input -> layer12_attn_k
+	layer12_input -> layer12_attn_v
+	layer12_attn_q -> layer12_attn_out
+	layer12_attn_k -> layer12_attn_out
+	layer12_attn_v -> layer12_attn_out
+	layer12_attn_out -> layer12_res1
+	layer12_input -> layer12_res1
+	layer12_res1 -> layer12_mlp_fc1
+	layer12_mlp_fc1 -> layer12_mlp_fc2
+	layer12_mlp_fc2 -> layer12_res2
+	layer12_res1 -> layer12_res2
+	layer12_res2 -> layer12_output
+	comm_12_13 [label="GPU11→GPU12
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer13_input [label="Layer 13 Input
+[B=1024, H=8192]
+GPU12" fillcolor=lightyellow shape=ellipse]
+	layer12_output -> comm_12_13
+	comm_12_13 -> layer13_input
+	layer13_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU12" fillcolor=lightcoral]
+	layer13_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU12" fillcolor=lightcoral]
+	layer13_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU12" fillcolor=lightcoral]
+	layer13_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU12" fillcolor=lightcoral]
+	layer13_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU12" fillcolor=lightcyan]
+	layer13_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU12" fillcolor=lightcyan]
+	layer13_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU12" fillcolor=lightpink shape=diamond]
+	layer13_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU12" fillcolor=lightpink shape=diamond]
+	layer13_output [label="Layer 13 Output
+[B=1024, H=8192]
+GPU12" fillcolor=lightyellow shape=ellipse]
+	layer13_input -> layer13_attn_q
+	layer13_input -> layer13_attn_k
+	layer13_input -> layer13_attn_v
+	layer13_attn_q -> layer13_attn_out
+	layer13_attn_k -> layer13_attn_out
+	layer13_attn_v -> layer13_attn_out
+	layer13_attn_out -> layer13_res1
+	layer13_input -> layer13_res1
+	layer13_res1 -> layer13_mlp_fc1
+	layer13_mlp_fc1 -> layer13_mlp_fc2
+	layer13_mlp_fc2 -> layer13_res2
+	layer13_res1 -> layer13_res2
+	layer13_res2 -> layer13_output
+	comm_13_14 [label="GPU12→GPU13
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer14_input [label="Layer 14 Input
+[B=1024, H=8192]
+GPU13" fillcolor=lightyellow shape=ellipse]
+	layer13_output -> comm_13_14
+	comm_13_14 -> layer14_input
+	layer14_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU13" fillcolor=lightcoral]
+	layer14_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU13" fillcolor=lightcoral]
+	layer14_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU13" fillcolor=lightcoral]
+	layer14_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU13" fillcolor=lightcoral]
+	layer14_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU13" fillcolor=lightcyan]
+	layer14_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU13" fillcolor=lightcyan]
+	layer14_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU13" fillcolor=lightpink shape=diamond]
+	layer14_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU13" fillcolor=lightpink shape=diamond]
+	layer14_output [label="Layer 14 Output
+[B=1024, H=8192]
+GPU13" fillcolor=lightyellow shape=ellipse]
+	layer14_input -> layer14_attn_q
+	layer14_input -> layer14_attn_k
+	layer14_input -> layer14_attn_v
+	layer14_attn_q -> layer14_attn_out
+	layer14_attn_k -> layer14_attn_out
+	layer14_attn_v -> layer14_attn_out
+	layer14_attn_out -> layer14_res1
+	layer14_input -> layer14_res1
+	layer14_res1 -> layer14_mlp_fc1
+	layer14_mlp_fc1 -> layer14_mlp_fc2
+	layer14_mlp_fc2 -> layer14_res2
+	layer14_res1 -> layer14_res2
+	layer14_res2 -> layer14_output
+	comm_14_15 [label="GPU13→GPU14
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer15_input [label="Layer 15 Input
+[B=1024, H=8192]
+GPU14" fillcolor=lightyellow shape=ellipse]
+	layer14_output -> comm_14_15
+	comm_14_15 -> layer15_input
+	layer15_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU14" fillcolor=lightcoral]
+	layer15_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU14" fillcolor=lightcoral]
+	layer15_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU14" fillcolor=lightcoral]
+	layer15_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU14" fillcolor=lightcoral]
+	layer15_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU14" fillcolor=lightcyan]
+	layer15_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU14" fillcolor=lightcyan]
+	layer15_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU14" fillcolor=lightpink shape=diamond]
+	layer15_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU14" fillcolor=lightpink shape=diamond]
+	layer15_output [label="Layer 15 Output
+[B=1024, H=8192]
+GPU14" fillcolor=lightyellow shape=ellipse]
+	layer15_input -> layer15_attn_q
+	layer15_input -> layer15_attn_k
+	layer15_input -> layer15_attn_v
+	layer15_attn_q -> layer15_attn_out
+	layer15_attn_k -> layer15_attn_out
+	layer15_attn_v -> layer15_attn_out
+	layer15_attn_out -> layer15_res1
+	layer15_input -> layer15_res1
+	layer15_res1 -> layer15_mlp_fc1
+	layer15_mlp_fc1 -> layer15_mlp_fc2
+	layer15_mlp_fc2 -> layer15_res2
+	layer15_res1 -> layer15_res2
+	layer15_res2 -> layer15_output
+	comm_15_16 [label="GPU14→GPU15
+[B=1024, H=8192]" fillcolor=orange shape=parallelogram style=dashed]
+	layer16_input [label="Layer 16 Input
+[B=1024, H=8192]
+GPU15" fillcolor=lightyellow shape=ellipse]
+	layer15_output -> comm_15_16
+	comm_15_16 -> layer16_input
+	layer16_attn_q [label="Q Projection
+[B=1024, H=8192]
+GPU15" fillcolor=lightcoral]
+	layer16_attn_k [label="K Projection
+[B=1024, H=8192]
+GPU15" fillcolor=lightcoral]
+	layer16_attn_v [label="V Projection
+[B=1024, H=8192]
+GPU15" fillcolor=lightcoral]
+	layer16_attn_out [label="Attention Output
+[B=1024, H=8192]
+GPU15" fillcolor=lightcoral]
+	layer16_mlp_fc1 [label="MLP FC1
+[B=1024, H=32768]
+GPU15" fillcolor=lightcyan]
+	layer16_mlp_fc2 [label="MLP FC2
+[B=1024, H=8192]
+GPU15" fillcolor=lightcyan]
+	layer16_res1 [label="Residual Add 1
+[B=1024, H=8192]
+GPU15" fillcolor=lightpink shape=diamond]
+	layer16_res2 [label="Residual Add 2
+[B=1024, H=8192]
+GPU15" fillcolor=lightpink shape=diamond]
+	layer16_output [label="Layer 16 Output
+[B=1024, H=8192]
+GPU15" fillcolor=lightyellow shape=ellipse]
+	layer16_input -> layer16_attn_q
+	layer16_input -> layer16_attn_k
+	layer16_input -> layer16_attn_v
+	layer16_attn_q -> layer16_attn_out
+	layer16_attn_k -> layer16_attn_out
+	layer16_attn_v -> layer16_attn_out
+	layer16_attn_out -> layer16_res1
+	layer16_input -> layer16_res1
+	layer16_res1 -> layer16_mlp_fc1
+	layer16_mlp_fc1 -> layer16_mlp_fc2
+	layer16_mlp_fc2 -> layer16_res2
+	layer16_res1 -> layer16_res2
+	layer16_res2 -> layer16_output
+	output [label="Final Output
+[B=1024, H=8192]" fillcolor=lightgreen shape=ellipse]
+	layer16_output -> output
+}

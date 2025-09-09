@@ -1,0 +1,1541 @@
+// Proposed Cross-Node Expert Parallelism DAG (EP=64)
+digraph {
+	nodesep=0.3 rankdir=TB ranksep=1.2 size="25,35"
+	input [label="Model Input
+[1024, 10000, 8192]" fillcolor=lightblue shape=ellipse style=filled]
+	layer_0_boundary [label="Layer 0 Boundary
+GPUs 0-15" fillcolor=lightgray shape=box style=dashed]
+	layer_0_gate [label="Gate Network
+[1024, 10000, 16]
+GPU 0" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_0_token_shard [label="Token Sharding
+[1024, 10000, 8192] -> [tokens, 8192]
+GPU 0" fillcolor=orange shape=parallelogram style=filled]
+	layer_0_async_comm [label="Async All-to-All
+[tokens, 8192]
+All GPUs 0-15" fillcolor=lightsteelblue shape=ellipse style=filled]
+	layer_0_expert_0_receive [label="Expert 0 Receive
+[local_tokens, 8192]
+GPU 0" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_0_linear1 [label="Expert 0 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_0_gelu [label="Expert 0 GELU
+[local_tokens, 32768]
+GPU 0" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_0_linear2 [label="Expert 0 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_0_send [label="Expert 0 Send
+[local_tokens, 8192]
+GPU 0" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_1_receive [label="Expert 1 Receive
+[local_tokens, 8192]
+GPU 1" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_1_linear1 [label="Expert 1 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_1_gelu [label="Expert 1 GELU
+[local_tokens, 32768]
+GPU 1" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_1_linear2 [label="Expert 1 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_1_send [label="Expert 1 Send
+[local_tokens, 8192]
+GPU 1" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_2_receive [label="Expert 2 Receive
+[local_tokens, 8192]
+GPU 2" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_2_linear1 [label="Expert 2 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_2_gelu [label="Expert 2 GELU
+[local_tokens, 32768]
+GPU 2" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_2_linear2 [label="Expert 2 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_2_send [label="Expert 2 Send
+[local_tokens, 8192]
+GPU 2" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_3_receive [label="Expert 3 Receive
+[local_tokens, 8192]
+GPU 3" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_3_linear1 [label="Expert 3 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_3_gelu [label="Expert 3 GELU
+[local_tokens, 32768]
+GPU 3" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_3_linear2 [label="Expert 3 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_3_send [label="Expert 3 Send
+[local_tokens, 8192]
+GPU 3" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_4_receive [label="Expert 4 Receive
+[local_tokens, 8192]
+GPU 4" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_4_linear1 [label="Expert 4 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_4_gelu [label="Expert 4 GELU
+[local_tokens, 32768]
+GPU 4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_4_linear2 [label="Expert 4 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_4_send [label="Expert 4 Send
+[local_tokens, 8192]
+GPU 4" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_5_receive [label="Expert 5 Receive
+[local_tokens, 8192]
+GPU 5" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_5_linear1 [label="Expert 5 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_5_gelu [label="Expert 5 GELU
+[local_tokens, 32768]
+GPU 5" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_5_linear2 [label="Expert 5 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_5_send [label="Expert 5 Send
+[local_tokens, 8192]
+GPU 5" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_6_receive [label="Expert 6 Receive
+[local_tokens, 8192]
+GPU 6" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_6_linear1 [label="Expert 6 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_6_gelu [label="Expert 6 GELU
+[local_tokens, 32768]
+GPU 6" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_6_linear2 [label="Expert 6 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_6_send [label="Expert 6 Send
+[local_tokens, 8192]
+GPU 6" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_7_receive [label="Expert 7 Receive
+[local_tokens, 8192]
+GPU 7" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_7_linear1 [label="Expert 7 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_7_gelu [label="Expert 7 GELU
+[local_tokens, 32768]
+GPU 7" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_7_linear2 [label="Expert 7 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_7_send [label="Expert 7 Send
+[local_tokens, 8192]
+GPU 7" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_8_receive [label="Expert 8 Receive
+[local_tokens, 8192]
+GPU 8" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_8_linear1 [label="Expert 8 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_8_gelu [label="Expert 8 GELU
+[local_tokens, 32768]
+GPU 8" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_8_linear2 [label="Expert 8 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_8_send [label="Expert 8 Send
+[local_tokens, 8192]
+GPU 8" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_9_receive [label="Expert 9 Receive
+[local_tokens, 8192]
+GPU 9" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_9_linear1 [label="Expert 9 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_9_gelu [label="Expert 9 GELU
+[local_tokens, 32768]
+GPU 9" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_9_linear2 [label="Expert 9 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_9_send [label="Expert 9 Send
+[local_tokens, 8192]
+GPU 9" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_10_receive [label="Expert 10 Receive
+[local_tokens, 8192]
+GPU 10" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_10_linear1 [label="Expert 10 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_10_gelu [label="Expert 10 GELU
+[local_tokens, 32768]
+GPU 10" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_10_linear2 [label="Expert 10 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_10_send [label="Expert 10 Send
+[local_tokens, 8192]
+GPU 10" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_11_receive [label="Expert 11 Receive
+[local_tokens, 8192]
+GPU 11" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_11_linear1 [label="Expert 11 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_11_gelu [label="Expert 11 GELU
+[local_tokens, 32768]
+GPU 11" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_11_linear2 [label="Expert 11 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_11_send [label="Expert 11 Send
+[local_tokens, 8192]
+GPU 11" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_12_receive [label="Expert 12 Receive
+[local_tokens, 8192]
+GPU 12" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_12_linear1 [label="Expert 12 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_12_gelu [label="Expert 12 GELU
+[local_tokens, 32768]
+GPU 12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_12_linear2 [label="Expert 12 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_12_send [label="Expert 12 Send
+[local_tokens, 8192]
+GPU 12" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_13_receive [label="Expert 13 Receive
+[local_tokens, 8192]
+GPU 13" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_13_linear1 [label="Expert 13 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_13_gelu [label="Expert 13 GELU
+[local_tokens, 32768]
+GPU 13" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_13_linear2 [label="Expert 13 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_13_send [label="Expert 13 Send
+[local_tokens, 8192]
+GPU 13" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_14_receive [label="Expert 14 Receive
+[local_tokens, 8192]
+GPU 14" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_14_linear1 [label="Expert 14 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_14_gelu [label="Expert 14 GELU
+[local_tokens, 32768]
+GPU 14" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_14_linear2 [label="Expert 14 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_14_send [label="Expert 14 Send
+[local_tokens, 8192]
+GPU 14" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_15_receive [label="Expert 15 Receive
+[local_tokens, 8192]
+GPU 15" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_expert_15_linear1 [label="Expert 15 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_15_gelu [label="Expert 15 GELU
+[local_tokens, 32768]
+GPU 15" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_expert_15_linear2 [label="Expert 15 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_0_expert_15_send [label="Expert 15 Send
+[local_tokens, 8192]
+GPU 15" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_0_token_agg [label="Token Aggregation
+[tokens, 8192] -> [1024, 10000, 8192]
+GPU 0" fillcolor=orange shape=parallelogram style=filled]
+	layer_0_async_back [label="Async All-to-All Back
+[tokens, 8192]
+All GPUs 0-15" fillcolor=lightsteelblue shape=ellipse style=filled]
+	layer_0_reconstruct [label="Output Reconstruction
+[1024, 10000, 8192]
+GPU 0" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_0_residual [label="Layer 0 Residual Add
+[1024, 10000, 8192]
+GPU 0" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_boundary [label="Layer 1 Boundary
+GPUs 16-31" fillcolor=lightgray shape=box style=dashed]
+	layer_1_gate [label="Gate Network
+[1024, 10000, 16]
+GPU 16" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_1_token_shard [label="Token Sharding
+[1024, 10000, 8192] -> [tokens, 8192]
+GPU 16" fillcolor=orange shape=parallelogram style=filled]
+	layer_1_async_comm [label="Async All-to-All
+[tokens, 8192]
+All GPUs 16-31" fillcolor=lightsteelblue shape=ellipse style=filled]
+	layer_1_expert_0_receive [label="Expert 0 Receive
+[local_tokens, 8192]
+GPU 16" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_0_linear1 [label="Expert 0 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_0_gelu [label="Expert 0 GELU
+[local_tokens, 32768]
+GPU 16" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_0_linear2 [label="Expert 0 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_0_send [label="Expert 0 Send
+[local_tokens, 8192]
+GPU 16" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_1_receive [label="Expert 1 Receive
+[local_tokens, 8192]
+GPU 17" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_1_linear1 [label="Expert 1 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_1_gelu [label="Expert 1 GELU
+[local_tokens, 32768]
+GPU 17" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_1_linear2 [label="Expert 1 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_1_send [label="Expert 1 Send
+[local_tokens, 8192]
+GPU 17" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_2_receive [label="Expert 2 Receive
+[local_tokens, 8192]
+GPU 18" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_2_linear1 [label="Expert 2 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_2_gelu [label="Expert 2 GELU
+[local_tokens, 32768]
+GPU 18" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_2_linear2 [label="Expert 2 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_2_send [label="Expert 2 Send
+[local_tokens, 8192]
+GPU 18" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_3_receive [label="Expert 3 Receive
+[local_tokens, 8192]
+GPU 19" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_3_linear1 [label="Expert 3 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_3_gelu [label="Expert 3 GELU
+[local_tokens, 32768]
+GPU 19" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_3_linear2 [label="Expert 3 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_3_send [label="Expert 3 Send
+[local_tokens, 8192]
+GPU 19" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_4_receive [label="Expert 4 Receive
+[local_tokens, 8192]
+GPU 20" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_4_linear1 [label="Expert 4 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_4_gelu [label="Expert 4 GELU
+[local_tokens, 32768]
+GPU 20" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_4_linear2 [label="Expert 4 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_4_send [label="Expert 4 Send
+[local_tokens, 8192]
+GPU 20" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_5_receive [label="Expert 5 Receive
+[local_tokens, 8192]
+GPU 21" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_5_linear1 [label="Expert 5 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_5_gelu [label="Expert 5 GELU
+[local_tokens, 32768]
+GPU 21" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_5_linear2 [label="Expert 5 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_5_send [label="Expert 5 Send
+[local_tokens, 8192]
+GPU 21" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_6_receive [label="Expert 6 Receive
+[local_tokens, 8192]
+GPU 22" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_6_linear1 [label="Expert 6 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_6_gelu [label="Expert 6 GELU
+[local_tokens, 32768]
+GPU 22" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_6_linear2 [label="Expert 6 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_6_send [label="Expert 6 Send
+[local_tokens, 8192]
+GPU 22" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_7_receive [label="Expert 7 Receive
+[local_tokens, 8192]
+GPU 23" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_7_linear1 [label="Expert 7 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_7_gelu [label="Expert 7 GELU
+[local_tokens, 32768]
+GPU 23" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_7_linear2 [label="Expert 7 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_7_send [label="Expert 7 Send
+[local_tokens, 8192]
+GPU 23" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_8_receive [label="Expert 8 Receive
+[local_tokens, 8192]
+GPU 24" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_8_linear1 [label="Expert 8 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_8_gelu [label="Expert 8 GELU
+[local_tokens, 32768]
+GPU 24" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_8_linear2 [label="Expert 8 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_8_send [label="Expert 8 Send
+[local_tokens, 8192]
+GPU 24" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_9_receive [label="Expert 9 Receive
+[local_tokens, 8192]
+GPU 25" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_9_linear1 [label="Expert 9 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_9_gelu [label="Expert 9 GELU
+[local_tokens, 32768]
+GPU 25" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_9_linear2 [label="Expert 9 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_9_send [label="Expert 9 Send
+[local_tokens, 8192]
+GPU 25" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_10_receive [label="Expert 10 Receive
+[local_tokens, 8192]
+GPU 26" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_10_linear1 [label="Expert 10 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_10_gelu [label="Expert 10 GELU
+[local_tokens, 32768]
+GPU 26" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_10_linear2 [label="Expert 10 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_10_send [label="Expert 10 Send
+[local_tokens, 8192]
+GPU 26" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_11_receive [label="Expert 11 Receive
+[local_tokens, 8192]
+GPU 27" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_11_linear1 [label="Expert 11 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_11_gelu [label="Expert 11 GELU
+[local_tokens, 32768]
+GPU 27" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_11_linear2 [label="Expert 11 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_11_send [label="Expert 11 Send
+[local_tokens, 8192]
+GPU 27" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_12_receive [label="Expert 12 Receive
+[local_tokens, 8192]
+GPU 28" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_12_linear1 [label="Expert 12 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_12_gelu [label="Expert 12 GELU
+[local_tokens, 32768]
+GPU 28" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_12_linear2 [label="Expert 12 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_12_send [label="Expert 12 Send
+[local_tokens, 8192]
+GPU 28" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_13_receive [label="Expert 13 Receive
+[local_tokens, 8192]
+GPU 29" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_13_linear1 [label="Expert 13 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_13_gelu [label="Expert 13 GELU
+[local_tokens, 32768]
+GPU 29" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_13_linear2 [label="Expert 13 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_13_send [label="Expert 13 Send
+[local_tokens, 8192]
+GPU 29" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_14_receive [label="Expert 14 Receive
+[local_tokens, 8192]
+GPU 30" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_14_linear1 [label="Expert 14 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_14_gelu [label="Expert 14 GELU
+[local_tokens, 32768]
+GPU 30" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_14_linear2 [label="Expert 14 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_14_send [label="Expert 14 Send
+[local_tokens, 8192]
+GPU 30" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_15_receive [label="Expert 15 Receive
+[local_tokens, 8192]
+GPU 31" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_expert_15_linear1 [label="Expert 15 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_15_gelu [label="Expert 15 GELU
+[local_tokens, 32768]
+GPU 31" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_expert_15_linear2 [label="Expert 15 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_1_expert_15_send [label="Expert 15 Send
+[local_tokens, 8192]
+GPU 31" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_1_token_agg [label="Token Aggregation
+[tokens, 8192] -> [1024, 10000, 8192]
+GPU 16" fillcolor=orange shape=parallelogram style=filled]
+	layer_1_async_back [label="Async All-to-All Back
+[tokens, 8192]
+All GPUs 16-31" fillcolor=lightsteelblue shape=ellipse style=filled]
+	layer_1_reconstruct [label="Output Reconstruction
+[1024, 10000, 8192]
+GPU 16" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_1_residual [label="Layer 1 Residual Add
+[1024, 10000, 8192]
+GPU 16" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_boundary [label="Layer 2 Boundary
+GPUs 32-47" fillcolor=lightgray shape=box style=dashed]
+	layer_2_gate [label="Gate Network
+[1024, 10000, 16]
+GPU 32" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_2_token_shard [label="Token Sharding
+[1024, 10000, 8192] -> [tokens, 8192]
+GPU 32" fillcolor=orange shape=parallelogram style=filled]
+	layer_2_async_comm [label="Async All-to-All
+[tokens, 8192]
+All GPUs 32-47" fillcolor=lightsteelblue shape=ellipse style=filled]
+	layer_2_expert_0_receive [label="Expert 0 Receive
+[local_tokens, 8192]
+GPU 32" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_0_linear1 [label="Expert 0 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_0_gelu [label="Expert 0 GELU
+[local_tokens, 32768]
+GPU 32" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_0_linear2 [label="Expert 0 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_0_send [label="Expert 0 Send
+[local_tokens, 8192]
+GPU 32" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_1_receive [label="Expert 1 Receive
+[local_tokens, 8192]
+GPU 33" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_1_linear1 [label="Expert 1 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_1_gelu [label="Expert 1 GELU
+[local_tokens, 32768]
+GPU 33" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_1_linear2 [label="Expert 1 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_1_send [label="Expert 1 Send
+[local_tokens, 8192]
+GPU 33" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_2_receive [label="Expert 2 Receive
+[local_tokens, 8192]
+GPU 34" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_2_linear1 [label="Expert 2 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_2_gelu [label="Expert 2 GELU
+[local_tokens, 32768]
+GPU 34" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_2_linear2 [label="Expert 2 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_2_send [label="Expert 2 Send
+[local_tokens, 8192]
+GPU 34" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_3_receive [label="Expert 3 Receive
+[local_tokens, 8192]
+GPU 35" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_3_linear1 [label="Expert 3 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_3_gelu [label="Expert 3 GELU
+[local_tokens, 32768]
+GPU 35" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_3_linear2 [label="Expert 3 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_3_send [label="Expert 3 Send
+[local_tokens, 8192]
+GPU 35" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_4_receive [label="Expert 4 Receive
+[local_tokens, 8192]
+GPU 36" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_4_linear1 [label="Expert 4 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_4_gelu [label="Expert 4 GELU
+[local_tokens, 32768]
+GPU 36" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_4_linear2 [label="Expert 4 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_4_send [label="Expert 4 Send
+[local_tokens, 8192]
+GPU 36" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_5_receive [label="Expert 5 Receive
+[local_tokens, 8192]
+GPU 37" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_5_linear1 [label="Expert 5 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_5_gelu [label="Expert 5 GELU
+[local_tokens, 32768]
+GPU 37" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_5_linear2 [label="Expert 5 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_5_send [label="Expert 5 Send
+[local_tokens, 8192]
+GPU 37" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_6_receive [label="Expert 6 Receive
+[local_tokens, 8192]
+GPU 38" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_6_linear1 [label="Expert 6 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_6_gelu [label="Expert 6 GELU
+[local_tokens, 32768]
+GPU 38" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_6_linear2 [label="Expert 6 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_6_send [label="Expert 6 Send
+[local_tokens, 8192]
+GPU 38" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_7_receive [label="Expert 7 Receive
+[local_tokens, 8192]
+GPU 39" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_7_linear1 [label="Expert 7 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_7_gelu [label="Expert 7 GELU
+[local_tokens, 32768]
+GPU 39" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_7_linear2 [label="Expert 7 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_7_send [label="Expert 7 Send
+[local_tokens, 8192]
+GPU 39" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_8_receive [label="Expert 8 Receive
+[local_tokens, 8192]
+GPU 40" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_8_linear1 [label="Expert 8 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_8_gelu [label="Expert 8 GELU
+[local_tokens, 32768]
+GPU 40" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_8_linear2 [label="Expert 8 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_8_send [label="Expert 8 Send
+[local_tokens, 8192]
+GPU 40" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_9_receive [label="Expert 9 Receive
+[local_tokens, 8192]
+GPU 41" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_9_linear1 [label="Expert 9 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_9_gelu [label="Expert 9 GELU
+[local_tokens, 32768]
+GPU 41" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_9_linear2 [label="Expert 9 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_9_send [label="Expert 9 Send
+[local_tokens, 8192]
+GPU 41" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_10_receive [label="Expert 10 Receive
+[local_tokens, 8192]
+GPU 42" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_10_linear1 [label="Expert 10 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_10_gelu [label="Expert 10 GELU
+[local_tokens, 32768]
+GPU 42" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_10_linear2 [label="Expert 10 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_10_send [label="Expert 10 Send
+[local_tokens, 8192]
+GPU 42" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_11_receive [label="Expert 11 Receive
+[local_tokens, 8192]
+GPU 43" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_11_linear1 [label="Expert 11 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_11_gelu [label="Expert 11 GELU
+[local_tokens, 32768]
+GPU 43" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_11_linear2 [label="Expert 11 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_11_send [label="Expert 11 Send
+[local_tokens, 8192]
+GPU 43" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_12_receive [label="Expert 12 Receive
+[local_tokens, 8192]
+GPU 44" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_12_linear1 [label="Expert 12 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_12_gelu [label="Expert 12 GELU
+[local_tokens, 32768]
+GPU 44" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_12_linear2 [label="Expert 12 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_12_send [label="Expert 12 Send
+[local_tokens, 8192]
+GPU 44" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_13_receive [label="Expert 13 Receive
+[local_tokens, 8192]
+GPU 45" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_13_linear1 [label="Expert 13 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_13_gelu [label="Expert 13 GELU
+[local_tokens, 32768]
+GPU 45" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_13_linear2 [label="Expert 13 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_13_send [label="Expert 13 Send
+[local_tokens, 8192]
+GPU 45" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_14_receive [label="Expert 14 Receive
+[local_tokens, 8192]
+GPU 46" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_14_linear1 [label="Expert 14 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_14_gelu [label="Expert 14 GELU
+[local_tokens, 32768]
+GPU 46" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_14_linear2 [label="Expert 14 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_14_send [label="Expert 14 Send
+[local_tokens, 8192]
+GPU 46" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_15_receive [label="Expert 15 Receive
+[local_tokens, 8192]
+GPU 47" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_expert_15_linear1 [label="Expert 15 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_15_gelu [label="Expert 15 GELU
+[local_tokens, 32768]
+GPU 47" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_expert_15_linear2 [label="Expert 15 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_2_expert_15_send [label="Expert 15 Send
+[local_tokens, 8192]
+GPU 47" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_2_token_agg [label="Token Aggregation
+[tokens, 8192] -> [1024, 10000, 8192]
+GPU 32" fillcolor=orange shape=parallelogram style=filled]
+	layer_2_async_back [label="Async All-to-All Back
+[tokens, 8192]
+All GPUs 32-47" fillcolor=lightsteelblue shape=ellipse style=filled]
+	layer_2_reconstruct [label="Output Reconstruction
+[1024, 10000, 8192]
+GPU 32" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_2_residual [label="Layer 2 Residual Add
+[1024, 10000, 8192]
+GPU 32" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_boundary [label="Layer 3 Boundary
+GPUs 48-63" fillcolor=lightgray shape=box style=dashed]
+	layer_3_gate [label="Gate Network
+[1024, 10000, 16]
+GPU 48" fillcolor=lightyellow shape=parallelogram style=filled]
+	layer_3_token_shard [label="Token Sharding
+[1024, 10000, 8192] -> [tokens, 8192]
+GPU 48" fillcolor=orange shape=parallelogram style=filled]
+	layer_3_async_comm [label="Async All-to-All
+[tokens, 8192]
+All GPUs 48-63" fillcolor=lightsteelblue shape=ellipse style=filled]
+	layer_3_expert_0_receive [label="Expert 0 Receive
+[local_tokens, 8192]
+GPU 48" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_0_linear1 [label="Expert 0 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_0_gelu [label="Expert 0 GELU
+[local_tokens, 32768]
+GPU 48" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_0_linear2 [label="Expert 0 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_0_send [label="Expert 0 Send
+[local_tokens, 8192]
+GPU 48" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_1_receive [label="Expert 1 Receive
+[local_tokens, 8192]
+GPU 49" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_1_linear1 [label="Expert 1 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_1_gelu [label="Expert 1 GELU
+[local_tokens, 32768]
+GPU 49" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_1_linear2 [label="Expert 1 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_1_send [label="Expert 1 Send
+[local_tokens, 8192]
+GPU 49" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_2_receive [label="Expert 2 Receive
+[local_tokens, 8192]
+GPU 50" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_2_linear1 [label="Expert 2 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_2_gelu [label="Expert 2 GELU
+[local_tokens, 32768]
+GPU 50" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_2_linear2 [label="Expert 2 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_2_send [label="Expert 2 Send
+[local_tokens, 8192]
+GPU 50" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_3_receive [label="Expert 3 Receive
+[local_tokens, 8192]
+GPU 51" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_3_linear1 [label="Expert 3 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_3_gelu [label="Expert 3 GELU
+[local_tokens, 32768]
+GPU 51" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_3_linear2 [label="Expert 3 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_3_send [label="Expert 3 Send
+[local_tokens, 8192]
+GPU 51" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_4_receive [label="Expert 4 Receive
+[local_tokens, 8192]
+GPU 52" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_4_linear1 [label="Expert 4 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_4_gelu [label="Expert 4 GELU
+[local_tokens, 32768]
+GPU 52" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_4_linear2 [label="Expert 4 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_4_send [label="Expert 4 Send
+[local_tokens, 8192]
+GPU 52" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_5_receive [label="Expert 5 Receive
+[local_tokens, 8192]
+GPU 53" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_5_linear1 [label="Expert 5 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_5_gelu [label="Expert 5 GELU
+[local_tokens, 32768]
+GPU 53" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_5_linear2 [label="Expert 5 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_5_send [label="Expert 5 Send
+[local_tokens, 8192]
+GPU 53" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_6_receive [label="Expert 6 Receive
+[local_tokens, 8192]
+GPU 54" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_6_linear1 [label="Expert 6 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_6_gelu [label="Expert 6 GELU
+[local_tokens, 32768]
+GPU 54" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_6_linear2 [label="Expert 6 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_6_send [label="Expert 6 Send
+[local_tokens, 8192]
+GPU 54" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_7_receive [label="Expert 7 Receive
+[local_tokens, 8192]
+GPU 55" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_7_linear1 [label="Expert 7 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_7_gelu [label="Expert 7 GELU
+[local_tokens, 32768]
+GPU 55" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_7_linear2 [label="Expert 7 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_7_send [label="Expert 7 Send
+[local_tokens, 8192]
+GPU 55" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_8_receive [label="Expert 8 Receive
+[local_tokens, 8192]
+GPU 56" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_8_linear1 [label="Expert 8 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_8_gelu [label="Expert 8 GELU
+[local_tokens, 32768]
+GPU 56" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_8_linear2 [label="Expert 8 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_8_send [label="Expert 8 Send
+[local_tokens, 8192]
+GPU 56" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_9_receive [label="Expert 9 Receive
+[local_tokens, 8192]
+GPU 57" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_9_linear1 [label="Expert 9 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_9_gelu [label="Expert 9 GELU
+[local_tokens, 32768]
+GPU 57" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_9_linear2 [label="Expert 9 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_9_send [label="Expert 9 Send
+[local_tokens, 8192]
+GPU 57" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_10_receive [label="Expert 10 Receive
+[local_tokens, 8192]
+GPU 58" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_10_linear1 [label="Expert 10 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_10_gelu [label="Expert 10 GELU
+[local_tokens, 32768]
+GPU 58" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_10_linear2 [label="Expert 10 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_10_send [label="Expert 10 Send
+[local_tokens, 8192]
+GPU 58" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_11_receive [label="Expert 11 Receive
+[local_tokens, 8192]
+GPU 59" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_11_linear1 [label="Expert 11 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_11_gelu [label="Expert 11 GELU
+[local_tokens, 32768]
+GPU 59" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_11_linear2 [label="Expert 11 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_11_send [label="Expert 11 Send
+[local_tokens, 8192]
+GPU 59" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_12_receive [label="Expert 12 Receive
+[local_tokens, 8192]
+GPU 60" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_12_linear1 [label="Expert 12 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_12_gelu [label="Expert 12 GELU
+[local_tokens, 32768]
+GPU 60" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_12_linear2 [label="Expert 12 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_12_send [label="Expert 12 Send
+[local_tokens, 8192]
+GPU 60" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_13_receive [label="Expert 13 Receive
+[local_tokens, 8192]
+GPU 61" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_13_linear1 [label="Expert 13 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_13_gelu [label="Expert 13 GELU
+[local_tokens, 32768]
+GPU 61" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_13_linear2 [label="Expert 13 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_13_send [label="Expert 13 Send
+[local_tokens, 8192]
+GPU 61" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_14_receive [label="Expert 14 Receive
+[local_tokens, 8192]
+GPU 62" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_14_linear1 [label="Expert 14 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_14_gelu [label="Expert 14 GELU
+[local_tokens, 32768]
+GPU 62" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_14_linear2 [label="Expert 14 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_14_send [label="Expert 14 Send
+[local_tokens, 8192]
+GPU 62" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_15_receive [label="Expert 15 Receive
+[local_tokens, 8192]
+GPU 63" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_expert_15_linear1 [label="Expert 15 Linear1
+[local_tokens, 8192] -> [local_tokens, 32768]
+GPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_15_gelu [label="Expert 15 GELU
+[local_tokens, 32768]
+GPU 63" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_expert_15_linear2 [label="Expert 15 Linear2
+[local_tokens, 32768] -> [local_tokens, 8192]
+GPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+	layer_3_expert_15_send [label="Expert 15 Send
+[local_tokens, 8192]
+GPU 63" fillcolor=lightgreen shape=ellipse style=filled]
+	layer_3_token_agg [label="Token Aggregation
+[tokens, 8192] -> [1024, 10000, 8192]
+GPU 48" fillcolor=orange shape=parallelogram style=filled]
+	layer_3_async_back [label="Async All-to-All Back
+[tokens, 8192]
+All GPUs 48-63" fillcolor=lightsteelblue shape=ellipse style=filled]
+	layer_3_reconstruct [label="Output Reconstruction
+[1024, 10000, 8192]
+GPU 48" fillcolor=lightgreen shape=parallelogram style=filled]
+	layer_3_residual [label="Layer 3 Residual Add
+[1024, 10000, 8192]
+GPU 48" fillcolor=lightgreen shape=ellipse style=filled]
+	output [label="Model Output
+[1024, 10000, 8192]" fillcolor=lightblue shape=ellipse style=filled]
+	input -> layer_0_boundary
+	layer_0_boundary -> layer_0_gate
+	layer_0_gate -> layer_0_token_shard
+	layer_0_token_shard -> layer_0_async_comm
+	layer_0_gate -> layer_0_expert_0_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_0_receive
+	layer_0_expert_0_receive -> layer_0_expert_0_linear1
+	layer_0_expert_0_linear1 -> layer_0_expert_0_gelu
+	layer_0_expert_0_gelu -> layer_0_expert_0_linear2
+	layer_0_expert_0_linear2 -> layer_0_expert_0_send
+	layer_0_expert_0_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_1_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_1_receive
+	layer_0_expert_1_receive -> layer_0_expert_1_linear1
+	layer_0_expert_1_linear1 -> layer_0_expert_1_gelu
+	layer_0_expert_1_gelu -> layer_0_expert_1_linear2
+	layer_0_expert_1_linear2 -> layer_0_expert_1_send
+	layer_0_expert_1_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_2_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_2_receive
+	layer_0_expert_2_receive -> layer_0_expert_2_linear1
+	layer_0_expert_2_linear1 -> layer_0_expert_2_gelu
+	layer_0_expert_2_gelu -> layer_0_expert_2_linear2
+	layer_0_expert_2_linear2 -> layer_0_expert_2_send
+	layer_0_expert_2_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_3_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_3_receive
+	layer_0_expert_3_receive -> layer_0_expert_3_linear1
+	layer_0_expert_3_linear1 -> layer_0_expert_3_gelu
+	layer_0_expert_3_gelu -> layer_0_expert_3_linear2
+	layer_0_expert_3_linear2 -> layer_0_expert_3_send
+	layer_0_expert_3_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_4_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_4_receive
+	layer_0_expert_4_receive -> layer_0_expert_4_linear1
+	layer_0_expert_4_linear1 -> layer_0_expert_4_gelu
+	layer_0_expert_4_gelu -> layer_0_expert_4_linear2
+	layer_0_expert_4_linear2 -> layer_0_expert_4_send
+	layer_0_expert_4_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_5_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_5_receive
+	layer_0_expert_5_receive -> layer_0_expert_5_linear1
+	layer_0_expert_5_linear1 -> layer_0_expert_5_gelu
+	layer_0_expert_5_gelu -> layer_0_expert_5_linear2
+	layer_0_expert_5_linear2 -> layer_0_expert_5_send
+	layer_0_expert_5_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_6_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_6_receive
+	layer_0_expert_6_receive -> layer_0_expert_6_linear1
+	layer_0_expert_6_linear1 -> layer_0_expert_6_gelu
+	layer_0_expert_6_gelu -> layer_0_expert_6_linear2
+	layer_0_expert_6_linear2 -> layer_0_expert_6_send
+	layer_0_expert_6_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_7_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_7_receive
+	layer_0_expert_7_receive -> layer_0_expert_7_linear1
+	layer_0_expert_7_linear1 -> layer_0_expert_7_gelu
+	layer_0_expert_7_gelu -> layer_0_expert_7_linear2
+	layer_0_expert_7_linear2 -> layer_0_expert_7_send
+	layer_0_expert_7_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_8_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_8_receive
+	layer_0_expert_8_receive -> layer_0_expert_8_linear1
+	layer_0_expert_8_linear1 -> layer_0_expert_8_gelu
+	layer_0_expert_8_gelu -> layer_0_expert_8_linear2
+	layer_0_expert_8_linear2 -> layer_0_expert_8_send
+	layer_0_expert_8_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_9_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_9_receive
+	layer_0_expert_9_receive -> layer_0_expert_9_linear1
+	layer_0_expert_9_linear1 -> layer_0_expert_9_gelu
+	layer_0_expert_9_gelu -> layer_0_expert_9_linear2
+	layer_0_expert_9_linear2 -> layer_0_expert_9_send
+	layer_0_expert_9_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_10_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_10_receive
+	layer_0_expert_10_receive -> layer_0_expert_10_linear1
+	layer_0_expert_10_linear1 -> layer_0_expert_10_gelu
+	layer_0_expert_10_gelu -> layer_0_expert_10_linear2
+	layer_0_expert_10_linear2 -> layer_0_expert_10_send
+	layer_0_expert_10_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_11_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_11_receive
+	layer_0_expert_11_receive -> layer_0_expert_11_linear1
+	layer_0_expert_11_linear1 -> layer_0_expert_11_gelu
+	layer_0_expert_11_gelu -> layer_0_expert_11_linear2
+	layer_0_expert_11_linear2 -> layer_0_expert_11_send
+	layer_0_expert_11_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_12_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_12_receive
+	layer_0_expert_12_receive -> layer_0_expert_12_linear1
+	layer_0_expert_12_linear1 -> layer_0_expert_12_gelu
+	layer_0_expert_12_gelu -> layer_0_expert_12_linear2
+	layer_0_expert_12_linear2 -> layer_0_expert_12_send
+	layer_0_expert_12_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_13_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_13_receive
+	layer_0_expert_13_receive -> layer_0_expert_13_linear1
+	layer_0_expert_13_linear1 -> layer_0_expert_13_gelu
+	layer_0_expert_13_gelu -> layer_0_expert_13_linear2
+	layer_0_expert_13_linear2 -> layer_0_expert_13_send
+	layer_0_expert_13_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_14_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_14_receive
+	layer_0_expert_14_receive -> layer_0_expert_14_linear1
+	layer_0_expert_14_linear1 -> layer_0_expert_14_gelu
+	layer_0_expert_14_gelu -> layer_0_expert_14_linear2
+	layer_0_expert_14_linear2 -> layer_0_expert_14_send
+	layer_0_expert_14_send -> layer_0_async_back
+	layer_0_gate -> layer_0_expert_15_receive [style=dashed]
+	layer_0_async_comm -> layer_0_expert_15_receive
+	layer_0_expert_15_receive -> layer_0_expert_15_linear1
+	layer_0_expert_15_linear1 -> layer_0_expert_15_gelu
+	layer_0_expert_15_gelu -> layer_0_expert_15_linear2
+	layer_0_expert_15_linear2 -> layer_0_expert_15_send
+	layer_0_expert_15_send -> layer_0_async_back
+	layer_0_async_back -> layer_0_token_agg
+	layer_0_token_agg -> layer_0_reconstruct
+	layer_0_boundary -> layer_0_residual [style=dotted]
+	layer_0_reconstruct -> layer_0_residual
+	layer_0_residual -> layer_1_boundary
+	layer_1_boundary -> layer_1_gate
+	layer_1_gate -> layer_1_token_shard
+	layer_1_token_shard -> layer_1_async_comm
+	layer_1_gate -> layer_1_expert_0_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_0_receive
+	layer_1_expert_0_receive -> layer_1_expert_0_linear1
+	layer_1_expert_0_linear1 -> layer_1_expert_0_gelu
+	layer_1_expert_0_gelu -> layer_1_expert_0_linear2
+	layer_1_expert_0_linear2 -> layer_1_expert_0_send
+	layer_1_expert_0_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_1_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_1_receive
+	layer_1_expert_1_receive -> layer_1_expert_1_linear1
+	layer_1_expert_1_linear1 -> layer_1_expert_1_gelu
+	layer_1_expert_1_gelu -> layer_1_expert_1_linear2
+	layer_1_expert_1_linear2 -> layer_1_expert_1_send
+	layer_1_expert_1_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_2_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_2_receive
+	layer_1_expert_2_receive -> layer_1_expert_2_linear1
+	layer_1_expert_2_linear1 -> layer_1_expert_2_gelu
+	layer_1_expert_2_gelu -> layer_1_expert_2_linear2
+	layer_1_expert_2_linear2 -> layer_1_expert_2_send
+	layer_1_expert_2_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_3_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_3_receive
+	layer_1_expert_3_receive -> layer_1_expert_3_linear1
+	layer_1_expert_3_linear1 -> layer_1_expert_3_gelu
+	layer_1_expert_3_gelu -> layer_1_expert_3_linear2
+	layer_1_expert_3_linear2 -> layer_1_expert_3_send
+	layer_1_expert_3_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_4_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_4_receive
+	layer_1_expert_4_receive -> layer_1_expert_4_linear1
+	layer_1_expert_4_linear1 -> layer_1_expert_4_gelu
+	layer_1_expert_4_gelu -> layer_1_expert_4_linear2
+	layer_1_expert_4_linear2 -> layer_1_expert_4_send
+	layer_1_expert_4_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_5_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_5_receive
+	layer_1_expert_5_receive -> layer_1_expert_5_linear1
+	layer_1_expert_5_linear1 -> layer_1_expert_5_gelu
+	layer_1_expert_5_gelu -> layer_1_expert_5_linear2
+	layer_1_expert_5_linear2 -> layer_1_expert_5_send
+	layer_1_expert_5_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_6_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_6_receive
+	layer_1_expert_6_receive -> layer_1_expert_6_linear1
+	layer_1_expert_6_linear1 -> layer_1_expert_6_gelu
+	layer_1_expert_6_gelu -> layer_1_expert_6_linear2
+	layer_1_expert_6_linear2 -> layer_1_expert_6_send
+	layer_1_expert_6_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_7_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_7_receive
+	layer_1_expert_7_receive -> layer_1_expert_7_linear1
+	layer_1_expert_7_linear1 -> layer_1_expert_7_gelu
+	layer_1_expert_7_gelu -> layer_1_expert_7_linear2
+	layer_1_expert_7_linear2 -> layer_1_expert_7_send
+	layer_1_expert_7_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_8_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_8_receive
+	layer_1_expert_8_receive -> layer_1_expert_8_linear1
+	layer_1_expert_8_linear1 -> layer_1_expert_8_gelu
+	layer_1_expert_8_gelu -> layer_1_expert_8_linear2
+	layer_1_expert_8_linear2 -> layer_1_expert_8_send
+	layer_1_expert_8_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_9_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_9_receive
+	layer_1_expert_9_receive -> layer_1_expert_9_linear1
+	layer_1_expert_9_linear1 -> layer_1_expert_9_gelu
+	layer_1_expert_9_gelu -> layer_1_expert_9_linear2
+	layer_1_expert_9_linear2 -> layer_1_expert_9_send
+	layer_1_expert_9_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_10_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_10_receive
+	layer_1_expert_10_receive -> layer_1_expert_10_linear1
+	layer_1_expert_10_linear1 -> layer_1_expert_10_gelu
+	layer_1_expert_10_gelu -> layer_1_expert_10_linear2
+	layer_1_expert_10_linear2 -> layer_1_expert_10_send
+	layer_1_expert_10_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_11_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_11_receive
+	layer_1_expert_11_receive -> layer_1_expert_11_linear1
+	layer_1_expert_11_linear1 -> layer_1_expert_11_gelu
+	layer_1_expert_11_gelu -> layer_1_expert_11_linear2
+	layer_1_expert_11_linear2 -> layer_1_expert_11_send
+	layer_1_expert_11_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_12_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_12_receive
+	layer_1_expert_12_receive -> layer_1_expert_12_linear1
+	layer_1_expert_12_linear1 -> layer_1_expert_12_gelu
+	layer_1_expert_12_gelu -> layer_1_expert_12_linear2
+	layer_1_expert_12_linear2 -> layer_1_expert_12_send
+	layer_1_expert_12_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_13_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_13_receive
+	layer_1_expert_13_receive -> layer_1_expert_13_linear1
+	layer_1_expert_13_linear1 -> layer_1_expert_13_gelu
+	layer_1_expert_13_gelu -> layer_1_expert_13_linear2
+	layer_1_expert_13_linear2 -> layer_1_expert_13_send
+	layer_1_expert_13_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_14_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_14_receive
+	layer_1_expert_14_receive -> layer_1_expert_14_linear1
+	layer_1_expert_14_linear1 -> layer_1_expert_14_gelu
+	layer_1_expert_14_gelu -> layer_1_expert_14_linear2
+	layer_1_expert_14_linear2 -> layer_1_expert_14_send
+	layer_1_expert_14_send -> layer_1_async_back
+	layer_1_gate -> layer_1_expert_15_receive [style=dashed]
+	layer_1_async_comm -> layer_1_expert_15_receive
+	layer_1_expert_15_receive -> layer_1_expert_15_linear1
+	layer_1_expert_15_linear1 -> layer_1_expert_15_gelu
+	layer_1_expert_15_gelu -> layer_1_expert_15_linear2
+	layer_1_expert_15_linear2 -> layer_1_expert_15_send
+	layer_1_expert_15_send -> layer_1_async_back
+	layer_1_async_back -> layer_1_token_agg
+	layer_1_token_agg -> layer_1_reconstruct
+	layer_1_boundary -> layer_1_residual [style=dotted]
+	layer_1_reconstruct -> layer_1_residual
+	layer_1_residual -> layer_2_boundary
+	layer_2_boundary -> layer_2_gate
+	layer_2_gate -> layer_2_token_shard
+	layer_2_token_shard -> layer_2_async_comm
+	layer_2_gate -> layer_2_expert_0_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_0_receive
+	layer_2_expert_0_receive -> layer_2_expert_0_linear1
+	layer_2_expert_0_linear1 -> layer_2_expert_0_gelu
+	layer_2_expert_0_gelu -> layer_2_expert_0_linear2
+	layer_2_expert_0_linear2 -> layer_2_expert_0_send
+	layer_2_expert_0_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_1_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_1_receive
+	layer_2_expert_1_receive -> layer_2_expert_1_linear1
+	layer_2_expert_1_linear1 -> layer_2_expert_1_gelu
+	layer_2_expert_1_gelu -> layer_2_expert_1_linear2
+	layer_2_expert_1_linear2 -> layer_2_expert_1_send
+	layer_2_expert_1_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_2_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_2_receive
+	layer_2_expert_2_receive -> layer_2_expert_2_linear1
+	layer_2_expert_2_linear1 -> layer_2_expert_2_gelu
+	layer_2_expert_2_gelu -> layer_2_expert_2_linear2
+	layer_2_expert_2_linear2 -> layer_2_expert_2_send
+	layer_2_expert_2_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_3_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_3_receive
+	layer_2_expert_3_receive -> layer_2_expert_3_linear1
+	layer_2_expert_3_linear1 -> layer_2_expert_3_gelu
+	layer_2_expert_3_gelu -> layer_2_expert_3_linear2
+	layer_2_expert_3_linear2 -> layer_2_expert_3_send
+	layer_2_expert_3_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_4_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_4_receive
+	layer_2_expert_4_receive -> layer_2_expert_4_linear1
+	layer_2_expert_4_linear1 -> layer_2_expert_4_gelu
+	layer_2_expert_4_gelu -> layer_2_expert_4_linear2
+	layer_2_expert_4_linear2 -> layer_2_expert_4_send
+	layer_2_expert_4_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_5_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_5_receive
+	layer_2_expert_5_receive -> layer_2_expert_5_linear1
+	layer_2_expert_5_linear1 -> layer_2_expert_5_gelu
+	layer_2_expert_5_gelu -> layer_2_expert_5_linear2
+	layer_2_expert_5_linear2 -> layer_2_expert_5_send
+	layer_2_expert_5_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_6_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_6_receive
+	layer_2_expert_6_receive -> layer_2_expert_6_linear1
+	layer_2_expert_6_linear1 -> layer_2_expert_6_gelu
+	layer_2_expert_6_gelu -> layer_2_expert_6_linear2
+	layer_2_expert_6_linear2 -> layer_2_expert_6_send
+	layer_2_expert_6_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_7_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_7_receive
+	layer_2_expert_7_receive -> layer_2_expert_7_linear1
+	layer_2_expert_7_linear1 -> layer_2_expert_7_gelu
+	layer_2_expert_7_gelu -> layer_2_expert_7_linear2
+	layer_2_expert_7_linear2 -> layer_2_expert_7_send
+	layer_2_expert_7_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_8_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_8_receive
+	layer_2_expert_8_receive -> layer_2_expert_8_linear1
+	layer_2_expert_8_linear1 -> layer_2_expert_8_gelu
+	layer_2_expert_8_gelu -> layer_2_expert_8_linear2
+	layer_2_expert_8_linear2 -> layer_2_expert_8_send
+	layer_2_expert_8_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_9_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_9_receive
+	layer_2_expert_9_receive -> layer_2_expert_9_linear1
+	layer_2_expert_9_linear1 -> layer_2_expert_9_gelu
+	layer_2_expert_9_gelu -> layer_2_expert_9_linear2
+	layer_2_expert_9_linear2 -> layer_2_expert_9_send
+	layer_2_expert_9_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_10_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_10_receive
+	layer_2_expert_10_receive -> layer_2_expert_10_linear1
+	layer_2_expert_10_linear1 -> layer_2_expert_10_gelu
+	layer_2_expert_10_gelu -> layer_2_expert_10_linear2
+	layer_2_expert_10_linear2 -> layer_2_expert_10_send
+	layer_2_expert_10_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_11_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_11_receive
+	layer_2_expert_11_receive -> layer_2_expert_11_linear1
+	layer_2_expert_11_linear1 -> layer_2_expert_11_gelu
+	layer_2_expert_11_gelu -> layer_2_expert_11_linear2
+	layer_2_expert_11_linear2 -> layer_2_expert_11_send
+	layer_2_expert_11_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_12_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_12_receive
+	layer_2_expert_12_receive -> layer_2_expert_12_linear1
+	layer_2_expert_12_linear1 -> layer_2_expert_12_gelu
+	layer_2_expert_12_gelu -> layer_2_expert_12_linear2
+	layer_2_expert_12_linear2 -> layer_2_expert_12_send
+	layer_2_expert_12_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_13_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_13_receive
+	layer_2_expert_13_receive -> layer_2_expert_13_linear1
+	layer_2_expert_13_linear1 -> layer_2_expert_13_gelu
+	layer_2_expert_13_gelu -> layer_2_expert_13_linear2
+	layer_2_expert_13_linear2 -> layer_2_expert_13_send
+	layer_2_expert_13_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_14_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_14_receive
+	layer_2_expert_14_receive -> layer_2_expert_14_linear1
+	layer_2_expert_14_linear1 -> layer_2_expert_14_gelu
+	layer_2_expert_14_gelu -> layer_2_expert_14_linear2
+	layer_2_expert_14_linear2 -> layer_2_expert_14_send
+	layer_2_expert_14_send -> layer_2_async_back
+	layer_2_gate -> layer_2_expert_15_receive [style=dashed]
+	layer_2_async_comm -> layer_2_expert_15_receive
+	layer_2_expert_15_receive -> layer_2_expert_15_linear1
+	layer_2_expert_15_linear1 -> layer_2_expert_15_gelu
+	layer_2_expert_15_gelu -> layer_2_expert_15_linear2
+	layer_2_expert_15_linear2 -> layer_2_expert_15_send
+	layer_2_expert_15_send -> layer_2_async_back
+	layer_2_async_back -> layer_2_token_agg
+	layer_2_token_agg -> layer_2_reconstruct
+	layer_2_boundary -> layer_2_residual [style=dotted]
+	layer_2_reconstruct -> layer_2_residual
+	layer_2_residual -> layer_3_boundary
+	layer_3_boundary -> layer_3_gate
+	layer_3_gate -> layer_3_token_shard
+	layer_3_token_shard -> layer_3_async_comm
+	layer_3_gate -> layer_3_expert_0_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_0_receive
+	layer_3_expert_0_receive -> layer_3_expert_0_linear1
+	layer_3_expert_0_linear1 -> layer_3_expert_0_gelu
+	layer_3_expert_0_gelu -> layer_3_expert_0_linear2
+	layer_3_expert_0_linear2 -> layer_3_expert_0_send
+	layer_3_expert_0_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_1_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_1_receive
+	layer_3_expert_1_receive -> layer_3_expert_1_linear1
+	layer_3_expert_1_linear1 -> layer_3_expert_1_gelu
+	layer_3_expert_1_gelu -> layer_3_expert_1_linear2
+	layer_3_expert_1_linear2 -> layer_3_expert_1_send
+	layer_3_expert_1_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_2_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_2_receive
+	layer_3_expert_2_receive -> layer_3_expert_2_linear1
+	layer_3_expert_2_linear1 -> layer_3_expert_2_gelu
+	layer_3_expert_2_gelu -> layer_3_expert_2_linear2
+	layer_3_expert_2_linear2 -> layer_3_expert_2_send
+	layer_3_expert_2_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_3_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_3_receive
+	layer_3_expert_3_receive -> layer_3_expert_3_linear1
+	layer_3_expert_3_linear1 -> layer_3_expert_3_gelu
+	layer_3_expert_3_gelu -> layer_3_expert_3_linear2
+	layer_3_expert_3_linear2 -> layer_3_expert_3_send
+	layer_3_expert_3_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_4_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_4_receive
+	layer_3_expert_4_receive -> layer_3_expert_4_linear1
+	layer_3_expert_4_linear1 -> layer_3_expert_4_gelu
+	layer_3_expert_4_gelu -> layer_3_expert_4_linear2
+	layer_3_expert_4_linear2 -> layer_3_expert_4_send
+	layer_3_expert_4_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_5_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_5_receive
+	layer_3_expert_5_receive -> layer_3_expert_5_linear1
+	layer_3_expert_5_linear1 -> layer_3_expert_5_gelu
+	layer_3_expert_5_gelu -> layer_3_expert_5_linear2
+	layer_3_expert_5_linear2 -> layer_3_expert_5_send
+	layer_3_expert_5_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_6_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_6_receive
+	layer_3_expert_6_receive -> layer_3_expert_6_linear1
+	layer_3_expert_6_linear1 -> layer_3_expert_6_gelu
+	layer_3_expert_6_gelu -> layer_3_expert_6_linear2
+	layer_3_expert_6_linear2 -> layer_3_expert_6_send
+	layer_3_expert_6_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_7_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_7_receive
+	layer_3_expert_7_receive -> layer_3_expert_7_linear1
+	layer_3_expert_7_linear1 -> layer_3_expert_7_gelu
+	layer_3_expert_7_gelu -> layer_3_expert_7_linear2
+	layer_3_expert_7_linear2 -> layer_3_expert_7_send
+	layer_3_expert_7_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_8_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_8_receive
+	layer_3_expert_8_receive -> layer_3_expert_8_linear1
+	layer_3_expert_8_linear1 -> layer_3_expert_8_gelu
+	layer_3_expert_8_gelu -> layer_3_expert_8_linear2
+	layer_3_expert_8_linear2 -> layer_3_expert_8_send
+	layer_3_expert_8_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_9_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_9_receive
+	layer_3_expert_9_receive -> layer_3_expert_9_linear1
+	layer_3_expert_9_linear1 -> layer_3_expert_9_gelu
+	layer_3_expert_9_gelu -> layer_3_expert_9_linear2
+	layer_3_expert_9_linear2 -> layer_3_expert_9_send
+	layer_3_expert_9_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_10_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_10_receive
+	layer_3_expert_10_receive -> layer_3_expert_10_linear1
+	layer_3_expert_10_linear1 -> layer_3_expert_10_gelu
+	layer_3_expert_10_gelu -> layer_3_expert_10_linear2
+	layer_3_expert_10_linear2 -> layer_3_expert_10_send
+	layer_3_expert_10_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_11_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_11_receive
+	layer_3_expert_11_receive -> layer_3_expert_11_linear1
+	layer_3_expert_11_linear1 -> layer_3_expert_11_gelu
+	layer_3_expert_11_gelu -> layer_3_expert_11_linear2
+	layer_3_expert_11_linear2 -> layer_3_expert_11_send
+	layer_3_expert_11_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_12_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_12_receive
+	layer_3_expert_12_receive -> layer_3_expert_12_linear1
+	layer_3_expert_12_linear1 -> layer_3_expert_12_gelu
+	layer_3_expert_12_gelu -> layer_3_expert_12_linear2
+	layer_3_expert_12_linear2 -> layer_3_expert_12_send
+	layer_3_expert_12_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_13_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_13_receive
+	layer_3_expert_13_receive -> layer_3_expert_13_linear1
+	layer_3_expert_13_linear1 -> layer_3_expert_13_gelu
+	layer_3_expert_13_gelu -> layer_3_expert_13_linear2
+	layer_3_expert_13_linear2 -> layer_3_expert_13_send
+	layer_3_expert_13_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_14_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_14_receive
+	layer_3_expert_14_receive -> layer_3_expert_14_linear1
+	layer_3_expert_14_linear1 -> layer_3_expert_14_gelu
+	layer_3_expert_14_gelu -> layer_3_expert_14_linear2
+	layer_3_expert_14_linear2 -> layer_3_expert_14_send
+	layer_3_expert_14_send -> layer_3_async_back
+	layer_3_gate -> layer_3_expert_15_receive [style=dashed]
+	layer_3_async_comm -> layer_3_expert_15_receive
+	layer_3_expert_15_receive -> layer_3_expert_15_linear1
+	layer_3_expert_15_linear1 -> layer_3_expert_15_gelu
+	layer_3_expert_15_gelu -> layer_3_expert_15_linear2
+	layer_3_expert_15_linear2 -> layer_3_expert_15_send
+	layer_3_expert_15_send -> layer_3_async_back
+	layer_3_async_back -> layer_3_token_agg
+	layer_3_token_agg -> layer_3_reconstruct
+	layer_3_boundary -> layer_3_residual [style=dotted]
+	layer_3_reconstruct -> layer_3_residual
+	layer_3_residual -> output
+}

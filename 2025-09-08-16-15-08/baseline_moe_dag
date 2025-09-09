@@ -1,0 +1,596 @@
+digraph baseline_moe_dag {
+	rankdir=TB size="30,20"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	input [label="Input\n[Batch: 1024×10000, Dim: 8192]" fillcolor=lightgreen shape=parallelogram]
+	tp_0_0_0 [label="TP Rank 0\nExpert 0\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_0_1 [label="TP Rank 1\nExpert 0\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_0_2 [label="TP Rank 2\nExpert 0\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_0_3 [label="TP Rank 3\nExpert 0\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_0_4 [label="TP Rank 4\nExpert 0\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_0_5 [label="TP Rank 5\nExpert 0\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_0_6 [label="TP Rank 6\nExpert 0\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_0_7 [label="TP Rank 7\nExpert 0\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_1_0 [label="TP Rank 0\nExpert 1\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_1_1 [label="TP Rank 1\nExpert 1\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_1_2 [label="TP Rank 2\nExpert 1\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_1_3 [label="TP Rank 3\nExpert 1\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_1_4 [label="TP Rank 4\nExpert 1\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_1_5 [label="TP Rank 5\nExpert 1\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_1_6 [label="TP Rank 6\nExpert 1\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_1_7 [label="TP Rank 7\nExpert 1\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_2_0 [label="TP Rank 0\nExpert 2\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_2_1 [label="TP Rank 1\nExpert 2\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_2_2 [label="TP Rank 2\nExpert 2\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_2_3 [label="TP Rank 3\nExpert 2\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_2_4 [label="TP Rank 4\nExpert 2\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_2_5 [label="TP Rank 5\nExpert 2\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_2_6 [label="TP Rank 6\nExpert 2\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_2_7 [label="TP Rank 7\nExpert 2\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_3_0 [label="TP Rank 0\nExpert 3\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_3_1 [label="TP Rank 1\nExpert 3\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_3_2 [label="TP Rank 2\nExpert 3\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_3_3 [label="TP Rank 3\nExpert 3\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_3_4 [label="TP Rank 4\nExpert 3\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_3_5 [label="TP Rank 5\nExpert 3\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_3_6 [label="TP Rank 6\nExpert 3\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_3_7 [label="TP Rank 7\nExpert 3\nGPU 0" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_4_0 [label="TP Rank 0\nExpert 4\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_4_1 [label="TP Rank 1\nExpert 4\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_4_2 [label="TP Rank 2\nExpert 4\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_4_3 [label="TP Rank 3\nExpert 4\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_4_4 [label="TP Rank 4\nExpert 4\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_4_5 [label="TP Rank 5\nExpert 4\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_4_6 [label="TP Rank 6\nExpert 4\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_4_7 [label="TP Rank 7\nExpert 4\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_5_0 [label="TP Rank 0\nExpert 5\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_5_1 [label="TP Rank 1\nExpert 5\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_5_2 [label="TP Rank 2\nExpert 5\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_5_3 [label="TP Rank 3\nExpert 5\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_5_4 [label="TP Rank 4\nExpert 5\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_5_5 [label="TP Rank 5\nExpert 5\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_5_6 [label="TP Rank 6\nExpert 5\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_5_7 [label="TP Rank 7\nExpert 5\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_6_0 [label="TP Rank 0\nExpert 6\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_6_1 [label="TP Rank 1\nExpert 6\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_6_2 [label="TP Rank 2\nExpert 6\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_6_3 [label="TP Rank 3\nExpert 6\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_6_4 [label="TP Rank 4\nExpert 6\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_6_5 [label="TP Rank 5\nExpert 6\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_6_6 [label="TP Rank 6\nExpert 6\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_6_7 [label="TP Rank 7\nExpert 6\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_7_0 [label="TP Rank 0\nExpert 7\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_7_1 [label="TP Rank 1\nExpert 7\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_7_2 [label="TP Rank 2\nExpert 7\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_7_3 [label="TP Rank 3\nExpert 7\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_7_4 [label="TP Rank 4\nExpert 7\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_7_5 [label="TP Rank 5\nExpert 7\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_7_6 [label="TP Rank 6\nExpert 7\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_7_7 [label="TP Rank 7\nExpert 7\nGPU 1" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_8_0 [label="TP Rank 0\nExpert 8\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_8_1 [label="TP Rank 1\nExpert 8\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_8_2 [label="TP Rank 2\nExpert 8\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_8_3 [label="TP Rank 3\nExpert 8\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_8_4 [label="TP Rank 4\nExpert 8\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_8_5 [label="TP Rank 5\nExpert 8\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_8_6 [label="TP Rank 6\nExpert 8\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_8_7 [label="TP Rank 7\nExpert 8\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_9_0 [label="TP Rank 0\nExpert 9\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_9_1 [label="TP Rank 1\nExpert 9\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_9_2 [label="TP Rank 2\nExpert 9\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_9_3 [label="TP Rank 3\nExpert 9\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_9_4 [label="TP Rank 4\nExpert 9\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_9_5 [label="TP Rank 5\nExpert 9\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_9_6 [label="TP Rank 6\nExpert 9\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_9_7 [label="TP Rank 7\nExpert 9\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_10_0 [label="TP Rank 0\nExpert 10\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_10_1 [label="TP Rank 1\nExpert 10\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_10_2 [label="TP Rank 2\nExpert 10\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_10_3 [label="TP Rank 3\nExpert 10\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_10_4 [label="TP Rank 4\nExpert 10\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_10_5 [label="TP Rank 5\nExpert 10\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_10_6 [label="TP Rank 6\nExpert 10\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_10_7 [label="TP Rank 7\nExpert 10\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_11_0 [label="TP Rank 0\nExpert 11\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_11_1 [label="TP Rank 1\nExpert 11\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_11_2 [label="TP Rank 2\nExpert 11\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_11_3 [label="TP Rank 3\nExpert 11\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_11_4 [label="TP Rank 4\nExpert 11\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_11_5 [label="TP Rank 5\nExpert 11\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_11_6 [label="TP Rank 6\nExpert 11\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_11_7 [label="TP Rank 7\nExpert 11\nGPU 2" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_12_0 [label="TP Rank 0\nExpert 12\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_12_1 [label="TP Rank 1\nExpert 12\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_12_2 [label="TP Rank 2\nExpert 12\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_12_3 [label="TP Rank 3\nExpert 12\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_12_4 [label="TP Rank 4\nExpert 12\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_12_5 [label="TP Rank 5\nExpert 12\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_12_6 [label="TP Rank 6\nExpert 12\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_12_7 [label="TP Rank 7\nExpert 12\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_13_0 [label="TP Rank 0\nExpert 13\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_13_1 [label="TP Rank 1\nExpert 13\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_13_2 [label="TP Rank 2\nExpert 13\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_13_3 [label="TP Rank 3\nExpert 13\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_13_4 [label="TP Rank 4\nExpert 13\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_13_5 [label="TP Rank 5\nExpert 13\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_13_6 [label="TP Rank 6\nExpert 13\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_13_7 [label="TP Rank 7\nExpert 13\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_14_0 [label="TP Rank 0\nExpert 14\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_14_1 [label="TP Rank 1\nExpert 14\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_14_2 [label="TP Rank 2\nExpert 14\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_14_3 [label="TP Rank 3\nExpert 14\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_14_4 [label="TP Rank 4\nExpert 14\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_14_5 [label="TP Rank 5\nExpert 14\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_14_6 [label="TP Rank 6\nExpert 14\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_14_7 [label="TP Rank 7\nExpert 14\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_15_0 [label="TP Rank 0\nExpert 15\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_15_1 [label="TP Rank 1\nExpert 15\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_15_2 [label="TP Rank 2\nExpert 15\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_15_3 [label="TP Rank 3\nExpert 15\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_15_4 [label="TP Rank 4\nExpert 15\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_15_5 [label="TP Rank 5\nExpert 15\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_15_6 [label="TP Rank 6\nExpert 15\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	tp_0_15_7 [label="TP Rank 7\nExpert 15\nGPU 3" fillcolor=lightblue shape=ellipse width=1.2]
+	subgraph cluster_pipeline_stage_0 {
+		color=blue label="Pipeline Stage 0 (GPUs 0-7)" style=dashed
+		subgraph cluster_layer_0 {
+			label="MoE Layer 0" style=rounded
+			gate_0 [label="Gating Network Layer 0\n[Input: 8192, Output: 16 experts]" fillcolor=yellow shape=diamond]
+			subgraph cluster_gpu_0 {
+				label="GPU 0 (4 experts)" style=dotted
+				expert_0_0 [label="Expert 0\n[MLP: 8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle]
+				expert_0_1 [label="Expert 1\n[MLP: 8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle]
+				expert_0_2 [label="Expert 2\n[MLP: 8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle]
+				expert_0_3 [label="Expert 3\n[MLP: 8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle]
+			}
+			subgraph cluster_gpu_1 {
+				label="GPU 1 (4 experts)" style=dotted
+				expert_0_4 [label="Expert 4\n[MLP: 8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle]
+				expert_0_5 [label="Expert 5\n[MLP: 8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle]
+				expert_0_6 [label="Expert 6\n[MLP: 8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle]
+				expert_0_7 [label="Expert 7\n[MLP: 8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle]
+			}
+			subgraph cluster_gpu_2 {
+				label="GPU 2 (4 experts)" style=dotted
+				expert_0_8 [label="Expert 8\n[MLP: 8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle]
+				expert_0_9 [label="Expert 9\n[MLP: 8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle]
+				expert_0_10 [label="Expert 10\n[MLP: 8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle]
+				expert_0_11 [label="Expert 11\n[MLP: 8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle]
+			}
+			subgraph cluster_gpu_3 {
+				label="GPU 3 (4 experts)" style=dotted
+				expert_0_12 [label="Expert 12\n[MLP: 8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle]
+				expert_0_13 [label="Expert 13\n[MLP: 8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle]
+				expert_0_14 [label="Expert 14\n[MLP: 8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle]
+				expert_0_15 [label="Expert 15\n[MLP: 8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle]
+			}
+		}
+	}
+	subgraph cluster_pipeline_stage_1 {
+		color=red label="Pipeline Stage 1 (GPUs 8-15)" style=dashed
+		subgraph cluster_layer_0_stage1 {
+			label="MoE Layer 0 Continued" style=rounded
+			subgraph cluster_gpu_8 {
+				label="GPU 8 (4 experts)" style=dotted
+				expert_0_16 [label="Expert 16\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+				expert_0_17 [label="Expert 17\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+				expert_0_18 [label="Expert 18\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+				expert_0_19 [label="Expert 19\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+			}
+			subgraph cluster_gpu_9 {
+				label="GPU 9 (4 experts)" style=dotted
+				expert_0_20 [label="Expert 20\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+				expert_0_21 [label="Expert 21\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+				expert_0_22 [label="Expert 22\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+				expert_0_23 [label="Expert 23\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+			}
+			subgraph cluster_gpu_10 {
+				label="GPU 10 (4 experts)" style=dotted
+				expert_0_24 [label="Expert 24\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+				expert_0_25 [label="Expert 25\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+				expert_0_26 [label="Expert 26\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+				expert_0_27 [label="Expert 27\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+			}
+			subgraph cluster_gpu_11 {
+				label="GPU 11 (4 experts)" style=dotted
+				expert_0_28 [label="Expert 28\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+				expert_0_29 [label="Expert 29\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+				expert_0_30 [label="Expert 30\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+				expert_0_31 [label="Expert 31\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+			}
+		}
+	}
+	subgraph cluster_layer_1 {
+		label="MoE Layer 1" style=rounded
+		gate_1 [label="Gating Network Layer 1\n[Input: 8192, Output: 16 experts]" fillcolor=yellow shape=diamond]
+		expert_1_16 [label="Expert 16\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+		expert_1_17 [label="Expert 17\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+		expert_1_18 [label="Expert 18\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+		expert_1_19 [label="Expert 19\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+		expert_1_20 [label="Expert 20\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+		expert_1_21 [label="Expert 21\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+		expert_1_22 [label="Expert 22\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+		expert_1_23 [label="Expert 23\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+		expert_1_24 [label="Expert 24\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+		expert_1_25 [label="Expert 25\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+		expert_1_26 [label="Expert 26\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+		expert_1_27 [label="Expert 27\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+		expert_1_28 [label="Expert 28\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+		expert_1_29 [label="Expert 29\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+		expert_1_30 [label="Expert 30\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+		expert_1_31 [label="Expert 31\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+		expert_1_32 [label="Expert 32\n[MLP: 8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle]
+		expert_1_33 [label="Expert 33\n[MLP: 8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle]
+		expert_1_34 [label="Expert 34\n[MLP: 8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle]
+		expert_1_35 [label="Expert 35\n[MLP: 8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle]
+		expert_1_36 [label="Expert 36\n[MLP: 8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle]
+		expert_1_37 [label="Expert 37\n[MLP: 8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle]
+		expert_1_38 [label="Expert 38\n[MLP: 8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle]
+		expert_1_39 [label="Expert 39\n[MLP: 8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle]
+		expert_1_40 [label="Expert 40\n[MLP: 8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle]
+		expert_1_41 [label="Expert 41\n[MLP: 8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle]
+		expert_1_42 [label="Expert 42\n[MLP: 8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle]
+		expert_1_43 [label="Expert 43\n[MLP: 8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle]
+		expert_1_44 [label="Expert 44\n[MLP: 8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle]
+		expert_1_45 [label="Expert 45\n[MLP: 8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle]
+		expert_1_46 [label="Expert 46\n[MLP: 8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle]
+		expert_1_47 [label="Expert 47\n[MLP: 8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle]
+	}
+	subgraph cluster_layer_2 {
+		label="MoE Layer 2" style=rounded
+		gate_2 [label="Gating Network Layer 2\n[Input: 8192, Output: 16 experts]" fillcolor=yellow shape=diamond]
+		expert_2_32 [label="Expert 32\n[MLP: 8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle]
+		expert_2_33 [label="Expert 33\n[MLP: 8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle]
+		expert_2_34 [label="Expert 34\n[MLP: 8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle]
+		expert_2_35 [label="Expert 35\n[MLP: 8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle]
+		expert_2_36 [label="Expert 36\n[MLP: 8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle]
+		expert_2_37 [label="Expert 37\n[MLP: 8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle]
+		expert_2_38 [label="Expert 38\n[MLP: 8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle]
+		expert_2_39 [label="Expert 39\n[MLP: 8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle]
+		expert_2_40 [label="Expert 40\n[MLP: 8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle]
+		expert_2_41 [label="Expert 41\n[MLP: 8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle]
+		expert_2_42 [label="Expert 42\n[MLP: 8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle]
+		expert_2_43 [label="Expert 43\n[MLP: 8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle]
+		expert_2_44 [label="Expert 44\n[MLP: 8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle]
+		expert_2_45 [label="Expert 45\n[MLP: 8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle]
+		expert_2_46 [label="Expert 46\n[MLP: 8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle]
+		expert_2_47 [label="Expert 47\n[MLP: 8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle]
+		expert_2_48 [label="Expert 48\n[MLP: 8192→32768→8192]\nGPU 4" fillcolor=lightcoral shape=rectangle]
+		expert_2_49 [label="Expert 49\n[MLP: 8192→32768→8192]\nGPU 4" fillcolor=lightcoral shape=rectangle]
+		expert_2_50 [label="Expert 50\n[MLP: 8192→32768→8192]\nGPU 4" fillcolor=lightcoral shape=rectangle]
+		expert_2_51 [label="Expert 51\n[MLP: 8192→32768→8192]\nGPU 4" fillcolor=lightcoral shape=rectangle]
+		expert_2_52 [label="Expert 52\n[MLP: 8192→32768→8192]\nGPU 5" fillcolor=lightcoral shape=rectangle]
+		expert_2_53 [label="Expert 53\n[MLP: 8192→32768→8192]\nGPU 5" fillcolor=lightcoral shape=rectangle]
+		expert_2_54 [label="Expert 54\n[MLP: 8192→32768→8192]\nGPU 5" fillcolor=lightcoral shape=rectangle]
+		expert_2_55 [label="Expert 55\n[MLP: 8192→32768→8192]\nGPU 5" fillcolor=lightcoral shape=rectangle]
+		expert_2_56 [label="Expert 56\n[MLP: 8192→32768→8192]\nGPU 6" fillcolor=lightcoral shape=rectangle]
+		expert_2_57 [label="Expert 57\n[MLP: 8192→32768→8192]\nGPU 6" fillcolor=lightcoral shape=rectangle]
+		expert_2_58 [label="Expert 58\n[MLP: 8192→32768→8192]\nGPU 6" fillcolor=lightcoral shape=rectangle]
+		expert_2_59 [label="Expert 59\n[MLP: 8192→32768→8192]\nGPU 6" fillcolor=lightcoral shape=rectangle]
+		expert_2_60 [label="Expert 60\n[MLP: 8192→32768→8192]\nGPU 7" fillcolor=lightcoral shape=rectangle]
+		expert_2_61 [label="Expert 61\n[MLP: 8192→32768→8192]\nGPU 7" fillcolor=lightcoral shape=rectangle]
+		expert_2_62 [label="Expert 62\n[MLP: 8192→32768→8192]\nGPU 7" fillcolor=lightcoral shape=rectangle]
+		expert_2_63 [label="Expert 63\n[MLP: 8192→32768→8192]\nGPU 7" fillcolor=lightcoral shape=rectangle]
+	}
+	subgraph cluster_layer_3 {
+		label="MoE Layer 3" style=rounded
+		gate_3 [label="Gating Network Layer 3\n[Input: 8192, Output: 16 experts]" fillcolor=yellow shape=diamond]
+		expert_3_48 [label="Expert 48\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+		expert_3_49 [label="Expert 49\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+		expert_3_50 [label="Expert 50\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+		expert_3_51 [label="Expert 51\n[MLP: 8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle]
+		expert_3_52 [label="Expert 52\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+		expert_3_53 [label="Expert 53\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+		expert_3_54 [label="Expert 54\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+		expert_3_55 [label="Expert 55\n[MLP: 8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle]
+		expert_3_56 [label="Expert 56\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+		expert_3_57 [label="Expert 57\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+		expert_3_58 [label="Expert 58\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+		expert_3_59 [label="Expert 59\n[MLP: 8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle]
+		expert_3_60 [label="Expert 60\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+		expert_3_61 [label="Expert 61\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+		expert_3_62 [label="Expert 62\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+		expert_3_63 [label="Expert 63\n[MLP: 8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle]
+		expert_3_64 [label="Expert 64\n[MLP: 8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle]
+		expert_3_65 [label="Expert 65\n[MLP: 8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle]
+		expert_3_66 [label="Expert 66\n[MLP: 8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle]
+		expert_3_67 [label="Expert 67\n[MLP: 8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle]
+		expert_3_68 [label="Expert 68\n[MLP: 8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle]
+		expert_3_69 [label="Expert 69\n[MLP: 8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle]
+		expert_3_70 [label="Expert 70\n[MLP: 8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle]
+		expert_3_71 [label="Expert 71\n[MLP: 8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle]
+		expert_3_72 [label="Expert 72\n[MLP: 8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle]
+		expert_3_73 [label="Expert 73\n[MLP: 8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle]
+		expert_3_74 [label="Expert 74\n[MLP: 8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle]
+		expert_3_75 [label="Expert 75\n[MLP: 8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle]
+		expert_3_76 [label="Expert 76\n[MLP: 8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle]
+		expert_3_77 [label="Expert 77\n[MLP: 8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle]
+		expert_3_78 [label="Expert 78\n[MLP: 8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle]
+		expert_3_79 [label="Expert 79\n[MLP: 8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle]
+	}
+	tp_allreduce [label="TP All-Reduce\n[Across 8 GPUs]" fillcolor=orange shape=parallelogram]
+	pp_send [label="Pipeline Send\n[Stage 0→1]" fillcolor=purple shape=parallelogram]
+	pp_recv [label="Pipeline Receive\n[Stage 1←0]" fillcolor=purple shape=parallelogram]
+	output [label="Output\n[Batch: 1024×10000, Dim: 8192]" fillcolor=lightgreen shape=parallelogram]
+	input -> gate_0
+	gate_0 -> expert_0_0 [label=route style=dashed]
+	gate_0 -> expert_0_1 [label=route style=dashed]
+	gate_0 -> expert_0_2 [label=route style=dashed]
+	gate_0 -> expert_0_3 [label=route style=dashed]
+	gate_0 -> expert_0_4 [label=route style=dashed]
+	gate_0 -> expert_0_5 [label=route style=dashed]
+	gate_0 -> expert_0_6 [label=route style=dashed]
+	gate_0 -> expert_0_7 [label=route style=dashed]
+	gate_0 -> expert_0_8 [label=route style=dashed]
+	gate_0 -> expert_0_9 [label=route style=dashed]
+	gate_0 -> expert_0_10 [label=route style=dashed]
+	gate_0 -> expert_0_11 [label=route style=dashed]
+	gate_0 -> expert_0_12 [label=route style=dashed]
+	gate_0 -> expert_0_13 [label=route style=dashed]
+	gate_0 -> expert_0_14 [label=route style=dashed]
+	gate_0 -> expert_0_15 [label=route style=dashed]
+	expert_0_0 -> tp_0_0_0
+	expert_0_0 -> tp_0_0_1
+	expert_0_0 -> tp_0_0_2
+	expert_0_0 -> tp_0_0_3
+	expert_0_0 -> tp_0_0_4
+	expert_0_0 -> tp_0_0_5
+	expert_0_0 -> tp_0_0_6
+	expert_0_0 -> tp_0_0_7
+	expert_0_1 -> tp_0_1_0
+	expert_0_1 -> tp_0_1_1
+	expert_0_1 -> tp_0_1_2
+	expert_0_1 -> tp_0_1_3
+	expert_0_1 -> tp_0_1_4
+	expert_0_1 -> tp_0_1_5
+	expert_0_1 -> tp_0_1_6
+	expert_0_1 -> tp_0_1_7
+	expert_0_2 -> tp_0_2_0
+	expert_0_2 -> tp_0_2_1
+	expert_0_2 -> tp_0_2_2
+	expert_0_2 -> tp_0_2_3
+	expert_0_2 -> tp_0_2_4
+	expert_0_2 -> tp_0_2_5
+	expert_0_2 -> tp_0_2_6
+	expert_0_2 -> tp_0_2_7
+	expert_0_3 -> tp_0_3_0
+	expert_0_3 -> tp_0_3_1
+	expert_0_3 -> tp_0_3_2
+	expert_0_3 -> tp_0_3_3
+	expert_0_3 -> tp_0_3_4
+	expert_0_3 -> tp_0_3_5
+	expert_0_3 -> tp_0_3_6
+	expert_0_3 -> tp_0_3_7
+	expert_0_4 -> tp_0_4_0
+	expert_0_4 -> tp_0_4_1
+	expert_0_4 -> tp_0_4_2
+	expert_0_4 -> tp_0_4_3
+	expert_0_4 -> tp_0_4_4
+	expert_0_4 -> tp_0_4_5
+	expert_0_4 -> tp_0_4_6
+	expert_0_4 -> tp_0_4_7
+	expert_0_5 -> tp_0_5_0
+	expert_0_5 -> tp_0_5_1
+	expert_0_5 -> tp_0_5_2
+	expert_0_5 -> tp_0_5_3
+	expert_0_5 -> tp_0_5_4
+	expert_0_5 -> tp_0_5_5
+	expert_0_5 -> tp_0_5_6
+	expert_0_5 -> tp_0_5_7
+	expert_0_6 -> tp_0_6_0
+	expert_0_6 -> tp_0_6_1
+	expert_0_6 -> tp_0_6_2
+	expert_0_6 -> tp_0_6_3
+	expert_0_6 -> tp_0_6_4
+	expert_0_6 -> tp_0_6_5
+	expert_0_6 -> tp_0_6_6
+	expert_0_6 -> tp_0_6_7
+	expert_0_7 -> tp_0_7_0
+	expert_0_7 -> tp_0_7_1
+	expert_0_7 -> tp_0_7_2
+	expert_0_7 -> tp_0_7_3
+	expert_0_7 -> tp_0_7_4
+	expert_0_7 -> tp_0_7_5
+	expert_0_7 -> tp_0_7_6
+	expert_0_7 -> tp_0_7_7
+	expert_0_8 -> tp_0_8_0
+	expert_0_8 -> tp_0_8_1
+	expert_0_8 -> tp_0_8_2
+	expert_0_8 -> tp_0_8_3
+	expert_0_8 -> tp_0_8_4
+	expert_0_8 -> tp_0_8_5
+	expert_0_8 -> tp_0_8_6
+	expert_0_8 -> tp_0_8_7
+	expert_0_9 -> tp_0_9_0
+	expert_0_9 -> tp_0_9_1
+	expert_0_9 -> tp_0_9_2
+	expert_0_9 -> tp_0_9_3
+	expert_0_9 -> tp_0_9_4
+	expert_0_9 -> tp_0_9_5
+	expert_0_9 -> tp_0_9_6
+	expert_0_9 -> tp_0_9_7
+	expert_0_10 -> tp_0_10_0
+	expert_0_10 -> tp_0_10_1
+	expert_0_10 -> tp_0_10_2
+	expert_0_10 -> tp_0_10_3
+	expert_0_10 -> tp_0_10_4
+	expert_0_10 -> tp_0_10_5
+	expert_0_10 -> tp_0_10_6
+	expert_0_10 -> tp_0_10_7
+	expert_0_11 -> tp_0_11_0
+	expert_0_11 -> tp_0_11_1
+	expert_0_11 -> tp_0_11_2
+	expert_0_11 -> tp_0_11_3
+	expert_0_11 -> tp_0_11_4
+	expert_0_11 -> tp_0_11_5
+	expert_0_11 -> tp_0_11_6
+	expert_0_11 -> tp_0_11_7
+	expert_0_12 -> tp_0_12_0
+	expert_0_12 -> tp_0_12_1
+	expert_0_12 -> tp_0_12_2
+	expert_0_12 -> tp_0_12_3
+	expert_0_12 -> tp_0_12_4
+	expert_0_12 -> tp_0_12_5
+	expert_0_12 -> tp_0_12_6
+	expert_0_12 -> tp_0_12_7
+	expert_0_13 -> tp_0_13_0
+	expert_0_13 -> tp_0_13_1
+	expert_0_13 -> tp_0_13_2
+	expert_0_13 -> tp_0_13_3
+	expert_0_13 -> tp_0_13_4
+	expert_0_13 -> tp_0_13_5
+	expert_0_13 -> tp_0_13_6
+	expert_0_13 -> tp_0_13_7
+	expert_0_14 -> tp_0_14_0
+	expert_0_14 -> tp_0_14_1
+	expert_0_14 -> tp_0_14_2
+	expert_0_14 -> tp_0_14_3
+	expert_0_14 -> tp_0_14_4
+	expert_0_14 -> tp_0_14_5
+	expert_0_14 -> tp_0_14_6
+	expert_0_14 -> tp_0_14_7
+	expert_0_15 -> tp_0_15_0
+	expert_0_15 -> tp_0_15_1
+	expert_0_15 -> tp_0_15_2
+	expert_0_15 -> tp_0_15_3
+	expert_0_15 -> tp_0_15_4
+	expert_0_15 -> tp_0_15_5
+	expert_0_15 -> tp_0_15_6
+	expert_0_15 -> tp_0_15_7
+	tp_0_0_0 -> tp_allreduce
+	tp_0_0_1 -> tp_allreduce
+	tp_0_0_2 -> tp_allreduce
+	tp_0_0_3 -> tp_allreduce
+	tp_0_0_4 -> tp_allreduce
+	tp_0_0_5 -> tp_allreduce
+	tp_0_0_6 -> tp_allreduce
+	tp_0_0_7 -> tp_allreduce
+	tp_0_1_0 -> tp_allreduce
+	tp_0_1_1 -> tp_allreduce
+	tp_0_1_2 -> tp_allreduce
+	tp_0_1_3 -> tp_allreduce
+	tp_0_1_4 -> tp_allreduce
+	tp_0_1_5 -> tp_allreduce
+	tp_0_1_6 -> tp_allreduce
+	tp_0_1_7 -> tp_allreduce
+	tp_0_2_0 -> tp_allreduce
+	tp_0_2_1 -> tp_allreduce
+	tp_0_2_2 -> tp_allreduce
+	tp_0_2_3 -> tp_allreduce
+	tp_0_2_4 -> tp_allreduce
+	tp_0_2_5 -> tp_allreduce
+	tp_0_2_6 -> tp_allreduce
+	tp_0_2_7 -> tp_allreduce
+	tp_0_3_0 -> tp_allreduce
+	tp_0_3_1 -> tp_allreduce
+	tp_0_3_2 -> tp_allreduce
+	tp_0_3_3 -> tp_allreduce
+	tp_0_3_4 -> tp_allreduce
+	tp_0_3_5 -> tp_allreduce
+	tp_0_3_6 -> tp_allreduce
+	tp_0_3_7 -> tp_allreduce
+	tp_0_4_0 -> tp_allreduce
+	tp_0_4_1 -> tp_allreduce
+	tp_0_4_2 -> tp_allreduce
+	tp_0_4_3 -> tp_allreduce
+	tp_0_4_4 -> tp_allreduce
+	tp_0_4_5 -> tp_allreduce
+	tp_0_4_6 -> tp_allreduce
+	tp_0_4_7 -> tp_allreduce
+	tp_0_5_0 -> tp_allreduce
+	tp_0_5_1 -> tp_allreduce
+	tp_0_5_2 -> tp_allreduce
+	tp_0_5_3 -> tp_allreduce
+	tp_0_5_4 -> tp_allreduce
+	tp_0_5_5 -> tp_allreduce
+	tp_0_5_6 -> tp_allreduce
+	tp_0_5_7 -> tp_allreduce
+	tp_0_6_0 -> tp_allreduce
+	tp_0_6_1 -> tp_allreduce
+	tp_0_6_2 -> tp_allreduce
+	tp_0_6_3 -> tp_allreduce
+	tp_0_6_4 -> tp_allreduce
+	tp_0_6_5 -> tp_allreduce
+	tp_0_6_6 -> tp_allreduce
+	tp_0_6_7 -> tp_allreduce
+	tp_0_7_0 -> tp_allreduce
+	tp_0_7_1 -> tp_allreduce
+	tp_0_7_2 -> tp_allreduce
+	tp_0_7_3 -> tp_allreduce
+	tp_0_7_4 -> tp_allreduce
+	tp_0_7_5 -> tp_allreduce
+	tp_0_7_6 -> tp_allreduce
+	tp_0_7_7 -> tp_allreduce
+	tp_0_8_0 -> tp_allreduce
+	tp_0_8_1 -> tp_allreduce
+	tp_0_8_2 -> tp_allreduce
+	tp_0_8_3 -> tp_allreduce
+	tp_0_8_4 -> tp_allreduce
+	tp_0_8_5 -> tp_allreduce
+	tp_0_8_6 -> tp_allreduce
+	tp_0_8_7 -> tp_allreduce
+	tp_0_9_0 -> tp_allreduce
+	tp_0_9_1 -> tp_allreduce
+	tp_0_9_2 -> tp_allreduce
+	tp_0_9_3 -> tp_allreduce
+	tp_0_9_4 -> tp_allreduce
+	tp_0_9_5 -> tp_allreduce
+	tp_0_9_6 -> tp_allreduce
+	tp_0_9_7 -> tp_allreduce
+	tp_0_10_0 -> tp_allreduce
+	tp_0_10_1 -> tp_allreduce
+	tp_0_10_2 -> tp_allreduce
+	tp_0_10_3 -> tp_allreduce
+	tp_0_10_4 -> tp_allreduce
+	tp_0_10_5 -> tp_allreduce
+	tp_0_10_6 -> tp_allreduce
+	tp_0_10_7 -> tp_allreduce
+	tp_0_11_0 -> tp_allreduce
+	tp_0_11_1 -> tp_allreduce
+	tp_0_11_2 -> tp_allreduce
+	tp_0_11_3 -> tp_allreduce
+	tp_0_11_4 -> tp_allreduce
+	tp_0_11_5 -> tp_allreduce
+	tp_0_11_6 -> tp_allreduce
+	tp_0_11_7 -> tp_allreduce
+	tp_0_12_0 -> tp_allreduce
+	tp_0_12_1 -> tp_allreduce
+	tp_0_12_2 -> tp_allreduce
+	tp_0_12_3 -> tp_allreduce
+	tp_0_12_4 -> tp_allreduce
+	tp_0_12_5 -> tp_allreduce
+	tp_0_12_6 -> tp_allreduce
+	tp_0_12_7 -> tp_allreduce
+	tp_0_13_0 -> tp_allreduce
+	tp_0_13_1 -> tp_allreduce
+	tp_0_13_2 -> tp_allreduce
+	tp_0_13_3 -> tp_allreduce
+	tp_0_13_4 -> tp_allreduce
+	tp_0_13_5 -> tp_allreduce
+	tp_0_13_6 -> tp_allreduce
+	tp_0_13_7 -> tp_allreduce
+	tp_0_14_0 -> tp_allreduce
+	tp_0_14_1 -> tp_allreduce
+	tp_0_14_2 -> tp_allreduce
+	tp_0_14_3 -> tp_allreduce
+	tp_0_14_4 -> tp_allreduce
+	tp_0_14_5 -> tp_allreduce
+	tp_0_14_6 -> tp_allreduce
+	tp_0_14_7 -> tp_allreduce
+	tp_0_15_0 -> tp_allreduce
+	tp_0_15_1 -> tp_allreduce
+	tp_0_15_2 -> tp_allreduce
+	tp_0_15_3 -> tp_allreduce
+	tp_0_15_4 -> tp_allreduce
+	tp_0_15_5 -> tp_allreduce
+	tp_0_15_6 -> tp_allreduce
+	tp_0_15_7 -> tp_allreduce
+	tp_allreduce -> pp_send
+	pp_send -> pp_recv
+	pp_recv -> gate_1
+	gate_1 -> expert_1_16
+	expert_1_16 -> gate_2
+	gate_2 -> expert_2_32
+	expert_2_32 -> gate_3
+	gate_3 -> expert_3_48
+	expert_3_63 -> output
+}

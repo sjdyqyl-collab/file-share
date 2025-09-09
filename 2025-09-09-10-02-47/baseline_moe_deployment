@@ -1,0 +1,573 @@
+digraph Baseline_MoE_Deployment {
+	nodesep=0.5 rankdir=TB ranksep=1.2 splines=ortho
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	input [label="Total Input\nbatch_size=1024, seq_len=10000, token_dim=8192" fillcolor=lightgreen shape=parallelogram]
+	L0_GPU0_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 0" fillcolor=yellow shape=rectangle]
+	L0_GPU0_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=yellow shape=rectangle]
+	L0_GPU0_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightcoral shape=ellipse]
+	L0_GPU0_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 0" fillcolor=orange shape=diamond]
+	L0_GPU0_expert_0 [label="Expert 0\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightblue shape=rectangle]
+	L0_GPU0_expert_1 [label="Expert 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightblue shape=rectangle]
+	L0_GPU0_expert_2 [label="Expert 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightblue shape=rectangle]
+	L0_GPU0_expert_3 [label="Expert 3\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightblue shape=rectangle]
+	L0_GPU0_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightgreen shape=hexagon]
+	L0_GPU0_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightcoral shape=ellipse]
+	L1_GPU0_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 0" fillcolor=yellow shape=rectangle]
+	L1_GPU0_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=yellow shape=rectangle]
+	L1_GPU0_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightcoral shape=ellipse]
+	L1_GPU0_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 0" fillcolor=orange shape=diamond]
+	L1_GPU0_expert_0 [label="Expert 0\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightblue shape=rectangle]
+	L1_GPU0_expert_1 [label="Expert 1\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightblue shape=rectangle]
+	L1_GPU0_expert_2 [label="Expert 2\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightblue shape=rectangle]
+	L1_GPU0_expert_3 [label="Expert 3\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightblue shape=rectangle]
+	L1_GPU0_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightgreen shape=hexagon]
+	L1_GPU0_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 0" fillcolor=lightcoral shape=ellipse]
+	L0_GPU1_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 1" fillcolor=yellow shape=rectangle]
+	L0_GPU1_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=yellow shape=rectangle]
+	L0_GPU1_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightcoral shape=ellipse]
+	L0_GPU1_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 1" fillcolor=orange shape=diamond]
+	L0_GPU1_expert_0 [label="Expert 4\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightblue shape=rectangle]
+	L0_GPU1_expert_1 [label="Expert 5\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightblue shape=rectangle]
+	L0_GPU1_expert_2 [label="Expert 6\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightblue shape=rectangle]
+	L0_GPU1_expert_3 [label="Expert 7\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightblue shape=rectangle]
+	L0_GPU1_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightgreen shape=hexagon]
+	L0_GPU1_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightcoral shape=ellipse]
+	L1_GPU1_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 1" fillcolor=yellow shape=rectangle]
+	L1_GPU1_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=yellow shape=rectangle]
+	L1_GPU1_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightcoral shape=ellipse]
+	L1_GPU1_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 1" fillcolor=orange shape=diamond]
+	L1_GPU1_expert_0 [label="Expert 4\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightblue shape=rectangle]
+	L1_GPU1_expert_1 [label="Expert 5\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightblue shape=rectangle]
+	L1_GPU1_expert_2 [label="Expert 6\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightblue shape=rectangle]
+	L1_GPU1_expert_3 [label="Expert 7\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightblue shape=rectangle]
+	L1_GPU1_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightgreen shape=hexagon]
+	L1_GPU1_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 1" fillcolor=lightcoral shape=ellipse]
+	L0_GPU2_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 2" fillcolor=yellow shape=rectangle]
+	L0_GPU2_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=yellow shape=rectangle]
+	L0_GPU2_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightcoral shape=ellipse]
+	L0_GPU2_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 2" fillcolor=orange shape=diamond]
+	L0_GPU2_expert_0 [label="Expert 8\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightblue shape=rectangle]
+	L0_GPU2_expert_1 [label="Expert 9\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightblue shape=rectangle]
+	L0_GPU2_expert_2 [label="Expert 10\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightblue shape=rectangle]
+	L0_GPU2_expert_3 [label="Expert 11\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightblue shape=rectangle]
+	L0_GPU2_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightgreen shape=hexagon]
+	L0_GPU2_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightcoral shape=ellipse]
+	L1_GPU2_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 2" fillcolor=yellow shape=rectangle]
+	L1_GPU2_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=yellow shape=rectangle]
+	L1_GPU2_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightcoral shape=ellipse]
+	L1_GPU2_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 2" fillcolor=orange shape=diamond]
+	L1_GPU2_expert_0 [label="Expert 8\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightblue shape=rectangle]
+	L1_GPU2_expert_1 [label="Expert 9\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightblue shape=rectangle]
+	L1_GPU2_expert_2 [label="Expert 10\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightblue shape=rectangle]
+	L1_GPU2_expert_3 [label="Expert 11\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightblue shape=rectangle]
+	L1_GPU2_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightgreen shape=hexagon]
+	L1_GPU2_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 2" fillcolor=lightcoral shape=ellipse]
+	L0_GPU3_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 3" fillcolor=yellow shape=rectangle]
+	L0_GPU3_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=yellow shape=rectangle]
+	L0_GPU3_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightcoral shape=ellipse]
+	L0_GPU3_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 3" fillcolor=orange shape=diamond]
+	L0_GPU3_expert_0 [label="Expert 12\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightblue shape=rectangle]
+	L0_GPU3_expert_1 [label="Expert 13\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightblue shape=rectangle]
+	L0_GPU3_expert_2 [label="Expert 14\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightblue shape=rectangle]
+	L0_GPU3_expert_3 [label="Expert 15\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightblue shape=rectangle]
+	L0_GPU3_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightgreen shape=hexagon]
+	L0_GPU3_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightcoral shape=ellipse]
+	L1_GPU3_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 3" fillcolor=yellow shape=rectangle]
+	L1_GPU3_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=yellow shape=rectangle]
+	L1_GPU3_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightcoral shape=ellipse]
+	L1_GPU3_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 3" fillcolor=orange shape=diamond]
+	L1_GPU3_expert_0 [label="Expert 12\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightblue shape=rectangle]
+	L1_GPU3_expert_1 [label="Expert 13\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightblue shape=rectangle]
+	L1_GPU3_expert_2 [label="Expert 14\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightblue shape=rectangle]
+	L1_GPU3_expert_3 [label="Expert 15\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightblue shape=rectangle]
+	L1_GPU3_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightgreen shape=hexagon]
+	L1_GPU3_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 3" fillcolor=lightcoral shape=ellipse]
+	L0_GPU4_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 4" fillcolor=yellow shape=rectangle]
+	L0_GPU4_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=yellow shape=rectangle]
+	L0_GPU4_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightcoral shape=ellipse]
+	L0_GPU4_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 4" fillcolor=orange shape=diamond]
+	L0_GPU4_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightgreen shape=hexagon]
+	L0_GPU4_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightcoral shape=ellipse]
+	L1_GPU4_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 4" fillcolor=yellow shape=rectangle]
+	L1_GPU4_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=yellow shape=rectangle]
+	L1_GPU4_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightcoral shape=ellipse]
+	L1_GPU4_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 4" fillcolor=orange shape=diamond]
+	L1_GPU4_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightgreen shape=hexagon]
+	L1_GPU4_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 4" fillcolor=lightcoral shape=ellipse]
+	L0_GPU5_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 5" fillcolor=yellow shape=rectangle]
+	L0_GPU5_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=yellow shape=rectangle]
+	L0_GPU5_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightcoral shape=ellipse]
+	L0_GPU5_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 5" fillcolor=orange shape=diamond]
+	L0_GPU5_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightgreen shape=hexagon]
+	L0_GPU5_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightcoral shape=ellipse]
+	L1_GPU5_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 5" fillcolor=yellow shape=rectangle]
+	L1_GPU5_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=yellow shape=rectangle]
+	L1_GPU5_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightcoral shape=ellipse]
+	L1_GPU5_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 5" fillcolor=orange shape=diamond]
+	L1_GPU5_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightgreen shape=hexagon]
+	L1_GPU5_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 5" fillcolor=lightcoral shape=ellipse]
+	L0_GPU6_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 6" fillcolor=yellow shape=rectangle]
+	L0_GPU6_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=yellow shape=rectangle]
+	L0_GPU6_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightcoral shape=ellipse]
+	L0_GPU6_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 6" fillcolor=orange shape=diamond]
+	L0_GPU6_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightgreen shape=hexagon]
+	L0_GPU6_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightcoral shape=ellipse]
+	L1_GPU6_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 6" fillcolor=yellow shape=rectangle]
+	L1_GPU6_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=yellow shape=rectangle]
+	L1_GPU6_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightcoral shape=ellipse]
+	L1_GPU6_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 6" fillcolor=orange shape=diamond]
+	L1_GPU6_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightgreen shape=hexagon]
+	L1_GPU6_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 6" fillcolor=lightcoral shape=ellipse]
+	L0_GPU7_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 7" fillcolor=yellow shape=rectangle]
+	L0_GPU7_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=yellow shape=rectangle]
+	L0_GPU7_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightcoral shape=ellipse]
+	L0_GPU7_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 7" fillcolor=orange shape=diamond]
+	L0_GPU7_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightgreen shape=hexagon]
+	L0_GPU7_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightcoral shape=ellipse]
+	L1_GPU7_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 7" fillcolor=yellow shape=rectangle]
+	L1_GPU7_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=yellow shape=rectangle]
+	L1_GPU7_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightcoral shape=ellipse]
+	L1_GPU7_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 7" fillcolor=orange shape=diamond]
+	L1_GPU7_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightgreen shape=hexagon]
+	L1_GPU7_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 7" fillcolor=lightcoral shape=ellipse]
+	subgraph cluster_stage_0 {
+		color=black label="Pipeline Stage 0" style=dashed
+		subgraph cluster_gpu_0 {
+			fillcolor=lightgray label="GPU 0" style="rounded,filled"
+		}
+		subgraph cluster_gpu_1 {
+			fillcolor=lightgray label="GPU 1" style="rounded,filled"
+		}
+		subgraph cluster_gpu_2 {
+			fillcolor=lightgray label="GPU 2" style="rounded,filled"
+		}
+		subgraph cluster_gpu_3 {
+			fillcolor=lightgray label="GPU 3" style="rounded,filled"
+		}
+		subgraph cluster_gpu_4 {
+			fillcolor=lightgray label="GPU 4" style="rounded,filled"
+		}
+		subgraph cluster_gpu_5 {
+			fillcolor=lightgray label="GPU 5" style="rounded,filled"
+		}
+		subgraph cluster_gpu_6 {
+			fillcolor=lightgray label="GPU 6" style="rounded,filled"
+		}
+		subgraph cluster_gpu_7 {
+			fillcolor=lightgray label="GPU 7" style="rounded,filled"
+		}
+	}
+	L2_GPU8_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 8" fillcolor=yellow shape=rectangle]
+	L2_GPU8_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=yellow shape=rectangle]
+	L2_GPU8_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightcoral shape=ellipse]
+	L2_GPU8_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 8" fillcolor=orange shape=diamond]
+	L2_GPU8_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightgreen shape=hexagon]
+	L2_GPU8_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightcoral shape=ellipse]
+	L3_GPU8_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 8" fillcolor=yellow shape=rectangle]
+	L3_GPU8_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=yellow shape=rectangle]
+	L3_GPU8_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightcoral shape=ellipse]
+	L3_GPU8_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 8" fillcolor=orange shape=diamond]
+	L3_GPU8_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightgreen shape=hexagon]
+	L3_GPU8_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 8" fillcolor=lightcoral shape=ellipse]
+	L2_GPU9_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 9" fillcolor=yellow shape=rectangle]
+	L2_GPU9_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=yellow shape=rectangle]
+	L2_GPU9_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightcoral shape=ellipse]
+	L2_GPU9_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 9" fillcolor=orange shape=diamond]
+	L2_GPU9_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightgreen shape=hexagon]
+	L2_GPU9_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightcoral shape=ellipse]
+	L3_GPU9_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 9" fillcolor=yellow shape=rectangle]
+	L3_GPU9_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=yellow shape=rectangle]
+	L3_GPU9_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightcoral shape=ellipse]
+	L3_GPU9_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 9" fillcolor=orange shape=diamond]
+	L3_GPU9_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightgreen shape=hexagon]
+	L3_GPU9_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 9" fillcolor=lightcoral shape=ellipse]
+	L2_GPU10_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 10" fillcolor=yellow shape=rectangle]
+	L2_GPU10_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=yellow shape=rectangle]
+	L2_GPU10_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightcoral shape=ellipse]
+	L2_GPU10_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 10" fillcolor=orange shape=diamond]
+	L2_GPU10_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightgreen shape=hexagon]
+	L2_GPU10_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightcoral shape=ellipse]
+	L3_GPU10_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 10" fillcolor=yellow shape=rectangle]
+	L3_GPU10_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=yellow shape=rectangle]
+	L3_GPU10_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightcoral shape=ellipse]
+	L3_GPU10_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 10" fillcolor=orange shape=diamond]
+	L3_GPU10_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightgreen shape=hexagon]
+	L3_GPU10_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 10" fillcolor=lightcoral shape=ellipse]
+	L2_GPU11_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 11" fillcolor=yellow shape=rectangle]
+	L2_GPU11_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=yellow shape=rectangle]
+	L2_GPU11_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightcoral shape=ellipse]
+	L2_GPU11_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 11" fillcolor=orange shape=diamond]
+	L2_GPU11_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightgreen shape=hexagon]
+	L2_GPU11_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightcoral shape=ellipse]
+	L3_GPU11_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 11" fillcolor=yellow shape=rectangle]
+	L3_GPU11_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=yellow shape=rectangle]
+	L3_GPU11_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightcoral shape=ellipse]
+	L3_GPU11_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 11" fillcolor=orange shape=diamond]
+	L3_GPU11_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightgreen shape=hexagon]
+	L3_GPU11_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 11" fillcolor=lightcoral shape=ellipse]
+	L2_GPU12_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 12" fillcolor=yellow shape=rectangle]
+	L2_GPU12_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=yellow shape=rectangle]
+	L2_GPU12_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightcoral shape=ellipse]
+	L2_GPU12_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 12" fillcolor=orange shape=diamond]
+	L2_GPU12_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightgreen shape=hexagon]
+	L2_GPU12_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightcoral shape=ellipse]
+	L3_GPU12_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 12" fillcolor=yellow shape=rectangle]
+	L3_GPU12_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=yellow shape=rectangle]
+	L3_GPU12_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightcoral shape=ellipse]
+	L3_GPU12_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 12" fillcolor=orange shape=diamond]
+	L3_GPU12_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightgreen shape=hexagon]
+	L3_GPU12_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 12" fillcolor=lightcoral shape=ellipse]
+	L2_GPU13_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 13" fillcolor=yellow shape=rectangle]
+	L2_GPU13_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=yellow shape=rectangle]
+	L2_GPU13_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightcoral shape=ellipse]
+	L2_GPU13_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 13" fillcolor=orange shape=diamond]
+	L2_GPU13_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightgreen shape=hexagon]
+	L2_GPU13_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightcoral shape=ellipse]
+	L3_GPU13_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 13" fillcolor=yellow shape=rectangle]
+	L3_GPU13_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=yellow shape=rectangle]
+	L3_GPU13_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightcoral shape=ellipse]
+	L3_GPU13_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 13" fillcolor=orange shape=diamond]
+	L3_GPU13_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightgreen shape=hexagon]
+	L3_GPU13_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 13" fillcolor=lightcoral shape=ellipse]
+	L2_GPU14_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 14" fillcolor=yellow shape=rectangle]
+	L2_GPU14_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=yellow shape=rectangle]
+	L2_GPU14_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightcoral shape=ellipse]
+	L2_GPU14_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 14" fillcolor=orange shape=diamond]
+	L2_GPU14_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightgreen shape=hexagon]
+	L2_GPU14_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightcoral shape=ellipse]
+	L3_GPU14_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 14" fillcolor=yellow shape=rectangle]
+	L3_GPU14_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=yellow shape=rectangle]
+	L3_GPU14_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightcoral shape=ellipse]
+	L3_GPU14_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 14" fillcolor=orange shape=diamond]
+	L3_GPU14_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightgreen shape=hexagon]
+	L3_GPU14_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 14" fillcolor=lightcoral shape=ellipse]
+	L2_GPU15_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 15" fillcolor=yellow shape=rectangle]
+	L2_GPU15_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=yellow shape=rectangle]
+	L2_GPU15_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightcoral shape=ellipse]
+	L2_GPU15_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 15" fillcolor=orange shape=diamond]
+	L2_GPU15_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightgreen shape=hexagon]
+	L2_GPU15_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightcoral shape=ellipse]
+	L3_GPU15_mha_qkv [label="MHA QKV Linear\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16,512*3\nGPU: 15" fillcolor=yellow shape=rectangle]
+	L3_GPU15_mha_attn [label="MHA Attention\nINPUT: 1024,10000,16,512\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=yellow shape=rectangle]
+	L3_GPU15_mha_residual [label="MHA Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightcoral shape=ellipse]
+	L3_GPU15_gate [label="Expert Gate\nINPUT: 1024,10000,8192\nOUTPUT: 1024,10000,16\nGPU: 15" fillcolor=orange shape=diamond]
+	L3_GPU15_expert_agg [label="Expert Aggregation\nINPUT: 4×(1024,10000,8192)\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightgreen shape=hexagon]
+	L3_GPU15_final_residual [label="Final Residual Add\nINPUT: 1024,10000,8192, 1024,10000,8192\nOUTPUT: 1024,10000,8192\nGPU: 15" fillcolor=lightcoral shape=ellipse]
+	subgraph cluster_stage_1 {
+		color=black label="Pipeline Stage 1" style=dashed
+		subgraph cluster_gpu_8 {
+			fillcolor=lightgray label="GPU 8" style="rounded,filled"
+		}
+		subgraph cluster_gpu_9 {
+			fillcolor=lightgray label="GPU 9" style="rounded,filled"
+		}
+		subgraph cluster_gpu_10 {
+			fillcolor=lightgray label="GPU 10" style="rounded,filled"
+		}
+		subgraph cluster_gpu_11 {
+			fillcolor=lightgray label="GPU 11" style="rounded,filled"
+		}
+		subgraph cluster_gpu_12 {
+			fillcolor=lightgray label="GPU 12" style="rounded,filled"
+		}
+		subgraph cluster_gpu_13 {
+			fillcolor=lightgray label="GPU 13" style="rounded,filled"
+		}
+		subgraph cluster_gpu_14 {
+			fillcolor=lightgray label="GPU 14" style="rounded,filled"
+		}
+		subgraph cluster_gpu_15 {
+			fillcolor=lightgray label="GPU 15" style="rounded,filled"
+		}
+	}
+	input -> L0_GPU0_mha_qkv
+	L0_GPU0_mha_qkv -> L0_GPU0_mha_attn
+	L0_GPU0_mha_attn -> L0_GPU0_mha_residual
+	L0_GPU0_mha_residual -> L0_GPU0_gate
+	L0_GPU0_gate -> L0_GPU0_expert_0 [style=dashed]
+	L0_GPU0_mha_residual -> L0_GPU0_expert_0
+	L0_GPU0_expert_0 -> L0_GPU0_expert_agg
+	L0_GPU0_gate -> L0_GPU0_expert_1 [style=dashed]
+	L0_GPU0_mha_residual -> L0_GPU0_expert_1
+	L0_GPU0_expert_1 -> L0_GPU0_expert_agg
+	L0_GPU0_gate -> L0_GPU0_expert_2 [style=dashed]
+	L0_GPU0_mha_residual -> L0_GPU0_expert_2
+	L0_GPU0_expert_2 -> L0_GPU0_expert_agg
+	L0_GPU0_gate -> L0_GPU0_expert_3 [style=dashed]
+	L0_GPU0_mha_residual -> L0_GPU0_expert_3
+	L0_GPU0_expert_3 -> L0_GPU0_expert_agg
+	L0_GPU0_expert_agg -> L0_GPU0_final_residual
+	L0_GPU0_mha_residual -> L0_GPU0_final_residual
+	L1_GPU0_mha_qkv -> L1_GPU0_mha_attn
+	L1_GPU0_mha_attn -> L1_GPU0_mha_residual
+	L1_GPU0_mha_residual -> L1_GPU0_gate
+	L1_GPU0_gate -> L1_GPU0_expert_0 [style=dashed]
+	L1_GPU0_mha_residual -> L1_GPU0_expert_0
+	L1_GPU0_expert_0 -> L1_GPU0_expert_agg
+	L1_GPU0_gate -> L1_GPU0_expert_1 [style=dashed]
+	L1_GPU0_mha_residual -> L1_GPU0_expert_1
+	L1_GPU0_expert_1 -> L1_GPU0_expert_agg
+	L1_GPU0_gate -> L1_GPU0_expert_2 [style=dashed]
+	L1_GPU0_mha_residual -> L1_GPU0_expert_2
+	L1_GPU0_expert_2 -> L1_GPU0_expert_agg
+	L1_GPU0_gate -> L1_GPU0_expert_3 [style=dashed]
+	L1_GPU0_mha_residual -> L1_GPU0_expert_3
+	L1_GPU0_expert_3 -> L1_GPU0_expert_agg
+	L1_GPU0_expert_agg -> L1_GPU0_final_residual
+	L1_GPU0_mha_residual -> L1_GPU0_final_residual
+	L0_GPU1_mha_qkv -> L0_GPU1_mha_attn
+	L0_GPU1_mha_attn -> L0_GPU1_mha_residual
+	L0_GPU1_mha_residual -> L0_GPU1_gate
+	L0_GPU1_gate -> L0_GPU1_expert_0 [style=dashed]
+	L0_GPU1_mha_residual -> L0_GPU1_expert_0
+	L0_GPU1_expert_0 -> L0_GPU1_expert_agg
+	L0_GPU1_gate -> L0_GPU1_expert_1 [style=dashed]
+	L0_GPU1_mha_residual -> L0_GPU1_expert_1
+	L0_GPU1_expert_1 -> L0_GPU1_expert_agg
+	L0_GPU1_gate -> L0_GPU1_expert_2 [style=dashed]
+	L0_GPU1_mha_residual -> L0_GPU1_expert_2
+	L0_GPU1_expert_2 -> L0_GPU1_expert_agg
+	L0_GPU1_gate -> L0_GPU1_expert_3 [style=dashed]
+	L0_GPU1_mha_residual -> L0_GPU1_expert_3
+	L0_GPU1_expert_3 -> L0_GPU1_expert_agg
+	L0_GPU1_expert_agg -> L0_GPU1_final_residual
+	L0_GPU1_mha_residual -> L0_GPU1_final_residual
+	L1_GPU1_mha_qkv -> L1_GPU1_mha_attn
+	L1_GPU1_mha_attn -> L1_GPU1_mha_residual
+	L1_GPU1_mha_residual -> L1_GPU1_gate
+	L1_GPU1_gate -> L1_GPU1_expert_0 [style=dashed]
+	L1_GPU1_mha_residual -> L1_GPU1_expert_0
+	L1_GPU1_expert_0 -> L1_GPU1_expert_agg
+	L1_GPU1_gate -> L1_GPU1_expert_1 [style=dashed]
+	L1_GPU1_mha_residual -> L1_GPU1_expert_1
+	L1_GPU1_expert_1 -> L1_GPU1_expert_agg
+	L1_GPU1_gate -> L1_GPU1_expert_2 [style=dashed]
+	L1_GPU1_mha_residual -> L1_GPU1_expert_2
+	L1_GPU1_expert_2 -> L1_GPU1_expert_agg
+	L1_GPU1_gate -> L1_GPU1_expert_3 [style=dashed]
+	L1_GPU1_mha_residual -> L1_GPU1_expert_3
+	L1_GPU1_expert_3 -> L1_GPU1_expert_agg
+	L1_GPU1_expert_agg -> L1_GPU1_final_residual
+	L1_GPU1_mha_residual -> L1_GPU1_final_residual
+	L0_GPU2_mha_qkv -> L0_GPU2_mha_attn
+	L0_GPU2_mha_attn -> L0_GPU2_mha_residual
+	L0_GPU2_mha_residual -> L0_GPU2_gate
+	L0_GPU2_gate -> L0_GPU2_expert_0 [style=dashed]
+	L0_GPU2_mha_residual -> L0_GPU2_expert_0
+	L0_GPU2_expert_0 -> L0_GPU2_expert_agg
+	L0_GPU2_gate -> L0_GPU2_expert_1 [style=dashed]
+	L0_GPU2_mha_residual -> L0_GPU2_expert_1
+	L0_GPU2_expert_1 -> L0_GPU2_expert_agg
+	L0_GPU2_gate -> L0_GPU2_expert_2 [style=dashed]
+	L0_GPU2_mha_residual -> L0_GPU2_expert_2
+	L0_GPU2_expert_2 -> L0_GPU2_expert_agg
+	L0_GPU2_gate -> L0_GPU2_expert_3 [style=dashed]
+	L0_GPU2_mha_residual -> L0_GPU2_expert_3
+	L0_GPU2_expert_3 -> L0_GPU2_expert_agg
+	L0_GPU2_expert_agg -> L0_GPU2_final_residual
+	L0_GPU2_mha_residual -> L0_GPU2_final_residual
+	L1_GPU2_mha_qkv -> L1_GPU2_mha_attn
+	L1_GPU2_mha_attn -> L1_GPU2_mha_residual
+	L1_GPU2_mha_residual -> L1_GPU2_gate
+	L1_GPU2_gate -> L1_GPU2_expert_0 [style=dashed]
+	L1_GPU2_mha_residual -> L1_GPU2_expert_0
+	L1_GPU2_expert_0 -> L1_GPU2_expert_agg
+	L1_GPU2_gate -> L1_GPU2_expert_1 [style=dashed]
+	L1_GPU2_mha_residual -> L1_GPU2_expert_1
+	L1_GPU2_expert_1 -> L1_GPU2_expert_agg
+	L1_GPU2_gate -> L1_GPU2_expert_2 [style=dashed]
+	L1_GPU2_mha_residual -> L1_GPU2_expert_2
+	L1_GPU2_expert_2 -> L1_GPU2_expert_agg
+	L1_GPU2_gate -> L1_GPU2_expert_3 [style=dashed]
+	L1_GPU2_mha_residual -> L1_GPU2_expert_3
+	L1_GPU2_expert_3 -> L1_GPU2_expert_agg
+	L1_GPU2_expert_agg -> L1_GPU2_final_residual
+	L1_GPU2_mha_residual -> L1_GPU2_final_residual
+	L0_GPU3_mha_qkv -> L0_GPU3_mha_attn
+	L0_GPU3_mha_attn -> L0_GPU3_mha_residual
+	L0_GPU3_mha_residual -> L0_GPU3_gate
+	L0_GPU3_gate -> L0_GPU3_expert_0 [style=dashed]
+	L0_GPU3_mha_residual -> L0_GPU3_expert_0
+	L0_GPU3_expert_0 -> L0_GPU3_expert_agg
+	L0_GPU3_gate -> L0_GPU3_expert_1 [style=dashed]
+	L0_GPU3_mha_residual -> L0_GPU3_expert_1
+	L0_GPU3_expert_1 -> L0_GPU3_expert_agg
+	L0_GPU3_gate -> L0_GPU3_expert_2 [style=dashed]
+	L0_GPU3_mha_residual -> L0_GPU3_expert_2
+	L0_GPU3_expert_2 -> L0_GPU3_expert_agg
+	L0_GPU3_gate -> L0_GPU3_expert_3 [style=dashed]
+	L0_GPU3_mha_residual -> L0_GPU3_expert_3
+	L0_GPU3_expert_3 -> L0_GPU3_expert_agg
+	L0_GPU3_expert_agg -> L0_GPU3_final_residual
+	L0_GPU3_mha_residual -> L0_GPU3_final_residual
+	L1_GPU3_mha_qkv -> L1_GPU3_mha_attn
+	L1_GPU3_mha_attn -> L1_GPU3_mha_residual
+	L1_GPU3_mha_residual -> L1_GPU3_gate
+	L1_GPU3_gate -> L1_GPU3_expert_0 [style=dashed]
+	L1_GPU3_mha_residual -> L1_GPU3_expert_0
+	L1_GPU3_expert_0 -> L1_GPU3_expert_agg
+	L1_GPU3_gate -> L1_GPU3_expert_1 [style=dashed]
+	L1_GPU3_mha_residual -> L1_GPU3_expert_1
+	L1_GPU3_expert_1 -> L1_GPU3_expert_agg
+	L1_GPU3_gate -> L1_GPU3_expert_2 [style=dashed]
+	L1_GPU3_mha_residual -> L1_GPU3_expert_2
+	L1_GPU3_expert_2 -> L1_GPU3_expert_agg
+	L1_GPU3_gate -> L1_GPU3_expert_3 [style=dashed]
+	L1_GPU3_mha_residual -> L1_GPU3_expert_3
+	L1_GPU3_expert_3 -> L1_GPU3_expert_agg
+	L1_GPU3_expert_agg -> L1_GPU3_final_residual
+	L1_GPU3_mha_residual -> L1_GPU3_final_residual
+	L0_GPU4_mha_qkv -> L0_GPU4_mha_attn
+	L0_GPU4_mha_attn -> L0_GPU4_mha_residual
+	L0_GPU4_mha_residual -> L0_GPU4_gate
+	L0_GPU4_expert_agg -> L0_GPU4_final_residual
+	L0_GPU4_mha_residual -> L0_GPU4_final_residual
+	L1_GPU4_mha_qkv -> L1_GPU4_mha_attn
+	L1_GPU4_mha_attn -> L1_GPU4_mha_residual
+	L1_GPU4_mha_residual -> L1_GPU4_gate
+	L1_GPU4_expert_agg -> L1_GPU4_final_residual
+	L1_GPU4_mha_residual -> L1_GPU4_final_residual
+	L0_GPU5_mha_qkv -> L0_GPU5_mha_attn
+	L0_GPU5_mha_attn -> L0_GPU5_mha_residual
+	L0_GPU5_mha_residual -> L0_GPU5_gate
+	L0_GPU5_expert_agg -> L0_GPU5_final_residual
+	L0_GPU5_mha_residual -> L0_GPU5_final_residual
+	L1_GPU5_mha_qkv -> L1_GPU5_mha_attn
+	L1_GPU5_mha_attn -> L1_GPU5_mha_residual
+	L1_GPU5_mha_residual -> L1_GPU5_gate
+	L1_GPU5_expert_agg -> L1_GPU5_final_residual
+	L1_GPU5_mha_residual -> L1_GPU5_final_residual
+	L0_GPU6_mha_qkv -> L0_GPU6_mha_attn
+	L0_GPU6_mha_attn -> L0_GPU6_mha_residual
+	L0_GPU6_mha_residual -> L0_GPU6_gate
+	L0_GPU6_expert_agg -> L0_GPU6_final_residual
+	L0_GPU6_mha_residual -> L0_GPU6_final_residual
+	L1_GPU6_mha_qkv -> L1_GPU6_mha_attn
+	L1_GPU6_mha_attn -> L1_GPU6_mha_residual
+	L1_GPU6_mha_residual -> L1_GPU6_gate
+	L1_GPU6_expert_agg -> L1_GPU6_final_residual
+	L1_GPU6_mha_residual -> L1_GPU6_final_residual
+	L0_GPU7_mha_qkv -> L0_GPU7_mha_attn
+	L0_GPU7_mha_attn -> L0_GPU7_mha_residual
+	L0_GPU7_mha_residual -> L0_GPU7_gate
+	L0_GPU7_expert_agg -> L0_GPU7_final_residual
+	L0_GPU7_mha_residual -> L0_GPU7_final_residual
+	L1_GPU7_mha_qkv -> L1_GPU7_mha_attn
+	L1_GPU7_mha_attn -> L1_GPU7_mha_residual
+	L1_GPU7_mha_residual -> L1_GPU7_gate
+	L1_GPU7_expert_agg -> L1_GPU7_final_residual
+	L1_GPU7_mha_residual -> L1_GPU7_final_residual
+	L2_GPU8_mha_qkv -> L2_GPU8_mha_attn
+	L2_GPU8_mha_attn -> L2_GPU8_mha_residual
+	L2_GPU8_mha_residual -> L2_GPU8_gate
+	L2_GPU8_expert_agg -> L2_GPU8_final_residual
+	L2_GPU8_mha_residual -> L2_GPU8_final_residual
+	L3_GPU8_mha_qkv -> L3_GPU8_mha_attn
+	L3_GPU8_mha_attn -> L3_GPU8_mha_residual
+	L3_GPU8_mha_residual -> L3_GPU8_gate
+	L3_GPU8_expert_agg -> L3_GPU8_final_residual
+	L3_GPU8_mha_residual -> L3_GPU8_final_residual
+	L2_GPU9_mha_qkv -> L2_GPU9_mha_attn
+	L2_GPU9_mha_attn -> L2_GPU9_mha_residual
+	L2_GPU9_mha_residual -> L2_GPU9_gate
+	L2_GPU9_expert_agg -> L2_GPU9_final_residual
+	L2_GPU9_mha_residual -> L2_GPU9_final_residual
+	L3_GPU9_mha_qkv -> L3_GPU9_mha_attn
+	L3_GPU9_mha_attn -> L3_GPU9_mha_residual
+	L3_GPU9_mha_residual -> L3_GPU9_gate
+	L3_GPU9_expert_agg -> L3_GPU9_final_residual
+	L3_GPU9_mha_residual -> L3_GPU9_final_residual
+	L2_GPU10_mha_qkv -> L2_GPU10_mha_attn
+	L2_GPU10_mha_attn -> L2_GPU10_mha_residual
+	L2_GPU10_mha_residual -> L2_GPU10_gate
+	L2_GPU10_expert_agg -> L2_GPU10_final_residual
+	L2_GPU10_mha_residual -> L2_GPU10_final_residual
+	L3_GPU10_mha_qkv -> L3_GPU10_mha_attn
+	L3_GPU10_mha_attn -> L3_GPU10_mha_residual
+	L3_GPU10_mha_residual -> L3_GPU10_gate
+	L3_GPU10_expert_agg -> L3_GPU10_final_residual
+	L3_GPU10_mha_residual -> L3_GPU10_final_residual
+	L2_GPU11_mha_qkv -> L2_GPU11_mha_attn
+	L2_GPU11_mha_attn -> L2_GPU11_mha_residual
+	L2_GPU11_mha_residual -> L2_GPU11_gate
+	L2_GPU11_expert_agg -> L2_GPU11_final_residual
+	L2_GPU11_mha_residual -> L2_GPU11_final_residual
+	L3_GPU11_mha_qkv -> L3_GPU11_mha_attn
+	L3_GPU11_mha_attn -> L3_GPU11_mha_residual
+	L3_GPU11_mha_residual -> L3_GPU11_gate
+	L3_GPU11_expert_agg -> L3_GPU11_final_residual
+	L3_GPU11_mha_residual -> L3_GPU11_final_residual
+	L2_GPU12_mha_qkv -> L2_GPU12_mha_attn
+	L2_GPU12_mha_attn -> L2_GPU12_mha_residual
+	L2_GPU12_mha_residual -> L2_GPU12_gate
+	L2_GPU12_expert_agg -> L2_GPU12_final_residual
+	L2_GPU12_mha_residual -> L2_GPU12_final_residual
+	L3_GPU12_mha_qkv -> L3_GPU12_mha_attn
+	L3_GPU12_mha_attn -> L3_GPU12_mha_residual
+	L3_GPU12_mha_residual -> L3_GPU12_gate
+	L3_GPU12_expert_agg -> L3_GPU12_final_residual
+	L3_GPU12_mha_residual -> L3_GPU12_final_residual
+	L2_GPU13_mha_qkv -> L2_GPU13_mha_attn
+	L2_GPU13_mha_attn -> L2_GPU13_mha_residual
+	L2_GPU13_mha_residual -> L2_GPU13_gate
+	L2_GPU13_expert_agg -> L2_GPU13_final_residual
+	L2_GPU13_mha_residual -> L2_GPU13_final_residual
+	L3_GPU13_mha_qkv -> L3_GPU13_mha_attn
+	L3_GPU13_mha_attn -> L3_GPU13_mha_residual
+	L3_GPU13_mha_residual -> L3_GPU13_gate
+	L3_GPU13_expert_agg -> L3_GPU13_final_residual
+	L3_GPU13_mha_residual -> L3_GPU13_final_residual
+	L2_GPU14_mha_qkv -> L2_GPU14_mha_attn
+	L2_GPU14_mha_attn -> L2_GPU14_mha_residual
+	L2_GPU14_mha_residual -> L2_GPU14_gate
+	L2_GPU14_expert_agg -> L2_GPU14_final_residual
+	L2_GPU14_mha_residual -> L2_GPU14_final_residual
+	L3_GPU14_mha_qkv -> L3_GPU14_mha_attn
+	L3_GPU14_mha_attn -> L3_GPU14_mha_residual
+	L3_GPU14_mha_residual -> L3_GPU14_gate
+	L3_GPU14_expert_agg -> L3_GPU14_final_residual
+	L3_GPU14_mha_residual -> L3_GPU14_final_residual
+	L2_GPU15_mha_qkv -> L2_GPU15_mha_attn
+	L2_GPU15_mha_attn -> L2_GPU15_mha_residual
+	L2_GPU15_mha_residual -> L2_GPU15_gate
+	L2_GPU15_expert_agg -> L2_GPU15_final_residual
+	L2_GPU15_mha_residual -> L2_GPU15_final_residual
+	L3_GPU15_mha_qkv -> L3_GPU15_mha_attn
+	L3_GPU15_mha_attn -> L3_GPU15_mha_residual
+	L3_GPU15_mha_residual -> L3_GPU15_gate
+	L3_GPU15_expert_agg -> L3_GPU15_final_residual
+	L3_GPU15_mha_residual -> L3_GPU15_final_residual
+	L0_GPU0_final_residual -> L1_GPU0_mha_qkv
+	L0_GPU1_final_residual -> L1_GPU1_mha_qkv
+	L0_GPU2_final_residual -> L1_GPU2_mha_qkv
+	L0_GPU3_final_residual -> L1_GPU3_mha_qkv
+	L0_GPU4_final_residual -> L1_GPU4_mha_qkv
+	L0_GPU5_final_residual -> L1_GPU5_mha_qkv
+	L0_GPU6_final_residual -> L1_GPU6_mha_qkv
+	L0_GPU7_final_residual -> L1_GPU7_mha_qkv
+	L1_GPU0_final_residual -> L2_GPU8_mha_qkv
+	L1_GPU1_final_residual -> L2_GPU9_mha_qkv
+	L1_GPU2_final_residual -> L2_GPU10_mha_qkv
+	L1_GPU3_final_residual -> L2_GPU11_mha_qkv
+	L1_GPU4_final_residual -> L2_GPU12_mha_qkv
+	L1_GPU5_final_residual -> L2_GPU13_mha_qkv
+	L1_GPU6_final_residual -> L2_GPU14_mha_qkv
+	L1_GPU7_final_residual -> L2_GPU15_mha_qkv
+	L2_GPU8_final_residual -> L3_GPU8_mha_qkv
+	L2_GPU9_final_residual -> L3_GPU9_mha_qkv
+	L2_GPU10_final_residual -> L3_GPU10_mha_qkv
+	L2_GPU11_final_residual -> L3_GPU11_mha_qkv
+	L2_GPU12_final_residual -> L3_GPU12_mha_qkv
+	L2_GPU13_final_residual -> L3_GPU13_mha_qkv
+	L2_GPU14_final_residual -> L3_GPU14_mha_qkv
+	L2_GPU15_final_residual -> L3_GPU15_mha_qkv
+	output [label="Total Output\nbatch_size=1024, seq_len=10000, token_dim=8192" fillcolor=lightgreen shape=parallelogram]
+	L3_GPU8_final_residual -> output
+	L3_GPU9_final_residual -> output
+	L3_GPU10_final_residual -> output
+	L3_GPU11_final_residual -> output
+	L3_GPU12_final_residual -> output
+	L3_GPU13_final_residual -> output
+	L3_GPU14_final_residual -> output
+	L3_GPU15_final_residual -> output
+}

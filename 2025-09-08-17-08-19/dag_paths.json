@@ -1,0 +1,12 @@
+{
+  "baseline_dag": {
+    "dot_path": "/home/wzc/data/file-share/2025-09-08-17-08-19/baseline_dag",
+    "svg_path": "/home/wzc/data/file-share/2025-09-08-17-08-19/baseline_dag.svg",
+    "description": "Baseline DAG with Tensor Parallelism=8, Pipeline Parallelism=2 across 16 GPUs"
+  },
+  "proposed_dag": {
+    "dot_path": "/home/wzc/data/file-share/2025-09-08-17-08-19/proposed_dag",
+    "svg_path": "/home/wzc/data/file-share/2025-09-08-17-08-19/proposed_dag.svg",
+    "description": "Proposed layer-wise cache-optimized deployment with 1 layer per GPU across 16 GPUs"
+  }
+}

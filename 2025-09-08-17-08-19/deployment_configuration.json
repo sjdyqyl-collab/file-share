@@ -1,0 +1,147 @@
+{
+  "deployment_configurations": {
+    "baseline": {
+      "name": "Baseline Tensor + Pipeline Parallelism",
+      "model": {
+        "type": "dense_16_layer",
+        "layers": 16,
+        "hidden_size": 8192,
+        "mlp_hidden_size": 32768,
+        "num_heads": 16,
+        "head_dim": 512,
+        "precision": "FP16",
+        "batch_size": 1024
+      },
+      "parallel_strategy": {
+        "type": "hybrid_parallel",
+        "tensor_parallelism": {
+          "degree": 8,
+          "method": "column_and_row_parallel",
+          "parameters": {
+            "column_split_dim": "input_features",
+            "row_split_dim": "output_features"
+          }
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "method": "layer_wise_pipeline",
+          "parameters": {
+            "layers_per_stage": 8,
+            "schedule": "gpipe"
+          }
+        }
+      },
+      "device_mapping": {
+        "total_gpus": 16,
+        "mapping_strategy": "grid",
+        "stages": [
+          {
+            "stage_id": 0,
+            "layers": [0, 1, 2, 3, 4, 5, 6, 7],
+            "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+            "tensor_parallel_group": [0, 1, 2, 3, 4, 5, 6, 7]
+          },
+          {
+            "stage_id": 1,
+            "layers": [8, 9, 10, 11, 12, 13, 14, 15],
+            "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+            "tensor_parallel_group": [8, 9, 10, 11, 12, 13, 14, 15]
+          }
+        ]
+      },
+      "communication": {
+        "tensor_parallel": {
+          "intra_stage_all_reduce": "nvlink",
+          "bandwidth": "900GB/s"
+        },
+        "pipeline_parallel": {
+          "inter_stage_p2p": "nvlink",
+          "bandwidth": "900GB/s"
+        }
+      }
+    },
+    "proposed": {
+      "name": "Proposed Layer-wise Cache-Optimized Deployment",
+      "model": {
+        "type": "dense_16_layer",
+        "layers": 16,
+        "hidden_size": 8192,
+        "mlp_hidden_size": 32768,
+        "num_heads": 16,
+        "head_dim": 512,
+        "precision": "FP16",
+        "batch_size": 1024
+      },
+      "parallel_strategy": {
+        "type": "layer_wise_parallelism",
+        "method": "cache_optimized_partitioning",
+        "parameters": {
+          "cache_capacity_per_device": "40MB",
+          "partitioning_algorithm": "greedy_layer_aggregation",
+          "contiguity_constraint": true,
+          "minimize_partitions": true
+        }
+      },
+      "memory_footprint_estimation": {
+        "components": ["weights", "activations", "temporary_buffers"],
+        "weight_calculation": "num_parameters * 2_bytes",
+        "activation_calculation": "batch_size * hidden_size * sequence_length * 2_bytes",
+        "buffer_calculation": "operator_workspace_profiling"
+      },
+      "partitioning_result": {
+        "total_partitions": 16,
+        "partitions": [
+          {"partition_id": 0, "layers": [0], "estimated_size_mb": 38.5, "device_id": 0},
+          {"partition_id": 1, "layers": [1], "estimated_size_mb": 38.5, "device_id": 1},
+          {"partition_id": 2, "layers": [2], "estimated_size_mb": 38.5, "device_id": 2},
+          {"partition_id": 3, "layers": [3], "estimated_size_mb": 38.5, "device_id": 3},
+          {"partition_id": 4, "layers": [4], "estimated_size_mb": 38.5, "device_id": 4},
+          {"partition_id": 5, "layers": [5], "estimated_size_mb": 38.5, "device_id": 5},
+          {"partition_id": 6, "layers": [6], "estimated_size_mb": 38.5, "device_id": 6},
+          {"partition_id": 7, "layers": [7], "estimated_size_mb": 38.5, "device_id": 7},
+          {"partition_id": 8, "layers": [8], "estimated_size_mb": 38.5, "device_id": 8},
+          {"partition_id": 9, "layers": [9], "estimated_size_mb": 38.5, "device_id": 9},
+          {"partition_id": 10, "layers": [10], "estimated_size_mb": 38.5, "device_id": 10},
+          {"partition_id": 11, "layers": [11], "estimated_size_mb": 38.5, "device_id": 11},
+          {"partition_id": 12, "layers": [12], "estimated_size_mb": 38.5, "device_id": 12},
+          {"partition_id": 13, "layers": [13], "estimated_size_mb": 38.5, "device_id": 13},
+          {"partition_id": 14, "layers": [14], "estimated_size_mb": 38.5, "device_id": 14},
+          {"partition_id": 15, "layers": [15], "estimated_size_mb": 38.5, "device_id": 15}
+        ]
+      },
+      "device_mapping": {
+        "total_gpus": 16,
+        "mapping_strategy": "one_layer_per_device",
+        "layer_to_device": {
+          "layer_0": 0, "layer_1": 1, "layer_2": 2, "layer_3": 3,
+          "layer_4": 4, "layer_5": 5, "layer_6": 6, "layer_7": 7,
+          "layer_8": 8, "layer_9": 9, "layer_10": 10, "layer_11": 11,
+          "layer_12": 12, "layer_13": 13, "layer_14": 14, "layer_15": 15
+        }
+      },
+      "memory_management": {
+        "cache_type": "L2_SRAM",
+        "cache_capacity_per_device_mb": 40,
+        "memory_allocation": {
+          "weights": "preloaded_to_cache",
+          "activations": "allocated_in_cache",
+          "buffers": "pre_allocated_in_cache"
+        },
+        "spill_to_dram": false
+      },
+      "communication": {
+        "inter_partition": {
+          "method": "p2p_transfer",
+          "medium": "nvlink",
+          "bandwidth": "900GB/s",
+          "transfer_size": "batch_size * hidden_size * 2_bytes"
+        }
+      },
+      "execution_order": {
+        "type": "sequential_layer_execution",
+        "pipeline_schedule": "synchronous",
+        "batch_processing": "full_batch_per_layer"
+      }
+    }
+  }
+}

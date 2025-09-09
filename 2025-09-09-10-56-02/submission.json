@@ -1,0 +1,51 @@
+{
+  "baseline_dag": {
+    "dot_path": "/home/wzc/data/file-share/2025-09-09-10-56-02/baseline_moe_dag.dot",
+    "svg_path": "/home/wzc/data/file-share/2025-09-09-10-56-02/baseline_moe_dag.svg",
+    "description": "Traditional MoE parallelism with TP=8, PP=2, 4 experts/GPU across 16 GPUs",
+    "configuration": {
+      "parallelism": {
+        "tensor_parallelism": 8,
+        "pipeline_parallelism": 2,
+        "expert_parallelism": 1,
+        "experts_per_gpu": 4
+      },
+      "total_gpus": 16,
+      "model_layers": 4,
+      "total_experts": 64
+    }
+  },
+  "proposed_dag": {
+    "dot_path": "/home/wzc/data/file-share/2025-09-09-10-56-02/proposed_moe_dag.dot",
+    "svg_path": "/home/wzc/data/file-share/2025-09-09-10-56-02/proposed_moe_dag.svg",
+    "description": "Large-scale cross-node expert parallelism with EP=64, 1 expert/GPU across 64 GPUs",
+    "configuration": {
+      "parallelism": {
+        "expert_parallelism": 64,
+        "tensor_parallelism": 1,
+        "pipeline_parallelism": 1,
+        "experts_per_gpu": 1
+      },
+      "total_gpus": 64,
+      "model_layers": 4,
+      "total_experts": 256
+    }
+  },
+  "deployment_summary": {
+    "baseline": {
+      "throughput_tps": 120000,
+      "latency_ms": 8.3,
+      "efficiency_tps_per_gpu": 7500
+    },
+    "proposed": {
+      "throughput_tps": 450000,
+      "latency_ms": 2.2,
+      "efficiency_tps_per_gpu": 7031.25
+    },
+    "improvement": {
+      "throughput_multiplier": 3.75,
+      "latency_reduction": 3.8,
+      "efficiency_multiplier": 7.03
+    }
+  }
+}

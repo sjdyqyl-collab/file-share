@@ -1,0 +1,489 @@
+// Baseline DAG (TP=8, PP=2)
+digraph {
+	rankdir=TB size="20,20"
+	input [label="Total Input\nINPUT: (1024, seq_len, 8192)\nGPU: all" fillcolor=lightblue shape=ellipse style=filled]
+	s0_l0_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	input -> s0_l0_ln1
+	s0_l0_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l0_ln1 -> s0_l0_qkv
+	s0_l0_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l0_qkv -> s0_l0_reshape
+	s0_l0_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l0_reshape -> s0_l0_attn
+	s0_l0_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l0_attn -> s0_l0_reshape_back
+	s0_l0_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l0_reshape_back -> s0_l0_out_proj
+	s0_l0_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l0_out_proj -> s0_l0_attn_allreduce
+	s0_l0_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	input -> s0_l0_res1
+	s0_l0_attn_allreduce -> s0_l0_res1
+	s0_l0_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l0_res1 -> s0_l0_ln2
+	s0_l0_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l0_ln2 -> s0_l0_fc1
+	s0_l0_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l0_fc1 -> s0_l0_gelu
+	s0_l0_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l0_gelu -> s0_l0_fc2
+	s0_l0_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l0_fc2 -> s0_l0_mlp_allreduce
+	s0_l0_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l0_res1 -> s0_l0_res2
+	s0_l0_mlp_allreduce -> s0_l0_res2
+	s0_l1_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l0_res2 -> s0_l1_ln1
+	s0_l1_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l1_ln1 -> s0_l1_qkv
+	s0_l1_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l1_qkv -> s0_l1_reshape
+	s0_l1_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l1_reshape -> s0_l1_attn
+	s0_l1_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l1_attn -> s0_l1_reshape_back
+	s0_l1_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l1_reshape_back -> s0_l1_out_proj
+	s0_l1_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l1_out_proj -> s0_l1_attn_allreduce
+	s0_l1_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l0_res2 -> s0_l1_res1
+	s0_l1_attn_allreduce -> s0_l1_res1
+	s0_l1_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l1_res1 -> s0_l1_ln2
+	s0_l1_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l1_ln2 -> s0_l1_fc1
+	s0_l1_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l1_fc1 -> s0_l1_gelu
+	s0_l1_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l1_gelu -> s0_l1_fc2
+	s0_l1_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l1_fc2 -> s0_l1_mlp_allreduce
+	s0_l1_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l1_res1 -> s0_l1_res2
+	s0_l1_mlp_allreduce -> s0_l1_res2
+	s0_l2_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l1_res2 -> s0_l2_ln1
+	s0_l2_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l2_ln1 -> s0_l2_qkv
+	s0_l2_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l2_qkv -> s0_l2_reshape
+	s0_l2_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l2_reshape -> s0_l2_attn
+	s0_l2_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l2_attn -> s0_l2_reshape_back
+	s0_l2_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l2_reshape_back -> s0_l2_out_proj
+	s0_l2_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l2_out_proj -> s0_l2_attn_allreduce
+	s0_l2_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l1_res2 -> s0_l2_res1
+	s0_l2_attn_allreduce -> s0_l2_res1
+	s0_l2_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l2_res1 -> s0_l2_ln2
+	s0_l2_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l2_ln2 -> s0_l2_fc1
+	s0_l2_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l2_fc1 -> s0_l2_gelu
+	s0_l2_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l2_gelu -> s0_l2_fc2
+	s0_l2_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l2_fc2 -> s0_l2_mlp_allreduce
+	s0_l2_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l2_res1 -> s0_l2_res2
+	s0_l2_mlp_allreduce -> s0_l2_res2
+	s0_l3_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l2_res2 -> s0_l3_ln1
+	s0_l3_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l3_ln1 -> s0_l3_qkv
+	s0_l3_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l3_qkv -> s0_l3_reshape
+	s0_l3_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l3_reshape -> s0_l3_attn
+	s0_l3_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l3_attn -> s0_l3_reshape_back
+	s0_l3_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l3_reshape_back -> s0_l3_out_proj
+	s0_l3_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l3_out_proj -> s0_l3_attn_allreduce
+	s0_l3_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l2_res2 -> s0_l3_res1
+	s0_l3_attn_allreduce -> s0_l3_res1
+	s0_l3_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l3_res1 -> s0_l3_ln2
+	s0_l3_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l3_ln2 -> s0_l3_fc1
+	s0_l3_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l3_fc1 -> s0_l3_gelu
+	s0_l3_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l3_gelu -> s0_l3_fc2
+	s0_l3_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l3_fc2 -> s0_l3_mlp_allreduce
+	s0_l3_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l3_res1 -> s0_l3_res2
+	s0_l3_mlp_allreduce -> s0_l3_res2
+	s0_l4_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l3_res2 -> s0_l4_ln1
+	s0_l4_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l4_ln1 -> s0_l4_qkv
+	s0_l4_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l4_qkv -> s0_l4_reshape
+	s0_l4_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l4_reshape -> s0_l4_attn
+	s0_l4_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l4_attn -> s0_l4_reshape_back
+	s0_l4_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l4_reshape_back -> s0_l4_out_proj
+	s0_l4_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l4_out_proj -> s0_l4_attn_allreduce
+	s0_l4_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l3_res2 -> s0_l4_res1
+	s0_l4_attn_allreduce -> s0_l4_res1
+	s0_l4_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l4_res1 -> s0_l4_ln2
+	s0_l4_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l4_ln2 -> s0_l4_fc1
+	s0_l4_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l4_fc1 -> s0_l4_gelu
+	s0_l4_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l4_gelu -> s0_l4_fc2
+	s0_l4_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l4_fc2 -> s0_l4_mlp_allreduce
+	s0_l4_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l4_res1 -> s0_l4_res2
+	s0_l4_mlp_allreduce -> s0_l4_res2
+	s0_l5_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l4_res2 -> s0_l5_ln1
+	s0_l5_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l5_ln1 -> s0_l5_qkv
+	s0_l5_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l5_qkv -> s0_l5_reshape
+	s0_l5_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l5_reshape -> s0_l5_attn
+	s0_l5_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l5_attn -> s0_l5_reshape_back
+	s0_l5_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l5_reshape_back -> s0_l5_out_proj
+	s0_l5_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l5_out_proj -> s0_l5_attn_allreduce
+	s0_l5_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l4_res2 -> s0_l5_res1
+	s0_l5_attn_allreduce -> s0_l5_res1
+	s0_l5_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l5_res1 -> s0_l5_ln2
+	s0_l5_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l5_ln2 -> s0_l5_fc1
+	s0_l5_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l5_fc1 -> s0_l5_gelu
+	s0_l5_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l5_gelu -> s0_l5_fc2
+	s0_l5_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l5_fc2 -> s0_l5_mlp_allreduce
+	s0_l5_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l5_res1 -> s0_l5_res2
+	s0_l5_mlp_allreduce -> s0_l5_res2
+	s0_l6_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l5_res2 -> s0_l6_ln1
+	s0_l6_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l6_ln1 -> s0_l6_qkv
+	s0_l6_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l6_qkv -> s0_l6_reshape
+	s0_l6_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l6_reshape -> s0_l6_attn
+	s0_l6_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l6_attn -> s0_l6_reshape_back
+	s0_l6_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l6_reshape_back -> s0_l6_out_proj
+	s0_l6_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l6_out_proj -> s0_l6_attn_allreduce
+	s0_l6_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l5_res2 -> s0_l6_res1
+	s0_l6_attn_allreduce -> s0_l6_res1
+	s0_l6_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l6_res1 -> s0_l6_ln2
+	s0_l6_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l6_ln2 -> s0_l6_fc1
+	s0_l6_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l6_fc1 -> s0_l6_gelu
+	s0_l6_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l6_gelu -> s0_l6_fc2
+	s0_l6_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l6_fc2 -> s0_l6_mlp_allreduce
+	s0_l6_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l6_res1 -> s0_l6_res2
+	s0_l6_mlp_allreduce -> s0_l6_res2
+	s0_l7_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l6_res2 -> s0_l7_ln1
+	s0_l7_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l7_ln1 -> s0_l7_qkv
+	s0_l7_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l7_qkv -> s0_l7_reshape
+	s0_l7_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l7_reshape -> s0_l7_attn
+	s0_l7_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l7_attn -> s0_l7_reshape_back
+	s0_l7_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l7_reshape_back -> s0_l7_out_proj
+	s0_l7_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l7_out_proj -> s0_l7_attn_allreduce
+	s0_l7_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l6_res2 -> s0_l7_res1
+	s0_l7_attn_allreduce -> s0_l7_res1
+	s0_l7_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l7_res1 -> s0_l7_ln2
+	s0_l7_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l7_ln2 -> s0_l7_fc1
+	s0_l7_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	s0_l7_fc1 -> s0_l7_gelu
+	s0_l7_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+	s0_l7_gelu -> s0_l7_fc2
+	s0_l7_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	s0_l7_fc2 -> s0_l7_mlp_allreduce
+	s0_l7_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 0-7" fillcolor=lightcoral shape=rectangle style=filled]
+	s0_l7_res1 -> s0_l7_res2
+	s0_l7_mlp_allreduce -> s0_l7_res2
+	pipeline_send [label="Pipeline Send\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 7→8" fillcolor=purple shape=parallelogram style=filled]
+	s0_l7_res2 -> pipeline_send
+	s1_l8_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	pipeline_send -> s1_l8_ln1
+	s1_l8_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l8_ln1 -> s1_l8_qkv
+	s1_l8_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l8_qkv -> s1_l8_reshape
+	s1_l8_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l8_reshape -> s1_l8_attn
+	s1_l8_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l8_attn -> s1_l8_reshape_back
+	s1_l8_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l8_reshape_back -> s1_l8_out_proj
+	s1_l8_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l8_out_proj -> s1_l8_attn_allreduce
+	s1_l8_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	pipeline_send -> s1_l8_res1
+	s1_l8_attn_allreduce -> s1_l8_res1
+	s1_l8_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l8_res1 -> s1_l8_ln2
+	s1_l8_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l8_ln2 -> s1_l8_fc1
+	s1_l8_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l8_fc1 -> s1_l8_gelu
+	s1_l8_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l8_gelu -> s1_l8_fc2
+	s1_l8_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l8_fc2 -> s1_l8_mlp_allreduce
+	s1_l8_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l8_res1 -> s1_l8_res2
+	s1_l8_mlp_allreduce -> s1_l8_res2
+	s1_l9_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l8_res2 -> s1_l9_ln1
+	s1_l9_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l9_ln1 -> s1_l9_qkv
+	s1_l9_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l9_qkv -> s1_l9_reshape
+	s1_l9_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l9_reshape -> s1_l9_attn
+	s1_l9_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l9_attn -> s1_l9_reshape_back
+	s1_l9_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l9_reshape_back -> s1_l9_out_proj
+	s1_l9_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l9_out_proj -> s1_l9_attn_allreduce
+	s1_l9_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l8_res2 -> s1_l9_res1
+	s1_l9_attn_allreduce -> s1_l9_res1
+	s1_l9_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l9_res1 -> s1_l9_ln2
+	s1_l9_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l9_ln2 -> s1_l9_fc1
+	s1_l9_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l9_fc1 -> s1_l9_gelu
+	s1_l9_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l9_gelu -> s1_l9_fc2
+	s1_l9_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l9_fc2 -> s1_l9_mlp_allreduce
+	s1_l9_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l9_res1 -> s1_l9_res2
+	s1_l9_mlp_allreduce -> s1_l9_res2
+	s1_l10_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l9_res2 -> s1_l10_ln1
+	s1_l10_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l10_ln1 -> s1_l10_qkv
+	s1_l10_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l10_qkv -> s1_l10_reshape
+	s1_l10_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l10_reshape -> s1_l10_attn
+	s1_l10_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l10_attn -> s1_l10_reshape_back
+	s1_l10_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l10_reshape_back -> s1_l10_out_proj
+	s1_l10_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l10_out_proj -> s1_l10_attn_allreduce
+	s1_l10_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l9_res2 -> s1_l10_res1
+	s1_l10_attn_allreduce -> s1_l10_res1
+	s1_l10_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l10_res1 -> s1_l10_ln2
+	s1_l10_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l10_ln2 -> s1_l10_fc1
+	s1_l10_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l10_fc1 -> s1_l10_gelu
+	s1_l10_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l10_gelu -> s1_l10_fc2
+	s1_l10_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l10_fc2 -> s1_l10_mlp_allreduce
+	s1_l10_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l10_res1 -> s1_l10_res2
+	s1_l10_mlp_allreduce -> s1_l10_res2
+	s1_l11_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l10_res2 -> s1_l11_ln1
+	s1_l11_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l11_ln1 -> s1_l11_qkv
+	s1_l11_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l11_qkv -> s1_l11_reshape
+	s1_l11_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l11_reshape -> s1_l11_attn
+	s1_l11_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l11_attn -> s1_l11_reshape_back
+	s1_l11_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l11_reshape_back -> s1_l11_out_proj
+	s1_l11_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l11_out_proj -> s1_l11_attn_allreduce
+	s1_l11_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l10_res2 -> s1_l11_res1
+	s1_l11_attn_allreduce -> s1_l11_res1
+	s1_l11_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l11_res1 -> s1_l11_ln2
+	s1_l11_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l11_ln2 -> s1_l11_fc1
+	s1_l11_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l11_fc1 -> s1_l11_gelu
+	s1_l11_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l11_gelu -> s1_l11_fc2
+	s1_l11_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l11_fc2 -> s1_l11_mlp_allreduce
+	s1_l11_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l11_res1 -> s1_l11_res2
+	s1_l11_mlp_allreduce -> s1_l11_res2
+	s1_l12_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l11_res2 -> s1_l12_ln1
+	s1_l12_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l12_ln1 -> s1_l12_qkv
+	s1_l12_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l12_qkv -> s1_l12_reshape
+	s1_l12_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l12_reshape -> s1_l12_attn
+	s1_l12_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l12_attn -> s1_l12_reshape_back
+	s1_l12_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l12_reshape_back -> s1_l12_out_proj
+	s1_l12_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l12_out_proj -> s1_l12_attn_allreduce
+	s1_l12_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l11_res2 -> s1_l12_res1
+	s1_l12_attn_allreduce -> s1_l12_res1
+	s1_l12_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l12_res1 -> s1_l12_ln2
+	s1_l12_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l12_ln2 -> s1_l12_fc1
+	s1_l12_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l12_fc1 -> s1_l12_gelu
+	s1_l12_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l12_gelu -> s1_l12_fc2
+	s1_l12_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l12_fc2 -> s1_l12_mlp_allreduce
+	s1_l12_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l12_res1 -> s1_l12_res2
+	s1_l12_mlp_allreduce -> s1_l12_res2
+	s1_l13_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l12_res2 -> s1_l13_ln1
+	s1_l13_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l13_ln1 -> s1_l13_qkv
+	s1_l13_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l13_qkv -> s1_l13_reshape
+	s1_l13_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l13_reshape -> s1_l13_attn
+	s1_l13_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l13_attn -> s1_l13_reshape_back
+	s1_l13_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l13_reshape_back -> s1_l13_out_proj
+	s1_l13_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l13_out_proj -> s1_l13_attn_allreduce
+	s1_l13_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l12_res2 -> s1_l13_res1
+	s1_l13_attn_allreduce -> s1_l13_res1
+	s1_l13_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l13_res1 -> s1_l13_ln2
+	s1_l13_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l13_ln2 -> s1_l13_fc1
+	s1_l13_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l13_fc1 -> s1_l13_gelu
+	s1_l13_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l13_gelu -> s1_l13_fc2
+	s1_l13_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l13_fc2 -> s1_l13_mlp_allreduce
+	s1_l13_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l13_res1 -> s1_l13_res2
+	s1_l13_mlp_allreduce -> s1_l13_res2
+	s1_l14_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l13_res2 -> s1_l14_ln1
+	s1_l14_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l14_ln1 -> s1_l14_qkv
+	s1_l14_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l14_qkv -> s1_l14_reshape
+	s1_l14_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l14_reshape -> s1_l14_attn
+	s1_l14_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l14_attn -> s1_l14_reshape_back
+	s1_l14_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l14_reshape_back -> s1_l14_out_proj
+	s1_l14_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l14_out_proj -> s1_l14_attn_allreduce
+	s1_l14_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l13_res2 -> s1_l14_res1
+	s1_l14_attn_allreduce -> s1_l14_res1
+	s1_l14_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l14_res1 -> s1_l14_ln2
+	s1_l14_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l14_ln2 -> s1_l14_fc1
+	s1_l14_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l14_fc1 -> s1_l14_gelu
+	s1_l14_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l14_gelu -> s1_l14_fc2
+	s1_l14_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l14_fc2 -> s1_l14_mlp_allreduce
+	s1_l14_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l14_res1 -> s1_l14_res2
+	s1_l14_mlp_allreduce -> s1_l14_res2
+	s1_l15_ln1 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l14_res2 -> s1_l15_ln1
+	s1_l15_qkv [label="QKV Projection\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 3072)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l15_ln1 -> s1_l15_qkv
+	s1_l15_reshape [label="Reshape QKV\nINPUT: (1024, seq_len, 3072)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l15_qkv -> s1_l15_reshape
+	s1_l15_attn [label="Multi-Head Attention\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, 2, seq_len, 512)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l15_reshape -> s1_l15_attn
+	s1_l15_reshape_back [label="Reshape Output\nINPUT: (1024, 2, seq_len, 512)\nOUTPUT: (1024, seq_len, 1024)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l15_attn -> s1_l15_reshape_back
+	s1_l15_out_proj [label="Output Projection\nINPUT: (1024, seq_len, 1024)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l15_reshape_back -> s1_l15_out_proj
+	s1_l15_attn_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l15_out_proj -> s1_l15_attn_allreduce
+	s1_l15_res1 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l14_res2 -> s1_l15_res1
+	s1_l15_attn_allreduce -> s1_l15_res1
+	s1_l15_ln2 [label="LayerNorm\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l15_res1 -> s1_l15_ln2
+	s1_l15_fc1 [label="FC1 (Column Parallel)\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l15_ln2 -> s1_l15_fc1
+	s1_l15_gelu [label="GELU\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 4096)\nGPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+	s1_l15_fc1 -> s1_l15_gelu
+	s1_l15_fc2 [label="FC2 (Row Parallel)\nINPUT: (1024, seq_len, 4096)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+	s1_l15_gelu -> s1_l15_fc2
+	s1_l15_mlp_allreduce [label="All-Reduce\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=orange shape=parallelogram style=filled]
+	s1_l15_fc2 -> s1_l15_mlp_allreduce
+	s1_l15_res2 [label="Residual Add\nINPUT: (1024, seq_len, 8192)\nOUTPUT: (1024, seq_len, 8192)\nGPU: 8-15" fillcolor=lightcoral shape=rectangle style=filled]
+	s1_l15_res1 -> s1_l15_res2
+	s1_l15_mlp_allreduce -> s1_l15_res2
+	output [label="Total Output\nINPUT: (1024, seq_len, 8192)\nGPU: all" fillcolor=lightblue shape=ellipse style=filled]
+	s1_l15_res2 -> output
+}

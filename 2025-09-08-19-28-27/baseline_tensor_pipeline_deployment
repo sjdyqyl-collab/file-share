@@ -1,0 +1,3346 @@
+digraph baseline_tensor_pipeline_deployment {
+	nodesep=0.5 rankdir=TB ranksep=1.0 splines=ortho
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	input [label="Model Input
+INPUT DIMENSION=[1024, seq_len, 8192]
+GPU=all" fillcolor=lightgreen shape=ellipse]
+	stage0_layer0_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	input -> stage0_layer0_split
+	stage0_layer0_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer0_split -> stage0_layer0_ln1_tp0
+	stage0_layer0_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer0_split -> stage0_layer0_ln1_tp1
+	stage0_layer0_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer0_split -> stage0_layer0_ln1_tp2
+	stage0_layer0_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer0_split -> stage0_layer0_ln1_tp3
+	stage0_layer0_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer0_split -> stage0_layer0_ln1_tp4
+	stage0_layer0_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer0_split -> stage0_layer0_ln1_tp5
+	stage0_layer0_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer0_split -> stage0_layer0_ln1_tp6
+	stage0_layer0_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer0_split -> stage0_layer0_ln1_tp7
+	stage0_layer0_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer0_ln1_tp0 -> stage0_layer0_attn_tp0
+	stage0_layer0_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer0_ln1_tp1 -> stage0_layer0_attn_tp1
+	stage0_layer0_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer0_ln1_tp2 -> stage0_layer0_attn_tp2
+	stage0_layer0_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer0_ln1_tp3 -> stage0_layer0_attn_tp3
+	stage0_layer0_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer0_ln1_tp4 -> stage0_layer0_attn_tp4
+	stage0_layer0_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer0_ln1_tp5 -> stage0_layer0_attn_tp5
+	stage0_layer0_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer0_ln1_tp6 -> stage0_layer0_attn_tp6
+	stage0_layer0_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer0_ln1_tp7 -> stage0_layer0_attn_tp7
+	stage0_layer0_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer0_attn_tp0 -> stage0_layer0_attn_reduce
+	stage0_layer0_attn_tp1 -> stage0_layer0_attn_reduce
+	stage0_layer0_attn_tp2 -> stage0_layer0_attn_reduce
+	stage0_layer0_attn_tp3 -> stage0_layer0_attn_reduce
+	stage0_layer0_attn_tp4 -> stage0_layer0_attn_reduce
+	stage0_layer0_attn_tp5 -> stage0_layer0_attn_reduce
+	stage0_layer0_attn_tp6 -> stage0_layer0_attn_reduce
+	stage0_layer0_attn_tp7 -> stage0_layer0_attn_reduce
+	stage0_layer0_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	input -> stage0_layer0_residual1
+	stage0_layer0_attn_reduce -> stage0_layer0_residual1
+	stage0_layer0_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer0_residual1 -> stage0_layer0_ffn_split
+	stage0_layer0_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer0_ffn_split -> stage0_layer0_ln2_tp0
+	stage0_layer0_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer0_ffn_split -> stage0_layer0_ln2_tp1
+	stage0_layer0_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer0_ffn_split -> stage0_layer0_ln2_tp2
+	stage0_layer0_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer0_ffn_split -> stage0_layer0_ln2_tp3
+	stage0_layer0_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer0_ffn_split -> stage0_layer0_ln2_tp4
+	stage0_layer0_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer0_ffn_split -> stage0_layer0_ln2_tp5
+	stage0_layer0_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer0_ffn_split -> stage0_layer0_ln2_tp6
+	stage0_layer0_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer0_ffn_split -> stage0_layer0_ln2_tp7
+	stage0_layer0_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer0_ln2_tp0 -> stage0_layer0_ffn_tp0
+	stage0_layer0_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer0_ln2_tp1 -> stage0_layer0_ffn_tp1
+	stage0_layer0_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer0_ln2_tp2 -> stage0_layer0_ffn_tp2
+	stage0_layer0_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer0_ln2_tp3 -> stage0_layer0_ffn_tp3
+	stage0_layer0_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer0_ln2_tp4 -> stage0_layer0_ffn_tp4
+	stage0_layer0_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer0_ln2_tp5 -> stage0_layer0_ffn_tp5
+	stage0_layer0_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer0_ln2_tp6 -> stage0_layer0_ffn_tp6
+	stage0_layer0_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer0_ln2_tp7 -> stage0_layer0_ffn_tp7
+	stage0_layer0_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer0_ffn_tp0 -> stage0_layer0_ffn_reduce
+	stage0_layer0_ffn_tp1 -> stage0_layer0_ffn_reduce
+	stage0_layer0_ffn_tp2 -> stage0_layer0_ffn_reduce
+	stage0_layer0_ffn_tp3 -> stage0_layer0_ffn_reduce
+	stage0_layer0_ffn_tp4 -> stage0_layer0_ffn_reduce
+	stage0_layer0_ffn_tp5 -> stage0_layer0_ffn_reduce
+	stage0_layer0_ffn_tp6 -> stage0_layer0_ffn_reduce
+	stage0_layer0_ffn_tp7 -> stage0_layer0_ffn_reduce
+	stage0_layer0_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer0_residual1 -> stage0_layer0_residual2
+	stage0_layer0_ffn_reduce -> stage0_layer0_residual2
+	stage0_layer1_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer0_residual2 -> stage0_layer1_split
+	stage0_layer1_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer1_split -> stage0_layer1_ln1_tp0
+	stage0_layer1_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer1_split -> stage0_layer1_ln1_tp1
+	stage0_layer1_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer1_split -> stage0_layer1_ln1_tp2
+	stage0_layer1_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer1_split -> stage0_layer1_ln1_tp3
+	stage0_layer1_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer1_split -> stage0_layer1_ln1_tp4
+	stage0_layer1_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer1_split -> stage0_layer1_ln1_tp5
+	stage0_layer1_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer1_split -> stage0_layer1_ln1_tp6
+	stage0_layer1_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer1_split -> stage0_layer1_ln1_tp7
+	stage0_layer1_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer1_ln1_tp0 -> stage0_layer1_attn_tp0
+	stage0_layer1_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer1_ln1_tp1 -> stage0_layer1_attn_tp1
+	stage0_layer1_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer1_ln1_tp2 -> stage0_layer1_attn_tp2
+	stage0_layer1_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer1_ln1_tp3 -> stage0_layer1_attn_tp3
+	stage0_layer1_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer1_ln1_tp4 -> stage0_layer1_attn_tp4
+	stage0_layer1_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer1_ln1_tp5 -> stage0_layer1_attn_tp5
+	stage0_layer1_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer1_ln1_tp6 -> stage0_layer1_attn_tp6
+	stage0_layer1_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer1_ln1_tp7 -> stage0_layer1_attn_tp7
+	stage0_layer1_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer1_attn_tp0 -> stage0_layer1_attn_reduce
+	stage0_layer1_attn_tp1 -> stage0_layer1_attn_reduce
+	stage0_layer1_attn_tp2 -> stage0_layer1_attn_reduce
+	stage0_layer1_attn_tp3 -> stage0_layer1_attn_reduce
+	stage0_layer1_attn_tp4 -> stage0_layer1_attn_reduce
+	stage0_layer1_attn_tp5 -> stage0_layer1_attn_reduce
+	stage0_layer1_attn_tp6 -> stage0_layer1_attn_reduce
+	stage0_layer1_attn_tp7 -> stage0_layer1_attn_reduce
+	stage0_layer1_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer0_residual2 -> stage0_layer1_residual1
+	stage0_layer1_attn_reduce -> stage0_layer1_residual1
+	stage0_layer1_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer1_residual1 -> stage0_layer1_ffn_split
+	stage0_layer1_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer1_ffn_split -> stage0_layer1_ln2_tp0
+	stage0_layer1_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer1_ffn_split -> stage0_layer1_ln2_tp1
+	stage0_layer1_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer1_ffn_split -> stage0_layer1_ln2_tp2
+	stage0_layer1_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer1_ffn_split -> stage0_layer1_ln2_tp3
+	stage0_layer1_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer1_ffn_split -> stage0_layer1_ln2_tp4
+	stage0_layer1_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer1_ffn_split -> stage0_layer1_ln2_tp5
+	stage0_layer1_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer1_ffn_split -> stage0_layer1_ln2_tp6
+	stage0_layer1_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer1_ffn_split -> stage0_layer1_ln2_tp7
+	stage0_layer1_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer1_ln2_tp0 -> stage0_layer1_ffn_tp0
+	stage0_layer1_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer1_ln2_tp1 -> stage0_layer1_ffn_tp1
+	stage0_layer1_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer1_ln2_tp2 -> stage0_layer1_ffn_tp2
+	stage0_layer1_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer1_ln2_tp3 -> stage0_layer1_ffn_tp3
+	stage0_layer1_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer1_ln2_tp4 -> stage0_layer1_ffn_tp4
+	stage0_layer1_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer1_ln2_tp5 -> stage0_layer1_ffn_tp5
+	stage0_layer1_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer1_ln2_tp6 -> stage0_layer1_ffn_tp6
+	stage0_layer1_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer1_ln2_tp7 -> stage0_layer1_ffn_tp7
+	stage0_layer1_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer1_ffn_tp0 -> stage0_layer1_ffn_reduce
+	stage0_layer1_ffn_tp1 -> stage0_layer1_ffn_reduce
+	stage0_layer1_ffn_tp2 -> stage0_layer1_ffn_reduce
+	stage0_layer1_ffn_tp3 -> stage0_layer1_ffn_reduce
+	stage0_layer1_ffn_tp4 -> stage0_layer1_ffn_reduce
+	stage0_layer1_ffn_tp5 -> stage0_layer1_ffn_reduce
+	stage0_layer1_ffn_tp6 -> stage0_layer1_ffn_reduce
+	stage0_layer1_ffn_tp7 -> stage0_layer1_ffn_reduce
+	stage0_layer1_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer1_residual1 -> stage0_layer1_residual2
+	stage0_layer1_ffn_reduce -> stage0_layer1_residual2
+	stage0_layer2_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer1_residual2 -> stage0_layer2_split
+	stage0_layer2_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer2_split -> stage0_layer2_ln1_tp0
+	stage0_layer2_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer2_split -> stage0_layer2_ln1_tp1
+	stage0_layer2_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer2_split -> stage0_layer2_ln1_tp2
+	stage0_layer2_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer2_split -> stage0_layer2_ln1_tp3
+	stage0_layer2_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer2_split -> stage0_layer2_ln1_tp4
+	stage0_layer2_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer2_split -> stage0_layer2_ln1_tp5
+	stage0_layer2_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer2_split -> stage0_layer2_ln1_tp6
+	stage0_layer2_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer2_split -> stage0_layer2_ln1_tp7
+	stage0_layer2_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer2_ln1_tp0 -> stage0_layer2_attn_tp0
+	stage0_layer2_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer2_ln1_tp1 -> stage0_layer2_attn_tp1
+	stage0_layer2_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer2_ln1_tp2 -> stage0_layer2_attn_tp2
+	stage0_layer2_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer2_ln1_tp3 -> stage0_layer2_attn_tp3
+	stage0_layer2_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer2_ln1_tp4 -> stage0_layer2_attn_tp4
+	stage0_layer2_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer2_ln1_tp5 -> stage0_layer2_attn_tp5
+	stage0_layer2_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer2_ln1_tp6 -> stage0_layer2_attn_tp6
+	stage0_layer2_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer2_ln1_tp7 -> stage0_layer2_attn_tp7
+	stage0_layer2_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer2_attn_tp0 -> stage0_layer2_attn_reduce
+	stage0_layer2_attn_tp1 -> stage0_layer2_attn_reduce
+	stage0_layer2_attn_tp2 -> stage0_layer2_attn_reduce
+	stage0_layer2_attn_tp3 -> stage0_layer2_attn_reduce
+	stage0_layer2_attn_tp4 -> stage0_layer2_attn_reduce
+	stage0_layer2_attn_tp5 -> stage0_layer2_attn_reduce
+	stage0_layer2_attn_tp6 -> stage0_layer2_attn_reduce
+	stage0_layer2_attn_tp7 -> stage0_layer2_attn_reduce
+	stage0_layer2_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer1_residual2 -> stage0_layer2_residual1
+	stage0_layer2_attn_reduce -> stage0_layer2_residual1
+	stage0_layer2_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer2_residual1 -> stage0_layer2_ffn_split
+	stage0_layer2_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer2_ffn_split -> stage0_layer2_ln2_tp0
+	stage0_layer2_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer2_ffn_split -> stage0_layer2_ln2_tp1
+	stage0_layer2_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer2_ffn_split -> stage0_layer2_ln2_tp2
+	stage0_layer2_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer2_ffn_split -> stage0_layer2_ln2_tp3
+	stage0_layer2_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer2_ffn_split -> stage0_layer2_ln2_tp4
+	stage0_layer2_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer2_ffn_split -> stage0_layer2_ln2_tp5
+	stage0_layer2_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer2_ffn_split -> stage0_layer2_ln2_tp6
+	stage0_layer2_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer2_ffn_split -> stage0_layer2_ln2_tp7
+	stage0_layer2_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer2_ln2_tp0 -> stage0_layer2_ffn_tp0
+	stage0_layer2_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer2_ln2_tp1 -> stage0_layer2_ffn_tp1
+	stage0_layer2_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer2_ln2_tp2 -> stage0_layer2_ffn_tp2
+	stage0_layer2_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer2_ln2_tp3 -> stage0_layer2_ffn_tp3
+	stage0_layer2_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer2_ln2_tp4 -> stage0_layer2_ffn_tp4
+	stage0_layer2_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer2_ln2_tp5 -> stage0_layer2_ffn_tp5
+	stage0_layer2_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer2_ln2_tp6 -> stage0_layer2_ffn_tp6
+	stage0_layer2_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer2_ln2_tp7 -> stage0_layer2_ffn_tp7
+	stage0_layer2_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer2_ffn_tp0 -> stage0_layer2_ffn_reduce
+	stage0_layer2_ffn_tp1 -> stage0_layer2_ffn_reduce
+	stage0_layer2_ffn_tp2 -> stage0_layer2_ffn_reduce
+	stage0_layer2_ffn_tp3 -> stage0_layer2_ffn_reduce
+	stage0_layer2_ffn_tp4 -> stage0_layer2_ffn_reduce
+	stage0_layer2_ffn_tp5 -> stage0_layer2_ffn_reduce
+	stage0_layer2_ffn_tp6 -> stage0_layer2_ffn_reduce
+	stage0_layer2_ffn_tp7 -> stage0_layer2_ffn_reduce
+	stage0_layer2_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer2_residual1 -> stage0_layer2_residual2
+	stage0_layer2_ffn_reduce -> stage0_layer2_residual2
+	stage0_layer3_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer2_residual2 -> stage0_layer3_split
+	stage0_layer3_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer3_split -> stage0_layer3_ln1_tp0
+	stage0_layer3_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer3_split -> stage0_layer3_ln1_tp1
+	stage0_layer3_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer3_split -> stage0_layer3_ln1_tp2
+	stage0_layer3_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer3_split -> stage0_layer3_ln1_tp3
+	stage0_layer3_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer3_split -> stage0_layer3_ln1_tp4
+	stage0_layer3_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer3_split -> stage0_layer3_ln1_tp5
+	stage0_layer3_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer3_split -> stage0_layer3_ln1_tp6
+	stage0_layer3_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer3_split -> stage0_layer3_ln1_tp7
+	stage0_layer3_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer3_ln1_tp0 -> stage0_layer3_attn_tp0
+	stage0_layer3_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer3_ln1_tp1 -> stage0_layer3_attn_tp1
+	stage0_layer3_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer3_ln1_tp2 -> stage0_layer3_attn_tp2
+	stage0_layer3_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer3_ln1_tp3 -> stage0_layer3_attn_tp3
+	stage0_layer3_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer3_ln1_tp4 -> stage0_layer3_attn_tp4
+	stage0_layer3_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer3_ln1_tp5 -> stage0_layer3_attn_tp5
+	stage0_layer3_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer3_ln1_tp6 -> stage0_layer3_attn_tp6
+	stage0_layer3_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer3_ln1_tp7 -> stage0_layer3_attn_tp7
+	stage0_layer3_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer3_attn_tp0 -> stage0_layer3_attn_reduce
+	stage0_layer3_attn_tp1 -> stage0_layer3_attn_reduce
+	stage0_layer3_attn_tp2 -> stage0_layer3_attn_reduce
+	stage0_layer3_attn_tp3 -> stage0_layer3_attn_reduce
+	stage0_layer3_attn_tp4 -> stage0_layer3_attn_reduce
+	stage0_layer3_attn_tp5 -> stage0_layer3_attn_reduce
+	stage0_layer3_attn_tp6 -> stage0_layer3_attn_reduce
+	stage0_layer3_attn_tp7 -> stage0_layer3_attn_reduce
+	stage0_layer3_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer2_residual2 -> stage0_layer3_residual1
+	stage0_layer3_attn_reduce -> stage0_layer3_residual1
+	stage0_layer3_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer3_residual1 -> stage0_layer3_ffn_split
+	stage0_layer3_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer3_ffn_split -> stage0_layer3_ln2_tp0
+	stage0_layer3_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer3_ffn_split -> stage0_layer3_ln2_tp1
+	stage0_layer3_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer3_ffn_split -> stage0_layer3_ln2_tp2
+	stage0_layer3_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer3_ffn_split -> stage0_layer3_ln2_tp3
+	stage0_layer3_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer3_ffn_split -> stage0_layer3_ln2_tp4
+	stage0_layer3_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer3_ffn_split -> stage0_layer3_ln2_tp5
+	stage0_layer3_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer3_ffn_split -> stage0_layer3_ln2_tp6
+	stage0_layer3_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer3_ffn_split -> stage0_layer3_ln2_tp7
+	stage0_layer3_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer3_ln2_tp0 -> stage0_layer3_ffn_tp0
+	stage0_layer3_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer3_ln2_tp1 -> stage0_layer3_ffn_tp1
+	stage0_layer3_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer3_ln2_tp2 -> stage0_layer3_ffn_tp2
+	stage0_layer3_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer3_ln2_tp3 -> stage0_layer3_ffn_tp3
+	stage0_layer3_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer3_ln2_tp4 -> stage0_layer3_ffn_tp4
+	stage0_layer3_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer3_ln2_tp5 -> stage0_layer3_ffn_tp5
+	stage0_layer3_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer3_ln2_tp6 -> stage0_layer3_ffn_tp6
+	stage0_layer3_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer3_ln2_tp7 -> stage0_layer3_ffn_tp7
+	stage0_layer3_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer3_ffn_tp0 -> stage0_layer3_ffn_reduce
+	stage0_layer3_ffn_tp1 -> stage0_layer3_ffn_reduce
+	stage0_layer3_ffn_tp2 -> stage0_layer3_ffn_reduce
+	stage0_layer3_ffn_tp3 -> stage0_layer3_ffn_reduce
+	stage0_layer3_ffn_tp4 -> stage0_layer3_ffn_reduce
+	stage0_layer3_ffn_tp5 -> stage0_layer3_ffn_reduce
+	stage0_layer3_ffn_tp6 -> stage0_layer3_ffn_reduce
+	stage0_layer3_ffn_tp7 -> stage0_layer3_ffn_reduce
+	stage0_layer3_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer3_residual1 -> stage0_layer3_residual2
+	stage0_layer3_ffn_reduce -> stage0_layer3_residual2
+	stage0_layer4_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer3_residual2 -> stage0_layer4_split
+	stage0_layer4_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer4_split -> stage0_layer4_ln1_tp0
+	stage0_layer4_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer4_split -> stage0_layer4_ln1_tp1
+	stage0_layer4_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer4_split -> stage0_layer4_ln1_tp2
+	stage0_layer4_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer4_split -> stage0_layer4_ln1_tp3
+	stage0_layer4_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer4_split -> stage0_layer4_ln1_tp4
+	stage0_layer4_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer4_split -> stage0_layer4_ln1_tp5
+	stage0_layer4_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer4_split -> stage0_layer4_ln1_tp6
+	stage0_layer4_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer4_split -> stage0_layer4_ln1_tp7
+	stage0_layer4_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer4_ln1_tp0 -> stage0_layer4_attn_tp0
+	stage0_layer4_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer4_ln1_tp1 -> stage0_layer4_attn_tp1
+	stage0_layer4_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer4_ln1_tp2 -> stage0_layer4_attn_tp2
+	stage0_layer4_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer4_ln1_tp3 -> stage0_layer4_attn_tp3
+	stage0_layer4_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer4_ln1_tp4 -> stage0_layer4_attn_tp4
+	stage0_layer4_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer4_ln1_tp5 -> stage0_layer4_attn_tp5
+	stage0_layer4_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer4_ln1_tp6 -> stage0_layer4_attn_tp6
+	stage0_layer4_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer4_ln1_tp7 -> stage0_layer4_attn_tp7
+	stage0_layer4_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer4_attn_tp0 -> stage0_layer4_attn_reduce
+	stage0_layer4_attn_tp1 -> stage0_layer4_attn_reduce
+	stage0_layer4_attn_tp2 -> stage0_layer4_attn_reduce
+	stage0_layer4_attn_tp3 -> stage0_layer4_attn_reduce
+	stage0_layer4_attn_tp4 -> stage0_layer4_attn_reduce
+	stage0_layer4_attn_tp5 -> stage0_layer4_attn_reduce
+	stage0_layer4_attn_tp6 -> stage0_layer4_attn_reduce
+	stage0_layer4_attn_tp7 -> stage0_layer4_attn_reduce
+	stage0_layer4_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer3_residual2 -> stage0_layer4_residual1
+	stage0_layer4_attn_reduce -> stage0_layer4_residual1
+	stage0_layer4_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer4_residual1 -> stage0_layer4_ffn_split
+	stage0_layer4_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer4_ffn_split -> stage0_layer4_ln2_tp0
+	stage0_layer4_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer4_ffn_split -> stage0_layer4_ln2_tp1
+	stage0_layer4_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer4_ffn_split -> stage0_layer4_ln2_tp2
+	stage0_layer4_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer4_ffn_split -> stage0_layer4_ln2_tp3
+	stage0_layer4_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer4_ffn_split -> stage0_layer4_ln2_tp4
+	stage0_layer4_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer4_ffn_split -> stage0_layer4_ln2_tp5
+	stage0_layer4_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer4_ffn_split -> stage0_layer4_ln2_tp6
+	stage0_layer4_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer4_ffn_split -> stage0_layer4_ln2_tp7
+	stage0_layer4_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer4_ln2_tp0 -> stage0_layer4_ffn_tp0
+	stage0_layer4_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer4_ln2_tp1 -> stage0_layer4_ffn_tp1
+	stage0_layer4_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer4_ln2_tp2 -> stage0_layer4_ffn_tp2
+	stage0_layer4_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer4_ln2_tp3 -> stage0_layer4_ffn_tp3
+	stage0_layer4_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer4_ln2_tp4 -> stage0_layer4_ffn_tp4
+	stage0_layer4_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer4_ln2_tp5 -> stage0_layer4_ffn_tp5
+	stage0_layer4_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer4_ln2_tp6 -> stage0_layer4_ffn_tp6
+	stage0_layer4_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer4_ln2_tp7 -> stage0_layer4_ffn_tp7
+	stage0_layer4_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer4_ffn_tp0 -> stage0_layer4_ffn_reduce
+	stage0_layer4_ffn_tp1 -> stage0_layer4_ffn_reduce
+	stage0_layer4_ffn_tp2 -> stage0_layer4_ffn_reduce
+	stage0_layer4_ffn_tp3 -> stage0_layer4_ffn_reduce
+	stage0_layer4_ffn_tp4 -> stage0_layer4_ffn_reduce
+	stage0_layer4_ffn_tp5 -> stage0_layer4_ffn_reduce
+	stage0_layer4_ffn_tp6 -> stage0_layer4_ffn_reduce
+	stage0_layer4_ffn_tp7 -> stage0_layer4_ffn_reduce
+	stage0_layer4_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer4_residual1 -> stage0_layer4_residual2
+	stage0_layer4_ffn_reduce -> stage0_layer4_residual2
+	stage0_layer5_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer4_residual2 -> stage0_layer5_split
+	stage0_layer5_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer5_split -> stage0_layer5_ln1_tp0
+	stage0_layer5_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer5_split -> stage0_layer5_ln1_tp1
+	stage0_layer5_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer5_split -> stage0_layer5_ln1_tp2
+	stage0_layer5_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer5_split -> stage0_layer5_ln1_tp3
+	stage0_layer5_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer5_split -> stage0_layer5_ln1_tp4
+	stage0_layer5_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer5_split -> stage0_layer5_ln1_tp5
+	stage0_layer5_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer5_split -> stage0_layer5_ln1_tp6
+	stage0_layer5_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer5_split -> stage0_layer5_ln1_tp7
+	stage0_layer5_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer5_ln1_tp0 -> stage0_layer5_attn_tp0
+	stage0_layer5_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer5_ln1_tp1 -> stage0_layer5_attn_tp1
+	stage0_layer5_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer5_ln1_tp2 -> stage0_layer5_attn_tp2
+	stage0_layer5_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer5_ln1_tp3 -> stage0_layer5_attn_tp3
+	stage0_layer5_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer5_ln1_tp4 -> stage0_layer5_attn_tp4
+	stage0_layer5_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer5_ln1_tp5 -> stage0_layer5_attn_tp5
+	stage0_layer5_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer5_ln1_tp6 -> stage0_layer5_attn_tp6
+	stage0_layer5_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer5_ln1_tp7 -> stage0_layer5_attn_tp7
+	stage0_layer5_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer5_attn_tp0 -> stage0_layer5_attn_reduce
+	stage0_layer5_attn_tp1 -> stage0_layer5_attn_reduce
+	stage0_layer5_attn_tp2 -> stage0_layer5_attn_reduce
+	stage0_layer5_attn_tp3 -> stage0_layer5_attn_reduce
+	stage0_layer5_attn_tp4 -> stage0_layer5_attn_reduce
+	stage0_layer5_attn_tp5 -> stage0_layer5_attn_reduce
+	stage0_layer5_attn_tp6 -> stage0_layer5_attn_reduce
+	stage0_layer5_attn_tp7 -> stage0_layer5_attn_reduce
+	stage0_layer5_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer4_residual2 -> stage0_layer5_residual1
+	stage0_layer5_attn_reduce -> stage0_layer5_residual1
+	stage0_layer5_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer5_residual1 -> stage0_layer5_ffn_split
+	stage0_layer5_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer5_ffn_split -> stage0_layer5_ln2_tp0
+	stage0_layer5_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer5_ffn_split -> stage0_layer5_ln2_tp1
+	stage0_layer5_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer5_ffn_split -> stage0_layer5_ln2_tp2
+	stage0_layer5_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer5_ffn_split -> stage0_layer5_ln2_tp3
+	stage0_layer5_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer5_ffn_split -> stage0_layer5_ln2_tp4
+	stage0_layer5_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer5_ffn_split -> stage0_layer5_ln2_tp5
+	stage0_layer5_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer5_ffn_split -> stage0_layer5_ln2_tp6
+	stage0_layer5_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer5_ffn_split -> stage0_layer5_ln2_tp7
+	stage0_layer5_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer5_ln2_tp0 -> stage0_layer5_ffn_tp0
+	stage0_layer5_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer5_ln2_tp1 -> stage0_layer5_ffn_tp1
+	stage0_layer5_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer5_ln2_tp2 -> stage0_layer5_ffn_tp2
+	stage0_layer5_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer5_ln2_tp3 -> stage0_layer5_ffn_tp3
+	stage0_layer5_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer5_ln2_tp4 -> stage0_layer5_ffn_tp4
+	stage0_layer5_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer5_ln2_tp5 -> stage0_layer5_ffn_tp5
+	stage0_layer5_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer5_ln2_tp6 -> stage0_layer5_ffn_tp6
+	stage0_layer5_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer5_ln2_tp7 -> stage0_layer5_ffn_tp7
+	stage0_layer5_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer5_ffn_tp0 -> stage0_layer5_ffn_reduce
+	stage0_layer5_ffn_tp1 -> stage0_layer5_ffn_reduce
+	stage0_layer5_ffn_tp2 -> stage0_layer5_ffn_reduce
+	stage0_layer5_ffn_tp3 -> stage0_layer5_ffn_reduce
+	stage0_layer5_ffn_tp4 -> stage0_layer5_ffn_reduce
+	stage0_layer5_ffn_tp5 -> stage0_layer5_ffn_reduce
+	stage0_layer5_ffn_tp6 -> stage0_layer5_ffn_reduce
+	stage0_layer5_ffn_tp7 -> stage0_layer5_ffn_reduce
+	stage0_layer5_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer5_residual1 -> stage0_layer5_residual2
+	stage0_layer5_ffn_reduce -> stage0_layer5_residual2
+	stage0_layer6_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer5_residual2 -> stage0_layer6_split
+	stage0_layer6_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer6_split -> stage0_layer6_ln1_tp0
+	stage0_layer6_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer6_split -> stage0_layer6_ln1_tp1
+	stage0_layer6_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer6_split -> stage0_layer6_ln1_tp2
+	stage0_layer6_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer6_split -> stage0_layer6_ln1_tp3
+	stage0_layer6_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer6_split -> stage0_layer6_ln1_tp4
+	stage0_layer6_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer6_split -> stage0_layer6_ln1_tp5
+	stage0_layer6_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer6_split -> stage0_layer6_ln1_tp6
+	stage0_layer6_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer6_split -> stage0_layer6_ln1_tp7
+	stage0_layer6_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer6_ln1_tp0 -> stage0_layer6_attn_tp0
+	stage0_layer6_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer6_ln1_tp1 -> stage0_layer6_attn_tp1
+	stage0_layer6_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer6_ln1_tp2 -> stage0_layer6_attn_tp2
+	stage0_layer6_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer6_ln1_tp3 -> stage0_layer6_attn_tp3
+	stage0_layer6_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer6_ln1_tp4 -> stage0_layer6_attn_tp4
+	stage0_layer6_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer6_ln1_tp5 -> stage0_layer6_attn_tp5
+	stage0_layer6_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer6_ln1_tp6 -> stage0_layer6_attn_tp6
+	stage0_layer6_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer6_ln1_tp7 -> stage0_layer6_attn_tp7
+	stage0_layer6_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer6_attn_tp0 -> stage0_layer6_attn_reduce
+	stage0_layer6_attn_tp1 -> stage0_layer6_attn_reduce
+	stage0_layer6_attn_tp2 -> stage0_layer6_attn_reduce
+	stage0_layer6_attn_tp3 -> stage0_layer6_attn_reduce
+	stage0_layer6_attn_tp4 -> stage0_layer6_attn_reduce
+	stage0_layer6_attn_tp5 -> stage0_layer6_attn_reduce
+	stage0_layer6_attn_tp6 -> stage0_layer6_attn_reduce
+	stage0_layer6_attn_tp7 -> stage0_layer6_attn_reduce
+	stage0_layer6_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer5_residual2 -> stage0_layer6_residual1
+	stage0_layer6_attn_reduce -> stage0_layer6_residual1
+	stage0_layer6_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer6_residual1 -> stage0_layer6_ffn_split
+	stage0_layer6_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer6_ffn_split -> stage0_layer6_ln2_tp0
+	stage0_layer6_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer6_ffn_split -> stage0_layer6_ln2_tp1
+	stage0_layer6_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer6_ffn_split -> stage0_layer6_ln2_tp2
+	stage0_layer6_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer6_ffn_split -> stage0_layer6_ln2_tp3
+	stage0_layer6_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer6_ffn_split -> stage0_layer6_ln2_tp4
+	stage0_layer6_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer6_ffn_split -> stage0_layer6_ln2_tp5
+	stage0_layer6_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer6_ffn_split -> stage0_layer6_ln2_tp6
+	stage0_layer6_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer6_ffn_split -> stage0_layer6_ln2_tp7
+	stage0_layer6_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer6_ln2_tp0 -> stage0_layer6_ffn_tp0
+	stage0_layer6_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer6_ln2_tp1 -> stage0_layer6_ffn_tp1
+	stage0_layer6_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer6_ln2_tp2 -> stage0_layer6_ffn_tp2
+	stage0_layer6_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer6_ln2_tp3 -> stage0_layer6_ffn_tp3
+	stage0_layer6_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer6_ln2_tp4 -> stage0_layer6_ffn_tp4
+	stage0_layer6_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer6_ln2_tp5 -> stage0_layer6_ffn_tp5
+	stage0_layer6_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer6_ln2_tp6 -> stage0_layer6_ffn_tp6
+	stage0_layer6_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer6_ln2_tp7 -> stage0_layer6_ffn_tp7
+	stage0_layer6_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer6_ffn_tp0 -> stage0_layer6_ffn_reduce
+	stage0_layer6_ffn_tp1 -> stage0_layer6_ffn_reduce
+	stage0_layer6_ffn_tp2 -> stage0_layer6_ffn_reduce
+	stage0_layer6_ffn_tp3 -> stage0_layer6_ffn_reduce
+	stage0_layer6_ffn_tp4 -> stage0_layer6_ffn_reduce
+	stage0_layer6_ffn_tp5 -> stage0_layer6_ffn_reduce
+	stage0_layer6_ffn_tp6 -> stage0_layer6_ffn_reduce
+	stage0_layer6_ffn_tp7 -> stage0_layer6_ffn_reduce
+	stage0_layer6_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer6_residual1 -> stage0_layer6_residual2
+	stage0_layer6_ffn_reduce -> stage0_layer6_residual2
+	stage0_layer7_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer6_residual2 -> stage0_layer7_split
+	stage0_layer7_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer7_split -> stage0_layer7_ln1_tp0
+	stage0_layer7_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer7_split -> stage0_layer7_ln1_tp1
+	stage0_layer7_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer7_split -> stage0_layer7_ln1_tp2
+	stage0_layer7_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer7_split -> stage0_layer7_ln1_tp3
+	stage0_layer7_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer7_split -> stage0_layer7_ln1_tp4
+	stage0_layer7_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer7_split -> stage0_layer7_ln1_tp5
+	stage0_layer7_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer7_split -> stage0_layer7_ln1_tp6
+	stage0_layer7_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer7_split -> stage0_layer7_ln1_tp7
+	stage0_layer7_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer7_ln1_tp0 -> stage0_layer7_attn_tp0
+	stage0_layer7_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer7_ln1_tp1 -> stage0_layer7_attn_tp1
+	stage0_layer7_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer7_ln1_tp2 -> stage0_layer7_attn_tp2
+	stage0_layer7_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer7_ln1_tp3 -> stage0_layer7_attn_tp3
+	stage0_layer7_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer7_ln1_tp4 -> stage0_layer7_attn_tp4
+	stage0_layer7_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer7_ln1_tp5 -> stage0_layer7_attn_tp5
+	stage0_layer7_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer7_ln1_tp6 -> stage0_layer7_attn_tp6
+	stage0_layer7_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer7_ln1_tp7 -> stage0_layer7_attn_tp7
+	stage0_layer7_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer7_attn_tp0 -> stage0_layer7_attn_reduce
+	stage0_layer7_attn_tp1 -> stage0_layer7_attn_reduce
+	stage0_layer7_attn_tp2 -> stage0_layer7_attn_reduce
+	stage0_layer7_attn_tp3 -> stage0_layer7_attn_reduce
+	stage0_layer7_attn_tp4 -> stage0_layer7_attn_reduce
+	stage0_layer7_attn_tp5 -> stage0_layer7_attn_reduce
+	stage0_layer7_attn_tp6 -> stage0_layer7_attn_reduce
+	stage0_layer7_attn_tp7 -> stage0_layer7_attn_reduce
+	stage0_layer7_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer6_residual2 -> stage0_layer7_residual1
+	stage0_layer7_attn_reduce -> stage0_layer7_residual1
+	stage0_layer7_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer7_residual1 -> stage0_layer7_ffn_split
+	stage0_layer7_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer7_ffn_split -> stage0_layer7_ln2_tp0
+	stage0_layer7_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer7_ffn_split -> stage0_layer7_ln2_tp1
+	stage0_layer7_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer7_ffn_split -> stage0_layer7_ln2_tp2
+	stage0_layer7_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer7_ffn_split -> stage0_layer7_ln2_tp3
+	stage0_layer7_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer7_ffn_split -> stage0_layer7_ln2_tp4
+	stage0_layer7_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer7_ffn_split -> stage0_layer7_ln2_tp5
+	stage0_layer7_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer7_ffn_split -> stage0_layer7_ln2_tp6
+	stage0_layer7_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer7_ffn_split -> stage0_layer7_ln2_tp7
+	stage0_layer7_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=0"]
+	stage0_layer7_ln2_tp0 -> stage0_layer7_ffn_tp0
+	stage0_layer7_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=1"]
+	stage0_layer7_ln2_tp1 -> stage0_layer7_ffn_tp1
+	stage0_layer7_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=2"]
+	stage0_layer7_ln2_tp2 -> stage0_layer7_ffn_tp2
+	stage0_layer7_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=3"]
+	stage0_layer7_ln2_tp3 -> stage0_layer7_ffn_tp3
+	stage0_layer7_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=4"]
+	stage0_layer7_ln2_tp4 -> stage0_layer7_ffn_tp4
+	stage0_layer7_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=5"]
+	stage0_layer7_ln2_tp5 -> stage0_layer7_ffn_tp5
+	stage0_layer7_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=6"]
+	stage0_layer7_ln2_tp6 -> stage0_layer7_ffn_tp6
+	stage0_layer7_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=7"]
+	stage0_layer7_ln2_tp7 -> stage0_layer7_ffn_tp7
+	stage0_layer7_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]" fillcolor=lightyellow shape=parallelogram]
+	stage0_layer7_ffn_tp0 -> stage0_layer7_ffn_reduce
+	stage0_layer7_ffn_tp1 -> stage0_layer7_ffn_reduce
+	stage0_layer7_ffn_tp2 -> stage0_layer7_ffn_reduce
+	stage0_layer7_ffn_tp3 -> stage0_layer7_ffn_reduce
+	stage0_layer7_ffn_tp4 -> stage0_layer7_ffn_reduce
+	stage0_layer7_ffn_tp5 -> stage0_layer7_ffn_reduce
+	stage0_layer7_ffn_tp6 -> stage0_layer7_ffn_reduce
+	stage0_layer7_ffn_tp7 -> stage0_layer7_ffn_reduce
+	stage0_layer7_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[0, 1, 2, 3, 4, 5, 6, 7]"]
+	stage0_layer7_residual1 -> stage0_layer7_residual2
+	stage0_layer7_ffn_reduce -> stage0_layer7_residual2
+	pipeline_stage0_to_stage1 [label="Pipeline Transfer
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+FROM_GPUs=[0-7]
+TO_GPUs=[8-15]" fillcolor=orange shape=parallelogram]
+	stage0_layer7_residual2 -> pipeline_stage0_to_stage1
+	stage1_layer8_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	pipeline_stage0_to_stage1 -> stage1_layer8_split
+	stage1_layer8_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer8_split -> stage1_layer8_ln1_tp0
+	stage1_layer8_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer8_split -> stage1_layer8_ln1_tp1
+	stage1_layer8_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer8_split -> stage1_layer8_ln1_tp2
+	stage1_layer8_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer8_split -> stage1_layer8_ln1_tp3
+	stage1_layer8_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer8_split -> stage1_layer8_ln1_tp4
+	stage1_layer8_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer8_split -> stage1_layer8_ln1_tp5
+	stage1_layer8_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer8_split -> stage1_layer8_ln1_tp6
+	stage1_layer8_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer8_split -> stage1_layer8_ln1_tp7
+	stage1_layer8_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer8_ln1_tp0 -> stage1_layer8_attn_tp0
+	stage1_layer8_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer8_ln1_tp1 -> stage1_layer8_attn_tp1
+	stage1_layer8_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer8_ln1_tp2 -> stage1_layer8_attn_tp2
+	stage1_layer8_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer8_ln1_tp3 -> stage1_layer8_attn_tp3
+	stage1_layer8_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer8_ln1_tp4 -> stage1_layer8_attn_tp4
+	stage1_layer8_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer8_ln1_tp5 -> stage1_layer8_attn_tp5
+	stage1_layer8_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer8_ln1_tp6 -> stage1_layer8_attn_tp6
+	stage1_layer8_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer8_ln1_tp7 -> stage1_layer8_attn_tp7
+	stage1_layer8_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer8_attn_tp0 -> stage1_layer8_attn_reduce
+	stage1_layer8_attn_tp1 -> stage1_layer8_attn_reduce
+	stage1_layer8_attn_tp2 -> stage1_layer8_attn_reduce
+	stage1_layer8_attn_tp3 -> stage1_layer8_attn_reduce
+	stage1_layer8_attn_tp4 -> stage1_layer8_attn_reduce
+	stage1_layer8_attn_tp5 -> stage1_layer8_attn_reduce
+	stage1_layer8_attn_tp6 -> stage1_layer8_attn_reduce
+	stage1_layer8_attn_tp7 -> stage1_layer8_attn_reduce
+	stage1_layer8_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	pipeline_stage0_to_stage1 -> stage1_layer8_residual1
+	stage1_layer8_attn_reduce -> stage1_layer8_residual1
+	stage1_layer8_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer8_residual1 -> stage1_layer8_ffn_split
+	stage1_layer8_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer8_ffn_split -> stage1_layer8_ln2_tp0
+	stage1_layer8_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer8_ffn_split -> stage1_layer8_ln2_tp1
+	stage1_layer8_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer8_ffn_split -> stage1_layer8_ln2_tp2
+	stage1_layer8_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer8_ffn_split -> stage1_layer8_ln2_tp3
+	stage1_layer8_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer8_ffn_split -> stage1_layer8_ln2_tp4
+	stage1_layer8_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer8_ffn_split -> stage1_layer8_ln2_tp5
+	stage1_layer8_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer8_ffn_split -> stage1_layer8_ln2_tp6
+	stage1_layer8_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer8_ffn_split -> stage1_layer8_ln2_tp7
+	stage1_layer8_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer8_ln2_tp0 -> stage1_layer8_ffn_tp0
+	stage1_layer8_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer8_ln2_tp1 -> stage1_layer8_ffn_tp1
+	stage1_layer8_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer8_ln2_tp2 -> stage1_layer8_ffn_tp2
+	stage1_layer8_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer8_ln2_tp3 -> stage1_layer8_ffn_tp3
+	stage1_layer8_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer8_ln2_tp4 -> stage1_layer8_ffn_tp4
+	stage1_layer8_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer8_ln2_tp5 -> stage1_layer8_ffn_tp5
+	stage1_layer8_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer8_ln2_tp6 -> stage1_layer8_ffn_tp6
+	stage1_layer8_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer8_ln2_tp7 -> stage1_layer8_ffn_tp7
+	stage1_layer8_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer8_ffn_tp0 -> stage1_layer8_ffn_reduce
+	stage1_layer8_ffn_tp1 -> stage1_layer8_ffn_reduce
+	stage1_layer8_ffn_tp2 -> stage1_layer8_ffn_reduce
+	stage1_layer8_ffn_tp3 -> stage1_layer8_ffn_reduce
+	stage1_layer8_ffn_tp4 -> stage1_layer8_ffn_reduce
+	stage1_layer8_ffn_tp5 -> stage1_layer8_ffn_reduce
+	stage1_layer8_ffn_tp6 -> stage1_layer8_ffn_reduce
+	stage1_layer8_ffn_tp7 -> stage1_layer8_ffn_reduce
+	stage1_layer8_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer8_residual1 -> stage1_layer8_residual2
+	stage1_layer8_ffn_reduce -> stage1_layer8_residual2
+	stage1_layer9_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer8_residual2 -> stage1_layer9_split
+	stage1_layer9_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer9_split -> stage1_layer9_ln1_tp0
+	stage1_layer9_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer9_split -> stage1_layer9_ln1_tp1
+	stage1_layer9_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer9_split -> stage1_layer9_ln1_tp2
+	stage1_layer9_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer9_split -> stage1_layer9_ln1_tp3
+	stage1_layer9_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer9_split -> stage1_layer9_ln1_tp4
+	stage1_layer9_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer9_split -> stage1_layer9_ln1_tp5
+	stage1_layer9_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer9_split -> stage1_layer9_ln1_tp6
+	stage1_layer9_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer9_split -> stage1_layer9_ln1_tp7
+	stage1_layer9_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer9_ln1_tp0 -> stage1_layer9_attn_tp0
+	stage1_layer9_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer9_ln1_tp1 -> stage1_layer9_attn_tp1
+	stage1_layer9_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer9_ln1_tp2 -> stage1_layer9_attn_tp2
+	stage1_layer9_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer9_ln1_tp3 -> stage1_layer9_attn_tp3
+	stage1_layer9_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer9_ln1_tp4 -> stage1_layer9_attn_tp4
+	stage1_layer9_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer9_ln1_tp5 -> stage1_layer9_attn_tp5
+	stage1_layer9_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer9_ln1_tp6 -> stage1_layer9_attn_tp6
+	stage1_layer9_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer9_ln1_tp7 -> stage1_layer9_attn_tp7
+	stage1_layer9_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer9_attn_tp0 -> stage1_layer9_attn_reduce
+	stage1_layer9_attn_tp1 -> stage1_layer9_attn_reduce
+	stage1_layer9_attn_tp2 -> stage1_layer9_attn_reduce
+	stage1_layer9_attn_tp3 -> stage1_layer9_attn_reduce
+	stage1_layer9_attn_tp4 -> stage1_layer9_attn_reduce
+	stage1_layer9_attn_tp5 -> stage1_layer9_attn_reduce
+	stage1_layer9_attn_tp6 -> stage1_layer9_attn_reduce
+	stage1_layer9_attn_tp7 -> stage1_layer9_attn_reduce
+	stage1_layer9_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer8_residual2 -> stage1_layer9_residual1
+	stage1_layer9_attn_reduce -> stage1_layer9_residual1
+	stage1_layer9_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer9_residual1 -> stage1_layer9_ffn_split
+	stage1_layer9_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer9_ffn_split -> stage1_layer9_ln2_tp0
+	stage1_layer9_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer9_ffn_split -> stage1_layer9_ln2_tp1
+	stage1_layer9_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer9_ffn_split -> stage1_layer9_ln2_tp2
+	stage1_layer9_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer9_ffn_split -> stage1_layer9_ln2_tp3
+	stage1_layer9_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer9_ffn_split -> stage1_layer9_ln2_tp4
+	stage1_layer9_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer9_ffn_split -> stage1_layer9_ln2_tp5
+	stage1_layer9_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer9_ffn_split -> stage1_layer9_ln2_tp6
+	stage1_layer9_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer9_ffn_split -> stage1_layer9_ln2_tp7
+	stage1_layer9_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer9_ln2_tp0 -> stage1_layer9_ffn_tp0
+	stage1_layer9_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer9_ln2_tp1 -> stage1_layer9_ffn_tp1
+	stage1_layer9_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer9_ln2_tp2 -> stage1_layer9_ffn_tp2
+	stage1_layer9_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer9_ln2_tp3 -> stage1_layer9_ffn_tp3
+	stage1_layer9_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer9_ln2_tp4 -> stage1_layer9_ffn_tp4
+	stage1_layer9_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer9_ln2_tp5 -> stage1_layer9_ffn_tp5
+	stage1_layer9_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer9_ln2_tp6 -> stage1_layer9_ffn_tp6
+	stage1_layer9_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer9_ln2_tp7 -> stage1_layer9_ffn_tp7
+	stage1_layer9_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer9_ffn_tp0 -> stage1_layer9_ffn_reduce
+	stage1_layer9_ffn_tp1 -> stage1_layer9_ffn_reduce
+	stage1_layer9_ffn_tp2 -> stage1_layer9_ffn_reduce
+	stage1_layer9_ffn_tp3 -> stage1_layer9_ffn_reduce
+	stage1_layer9_ffn_tp4 -> stage1_layer9_ffn_reduce
+	stage1_layer9_ffn_tp5 -> stage1_layer9_ffn_reduce
+	stage1_layer9_ffn_tp6 -> stage1_layer9_ffn_reduce
+	stage1_layer9_ffn_tp7 -> stage1_layer9_ffn_reduce
+	stage1_layer9_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer9_residual1 -> stage1_layer9_residual2
+	stage1_layer9_ffn_reduce -> stage1_layer9_residual2
+	stage1_layer10_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer9_residual2 -> stage1_layer10_split
+	stage1_layer10_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer10_split -> stage1_layer10_ln1_tp0
+	stage1_layer10_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer10_split -> stage1_layer10_ln1_tp1
+	stage1_layer10_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer10_split -> stage1_layer10_ln1_tp2
+	stage1_layer10_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer10_split -> stage1_layer10_ln1_tp3
+	stage1_layer10_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer10_split -> stage1_layer10_ln1_tp4
+	stage1_layer10_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer10_split -> stage1_layer10_ln1_tp5
+	stage1_layer10_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer10_split -> stage1_layer10_ln1_tp6
+	stage1_layer10_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer10_split -> stage1_layer10_ln1_tp7
+	stage1_layer10_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer10_ln1_tp0 -> stage1_layer10_attn_tp0
+	stage1_layer10_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer10_ln1_tp1 -> stage1_layer10_attn_tp1
+	stage1_layer10_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer10_ln1_tp2 -> stage1_layer10_attn_tp2
+	stage1_layer10_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer10_ln1_tp3 -> stage1_layer10_attn_tp3
+	stage1_layer10_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer10_ln1_tp4 -> stage1_layer10_attn_tp4
+	stage1_layer10_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer10_ln1_tp5 -> stage1_layer10_attn_tp5
+	stage1_layer10_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer10_ln1_tp6 -> stage1_layer10_attn_tp6
+	stage1_layer10_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer10_ln1_tp7 -> stage1_layer10_attn_tp7
+	stage1_layer10_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer10_attn_tp0 -> stage1_layer10_attn_reduce
+	stage1_layer10_attn_tp1 -> stage1_layer10_attn_reduce
+	stage1_layer10_attn_tp2 -> stage1_layer10_attn_reduce
+	stage1_layer10_attn_tp3 -> stage1_layer10_attn_reduce
+	stage1_layer10_attn_tp4 -> stage1_layer10_attn_reduce
+	stage1_layer10_attn_tp5 -> stage1_layer10_attn_reduce
+	stage1_layer10_attn_tp6 -> stage1_layer10_attn_reduce
+	stage1_layer10_attn_tp7 -> stage1_layer10_attn_reduce
+	stage1_layer10_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer9_residual2 -> stage1_layer10_residual1
+	stage1_layer10_attn_reduce -> stage1_layer10_residual1
+	stage1_layer10_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer10_residual1 -> stage1_layer10_ffn_split
+	stage1_layer10_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer10_ffn_split -> stage1_layer10_ln2_tp0
+	stage1_layer10_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer10_ffn_split -> stage1_layer10_ln2_tp1
+	stage1_layer10_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer10_ffn_split -> stage1_layer10_ln2_tp2
+	stage1_layer10_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer10_ffn_split -> stage1_layer10_ln2_tp3
+	stage1_layer10_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer10_ffn_split -> stage1_layer10_ln2_tp4
+	stage1_layer10_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer10_ffn_split -> stage1_layer10_ln2_tp5
+	stage1_layer10_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer10_ffn_split -> stage1_layer10_ln2_tp6
+	stage1_layer10_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer10_ffn_split -> stage1_layer10_ln2_tp7
+	stage1_layer10_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer10_ln2_tp0 -> stage1_layer10_ffn_tp0
+	stage1_layer10_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer10_ln2_tp1 -> stage1_layer10_ffn_tp1
+	stage1_layer10_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer10_ln2_tp2 -> stage1_layer10_ffn_tp2
+	stage1_layer10_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer10_ln2_tp3 -> stage1_layer10_ffn_tp3
+	stage1_layer10_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer10_ln2_tp4 -> stage1_layer10_ffn_tp4
+	stage1_layer10_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer10_ln2_tp5 -> stage1_layer10_ffn_tp5
+	stage1_layer10_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer10_ln2_tp6 -> stage1_layer10_ffn_tp6
+	stage1_layer10_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer10_ln2_tp7 -> stage1_layer10_ffn_tp7
+	stage1_layer10_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer10_ffn_tp0 -> stage1_layer10_ffn_reduce
+	stage1_layer10_ffn_tp1 -> stage1_layer10_ffn_reduce
+	stage1_layer10_ffn_tp2 -> stage1_layer10_ffn_reduce
+	stage1_layer10_ffn_tp3 -> stage1_layer10_ffn_reduce
+	stage1_layer10_ffn_tp4 -> stage1_layer10_ffn_reduce
+	stage1_layer10_ffn_tp5 -> stage1_layer10_ffn_reduce
+	stage1_layer10_ffn_tp6 -> stage1_layer10_ffn_reduce
+	stage1_layer10_ffn_tp7 -> stage1_layer10_ffn_reduce
+	stage1_layer10_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer10_residual1 -> stage1_layer10_residual2
+	stage1_layer10_ffn_reduce -> stage1_layer10_residual2
+	stage1_layer11_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer10_residual2 -> stage1_layer11_split
+	stage1_layer11_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer11_split -> stage1_layer11_ln1_tp0
+	stage1_layer11_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer11_split -> stage1_layer11_ln1_tp1
+	stage1_layer11_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer11_split -> stage1_layer11_ln1_tp2
+	stage1_layer11_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer11_split -> stage1_layer11_ln1_tp3
+	stage1_layer11_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer11_split -> stage1_layer11_ln1_tp4
+	stage1_layer11_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer11_split -> stage1_layer11_ln1_tp5
+	stage1_layer11_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer11_split -> stage1_layer11_ln1_tp6
+	stage1_layer11_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer11_split -> stage1_layer11_ln1_tp7
+	stage1_layer11_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer11_ln1_tp0 -> stage1_layer11_attn_tp0
+	stage1_layer11_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer11_ln1_tp1 -> stage1_layer11_attn_tp1
+	stage1_layer11_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer11_ln1_tp2 -> stage1_layer11_attn_tp2
+	stage1_layer11_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer11_ln1_tp3 -> stage1_layer11_attn_tp3
+	stage1_layer11_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer11_ln1_tp4 -> stage1_layer11_attn_tp4
+	stage1_layer11_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer11_ln1_tp5 -> stage1_layer11_attn_tp5
+	stage1_layer11_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer11_ln1_tp6 -> stage1_layer11_attn_tp6
+	stage1_layer11_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer11_ln1_tp7 -> stage1_layer11_attn_tp7
+	stage1_layer11_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer11_attn_tp0 -> stage1_layer11_attn_reduce
+	stage1_layer11_attn_tp1 -> stage1_layer11_attn_reduce
+	stage1_layer11_attn_tp2 -> stage1_layer11_attn_reduce
+	stage1_layer11_attn_tp3 -> stage1_layer11_attn_reduce
+	stage1_layer11_attn_tp4 -> stage1_layer11_attn_reduce
+	stage1_layer11_attn_tp5 -> stage1_layer11_attn_reduce
+	stage1_layer11_attn_tp6 -> stage1_layer11_attn_reduce
+	stage1_layer11_attn_tp7 -> stage1_layer11_attn_reduce
+	stage1_layer11_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer10_residual2 -> stage1_layer11_residual1
+	stage1_layer11_attn_reduce -> stage1_layer11_residual1
+	stage1_layer11_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer11_residual1 -> stage1_layer11_ffn_split
+	stage1_layer11_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer11_ffn_split -> stage1_layer11_ln2_tp0
+	stage1_layer11_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer11_ffn_split -> stage1_layer11_ln2_tp1
+	stage1_layer11_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer11_ffn_split -> stage1_layer11_ln2_tp2
+	stage1_layer11_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer11_ffn_split -> stage1_layer11_ln2_tp3
+	stage1_layer11_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer11_ffn_split -> stage1_layer11_ln2_tp4
+	stage1_layer11_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer11_ffn_split -> stage1_layer11_ln2_tp5
+	stage1_layer11_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer11_ffn_split -> stage1_layer11_ln2_tp6
+	stage1_layer11_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer11_ffn_split -> stage1_layer11_ln2_tp7
+	stage1_layer11_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer11_ln2_tp0 -> stage1_layer11_ffn_tp0
+	stage1_layer11_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer11_ln2_tp1 -> stage1_layer11_ffn_tp1
+	stage1_layer11_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer11_ln2_tp2 -> stage1_layer11_ffn_tp2
+	stage1_layer11_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer11_ln2_tp3 -> stage1_layer11_ffn_tp3
+	stage1_layer11_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer11_ln2_tp4 -> stage1_layer11_ffn_tp4
+	stage1_layer11_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer11_ln2_tp5 -> stage1_layer11_ffn_tp5
+	stage1_layer11_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer11_ln2_tp6 -> stage1_layer11_ffn_tp6
+	stage1_layer11_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer11_ln2_tp7 -> stage1_layer11_ffn_tp7
+	stage1_layer11_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer11_ffn_tp0 -> stage1_layer11_ffn_reduce
+	stage1_layer11_ffn_tp1 -> stage1_layer11_ffn_reduce
+	stage1_layer11_ffn_tp2 -> stage1_layer11_ffn_reduce
+	stage1_layer11_ffn_tp3 -> stage1_layer11_ffn_reduce
+	stage1_layer11_ffn_tp4 -> stage1_layer11_ffn_reduce
+	stage1_layer11_ffn_tp5 -> stage1_layer11_ffn_reduce
+	stage1_layer11_ffn_tp6 -> stage1_layer11_ffn_reduce
+	stage1_layer11_ffn_tp7 -> stage1_layer11_ffn_reduce
+	stage1_layer11_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer11_residual1 -> stage1_layer11_residual2
+	stage1_layer11_ffn_reduce -> stage1_layer11_residual2
+	stage1_layer12_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer11_residual2 -> stage1_layer12_split
+	stage1_layer12_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer12_split -> stage1_layer12_ln1_tp0
+	stage1_layer12_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer12_split -> stage1_layer12_ln1_tp1
+	stage1_layer12_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer12_split -> stage1_layer12_ln1_tp2
+	stage1_layer12_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer12_split -> stage1_layer12_ln1_tp3
+	stage1_layer12_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer12_split -> stage1_layer12_ln1_tp4
+	stage1_layer12_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer12_split -> stage1_layer12_ln1_tp5
+	stage1_layer12_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer12_split -> stage1_layer12_ln1_tp6
+	stage1_layer12_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer12_split -> stage1_layer12_ln1_tp7
+	stage1_layer12_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer12_ln1_tp0 -> stage1_layer12_attn_tp0
+	stage1_layer12_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer12_ln1_tp1 -> stage1_layer12_attn_tp1
+	stage1_layer12_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer12_ln1_tp2 -> stage1_layer12_attn_tp2
+	stage1_layer12_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer12_ln1_tp3 -> stage1_layer12_attn_tp3
+	stage1_layer12_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer12_ln1_tp4 -> stage1_layer12_attn_tp4
+	stage1_layer12_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer12_ln1_tp5 -> stage1_layer12_attn_tp5
+	stage1_layer12_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer12_ln1_tp6 -> stage1_layer12_attn_tp6
+	stage1_layer12_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer12_ln1_tp7 -> stage1_layer12_attn_tp7
+	stage1_layer12_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer12_attn_tp0 -> stage1_layer12_attn_reduce
+	stage1_layer12_attn_tp1 -> stage1_layer12_attn_reduce
+	stage1_layer12_attn_tp2 -> stage1_layer12_attn_reduce
+	stage1_layer12_attn_tp3 -> stage1_layer12_attn_reduce
+	stage1_layer12_attn_tp4 -> stage1_layer12_attn_reduce
+	stage1_layer12_attn_tp5 -> stage1_layer12_attn_reduce
+	stage1_layer12_attn_tp6 -> stage1_layer12_attn_reduce
+	stage1_layer12_attn_tp7 -> stage1_layer12_attn_reduce
+	stage1_layer12_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer11_residual2 -> stage1_layer12_residual1
+	stage1_layer12_attn_reduce -> stage1_layer12_residual1
+	stage1_layer12_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer12_residual1 -> stage1_layer12_ffn_split
+	stage1_layer12_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer12_ffn_split -> stage1_layer12_ln2_tp0
+	stage1_layer12_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer12_ffn_split -> stage1_layer12_ln2_tp1
+	stage1_layer12_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer12_ffn_split -> stage1_layer12_ln2_tp2
+	stage1_layer12_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer12_ffn_split -> stage1_layer12_ln2_tp3
+	stage1_layer12_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer12_ffn_split -> stage1_layer12_ln2_tp4
+	stage1_layer12_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer12_ffn_split -> stage1_layer12_ln2_tp5
+	stage1_layer12_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer12_ffn_split -> stage1_layer12_ln2_tp6
+	stage1_layer12_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer12_ffn_split -> stage1_layer12_ln2_tp7
+	stage1_layer12_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer12_ln2_tp0 -> stage1_layer12_ffn_tp0
+	stage1_layer12_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer12_ln2_tp1 -> stage1_layer12_ffn_tp1
+	stage1_layer12_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer12_ln2_tp2 -> stage1_layer12_ffn_tp2
+	stage1_layer12_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer12_ln2_tp3 -> stage1_layer12_ffn_tp3
+	stage1_layer12_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer12_ln2_tp4 -> stage1_layer12_ffn_tp4
+	stage1_layer12_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer12_ln2_tp5 -> stage1_layer12_ffn_tp5
+	stage1_layer12_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer12_ln2_tp6 -> stage1_layer12_ffn_tp6
+	stage1_layer12_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer12_ln2_tp7 -> stage1_layer12_ffn_tp7
+	stage1_layer12_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer12_ffn_tp0 -> stage1_layer12_ffn_reduce
+	stage1_layer12_ffn_tp1 -> stage1_layer12_ffn_reduce
+	stage1_layer12_ffn_tp2 -> stage1_layer12_ffn_reduce
+	stage1_layer12_ffn_tp3 -> stage1_layer12_ffn_reduce
+	stage1_layer12_ffn_tp4 -> stage1_layer12_ffn_reduce
+	stage1_layer12_ffn_tp5 -> stage1_layer12_ffn_reduce
+	stage1_layer12_ffn_tp6 -> stage1_layer12_ffn_reduce
+	stage1_layer12_ffn_tp7 -> stage1_layer12_ffn_reduce
+	stage1_layer12_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer12_residual1 -> stage1_layer12_residual2
+	stage1_layer12_ffn_reduce -> stage1_layer12_residual2
+	stage1_layer13_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer12_residual2 -> stage1_layer13_split
+	stage1_layer13_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer13_split -> stage1_layer13_ln1_tp0
+	stage1_layer13_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer13_split -> stage1_layer13_ln1_tp1
+	stage1_layer13_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer13_split -> stage1_layer13_ln1_tp2
+	stage1_layer13_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer13_split -> stage1_layer13_ln1_tp3
+	stage1_layer13_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer13_split -> stage1_layer13_ln1_tp4
+	stage1_layer13_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer13_split -> stage1_layer13_ln1_tp5
+	stage1_layer13_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer13_split -> stage1_layer13_ln1_tp6
+	stage1_layer13_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer13_split -> stage1_layer13_ln1_tp7
+	stage1_layer13_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer13_ln1_tp0 -> stage1_layer13_attn_tp0
+	stage1_layer13_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer13_ln1_tp1 -> stage1_layer13_attn_tp1
+	stage1_layer13_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer13_ln1_tp2 -> stage1_layer13_attn_tp2
+	stage1_layer13_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer13_ln1_tp3 -> stage1_layer13_attn_tp3
+	stage1_layer13_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer13_ln1_tp4 -> stage1_layer13_attn_tp4
+	stage1_layer13_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer13_ln1_tp5 -> stage1_layer13_attn_tp5
+	stage1_layer13_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer13_ln1_tp6 -> stage1_layer13_attn_tp6
+	stage1_layer13_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer13_ln1_tp7 -> stage1_layer13_attn_tp7
+	stage1_layer13_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer13_attn_tp0 -> stage1_layer13_attn_reduce
+	stage1_layer13_attn_tp1 -> stage1_layer13_attn_reduce
+	stage1_layer13_attn_tp2 -> stage1_layer13_attn_reduce
+	stage1_layer13_attn_tp3 -> stage1_layer13_attn_reduce
+	stage1_layer13_attn_tp4 -> stage1_layer13_attn_reduce
+	stage1_layer13_attn_tp5 -> stage1_layer13_attn_reduce
+	stage1_layer13_attn_tp6 -> stage1_layer13_attn_reduce
+	stage1_layer13_attn_tp7 -> stage1_layer13_attn_reduce
+	stage1_layer13_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer12_residual2 -> stage1_layer13_residual1
+	stage1_layer13_attn_reduce -> stage1_layer13_residual1
+	stage1_layer13_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer13_residual1 -> stage1_layer13_ffn_split
+	stage1_layer13_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer13_ffn_split -> stage1_layer13_ln2_tp0
+	stage1_layer13_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer13_ffn_split -> stage1_layer13_ln2_tp1
+	stage1_layer13_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer13_ffn_split -> stage1_layer13_ln2_tp2
+	stage1_layer13_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer13_ffn_split -> stage1_layer13_ln2_tp3
+	stage1_layer13_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer13_ffn_split -> stage1_layer13_ln2_tp4
+	stage1_layer13_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer13_ffn_split -> stage1_layer13_ln2_tp5
+	stage1_layer13_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer13_ffn_split -> stage1_layer13_ln2_tp6
+	stage1_layer13_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer13_ffn_split -> stage1_layer13_ln2_tp7
+	stage1_layer13_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer13_ln2_tp0 -> stage1_layer13_ffn_tp0
+	stage1_layer13_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer13_ln2_tp1 -> stage1_layer13_ffn_tp1
+	stage1_layer13_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer13_ln2_tp2 -> stage1_layer13_ffn_tp2
+	stage1_layer13_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer13_ln2_tp3 -> stage1_layer13_ffn_tp3
+	stage1_layer13_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer13_ln2_tp4 -> stage1_layer13_ffn_tp4
+	stage1_layer13_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer13_ln2_tp5 -> stage1_layer13_ffn_tp5
+	stage1_layer13_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer13_ln2_tp6 -> stage1_layer13_ffn_tp6
+	stage1_layer13_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer13_ln2_tp7 -> stage1_layer13_ffn_tp7
+	stage1_layer13_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer13_ffn_tp0 -> stage1_layer13_ffn_reduce
+	stage1_layer13_ffn_tp1 -> stage1_layer13_ffn_reduce
+	stage1_layer13_ffn_tp2 -> stage1_layer13_ffn_reduce
+	stage1_layer13_ffn_tp3 -> stage1_layer13_ffn_reduce
+	stage1_layer13_ffn_tp4 -> stage1_layer13_ffn_reduce
+	stage1_layer13_ffn_tp5 -> stage1_layer13_ffn_reduce
+	stage1_layer13_ffn_tp6 -> stage1_layer13_ffn_reduce
+	stage1_layer13_ffn_tp7 -> stage1_layer13_ffn_reduce
+	stage1_layer13_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer13_residual1 -> stage1_layer13_residual2
+	stage1_layer13_ffn_reduce -> stage1_layer13_residual2
+	stage1_layer14_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer13_residual2 -> stage1_layer14_split
+	stage1_layer14_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer14_split -> stage1_layer14_ln1_tp0
+	stage1_layer14_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer14_split -> stage1_layer14_ln1_tp1
+	stage1_layer14_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer14_split -> stage1_layer14_ln1_tp2
+	stage1_layer14_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer14_split -> stage1_layer14_ln1_tp3
+	stage1_layer14_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer14_split -> stage1_layer14_ln1_tp4
+	stage1_layer14_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer14_split -> stage1_layer14_ln1_tp5
+	stage1_layer14_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer14_split -> stage1_layer14_ln1_tp6
+	stage1_layer14_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer14_split -> stage1_layer14_ln1_tp7
+	stage1_layer14_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer14_ln1_tp0 -> stage1_layer14_attn_tp0
+	stage1_layer14_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer14_ln1_tp1 -> stage1_layer14_attn_tp1
+	stage1_layer14_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer14_ln1_tp2 -> stage1_layer14_attn_tp2
+	stage1_layer14_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer14_ln1_tp3 -> stage1_layer14_attn_tp3
+	stage1_layer14_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer14_ln1_tp4 -> stage1_layer14_attn_tp4
+	stage1_layer14_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer14_ln1_tp5 -> stage1_layer14_attn_tp5
+	stage1_layer14_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer14_ln1_tp6 -> stage1_layer14_attn_tp6
+	stage1_layer14_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer14_ln1_tp7 -> stage1_layer14_attn_tp7
+	stage1_layer14_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer14_attn_tp0 -> stage1_layer14_attn_reduce
+	stage1_layer14_attn_tp1 -> stage1_layer14_attn_reduce
+	stage1_layer14_attn_tp2 -> stage1_layer14_attn_reduce
+	stage1_layer14_attn_tp3 -> stage1_layer14_attn_reduce
+	stage1_layer14_attn_tp4 -> stage1_layer14_attn_reduce
+	stage1_layer14_attn_tp5 -> stage1_layer14_attn_reduce
+	stage1_layer14_attn_tp6 -> stage1_layer14_attn_reduce
+	stage1_layer14_attn_tp7 -> stage1_layer14_attn_reduce
+	stage1_layer14_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer13_residual2 -> stage1_layer14_residual1
+	stage1_layer14_attn_reduce -> stage1_layer14_residual1
+	stage1_layer14_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer14_residual1 -> stage1_layer14_ffn_split
+	stage1_layer14_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer14_ffn_split -> stage1_layer14_ln2_tp0
+	stage1_layer14_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer14_ffn_split -> stage1_layer14_ln2_tp1
+	stage1_layer14_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer14_ffn_split -> stage1_layer14_ln2_tp2
+	stage1_layer14_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer14_ffn_split -> stage1_layer14_ln2_tp3
+	stage1_layer14_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer14_ffn_split -> stage1_layer14_ln2_tp4
+	stage1_layer14_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer14_ffn_split -> stage1_layer14_ln2_tp5
+	stage1_layer14_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer14_ffn_split -> stage1_layer14_ln2_tp6
+	stage1_layer14_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer14_ffn_split -> stage1_layer14_ln2_tp7
+	stage1_layer14_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer14_ln2_tp0 -> stage1_layer14_ffn_tp0
+	stage1_layer14_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer14_ln2_tp1 -> stage1_layer14_ffn_tp1
+	stage1_layer14_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer14_ln2_tp2 -> stage1_layer14_ffn_tp2
+	stage1_layer14_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer14_ln2_tp3 -> stage1_layer14_ffn_tp3
+	stage1_layer14_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer14_ln2_tp4 -> stage1_layer14_ffn_tp4
+	stage1_layer14_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer14_ln2_tp5 -> stage1_layer14_ffn_tp5
+	stage1_layer14_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer14_ln2_tp6 -> stage1_layer14_ffn_tp6
+	stage1_layer14_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer14_ln2_tp7 -> stage1_layer14_ffn_tp7
+	stage1_layer14_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer14_ffn_tp0 -> stage1_layer14_ffn_reduce
+	stage1_layer14_ffn_tp1 -> stage1_layer14_ffn_reduce
+	stage1_layer14_ffn_tp2 -> stage1_layer14_ffn_reduce
+	stage1_layer14_ffn_tp3 -> stage1_layer14_ffn_reduce
+	stage1_layer14_ffn_tp4 -> stage1_layer14_ffn_reduce
+	stage1_layer14_ffn_tp5 -> stage1_layer14_ffn_reduce
+	stage1_layer14_ffn_tp6 -> stage1_layer14_ffn_reduce
+	stage1_layer14_ffn_tp7 -> stage1_layer14_ffn_reduce
+	stage1_layer14_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer14_residual1 -> stage1_layer14_residual2
+	stage1_layer14_ffn_reduce -> stage1_layer14_residual2
+	stage1_layer15_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer14_residual2 -> stage1_layer15_split
+	stage1_layer15_ln1_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer15_split -> stage1_layer15_ln1_tp0
+	stage1_layer15_ln1_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer15_split -> stage1_layer15_ln1_tp1
+	stage1_layer15_ln1_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer15_split -> stage1_layer15_ln1_tp2
+	stage1_layer15_ln1_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer15_split -> stage1_layer15_ln1_tp3
+	stage1_layer15_ln1_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer15_split -> stage1_layer15_ln1_tp4
+	stage1_layer15_ln1_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer15_split -> stage1_layer15_ln1_tp5
+	stage1_layer15_ln1_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer15_split -> stage1_layer15_ln1_tp6
+	stage1_layer15_ln1_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer15_split -> stage1_layer15_ln1_tp7
+	stage1_layer15_attn_tp0 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer15_ln1_tp0 -> stage1_layer15_attn_tp0
+	stage1_layer15_attn_tp1 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer15_ln1_tp1 -> stage1_layer15_attn_tp1
+	stage1_layer15_attn_tp2 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer15_ln1_tp2 -> stage1_layer15_attn_tp2
+	stage1_layer15_attn_tp3 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer15_ln1_tp3 -> stage1_layer15_attn_tp3
+	stage1_layer15_attn_tp4 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer15_ln1_tp4 -> stage1_layer15_attn_tp4
+	stage1_layer15_attn_tp5 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer15_ln1_tp5 -> stage1_layer15_attn_tp5
+	stage1_layer15_attn_tp6 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer15_ln1_tp6 -> stage1_layer15_attn_tp6
+	stage1_layer15_attn_tp7 [label="MultiHeadAttention
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer15_ln1_tp7 -> stage1_layer15_attn_tp7
+	stage1_layer15_attn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer15_attn_tp0 -> stage1_layer15_attn_reduce
+	stage1_layer15_attn_tp1 -> stage1_layer15_attn_reduce
+	stage1_layer15_attn_tp2 -> stage1_layer15_attn_reduce
+	stage1_layer15_attn_tp3 -> stage1_layer15_attn_reduce
+	stage1_layer15_attn_tp4 -> stage1_layer15_attn_reduce
+	stage1_layer15_attn_tp5 -> stage1_layer15_attn_reduce
+	stage1_layer15_attn_tp6 -> stage1_layer15_attn_reduce
+	stage1_layer15_attn_tp7 -> stage1_layer15_attn_reduce
+	stage1_layer15_residual1 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer14_residual2 -> stage1_layer15_residual1
+	stage1_layer15_attn_reduce -> stage1_layer15_residual1
+	stage1_layer15_ffn_split [label="Split Tensor
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[8, 1024, seq_len, 1024]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer15_residual1 -> stage1_layer15_ffn_split
+	stage1_layer15_ln2_tp0 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer15_ffn_split -> stage1_layer15_ln2_tp0
+	stage1_layer15_ln2_tp1 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer15_ffn_split -> stage1_layer15_ln2_tp1
+	stage1_layer15_ln2_tp2 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer15_ffn_split -> stage1_layer15_ln2_tp2
+	stage1_layer15_ln2_tp3 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer15_ffn_split -> stage1_layer15_ln2_tp3
+	stage1_layer15_ln2_tp4 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer15_ffn_split -> stage1_layer15_ln2_tp4
+	stage1_layer15_ln2_tp5 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer15_ffn_split -> stage1_layer15_ln2_tp5
+	stage1_layer15_ln2_tp6 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer15_ffn_split -> stage1_layer15_ln2_tp6
+	stage1_layer15_ln2_tp7 [label="LayerNorm
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer15_ffn_split -> stage1_layer15_ln2_tp7
+	stage1_layer15_ffn_tp0 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=8"]
+	stage1_layer15_ln2_tp0 -> stage1_layer15_ffn_tp0
+	stage1_layer15_ffn_tp1 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=9"]
+	stage1_layer15_ln2_tp1 -> stage1_layer15_ffn_tp1
+	stage1_layer15_ffn_tp2 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=10"]
+	stage1_layer15_ln2_tp2 -> stage1_layer15_ffn_tp2
+	stage1_layer15_ffn_tp3 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=11"]
+	stage1_layer15_ln2_tp3 -> stage1_layer15_ffn_tp3
+	stage1_layer15_ffn_tp4 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=12"]
+	stage1_layer15_ln2_tp4 -> stage1_layer15_ffn_tp4
+	stage1_layer15_ffn_tp5 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=13"]
+	stage1_layer15_ln2_tp5 -> stage1_layer15_ffn_tp5
+	stage1_layer15_ffn_tp6 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=14"]
+	stage1_layer15_ln2_tp6 -> stage1_layer15_ffn_tp6
+	stage1_layer15_ffn_tp7 [label="FeedForward
+INPUT=[1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 1024]
+GPU=15"]
+	stage1_layer15_ln2_tp7 -> stage1_layer15_ffn_tp7
+	stage1_layer15_ffn_reduce [label="All-Reduce Sum
+INPUT=[8, 1024, seq_len, 1024]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]" fillcolor=lightyellow shape=parallelogram]
+	stage1_layer15_ffn_tp0 -> stage1_layer15_ffn_reduce
+	stage1_layer15_ffn_tp1 -> stage1_layer15_ffn_reduce
+	stage1_layer15_ffn_tp2 -> stage1_layer15_ffn_reduce
+	stage1_layer15_ffn_tp3 -> stage1_layer15_ffn_reduce
+	stage1_layer15_ffn_tp4 -> stage1_layer15_ffn_reduce
+	stage1_layer15_ffn_tp5 -> stage1_layer15_ffn_reduce
+	stage1_layer15_ffn_tp6 -> stage1_layer15_ffn_reduce
+	stage1_layer15_ffn_tp7 -> stage1_layer15_ffn_reduce
+	stage1_layer15_residual2 [label="ResidualAdd
+INPUT1=[1024, seq_len, 8192]
+INPUT2=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8, 9, 10, 11, 12, 13, 14, 15]"]
+	stage1_layer15_residual1 -> stage1_layer15_residual2
+	stage1_layer15_ffn_reduce -> stage1_layer15_residual2
+	output [label="Model Output
+INPUT=[1024, seq_len, 8192]
+OUTPUT=[1024, seq_len, 8192]
+GPUs=[8-15]" fillcolor=lightgreen shape=ellipse]
+	stage1_layer15_residual2 -> output
+}

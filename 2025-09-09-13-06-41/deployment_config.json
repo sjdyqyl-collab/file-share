@@ -1,0 +1,263 @@
+{
+  "baseline_deployment": {
+    "name": "Baseline_TP8_PP2",
+    "model_config": {
+      "layers": 4,
+      "experts_per_layer": 16,
+      "expert_type": "MLP",
+      "token_dimension": 8192,
+      "mlp_hidden_size": 32768,
+      "precision": "FP16"
+    },
+    "parallel_strategy": {
+      "tensor_parallelism": {
+        "degree": 8,
+        "type": "column_and_row_parallel",
+        "parameters": {
+          "column_parallel_layers": ["mlp_linear1"],
+          "row_parallel_layers": ["mlp_linear2"],
+          "all_reduce_backend": "NCCL"
+        }
+      },
+      "pipeline_parallelism": {
+        "degree": 2,
+        "type": "layer_wise",
+        "parameters": {
+          "layers_per_stage": [2, 2],
+          "micro_batch_size": 512,
+          "communication_backend": "NCCL"
+        }
+      },
+      "expert_parallelism": {
+        "degree": 2,
+        "type": "colocated",
+        "parameters": {
+          "experts_per_gpu": 4,
+          "placement_strategy": "memory_balanced"
+        }
+      }
+    },
+    "device_mapping": {
+      "total_gpus": 16,
+      "gpu_type": "H100",
+      "gpu_memory_gb": 80,
+      "topology": {
+        "stage_0": {
+          "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+          "layers": [0, 1],
+          "experts_per_gpu": 4,
+          "tensor_parallel_group": [0, 1, 2, 3, 4, 5, 6, 7]
+        },
+        "stage_1": {
+          "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+          "layers": [2, 3],
+          "experts_per_gpu": 4,
+          "tensor_parallel_group": [8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      }
+    },
+    "module_division": {
+      "attention_modules": {
+        "tensor_parallel": true,
+        "devices": "shared_across_tp_group"
+      },
+      "expert_modules": {
+        "distribution": "colocated_4_per_gpu",
+        "memory_per_expert_mb": 536,
+        "total_expert_memory_per_gpu_mb": 2144
+      },
+      "routing_modules": {
+        "location": "centralized_per_stage",
+        "devices": "stage_master_gpu"
+      }
+    }
+  },
+  "proposed_deployment": {
+    "name": "Cross_Node_Expert_Parallelism_EP64",
+    "model_config": {
+      "layers": 4,
+      "experts_per_layer": 16,
+      "expert_type": "MLP",
+      "token_dimension": 8192,
+      "mlp_hidden_size": 32768,
+      "precision": "FP16"
+    },
+    "parallel_strategy": {
+      "expert_parallelism": {
+        "degree": 64,
+        "type": "single_expert_per_gpu",
+        "parameters": {
+          "placement_strategy": "topology_aware",
+          "max_experts_per_gpu": 1,
+          "cross_node_distribution": true,
+          "communication_overlap": true
+        }
+      },
+      "pipeline_parallelism": {
+        "degree": 4,
+        "type": "layer_wise_micro_stages",
+        "parameters": {
+          "layers_per_stage": 1,
+          "micro_batch_size": 256,
+          "overlap_communication": true,
+          "communication_backend": "NCCL"
+        }
+      },
+      "tensor_parallelism": {
+        "degree": 1,
+        "type": "optional",
+        "parameters": {
+          "apply_when": "expert_exceeds_gpu_memory",
+          "max_degree": 2,
+          "column_parallel_layers": ["mlp_linear1"],
+          "row_parallel_layers": ["mlp_linear2"]
+        }
+      }
+    },
+    "device_mapping": {
+      "total_gpus": 64,
+      "gpu_type": "H100",
+      "gpu_memory_gb": 80,
+      "topology": {
+        "layer_0": {
+          "experts": [
+            {"id": 0, "gpu": 0, "node": 0},
+            {"id": 1, "gpu": 1, "node": 0},
+            {"id": 2, "gpu": 2, "node": 0},
+            {"id": 3, "gpu": 3, "node": 0},
+            {"id": 4, "gpu": 4, "node": 1},
+            {"id": 5, "gpu": 5, "node": 1},
+            {"id": 6, "gpu": 6, "node": 1},
+            {"id": 7, "gpu": 7, "node": 1},
+            {"id": 8, "gpu": 8, "node": 2},
+            {"id": 9, "gpu": 9, "node": 2},
+            {"id": 10, "gpu": 10, "node": 2},
+            {"id": 11, "gpu": 11, "node": 2},
+            {"id": 12, "gpu": 12, "node": 3},
+            {"id": 13, "gpu": 13, "node": 3},
+            {"id": 14, "gpu": 14, "node": 3},
+            {"id": 15, "gpu": 15, "node": 3}
+          ]
+        },
+        "layer_1": {
+          "experts": [
+            {"id": 16, "gpu": 16, "node": 4},
+            {"id": 17, "gpu": 17, "node": 4},
+            {"id": 18, "gpu": 18, "node": 4},
+            {"id": 19, "gpu": 19, "node": 4},
+            {"id": 20, "gpu": 20, "node": 5},
+            {"id": 21, "gpu": 21, "node": 5},
+            {"id": 22, "gpu": 22, "node": 5},
+            {"id": 23, "gpu": 23, "node": 5},
+            {"id": 24, "gpu": 24, "node": 6},
+            {"id": 25, "gpu": 25, "node": 6},
+            {"id": 26, "gpu": 26, "node": 6},
+            {"id": 27, "gpu": 27, "node": 6},
+            {"id": 28, "gpu": 28, "node": 7},
+            {"id": 29, "gpu": 29, "node": 7},
+            {"id": 30, "gpu": 30, "node": 7},
+            {"id": 31, "gpu": 31, "node": 7}
+          ]
+        },
+        "layer_2": {
+          "experts": [
+            {"id": 32, "gpu": 32, "node": 8},
+            {"id": 33, "gpu": 33, "node": 8},
+            {"id": 34, "gpu": 34, "node": 8},
+            {"id": 35, "gpu": 35, "node": 8},
+            {"id": 36, "gpu": 36, "node": 9},
+            {"id": 37, "gpu": 37, "node": 9},
+            {"id": 38, "gpu": 38, "node": 9},
+            {"id": 39, "gpu": 39, "node": 9},
+            {"id": 40, "gpu": 40, "node": 10},
+            {"id": 41, "gpu": 41, "node": 10},
+            {"id": 42, "gpu": 42, "node": 10},
+            {"id": 43, "gpu": 43, "node": 10},
+            {"id": 44, "gpu": 44, "node": 11},
+            {"id": 45, "gpu": 45, "node": 11},
+            {"id": 46, "gpu": 46, "node": 11},
+            {"id": 47, "gpu": 47, "node": 11}
+          ]
+        },
+        "layer_3": {
+          "experts": [
+            {"id": 48, "gpu": 48, "node": 12},
+            {"id": 49, "gpu": 49, "node": 12},
+            {"id": 50, "gpu": 50, "node": 12},
+            {"id": 51, "gpu": 51, "node": 12},
+            {"id": 52, "gpu": 52, "node": 13},
+            {"id": 53, "gpu": 53, "node": 13},
+            {"id": 54, "gpu": 54, "node": 13},
+            {"id": 55, "gpu": 55, "node": 13},
+            {"id": 56, "gpu": 56, "node": 14},
+            {"id": 57, "gpu": 57, "node": 14},
+            {"id": 58, "gpu": 58, "node": 14},
+            {"id": 59, "gpu": 59, "node": 14},
+            {"id": 60, "gpu": 60, "node": 15},
+            {"id": 61, "gpu": 61, "node": 15},
+            {"id": 62, "gpu": 62, "node": 15},
+            {"id": 63, "gpu": 63, "node": 15}
+          ]
+        }
+      }
+    },
+    "module_division": {
+      "attention_modules": {
+        "distribution": "not_applicable",
+        "note": "Attention handled within token routing"
+      },
+      "expert_modules": {
+        "distribution": "one_per_gpu",
+        "expert_id_mapping": "gpu_id_mod_16",
+        "memory_per_expert_mb": 536,
+        "activation_memory_gb": 50,
+        "total_memory_per_gpu_gb": 51
+      },
+      "routing_modules": {
+        "gating_network": {
+          "location": "distributed_per_token",
+          "computation": "source_gpu_before_routing",
+          "parameters": {
+            "top_k": 2,
+            "load_balance_factor": 0.01
+          }
+        },
+        "token_dispatcher": {
+          "type": "all_to_all",
+          "backend": "NCCL",
+          "buffer_size": "640000_tokens_per_expert",
+          "overlap": true
+        }
+      }
+    },
+    "communication_configuration": {
+      "intra_node": {
+        "bandwidth": "400Gbps_NVLink_4",
+        "latency": "10us"
+      },
+      "inter_node": {
+        "bandwidth": "400Gbps_InfiniBand",
+        "latency": "50us"
+      },
+      "collective_operations": {
+        "all_to_all": {
+          "backend": "NCCL",
+          "algorithm": "ring",
+          "buffer_size": "2GB_per_gpu"
+        }
+      }
+    }
+  },
+  "performance_targets": {
+    "baseline": {
+      "tps": 120000,
+      "tpot_ms": 8.3,
+      "gpu_utilization": "70%"
+    },
+    "proposed": {
+      "tps": 450000,
+      "tpot_ms": 2.2,
+      "gpu_utilization": "90%"
+    }
+  }
+}

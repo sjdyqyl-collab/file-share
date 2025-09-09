@@ -1,0 +1,80 @@
+digraph Proposed_Cross_Node_MoE_Deployment {
+    rankdir=TB;
+    splines=ortho;
+    nodesep=0.3;
+    ranksep=1.5;
+    
+    // Input node
+    input [label="Total Input\nbatch_size=1024\nseq_len=10000\ntoken_dim=8192", shape=parallelogram, fillcolor=lightgreen];
+    
+    // Layer 0 - GPU 0
+    L0_GPU0_mha_qkv [label="MHA QKV Linear\nGPU: 0", shape=rectangle, fillcolor=yellow];
+    L0_GPU0_mha_attn [label="MHA Attention\nGPU: 0", shape=rectangle, fillcolor=yellow];
+    L0_GPU0_mha_residual [label="MHA Residual\nGPU: 0", shape=ellipse, fillcolor=lightcoral];
+    L0_GPU0_gate [label="Expert Gate\nGPU: 0", shape=diamond, fillcolor=orange];
+    L0_GPU0_token_split [label="Token Split\nGPU: 0", shape=hexagon, fillcolor=lightgreen];
+    L0_GPU0_expert [label="Expert 0\nGPU: 0", shape=rectangle, fillcolor=lightblue];
+    L0_GPU0_token_gather [label="Token Gather\nGPU: 0", shape=hexagon, fillcolor=lightgreen];
+    L0_GPU0_final_residual [label="Final Residual\nGPU: 0", shape=ellipse, fillcolor=lightcoral];
+    
+    // Layer 0 - GPU 1
+    L0_GPU1_expert [label="Expert 1\nGPU: 1", shape=rectangle, fillcolor=lightblue];
+    
+    // Layer 0 - GPU 63
+    L0_GPU63_expert [label="Expert 63\nGPU: 63", shape=rectangle, fillcolor=lightblue];
+    
+    // Layer 1 - GPU 0
+    L1_GPU0_mha_qkv [label="MHA QKV Linear\nGPU: 0", shape=rectangle, fillcolor=yellow];
+    L1_GPU0_expert [label="Expert 64\nGPU: 0", shape=rectangle, fillcolor=lightblue];
+    L1_GPU0_final_residual [label="Final Residual\nGPU: 0", shape=ellipse, fillcolor=lightcoral];
+    
+    // Layer 1 - GPU 63
+    L1_GPU63_expert [label="Expert 127\nGPU: 63", shape=rectangle, fillcolor=lightblue];
+    
+    // Layer 2 - GPU 0
+    L2_GPU0_mha_qkv [label="MHA QKV Linear\nGPU: 0", shape=rectangle, fillcolor=yellow];
+    L2_GPU0_expert [label="Expert 128\nGPU: 0", shape=rectangle, fillcolor=lightblue];
+    L2_GPU0_final_residual [label="Final Residual\nGPU: 0", shape=ellipse, fillcolor=lightcoral];
+    
+    // Layer 2 - GPU 63
+    L2_GPU63_expert [label="Expert 191\nGPU: 63", shape=rectangle, fillcolor=lightblue];
+    
+    // Layer 3 - GPU 0
+    L3_GPU0_mha_qkv [label="MHA QKV Linear\nGPU: 0", shape=rectangle, fillcolor=yellow];
+    L3_GPU0_expert [label="Expert 192\nGPU: 0", shape=rectangle, fillcolor=lightblue];
+    L3_GPU0_final_residual [label="Final Residual\nGPU: 0", shape=ellipse, fillcolor=lightcoral];
+    
+    // Layer 3 - GPU 63
+    L3_GPU63_expert [label="Expert 255\nGPU: 63", shape=rectangle, fillcolor=lightblue];
+    
+    // Output node
+    output [label="Total Output\nbatch_size=1024\nseq_len=10000\ntoken_dim=8192", shape=parallelogram, fillcolor=lightgreen];
+    
+    // Connections
+    input -> L0_GPU0_mha_qkv;
+    
+    // Layer 0
+    L0_GPU0_mha_qkv -> L0_GPU0_mha_attn -> L0_GPU0_mha_residual -> L0_GPU0_gate;
+    L0_GPU0_gate -> L0_GPU0_token_split [style=dashed];
+    L0_GPU0_mha_residual -> L0_GPU0_token_split;
+    L0_GPU0_token_split -> L0_GPU0_expert;
+    L0_GPU0_token_split -> L0_GPU1_expert [style=dotted, color=red, label="cross-node"];
+    L0_GPU0_token_split -> L0_GPU63_expert [style=dotted, color=red, label="cross-node"];
+    L0_GPU0_expert -> L0_GPU0_token_gather;
+    L0_GPU1_expert -> L0_GPU0_token_gather [style=dotted, color=blue, label="cross-node"];
+    L0_GPU63_expert -> L0_GPU0_token_gather [style=dotted, color=blue, label="cross-node"];
+    L0_GPU0_token_gather -> L0_GPU0_final_residual;
+    L0_GPU0_mha_residual -> L0_GPU0_final_residual;
+    
+    // Between layers
+    L0_GPU0_final_residual -> L1_GPU0_mha_qkv;
+    L0_GPU0_final_residual -> L1_GPU63_expert [style=dotted, color=red, label="cross-layer"];
+    L1_GPU0_final_residual -> L2_GPU0_mha_qkv;
+    L1_GPU0_final_residual -> L2_GPU63_expert [style=dotted, color=red, label="cross-layer"];
+    L2_GPU0_final_residual -> L3_GPU0_mha_qkv;
+    L2_GPU0_final_residual -> L3_GPU63_expert [style=dotted, color=red, label="cross-layer"];
+    
+    // Output
+    L3_GPU0_final_residual -> output;
+    L3_GPU63_final_residual -> output;
+}

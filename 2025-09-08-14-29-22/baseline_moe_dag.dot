@@ -1,0 +1,1423 @@
+// 4-layer MoE Baseline Deployment
+digraph baseline_moe_dag {
+	concentrate=true rankdir=TB size="100,100"
+	global_input [label="Global Input
+[B=1024, S=10000, D=8192]" fillcolor=lightyellow shape=ellipse style=filled]
+	layer_0_ln [label="LayerNorm
+[B=1024, S=10000, D=8192]" fillcolor=lightcyan shape=rectangle style=filled]
+	global_input -> layer_0_ln
+	layer_0_mha_tp0 [label="MHA TP0
+[B=1024, S=10000, D=1024]
+GPU0" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_mha_tp0
+	layer_0_mha_tp1 [label="MHA TP1
+[B=1024, S=10000, D=1024]
+GPU1" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_mha_tp1
+	layer_0_mha_tp2 [label="MHA TP2
+[B=1024, S=10000, D=1024]
+GPU2" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_mha_tp2
+	layer_0_mha_tp3 [label="MHA TP3
+[B=1024, S=10000, D=1024]
+GPU3" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_mha_tp3
+	layer_0_mha_tp4 [label="MHA TP4
+[B=1024, S=10000, D=1024]
+GPU4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_mha_tp4
+	layer_0_mha_tp5 [label="MHA TP5
+[B=1024, S=10000, D=1024]
+GPU5" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_mha_tp5
+	layer_0_mha_tp6 [label="MHA TP6
+[B=1024, S=10000, D=1024]
+GPU6" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_mha_tp6
+	layer_0_mha_tp7 [label="MHA TP7
+[B=1024, S=10000, D=1024]
+GPU7" fillcolor=lightpink shape=rectangle style=filled]
+	layer_0_ln -> layer_0_mha_tp7
+	layer_0_mha_ar [label="MHA All-Reduce
+[B=1024, S=10000, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+	layer_0_mha_tp0 -> layer_0_mha_ar
+	layer_0_mha_tp1 -> layer_0_mha_ar
+	layer_0_mha_tp2 -> layer_0_mha_ar
+	layer_0_mha_tp3 -> layer_0_mha_ar
+	layer_0_mha_tp4 -> layer_0_mha_ar
+	layer_0_mha_tp5 -> layer_0_mha_ar
+	layer_0_mha_tp6 -> layer_0_mha_ar
+	layer_0_mha_tp7 -> layer_0_mha_ar
+	layer_0_residual1 [label="Residual Add
+[B=1024, S=10000, D=8192]" fillcolor=lightgreen shape=diamond style=filled]
+	global_input -> layer_0_residual1
+	layer_0_mha_ar -> layer_0_residual1
+	layer_0_ln2 [label="LayerNorm
+[B=1024, S=10000, D=8192]" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_residual1 -> layer_0_ln2
+	layer_0_expert_0_0 [label="Expert 0
+[B=?, S=?, D=32768]
+GPU0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_0_0 [label="Gate 0
+Select tokens
+GPU0" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_0_0 [style=dashed]
+	layer_0_gate_0_0 -> layer_0_expert_0_0
+	layer_0_expert_0_1 [label="Expert 1
+[B=?, S=?, D=32768]
+GPU0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_0_1 [label="Gate 1
+Select tokens
+GPU0" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_0_1 [style=dashed]
+	layer_0_gate_0_1 -> layer_0_expert_0_1
+	layer_0_expert_0_2 [label="Expert 2
+[B=?, S=?, D=32768]
+GPU0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_0_2 [label="Gate 2
+Select tokens
+GPU0" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_0_2 [style=dashed]
+	layer_0_gate_0_2 -> layer_0_expert_0_2
+	layer_0_expert_0_3 [label="Expert 3
+[B=?, S=?, D=32768]
+GPU0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_0_3 [label="Gate 3
+Select tokens
+GPU0" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_0_3 [style=dashed]
+	layer_0_gate_0_3 -> layer_0_expert_0_3
+	layer_0_expert_1_0 [label="Expert 4
+[B=?, S=?, D=32768]
+GPU1" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_1_0 [label="Gate 4
+Select tokens
+GPU1" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_1_0 [style=dashed]
+	layer_0_gate_1_0 -> layer_0_expert_1_0
+	layer_0_expert_1_1 [label="Expert 5
+[B=?, S=?, D=32768]
+GPU1" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_1_1 [label="Gate 5
+Select tokens
+GPU1" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_1_1 [style=dashed]
+	layer_0_gate_1_1 -> layer_0_expert_1_1
+	layer_0_expert_1_2 [label="Expert 6
+[B=?, S=?, D=32768]
+GPU1" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_1_2 [label="Gate 6
+Select tokens
+GPU1" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_1_2 [style=dashed]
+	layer_0_gate_1_2 -> layer_0_expert_1_2
+	layer_0_expert_1_3 [label="Expert 7
+[B=?, S=?, D=32768]
+GPU1" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_1_3 [label="Gate 7
+Select tokens
+GPU1" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_1_3 [style=dashed]
+	layer_0_gate_1_3 -> layer_0_expert_1_3
+	layer_0_expert_2_0 [label="Expert 8
+[B=?, S=?, D=32768]
+GPU2" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_2_0 [label="Gate 8
+Select tokens
+GPU2" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_2_0 [style=dashed]
+	layer_0_gate_2_0 -> layer_0_expert_2_0
+	layer_0_expert_2_1 [label="Expert 9
+[B=?, S=?, D=32768]
+GPU2" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_2_1 [label="Gate 9
+Select tokens
+GPU2" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_2_1 [style=dashed]
+	layer_0_gate_2_1 -> layer_0_expert_2_1
+	layer_0_expert_2_2 [label="Expert 10
+[B=?, S=?, D=32768]
+GPU2" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_2_2 [label="Gate 10
+Select tokens
+GPU2" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_2_2 [style=dashed]
+	layer_0_gate_2_2 -> layer_0_expert_2_2
+	layer_0_expert_2_3 [label="Expert 11
+[B=?, S=?, D=32768]
+GPU2" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_2_3 [label="Gate 11
+Select tokens
+GPU2" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_2_3 [style=dashed]
+	layer_0_gate_2_3 -> layer_0_expert_2_3
+	layer_0_expert_3_0 [label="Expert 12
+[B=?, S=?, D=32768]
+GPU3" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_3_0 [label="Gate 12
+Select tokens
+GPU3" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_3_0 [style=dashed]
+	layer_0_gate_3_0 -> layer_0_expert_3_0
+	layer_0_expert_3_1 [label="Expert 13
+[B=?, S=?, D=32768]
+GPU3" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_3_1 [label="Gate 13
+Select tokens
+GPU3" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_3_1 [style=dashed]
+	layer_0_gate_3_1 -> layer_0_expert_3_1
+	layer_0_expert_3_2 [label="Expert 14
+[B=?, S=?, D=32768]
+GPU3" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_3_2 [label="Gate 14
+Select tokens
+GPU3" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_3_2 [style=dashed]
+	layer_0_gate_3_2 -> layer_0_expert_3_2
+	layer_0_expert_3_3 [label="Expert 15
+[B=?, S=?, D=32768]
+GPU3" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_3_3 [label="Gate 15
+Select tokens
+GPU3" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_3_3 [style=dashed]
+	layer_0_gate_3_3 -> layer_0_expert_3_3
+	layer_0_expert_4_0 [label="Expert 16
+[B=?, S=?, D=32768]
+GPU4" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_4_0 [label="Gate 16
+Select tokens
+GPU4" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_4_0 [style=dashed]
+	layer_0_gate_4_0 -> layer_0_expert_4_0
+	layer_0_expert_4_1 [label="Expert 17
+[B=?, S=?, D=32768]
+GPU4" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_4_1 [label="Gate 17
+Select tokens
+GPU4" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_4_1 [style=dashed]
+	layer_0_gate_4_1 -> layer_0_expert_4_1
+	layer_0_expert_4_2 [label="Expert 18
+[B=?, S=?, D=32768]
+GPU4" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_4_2 [label="Gate 18
+Select tokens
+GPU4" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_4_2 [style=dashed]
+	layer_0_gate_4_2 -> layer_0_expert_4_2
+	layer_0_expert_4_3 [label="Expert 19
+[B=?, S=?, D=32768]
+GPU4" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_4_3 [label="Gate 19
+Select tokens
+GPU4" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_4_3 [style=dashed]
+	layer_0_gate_4_3 -> layer_0_expert_4_3
+	layer_0_expert_5_0 [label="Expert 20
+[B=?, S=?, D=32768]
+GPU5" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_5_0 [label="Gate 20
+Select tokens
+GPU5" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_5_0 [style=dashed]
+	layer_0_gate_5_0 -> layer_0_expert_5_0
+	layer_0_expert_5_1 [label="Expert 21
+[B=?, S=?, D=32768]
+GPU5" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_5_1 [label="Gate 21
+Select tokens
+GPU5" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_5_1 [style=dashed]
+	layer_0_gate_5_1 -> layer_0_expert_5_1
+	layer_0_expert_5_2 [label="Expert 22
+[B=?, S=?, D=32768]
+GPU5" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_5_2 [label="Gate 22
+Select tokens
+GPU5" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_5_2 [style=dashed]
+	layer_0_gate_5_2 -> layer_0_expert_5_2
+	layer_0_expert_5_3 [label="Expert 23
+[B=?, S=?, D=32768]
+GPU5" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_5_3 [label="Gate 23
+Select tokens
+GPU5" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_5_3 [style=dashed]
+	layer_0_gate_5_3 -> layer_0_expert_5_3
+	layer_0_expert_6_0 [label="Expert 24
+[B=?, S=?, D=32768]
+GPU6" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_6_0 [label="Gate 24
+Select tokens
+GPU6" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_6_0 [style=dashed]
+	layer_0_gate_6_0 -> layer_0_expert_6_0
+	layer_0_expert_6_1 [label="Expert 25
+[B=?, S=?, D=32768]
+GPU6" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_6_1 [label="Gate 25
+Select tokens
+GPU6" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_6_1 [style=dashed]
+	layer_0_gate_6_1 -> layer_0_expert_6_1
+	layer_0_expert_6_2 [label="Expert 26
+[B=?, S=?, D=32768]
+GPU6" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_6_2 [label="Gate 26
+Select tokens
+GPU6" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_6_2 [style=dashed]
+	layer_0_gate_6_2 -> layer_0_expert_6_2
+	layer_0_expert_6_3 [label="Expert 27
+[B=?, S=?, D=32768]
+GPU6" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_6_3 [label="Gate 27
+Select tokens
+GPU6" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_6_3 [style=dashed]
+	layer_0_gate_6_3 -> layer_0_expert_6_3
+	layer_0_expert_7_0 [label="Expert 28
+[B=?, S=?, D=32768]
+GPU7" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_7_0 [label="Gate 28
+Select tokens
+GPU7" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_7_0 [style=dashed]
+	layer_0_gate_7_0 -> layer_0_expert_7_0
+	layer_0_expert_7_1 [label="Expert 29
+[B=?, S=?, D=32768]
+GPU7" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_7_1 [label="Gate 29
+Select tokens
+GPU7" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_7_1 [style=dashed]
+	layer_0_gate_7_1 -> layer_0_expert_7_1
+	layer_0_expert_7_2 [label="Expert 30
+[B=?, S=?, D=32768]
+GPU7" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_7_2 [label="Gate 30
+Select tokens
+GPU7" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_7_2 [style=dashed]
+	layer_0_gate_7_2 -> layer_0_expert_7_2
+	layer_0_expert_7_3 [label="Expert 31
+[B=?, S=?, D=32768]
+GPU7" fillcolor=lightblue shape=rectangle style=filled]
+	layer_0_gate_7_3 [label="Gate 31
+Select tokens
+GPU7" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_0_ln2 -> layer_0_expert_7_3 [style=dashed]
+	layer_0_gate_7_3 -> layer_0_expert_7_3
+	layer_0_expert_agg [label="Expert Aggregation
+[B=1024, S=10000, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+	layer_0_expert_0_0 -> layer_0_expert_agg
+	layer_0_expert_0_1 -> layer_0_expert_agg
+	layer_0_expert_0_2 -> layer_0_expert_agg
+	layer_0_expert_0_3 -> layer_0_expert_agg
+	layer_0_expert_1_0 -> layer_0_expert_agg
+	layer_0_expert_1_1 -> layer_0_expert_agg
+	layer_0_expert_1_2 -> layer_0_expert_agg
+	layer_0_expert_1_3 -> layer_0_expert_agg
+	layer_0_expert_2_0 -> layer_0_expert_agg
+	layer_0_expert_2_1 -> layer_0_expert_agg
+	layer_0_expert_2_2 -> layer_0_expert_agg
+	layer_0_expert_2_3 -> layer_0_expert_agg
+	layer_0_expert_3_0 -> layer_0_expert_agg
+	layer_0_expert_3_1 -> layer_0_expert_agg
+	layer_0_expert_3_2 -> layer_0_expert_agg
+	layer_0_expert_3_3 -> layer_0_expert_agg
+	layer_0_expert_4_0 -> layer_0_expert_agg
+	layer_0_expert_4_1 -> layer_0_expert_agg
+	layer_0_expert_4_2 -> layer_0_expert_agg
+	layer_0_expert_4_3 -> layer_0_expert_agg
+	layer_0_expert_5_0 -> layer_0_expert_agg
+	layer_0_expert_5_1 -> layer_0_expert_agg
+	layer_0_expert_5_2 -> layer_0_expert_agg
+	layer_0_expert_5_3 -> layer_0_expert_agg
+	layer_0_expert_6_0 -> layer_0_expert_agg
+	layer_0_expert_6_1 -> layer_0_expert_agg
+	layer_0_expert_6_2 -> layer_0_expert_agg
+	layer_0_expert_6_3 -> layer_0_expert_agg
+	layer_0_expert_7_0 -> layer_0_expert_agg
+	layer_0_expert_7_1 -> layer_0_expert_agg
+	layer_0_expert_7_2 -> layer_0_expert_agg
+	layer_0_expert_7_3 -> layer_0_expert_agg
+	layer_0_residual2 [label="Residual Add
+[B=1024, S=10000, D=8192]" fillcolor=lightgreen shape=diamond style=filled]
+	layer_0_residual1 -> layer_0_residual2
+	layer_0_expert_agg -> layer_0_residual2
+	layer_0_output [label="Layer 0 Output
+[B=1024, S=10000, D=8192]" fillcolor=lightgray shape=ellipse style=filled]
+	layer_0_residual2 -> layer_0_output
+	layer_1_ln [label="LayerNorm
+[B=1024, S=10000, D=8192]" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_output -> layer_1_ln
+	layer_1_mha_tp0 [label="MHA TP0
+[B=1024, S=10000, D=1024]
+GPU0" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_mha_tp0
+	layer_1_mha_tp1 [label="MHA TP1
+[B=1024, S=10000, D=1024]
+GPU1" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_mha_tp1
+	layer_1_mha_tp2 [label="MHA TP2
+[B=1024, S=10000, D=1024]
+GPU2" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_mha_tp2
+	layer_1_mha_tp3 [label="MHA TP3
+[B=1024, S=10000, D=1024]
+GPU3" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_mha_tp3
+	layer_1_mha_tp4 [label="MHA TP4
+[B=1024, S=10000, D=1024]
+GPU4" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_mha_tp4
+	layer_1_mha_tp5 [label="MHA TP5
+[B=1024, S=10000, D=1024]
+GPU5" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_mha_tp5
+	layer_1_mha_tp6 [label="MHA TP6
+[B=1024, S=10000, D=1024]
+GPU6" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_mha_tp6
+	layer_1_mha_tp7 [label="MHA TP7
+[B=1024, S=10000, D=1024]
+GPU7" fillcolor=lightpink shape=rectangle style=filled]
+	layer_1_ln -> layer_1_mha_tp7
+	layer_1_mha_ar [label="MHA All-Reduce
+[B=1024, S=10000, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+	layer_1_mha_tp0 -> layer_1_mha_ar
+	layer_1_mha_tp1 -> layer_1_mha_ar
+	layer_1_mha_tp2 -> layer_1_mha_ar
+	layer_1_mha_tp3 -> layer_1_mha_ar
+	layer_1_mha_tp4 -> layer_1_mha_ar
+	layer_1_mha_tp5 -> layer_1_mha_ar
+	layer_1_mha_tp6 -> layer_1_mha_ar
+	layer_1_mha_tp7 -> layer_1_mha_ar
+	layer_1_residual1 [label="Residual Add
+[B=1024, S=10000, D=8192]" fillcolor=lightgreen shape=diamond style=filled]
+	layer_0_output -> layer_1_residual1
+	layer_1_mha_ar -> layer_1_residual1
+	layer_1_ln2 [label="LayerNorm
+[B=1024, S=10000, D=8192]" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_residual1 -> layer_1_ln2
+	layer_1_expert_0_0 [label="Expert 0
+[B=?, S=?, D=32768]
+GPU0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_0_0 [label="Gate 0
+Select tokens
+GPU0" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_0_0 [style=dashed]
+	layer_1_gate_0_0 -> layer_1_expert_0_0
+	layer_1_expert_0_1 [label="Expert 1
+[B=?, S=?, D=32768]
+GPU0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_0_1 [label="Gate 1
+Select tokens
+GPU0" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_0_1 [style=dashed]
+	layer_1_gate_0_1 -> layer_1_expert_0_1
+	layer_1_expert_0_2 [label="Expert 2
+[B=?, S=?, D=32768]
+GPU0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_0_2 [label="Gate 2
+Select tokens
+GPU0" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_0_2 [style=dashed]
+	layer_1_gate_0_2 -> layer_1_expert_0_2
+	layer_1_expert_0_3 [label="Expert 3
+[B=?, S=?, D=32768]
+GPU0" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_0_3 [label="Gate 3
+Select tokens
+GPU0" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_0_3 [style=dashed]
+	layer_1_gate_0_3 -> layer_1_expert_0_3
+	layer_1_expert_1_0 [label="Expert 4
+[B=?, S=?, D=32768]
+GPU1" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_1_0 [label="Gate 4
+Select tokens
+GPU1" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_1_0 [style=dashed]
+	layer_1_gate_1_0 -> layer_1_expert_1_0
+	layer_1_expert_1_1 [label="Expert 5
+[B=?, S=?, D=32768]
+GPU1" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_1_1 [label="Gate 5
+Select tokens
+GPU1" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_1_1 [style=dashed]
+	layer_1_gate_1_1 -> layer_1_expert_1_1
+	layer_1_expert_1_2 [label="Expert 6
+[B=?, S=?, D=32768]
+GPU1" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_1_2 [label="Gate 6
+Select tokens
+GPU1" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_1_2 [style=dashed]
+	layer_1_gate_1_2 -> layer_1_expert_1_2
+	layer_1_expert_1_3 [label="Expert 7
+[B=?, S=?, D=32768]
+GPU1" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_1_3 [label="Gate 7
+Select tokens
+GPU1" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_1_3 [style=dashed]
+	layer_1_gate_1_3 -> layer_1_expert_1_3
+	layer_1_expert_2_0 [label="Expert 8
+[B=?, S=?, D=32768]
+GPU2" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_2_0 [label="Gate 8
+Select tokens
+GPU2" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_2_0 [style=dashed]
+	layer_1_gate_2_0 -> layer_1_expert_2_0
+	layer_1_expert_2_1 [label="Expert 9
+[B=?, S=?, D=32768]
+GPU2" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_2_1 [label="Gate 9
+Select tokens
+GPU2" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_2_1 [style=dashed]
+	layer_1_gate_2_1 -> layer_1_expert_2_1
+	layer_1_expert_2_2 [label="Expert 10
+[B=?, S=?, D=32768]
+GPU2" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_2_2 [label="Gate 10
+Select tokens
+GPU2" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_2_2 [style=dashed]
+	layer_1_gate_2_2 -> layer_1_expert_2_2
+	layer_1_expert_2_3 [label="Expert 11
+[B=?, S=?, D=32768]
+GPU2" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_2_3 [label="Gate 11
+Select tokens
+GPU2" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_2_3 [style=dashed]
+	layer_1_gate_2_3 -> layer_1_expert_2_3
+	layer_1_expert_3_0 [label="Expert 12
+[B=?, S=?, D=32768]
+GPU3" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_3_0 [label="Gate 12
+Select tokens
+GPU3" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_3_0 [style=dashed]
+	layer_1_gate_3_0 -> layer_1_expert_3_0
+	layer_1_expert_3_1 [label="Expert 13
+[B=?, S=?, D=32768]
+GPU3" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_3_1 [label="Gate 13
+Select tokens
+GPU3" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_3_1 [style=dashed]
+	layer_1_gate_3_1 -> layer_1_expert_3_1
+	layer_1_expert_3_2 [label="Expert 14
+[B=?, S=?, D=32768]
+GPU3" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_3_2 [label="Gate 14
+Select tokens
+GPU3" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_3_2 [style=dashed]
+	layer_1_gate_3_2 -> layer_1_expert_3_2
+	layer_1_expert_3_3 [label="Expert 15
+[B=?, S=?, D=32768]
+GPU3" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_3_3 [label="Gate 15
+Select tokens
+GPU3" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_3_3 [style=dashed]
+	layer_1_gate_3_3 -> layer_1_expert_3_3
+	layer_1_expert_4_0 [label="Expert 16
+[B=?, S=?, D=32768]
+GPU4" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_4_0 [label="Gate 16
+Select tokens
+GPU4" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_4_0 [style=dashed]
+	layer_1_gate_4_0 -> layer_1_expert_4_0
+	layer_1_expert_4_1 [label="Expert 17
+[B=?, S=?, D=32768]
+GPU4" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_4_1 [label="Gate 17
+Select tokens
+GPU4" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_4_1 [style=dashed]
+	layer_1_gate_4_1 -> layer_1_expert_4_1
+	layer_1_expert_4_2 [label="Expert 18
+[B=?, S=?, D=32768]
+GPU4" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_4_2 [label="Gate 18
+Select tokens
+GPU4" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_4_2 [style=dashed]
+	layer_1_gate_4_2 -> layer_1_expert_4_2
+	layer_1_expert_4_3 [label="Expert 19
+[B=?, S=?, D=32768]
+GPU4" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_4_3 [label="Gate 19
+Select tokens
+GPU4" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_4_3 [style=dashed]
+	layer_1_gate_4_3 -> layer_1_expert_4_3
+	layer_1_expert_5_0 [label="Expert 20
+[B=?, S=?, D=32768]
+GPU5" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_5_0 [label="Gate 20
+Select tokens
+GPU5" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_5_0 [style=dashed]
+	layer_1_gate_5_0 -> layer_1_expert_5_0
+	layer_1_expert_5_1 [label="Expert 21
+[B=?, S=?, D=32768]
+GPU5" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_5_1 [label="Gate 21
+Select tokens
+GPU5" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_5_1 [style=dashed]
+	layer_1_gate_5_1 -> layer_1_expert_5_1
+	layer_1_expert_5_2 [label="Expert 22
+[B=?, S=?, D=32768]
+GPU5" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_5_2 [label="Gate 22
+Select tokens
+GPU5" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_5_2 [style=dashed]
+	layer_1_gate_5_2 -> layer_1_expert_5_2
+	layer_1_expert_5_3 [label="Expert 23
+[B=?, S=?, D=32768]
+GPU5" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_5_3 [label="Gate 23
+Select tokens
+GPU5" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_5_3 [style=dashed]
+	layer_1_gate_5_3 -> layer_1_expert_5_3
+	layer_1_expert_6_0 [label="Expert 24
+[B=?, S=?, D=32768]
+GPU6" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_6_0 [label="Gate 24
+Select tokens
+GPU6" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_6_0 [style=dashed]
+	layer_1_gate_6_0 -> layer_1_expert_6_0
+	layer_1_expert_6_1 [label="Expert 25
+[B=?, S=?, D=32768]
+GPU6" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_6_1 [label="Gate 25
+Select tokens
+GPU6" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_6_1 [style=dashed]
+	layer_1_gate_6_1 -> layer_1_expert_6_1
+	layer_1_expert_6_2 [label="Expert 26
+[B=?, S=?, D=32768]
+GPU6" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_6_2 [label="Gate 26
+Select tokens
+GPU6" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_6_2 [style=dashed]
+	layer_1_gate_6_2 -> layer_1_expert_6_2
+	layer_1_expert_6_3 [label="Expert 27
+[B=?, S=?, D=32768]
+GPU6" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_6_3 [label="Gate 27
+Select tokens
+GPU6" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_6_3 [style=dashed]
+	layer_1_gate_6_3 -> layer_1_expert_6_3
+	layer_1_expert_7_0 [label="Expert 28
+[B=?, S=?, D=32768]
+GPU7" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_7_0 [label="Gate 28
+Select tokens
+GPU7" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_7_0 [style=dashed]
+	layer_1_gate_7_0 -> layer_1_expert_7_0
+	layer_1_expert_7_1 [label="Expert 29
+[B=?, S=?, D=32768]
+GPU7" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_7_1 [label="Gate 29
+Select tokens
+GPU7" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_7_1 [style=dashed]
+	layer_1_gate_7_1 -> layer_1_expert_7_1
+	layer_1_expert_7_2 [label="Expert 30
+[B=?, S=?, D=32768]
+GPU7" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_7_2 [label="Gate 30
+Select tokens
+GPU7" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_7_2 [style=dashed]
+	layer_1_gate_7_2 -> layer_1_expert_7_2
+	layer_1_expert_7_3 [label="Expert 31
+[B=?, S=?, D=32768]
+GPU7" fillcolor=lightblue shape=rectangle style=filled]
+	layer_1_gate_7_3 [label="Gate 31
+Select tokens
+GPU7" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_1_ln2 -> layer_1_expert_7_3 [style=dashed]
+	layer_1_gate_7_3 -> layer_1_expert_7_3
+	layer_1_expert_agg [label="Expert Aggregation
+[B=1024, S=10000, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+	layer_1_expert_0_0 -> layer_1_expert_agg
+	layer_1_expert_0_1 -> layer_1_expert_agg
+	layer_1_expert_0_2 -> layer_1_expert_agg
+	layer_1_expert_0_3 -> layer_1_expert_agg
+	layer_1_expert_1_0 -> layer_1_expert_agg
+	layer_1_expert_1_1 -> layer_1_expert_agg
+	layer_1_expert_1_2 -> layer_1_expert_agg
+	layer_1_expert_1_3 -> layer_1_expert_agg
+	layer_1_expert_2_0 -> layer_1_expert_agg
+	layer_1_expert_2_1 -> layer_1_expert_agg
+	layer_1_expert_2_2 -> layer_1_expert_agg
+	layer_1_expert_2_3 -> layer_1_expert_agg
+	layer_1_expert_3_0 -> layer_1_expert_agg
+	layer_1_expert_3_1 -> layer_1_expert_agg
+	layer_1_expert_3_2 -> layer_1_expert_agg
+	layer_1_expert_3_3 -> layer_1_expert_agg
+	layer_1_expert_4_0 -> layer_1_expert_agg
+	layer_1_expert_4_1 -> layer_1_expert_agg
+	layer_1_expert_4_2 -> layer_1_expert_agg
+	layer_1_expert_4_3 -> layer_1_expert_agg
+	layer_1_expert_5_0 -> layer_1_expert_agg
+	layer_1_expert_5_1 -> layer_1_expert_agg
+	layer_1_expert_5_2 -> layer_1_expert_agg
+	layer_1_expert_5_3 -> layer_1_expert_agg
+	layer_1_expert_6_0 -> layer_1_expert_agg
+	layer_1_expert_6_1 -> layer_1_expert_agg
+	layer_1_expert_6_2 -> layer_1_expert_agg
+	layer_1_expert_6_3 -> layer_1_expert_agg
+	layer_1_expert_7_0 -> layer_1_expert_agg
+	layer_1_expert_7_1 -> layer_1_expert_agg
+	layer_1_expert_7_2 -> layer_1_expert_agg
+	layer_1_expert_7_3 -> layer_1_expert_agg
+	layer_1_residual2 [label="Residual Add
+[B=1024, S=10000, D=8192]" fillcolor=lightgreen shape=diamond style=filled]
+	layer_1_residual1 -> layer_1_residual2
+	layer_1_expert_agg -> layer_1_residual2
+	layer_1_output [label="Layer 1 Output
+[B=1024, S=10000, D=8192]" fillcolor=lightgray shape=ellipse style=filled]
+	layer_1_residual2 -> layer_1_output
+	subgraph cluster_stage_0 {
+		bgcolor=lightblue color=blue label="Pipeline Stage 0" style=rounded
+		subgraph cluster_layer_0 {
+			color=green label="Layer 0" style=dashed
+		}
+		subgraph cluster_layer_1 {
+			color=green label="Layer 1" style=dashed
+		}
+	}
+	layer_2_ln [label="LayerNorm
+[B=1024, S=10000, D=8192]" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_output -> layer_2_ln
+	layer_2_mha_tp0 [label="MHA TP0
+[B=1024, S=10000, D=1024]
+GPU8" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_mha_tp0
+	layer_2_mha_tp1 [label="MHA TP1
+[B=1024, S=10000, D=1024]
+GPU9" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_mha_tp1
+	layer_2_mha_tp2 [label="MHA TP2
+[B=1024, S=10000, D=1024]
+GPU10" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_mha_tp2
+	layer_2_mha_tp3 [label="MHA TP3
+[B=1024, S=10000, D=1024]
+GPU11" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_mha_tp3
+	layer_2_mha_tp4 [label="MHA TP4
+[B=1024, S=10000, D=1024]
+GPU12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_mha_tp4
+	layer_2_mha_tp5 [label="MHA TP5
+[B=1024, S=10000, D=1024]
+GPU13" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_mha_tp5
+	layer_2_mha_tp6 [label="MHA TP6
+[B=1024, S=10000, D=1024]
+GPU14" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_mha_tp6
+	layer_2_mha_tp7 [label="MHA TP7
+[B=1024, S=10000, D=1024]
+GPU15" fillcolor=lightpink shape=rectangle style=filled]
+	layer_2_ln -> layer_2_mha_tp7
+	layer_2_mha_ar [label="MHA All-Reduce
+[B=1024, S=10000, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+	layer_2_mha_tp0 -> layer_2_mha_ar
+	layer_2_mha_tp1 -> layer_2_mha_ar
+	layer_2_mha_tp2 -> layer_2_mha_ar
+	layer_2_mha_tp3 -> layer_2_mha_ar
+	layer_2_mha_tp4 -> layer_2_mha_ar
+	layer_2_mha_tp5 -> layer_2_mha_ar
+	layer_2_mha_tp6 -> layer_2_mha_ar
+	layer_2_mha_tp7 -> layer_2_mha_ar
+	layer_2_residual1 [label="Residual Add
+[B=1024, S=10000, D=8192]" fillcolor=lightgreen shape=diamond style=filled]
+	layer_1_output -> layer_2_residual1
+	layer_2_mha_ar -> layer_2_residual1
+	layer_2_ln2 [label="LayerNorm
+[B=1024, S=10000, D=8192]" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_residual1 -> layer_2_ln2
+	layer_2_expert_8_0 [label="Expert 0
+[B=?, S=?, D=32768]
+GPU8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_8_0 [label="Gate 0
+Select tokens
+GPU8" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_8_0 [style=dashed]
+	layer_2_gate_8_0 -> layer_2_expert_8_0
+	layer_2_expert_8_1 [label="Expert 1
+[B=?, S=?, D=32768]
+GPU8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_8_1 [label="Gate 1
+Select tokens
+GPU8" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_8_1 [style=dashed]
+	layer_2_gate_8_1 -> layer_2_expert_8_1
+	layer_2_expert_8_2 [label="Expert 2
+[B=?, S=?, D=32768]
+GPU8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_8_2 [label="Gate 2
+Select tokens
+GPU8" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_8_2 [style=dashed]
+	layer_2_gate_8_2 -> layer_2_expert_8_2
+	layer_2_expert_8_3 [label="Expert 3
+[B=?, S=?, D=32768]
+GPU8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_8_3 [label="Gate 3
+Select tokens
+GPU8" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_8_3 [style=dashed]
+	layer_2_gate_8_3 -> layer_2_expert_8_3
+	layer_2_expert_9_0 [label="Expert 4
+[B=?, S=?, D=32768]
+GPU9" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_9_0 [label="Gate 4
+Select tokens
+GPU9" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_9_0 [style=dashed]
+	layer_2_gate_9_0 -> layer_2_expert_9_0
+	layer_2_expert_9_1 [label="Expert 5
+[B=?, S=?, D=32768]
+GPU9" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_9_1 [label="Gate 5
+Select tokens
+GPU9" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_9_1 [style=dashed]
+	layer_2_gate_9_1 -> layer_2_expert_9_1
+	layer_2_expert_9_2 [label="Expert 6
+[B=?, S=?, D=32768]
+GPU9" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_9_2 [label="Gate 6
+Select tokens
+GPU9" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_9_2 [style=dashed]
+	layer_2_gate_9_2 -> layer_2_expert_9_2
+	layer_2_expert_9_3 [label="Expert 7
+[B=?, S=?, D=32768]
+GPU9" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_9_3 [label="Gate 7
+Select tokens
+GPU9" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_9_3 [style=dashed]
+	layer_2_gate_9_3 -> layer_2_expert_9_3
+	layer_2_expert_10_0 [label="Expert 8
+[B=?, S=?, D=32768]
+GPU10" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_10_0 [label="Gate 8
+Select tokens
+GPU10" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_10_0 [style=dashed]
+	layer_2_gate_10_0 -> layer_2_expert_10_0
+	layer_2_expert_10_1 [label="Expert 9
+[B=?, S=?, D=32768]
+GPU10" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_10_1 [label="Gate 9
+Select tokens
+GPU10" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_10_1 [style=dashed]
+	layer_2_gate_10_1 -> layer_2_expert_10_1
+	layer_2_expert_10_2 [label="Expert 10
+[B=?, S=?, D=32768]
+GPU10" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_10_2 [label="Gate 10
+Select tokens
+GPU10" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_10_2 [style=dashed]
+	layer_2_gate_10_2 -> layer_2_expert_10_2
+	layer_2_expert_10_3 [label="Expert 11
+[B=?, S=?, D=32768]
+GPU10" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_10_3 [label="Gate 11
+Select tokens
+GPU10" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_10_3 [style=dashed]
+	layer_2_gate_10_3 -> layer_2_expert_10_3
+	layer_2_expert_11_0 [label="Expert 12
+[B=?, S=?, D=32768]
+GPU11" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_11_0 [label="Gate 12
+Select tokens
+GPU11" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_11_0 [style=dashed]
+	layer_2_gate_11_0 -> layer_2_expert_11_0
+	layer_2_expert_11_1 [label="Expert 13
+[B=?, S=?, D=32768]
+GPU11" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_11_1 [label="Gate 13
+Select tokens
+GPU11" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_11_1 [style=dashed]
+	layer_2_gate_11_1 -> layer_2_expert_11_1
+	layer_2_expert_11_2 [label="Expert 14
+[B=?, S=?, D=32768]
+GPU11" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_11_2 [label="Gate 14
+Select tokens
+GPU11" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_11_2 [style=dashed]
+	layer_2_gate_11_2 -> layer_2_expert_11_2
+	layer_2_expert_11_3 [label="Expert 15
+[B=?, S=?, D=32768]
+GPU11" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_11_3 [label="Gate 15
+Select tokens
+GPU11" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_11_3 [style=dashed]
+	layer_2_gate_11_3 -> layer_2_expert_11_3
+	layer_2_expert_12_0 [label="Expert 16
+[B=?, S=?, D=32768]
+GPU12" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_12_0 [label="Gate 16
+Select tokens
+GPU12" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_12_0 [style=dashed]
+	layer_2_gate_12_0 -> layer_2_expert_12_0
+	layer_2_expert_12_1 [label="Expert 17
+[B=?, S=?, D=32768]
+GPU12" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_12_1 [label="Gate 17
+Select tokens
+GPU12" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_12_1 [style=dashed]
+	layer_2_gate_12_1 -> layer_2_expert_12_1
+	layer_2_expert_12_2 [label="Expert 18
+[B=?, S=?, D=32768]
+GPU12" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_12_2 [label="Gate 18
+Select tokens
+GPU12" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_12_2 [style=dashed]
+	layer_2_gate_12_2 -> layer_2_expert_12_2
+	layer_2_expert_12_3 [label="Expert 19
+[B=?, S=?, D=32768]
+GPU12" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_12_3 [label="Gate 19
+Select tokens
+GPU12" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_12_3 [style=dashed]
+	layer_2_gate_12_3 -> layer_2_expert_12_3
+	layer_2_expert_13_0 [label="Expert 20
+[B=?, S=?, D=32768]
+GPU13" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_13_0 [label="Gate 20
+Select tokens
+GPU13" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_13_0 [style=dashed]
+	layer_2_gate_13_0 -> layer_2_expert_13_0
+	layer_2_expert_13_1 [label="Expert 21
+[B=?, S=?, D=32768]
+GPU13" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_13_1 [label="Gate 21
+Select tokens
+GPU13" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_13_1 [style=dashed]
+	layer_2_gate_13_1 -> layer_2_expert_13_1
+	layer_2_expert_13_2 [label="Expert 22
+[B=?, S=?, D=32768]
+GPU13" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_13_2 [label="Gate 22
+Select tokens
+GPU13" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_13_2 [style=dashed]
+	layer_2_gate_13_2 -> layer_2_expert_13_2
+	layer_2_expert_13_3 [label="Expert 23
+[B=?, S=?, D=32768]
+GPU13" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_13_3 [label="Gate 23
+Select tokens
+GPU13" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_13_3 [style=dashed]
+	layer_2_gate_13_3 -> layer_2_expert_13_3
+	layer_2_expert_14_0 [label="Expert 24
+[B=?, S=?, D=32768]
+GPU14" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_14_0 [label="Gate 24
+Select tokens
+GPU14" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_14_0 [style=dashed]
+	layer_2_gate_14_0 -> layer_2_expert_14_0
+	layer_2_expert_14_1 [label="Expert 25
+[B=?, S=?, D=32768]
+GPU14" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_14_1 [label="Gate 25
+Select tokens
+GPU14" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_14_1 [style=dashed]
+	layer_2_gate_14_1 -> layer_2_expert_14_1
+	layer_2_expert_14_2 [label="Expert 26
+[B=?, S=?, D=32768]
+GPU14" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_14_2 [label="Gate 26
+Select tokens
+GPU14" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_14_2 [style=dashed]
+	layer_2_gate_14_2 -> layer_2_expert_14_2
+	layer_2_expert_14_3 [label="Expert 27
+[B=?, S=?, D=32768]
+GPU14" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_14_3 [label="Gate 27
+Select tokens
+GPU14" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_14_3 [style=dashed]
+	layer_2_gate_14_3 -> layer_2_expert_14_3
+	layer_2_expert_15_0 [label="Expert 28
+[B=?, S=?, D=32768]
+GPU15" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_15_0 [label="Gate 28
+Select tokens
+GPU15" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_15_0 [style=dashed]
+	layer_2_gate_15_0 -> layer_2_expert_15_0
+	layer_2_expert_15_1 [label="Expert 29
+[B=?, S=?, D=32768]
+GPU15" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_15_1 [label="Gate 29
+Select tokens
+GPU15" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_15_1 [style=dashed]
+	layer_2_gate_15_1 -> layer_2_expert_15_1
+	layer_2_expert_15_2 [label="Expert 30
+[B=?, S=?, D=32768]
+GPU15" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_15_2 [label="Gate 30
+Select tokens
+GPU15" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_15_2 [style=dashed]
+	layer_2_gate_15_2 -> layer_2_expert_15_2
+	layer_2_expert_15_3 [label="Expert 31
+[B=?, S=?, D=32768]
+GPU15" fillcolor=lightblue shape=rectangle style=filled]
+	layer_2_gate_15_3 [label="Gate 31
+Select tokens
+GPU15" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_2_ln2 -> layer_2_expert_15_3 [style=dashed]
+	layer_2_gate_15_3 -> layer_2_expert_15_3
+	layer_2_expert_agg [label="Expert Aggregation
+[B=1024, S=10000, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+	layer_2_expert_8_0 -> layer_2_expert_agg
+	layer_2_expert_8_1 -> layer_2_expert_agg
+	layer_2_expert_8_2 -> layer_2_expert_agg
+	layer_2_expert_8_3 -> layer_2_expert_agg
+	layer_2_expert_9_0 -> layer_2_expert_agg
+	layer_2_expert_9_1 -> layer_2_expert_agg
+	layer_2_expert_9_2 -> layer_2_expert_agg
+	layer_2_expert_9_3 -> layer_2_expert_agg
+	layer_2_expert_10_0 -> layer_2_expert_agg
+	layer_2_expert_10_1 -> layer_2_expert_agg
+	layer_2_expert_10_2 -> layer_2_expert_agg
+	layer_2_expert_10_3 -> layer_2_expert_agg
+	layer_2_expert_11_0 -> layer_2_expert_agg
+	layer_2_expert_11_1 -> layer_2_expert_agg
+	layer_2_expert_11_2 -> layer_2_expert_agg
+	layer_2_expert_11_3 -> layer_2_expert_agg
+	layer_2_expert_12_0 -> layer_2_expert_agg
+	layer_2_expert_12_1 -> layer_2_expert_agg
+	layer_2_expert_12_2 -> layer_2_expert_agg
+	layer_2_expert_12_3 -> layer_2_expert_agg
+	layer_2_expert_13_0 -> layer_2_expert_agg
+	layer_2_expert_13_1 -> layer_2_expert_agg
+	layer_2_expert_13_2 -> layer_2_expert_agg
+	layer_2_expert_13_3 -> layer_2_expert_agg
+	layer_2_expert_14_0 -> layer_2_expert_agg
+	layer_2_expert_14_1 -> layer_2_expert_agg
+	layer_2_expert_14_2 -> layer_2_expert_agg
+	layer_2_expert_14_3 -> layer_2_expert_agg
+	layer_2_expert_15_0 -> layer_2_expert_agg
+	layer_2_expert_15_1 -> layer_2_expert_agg
+	layer_2_expert_15_2 -> layer_2_expert_agg
+	layer_2_expert_15_3 -> layer_2_expert_agg
+	layer_2_residual2 [label="Residual Add
+[B=1024, S=10000, D=8192]" fillcolor=lightgreen shape=diamond style=filled]
+	layer_2_residual1 -> layer_2_residual2
+	layer_2_expert_agg -> layer_2_residual2
+	layer_2_output [label="Layer 2 Output
+[B=1024, S=10000, D=8192]" fillcolor=lightgray shape=ellipse style=filled]
+	layer_2_residual2 -> layer_2_output
+	layer_3_ln [label="LayerNorm
+[B=1024, S=10000, D=8192]" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_output -> layer_3_ln
+	layer_3_mha_tp0 [label="MHA TP0
+[B=1024, S=10000, D=1024]
+GPU8" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_mha_tp0
+	layer_3_mha_tp1 [label="MHA TP1
+[B=1024, S=10000, D=1024]
+GPU9" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_mha_tp1
+	layer_3_mha_tp2 [label="MHA TP2
+[B=1024, S=10000, D=1024]
+GPU10" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_mha_tp2
+	layer_3_mha_tp3 [label="MHA TP3
+[B=1024, S=10000, D=1024]
+GPU11" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_mha_tp3
+	layer_3_mha_tp4 [label="MHA TP4
+[B=1024, S=10000, D=1024]
+GPU12" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_mha_tp4
+	layer_3_mha_tp5 [label="MHA TP5
+[B=1024, S=10000, D=1024]
+GPU13" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_mha_tp5
+	layer_3_mha_tp6 [label="MHA TP6
+[B=1024, S=10000, D=1024]
+GPU14" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_mha_tp6
+	layer_3_mha_tp7 [label="MHA TP7
+[B=1024, S=10000, D=1024]
+GPU15" fillcolor=lightpink shape=rectangle style=filled]
+	layer_3_ln -> layer_3_mha_tp7
+	layer_3_mha_ar [label="MHA All-Reduce
+[B=1024, S=10000, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+	layer_3_mha_tp0 -> layer_3_mha_ar
+	layer_3_mha_tp1 -> layer_3_mha_ar
+	layer_3_mha_tp2 -> layer_3_mha_ar
+	layer_3_mha_tp3 -> layer_3_mha_ar
+	layer_3_mha_tp4 -> layer_3_mha_ar
+	layer_3_mha_tp5 -> layer_3_mha_ar
+	layer_3_mha_tp6 -> layer_3_mha_ar
+	layer_3_mha_tp7 -> layer_3_mha_ar
+	layer_3_residual1 [label="Residual Add
+[B=1024, S=10000, D=8192]" fillcolor=lightgreen shape=diamond style=filled]
+	layer_2_output -> layer_3_residual1
+	layer_3_mha_ar -> layer_3_residual1
+	layer_3_ln2 [label="LayerNorm
+[B=1024, S=10000, D=8192]" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_residual1 -> layer_3_ln2
+	layer_3_expert_8_0 [label="Expert 0
+[B=?, S=?, D=32768]
+GPU8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_8_0 [label="Gate 0
+Select tokens
+GPU8" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_8_0 [style=dashed]
+	layer_3_gate_8_0 -> layer_3_expert_8_0
+	layer_3_expert_8_1 [label="Expert 1
+[B=?, S=?, D=32768]
+GPU8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_8_1 [label="Gate 1
+Select tokens
+GPU8" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_8_1 [style=dashed]
+	layer_3_gate_8_1 -> layer_3_expert_8_1
+	layer_3_expert_8_2 [label="Expert 2
+[B=?, S=?, D=32768]
+GPU8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_8_2 [label="Gate 2
+Select tokens
+GPU8" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_8_2 [style=dashed]
+	layer_3_gate_8_2 -> layer_3_expert_8_2
+	layer_3_expert_8_3 [label="Expert 3
+[B=?, S=?, D=32768]
+GPU8" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_8_3 [label="Gate 3
+Select tokens
+GPU8" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_8_3 [style=dashed]
+	layer_3_gate_8_3 -> layer_3_expert_8_3
+	layer_3_expert_9_0 [label="Expert 4
+[B=?, S=?, D=32768]
+GPU9" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_9_0 [label="Gate 4
+Select tokens
+GPU9" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_9_0 [style=dashed]
+	layer_3_gate_9_0 -> layer_3_expert_9_0
+	layer_3_expert_9_1 [label="Expert 5
+[B=?, S=?, D=32768]
+GPU9" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_9_1 [label="Gate 5
+Select tokens
+GPU9" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_9_1 [style=dashed]
+	layer_3_gate_9_1 -> layer_3_expert_9_1
+	layer_3_expert_9_2 [label="Expert 6
+[B=?, S=?, D=32768]
+GPU9" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_9_2 [label="Gate 6
+Select tokens
+GPU9" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_9_2 [style=dashed]
+	layer_3_gate_9_2 -> layer_3_expert_9_2
+	layer_3_expert_9_3 [label="Expert 7
+[B=?, S=?, D=32768]
+GPU9" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_9_3 [label="Gate 7
+Select tokens
+GPU9" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_9_3 [style=dashed]
+	layer_3_gate_9_3 -> layer_3_expert_9_3
+	layer_3_expert_10_0 [label="Expert 8
+[B=?, S=?, D=32768]
+GPU10" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_10_0 [label="Gate 8
+Select tokens
+GPU10" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_10_0 [style=dashed]
+	layer_3_gate_10_0 -> layer_3_expert_10_0
+	layer_3_expert_10_1 [label="Expert 9
+[B=?, S=?, D=32768]
+GPU10" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_10_1 [label="Gate 9
+Select tokens
+GPU10" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_10_1 [style=dashed]
+	layer_3_gate_10_1 -> layer_3_expert_10_1
+	layer_3_expert_10_2 [label="Expert 10
+[B=?, S=?, D=32768]
+GPU10" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_10_2 [label="Gate 10
+Select tokens
+GPU10" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_10_2 [style=dashed]
+	layer_3_gate_10_2 -> layer_3_expert_10_2
+	layer_3_expert_10_3 [label="Expert 11
+[B=?, S=?, D=32768]
+GPU10" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_10_3 [label="Gate 11
+Select tokens
+GPU10" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_10_3 [style=dashed]
+	layer_3_gate_10_3 -> layer_3_expert_10_3
+	layer_3_expert_11_0 [label="Expert 12
+[B=?, S=?, D=32768]
+GPU11" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_11_0 [label="Gate 12
+Select tokens
+GPU11" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_11_0 [style=dashed]
+	layer_3_gate_11_0 -> layer_3_expert_11_0
+	layer_3_expert_11_1 [label="Expert 13
+[B=?, S=?, D=32768]
+GPU11" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_11_1 [label="Gate 13
+Select tokens
+GPU11" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_11_1 [style=dashed]
+	layer_3_gate_11_1 -> layer_3_expert_11_1
+	layer_3_expert_11_2 [label="Expert 14
+[B=?, S=?, D=32768]
+GPU11" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_11_2 [label="Gate 14
+Select tokens
+GPU11" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_11_2 [style=dashed]
+	layer_3_gate_11_2 -> layer_3_expert_11_2
+	layer_3_expert_11_3 [label="Expert 15
+[B=?, S=?, D=32768]
+GPU11" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_11_3 [label="Gate 15
+Select tokens
+GPU11" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_11_3 [style=dashed]
+	layer_3_gate_11_3 -> layer_3_expert_11_3
+	layer_3_expert_12_0 [label="Expert 16
+[B=?, S=?, D=32768]
+GPU12" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_12_0 [label="Gate 16
+Select tokens
+GPU12" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_12_0 [style=dashed]
+	layer_3_gate_12_0 -> layer_3_expert_12_0
+	layer_3_expert_12_1 [label="Expert 17
+[B=?, S=?, D=32768]
+GPU12" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_12_1 [label="Gate 17
+Select tokens
+GPU12" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_12_1 [style=dashed]
+	layer_3_gate_12_1 -> layer_3_expert_12_1
+	layer_3_expert_12_2 [label="Expert 18
+[B=?, S=?, D=32768]
+GPU12" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_12_2 [label="Gate 18
+Select tokens
+GPU12" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_12_2 [style=dashed]
+	layer_3_gate_12_2 -> layer_3_expert_12_2
+	layer_3_expert_12_3 [label="Expert 19
+[B=?, S=?, D=32768]
+GPU12" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_12_3 [label="Gate 19
+Select tokens
+GPU12" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_12_3 [style=dashed]
+	layer_3_gate_12_3 -> layer_3_expert_12_3
+	layer_3_expert_13_0 [label="Expert 20
+[B=?, S=?, D=32768]
+GPU13" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_13_0 [label="Gate 20
+Select tokens
+GPU13" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_13_0 [style=dashed]
+	layer_3_gate_13_0 -> layer_3_expert_13_0
+	layer_3_expert_13_1 [label="Expert 21
+[B=?, S=?, D=32768]
+GPU13" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_13_1 [label="Gate 21
+Select tokens
+GPU13" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_13_1 [style=dashed]
+	layer_3_gate_13_1 -> layer_3_expert_13_1
+	layer_3_expert_13_2 [label="Expert 22
+[B=?, S=?, D=32768]
+GPU13" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_13_2 [label="Gate 22
+Select tokens
+GPU13" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_13_2 [style=dashed]
+	layer_3_gate_13_2 -> layer_3_expert_13_2
+	layer_3_expert_13_3 [label="Expert 23
+[B=?, S=?, D=32768]
+GPU13" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_13_3 [label="Gate 23
+Select tokens
+GPU13" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_13_3 [style=dashed]
+	layer_3_gate_13_3 -> layer_3_expert_13_3
+	layer_3_expert_14_0 [label="Expert 24
+[B=?, S=?, D=32768]
+GPU14" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_14_0 [label="Gate 24
+Select tokens
+GPU14" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_14_0 [style=dashed]
+	layer_3_gate_14_0 -> layer_3_expert_14_0
+	layer_3_expert_14_1 [label="Expert 25
+[B=?, S=?, D=32768]
+GPU14" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_14_1 [label="Gate 25
+Select tokens
+GPU14" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_14_1 [style=dashed]
+	layer_3_gate_14_1 -> layer_3_expert_14_1
+	layer_3_expert_14_2 [label="Expert 26
+[B=?, S=?, D=32768]
+GPU14" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_14_2 [label="Gate 26
+Select tokens
+GPU14" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_14_2 [style=dashed]
+	layer_3_gate_14_2 -> layer_3_expert_14_2
+	layer_3_expert_14_3 [label="Expert 27
+[B=?, S=?, D=32768]
+GPU14" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_14_3 [label="Gate 27
+Select tokens
+GPU14" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_14_3 [style=dashed]
+	layer_3_gate_14_3 -> layer_3_expert_14_3
+	layer_3_expert_15_0 [label="Expert 28
+[B=?, S=?, D=32768]
+GPU15" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_15_0 [label="Gate 28
+Select tokens
+GPU15" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_15_0 [style=dashed]
+	layer_3_gate_15_0 -> layer_3_expert_15_0
+	layer_3_expert_15_1 [label="Expert 29
+[B=?, S=?, D=32768]
+GPU15" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_15_1 [label="Gate 29
+Select tokens
+GPU15" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_15_1 [style=dashed]
+	layer_3_gate_15_1 -> layer_3_expert_15_1
+	layer_3_expert_15_2 [label="Expert 30
+[B=?, S=?, D=32768]
+GPU15" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_15_2 [label="Gate 30
+Select tokens
+GPU15" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_15_2 [style=dashed]
+	layer_3_gate_15_2 -> layer_3_expert_15_2
+	layer_3_expert_15_3 [label="Expert 31
+[B=?, S=?, D=32768]
+GPU15" fillcolor=lightblue shape=rectangle style=filled]
+	layer_3_gate_15_3 [label="Gate 31
+Select tokens
+GPU15" fillcolor=yellow shape=parallelogram style=dashed]
+	layer_3_ln2 -> layer_3_expert_15_3 [style=dashed]
+	layer_3_gate_15_3 -> layer_3_expert_15_3
+	layer_3_expert_agg [label="Expert Aggregation
+[B=1024, S=10000, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+	layer_3_expert_8_0 -> layer_3_expert_agg
+	layer_3_expert_8_1 -> layer_3_expert_agg
+	layer_3_expert_8_2 -> layer_3_expert_agg
+	layer_3_expert_8_3 -> layer_3_expert_agg
+	layer_3_expert_9_0 -> layer_3_expert_agg
+	layer_3_expert_9_1 -> layer_3_expert_agg
+	layer_3_expert_9_2 -> layer_3_expert_agg
+	layer_3_expert_9_3 -> layer_3_expert_agg
+	layer_3_expert_10_0 -> layer_3_expert_agg
+	layer_3_expert_10_1 -> layer_3_expert_agg
+	layer_3_expert_10_2 -> layer_3_expert_agg
+	layer_3_expert_10_3 -> layer_3_expert_agg
+	layer_3_expert_11_0 -> layer_3_expert_agg
+	layer_3_expert_11_1 -> layer_3_expert_agg
+	layer_3_expert_11_2 -> layer_3_expert_agg
+	layer_3_expert_11_3 -> layer_3_expert_agg
+	layer_3_expert_12_0 -> layer_3_expert_agg
+	layer_3_expert_12_1 -> layer_3_expert_agg
+	layer_3_expert_12_2 -> layer_3_expert_agg
+	layer_3_expert_12_3 -> layer_3_expert_agg
+	layer_3_expert_13_0 -> layer_3_expert_agg
+	layer_3_expert_13_1 -> layer_3_expert_agg
+	layer_3_expert_13_2 -> layer_3_expert_agg
+	layer_3_expert_13_3 -> layer_3_expert_agg
+	layer_3_expert_14_0 -> layer_3_expert_agg
+	layer_3_expert_14_1 -> layer_3_expert_agg
+	layer_3_expert_14_2 -> layer_3_expert_agg
+	layer_3_expert_14_3 -> layer_3_expert_agg
+	layer_3_expert_15_0 -> layer_3_expert_agg
+	layer_3_expert_15_1 -> layer_3_expert_agg
+	layer_3_expert_15_2 -> layer_3_expert_agg
+	layer_3_expert_15_3 -> layer_3_expert_agg
+	layer_3_residual2 [label="Residual Add
+[B=1024, S=10000, D=8192]" fillcolor=lightgreen shape=diamond style=filled]
+	layer_3_residual1 -> layer_3_residual2
+	layer_3_expert_agg -> layer_3_residual2
+	layer_3_output [label="Layer 3 Output
+[B=1024, S=10000, D=8192]" fillcolor=lightgray shape=ellipse style=filled]
+	layer_3_residual2 -> layer_3_output
+	subgraph cluster_stage_1 {
+		bgcolor=lightblue color=blue label="Pipeline Stage 1" style=rounded
+		subgraph cluster_layer_2 {
+			color=green label="Layer 2" style=dashed
+		}
+		subgraph cluster_layer_3 {
+			color=green label="Layer 3" style=dashed
+		}
+	}
+	global_output [label="Global Output
+[B=1024, S=10000, D=8192]" fillcolor=lightyellow shape=ellipse style=filled]
+	layer_3_output -> global_output
+}

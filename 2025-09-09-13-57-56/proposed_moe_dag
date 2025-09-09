@@ -1,0 +1,649 @@
+// Proposed Large EP MoE with 1 expert per GPU
+digraph Proposed_Large_EP_MoE {
+	rankdir=TB size="30,40"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	node [fillcolor=lightcoral shape=diamond style=filled]
+	input [label="Input\nInput: [batch_size=1024, seq_len=10000, dim=8192]\nGPU: All GPUs" fillcolor=lightblue shape=ellipse]
+	layer_0_attention_qkv [label="QKV Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_attention_split [label="Split Heads\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_attention_matmul_qk [label="QK^T Matmul\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 16, 10000, 10000]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_attention_softmax [label="Softmax\nInput: [1024, 16, 10000, 10000]\nOutput: [1024, 16, 10000, 10000]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_attention_matmul_v [label="Attention Output\nInput: [1024, 16, 10000, 10000], [1024, 10000, 16, 512]\nOutput: [1024, 10000, 16, 512]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_attention_concat [label="Concat Heads\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 10000, 8192]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_attention_linear [label="Output Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_attention_residual [label="Residual Add\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_attention_layernorm [label="LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_gating [label="Global Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16]\nGPU: 0-15" fillcolor=lightcoral shape=diamond]
+	layer_0_token_routing [label="Token Routing\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-15 → Individual GPUs" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert0_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 0" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert0_linear1 [label="Expert 0 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert0_gelu [label="Expert 0 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert0_linear2 [label="Expert 0 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert0_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert1_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 1" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert1_linear1 [label="Expert 1 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert1_gelu [label="Expert 1 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert1_linear2 [label="Expert 1 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert1_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 1" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert2_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 2" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert2_linear1 [label="Expert 2 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert2_gelu [label="Expert 2 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert2_linear2 [label="Expert 2 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert2_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 2" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert3_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 3" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert3_linear1 [label="Expert 3 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert3_gelu [label="Expert 3 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert3_linear2 [label="Expert 3 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert3_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 3" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert4_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 4" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert4_linear1 [label="Expert 4 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert4_gelu [label="Expert 4 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert4_linear2 [label="Expert 4 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert4_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 4" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert5_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 5" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert5_linear1 [label="Expert 5 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert5_gelu [label="Expert 5 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert5_linear2 [label="Expert 5 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert5_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 5" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert6_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 6" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert6_linear1 [label="Expert 6 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert6_gelu [label="Expert 6 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert6_linear2 [label="Expert 6 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert6_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 6" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert7_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 7" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert7_linear1 [label="Expert 7 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert7_gelu [label="Expert 7 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert7_linear2 [label="Expert 7 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert7_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 7" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert8_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 8" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert8_linear1 [label="Expert 8 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert8_gelu [label="Expert 8 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert8_linear2 [label="Expert 8 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert8_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 8" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert9_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 9" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert9_linear1 [label="Expert 9 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert9_gelu [label="Expert 9 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert9_linear2 [label="Expert 9 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert9_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 9" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert10_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 10" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert10_linear1 [label="Expert 10 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert10_gelu [label="Expert 10 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert10_linear2 [label="Expert 10 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert10_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 10" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert11_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 11" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert11_linear1 [label="Expert 11 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert11_gelu [label="Expert 11 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert11_linear2 [label="Expert 11 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert11_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 11" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert12_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 12" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert12_linear1 [label="Expert 12 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert12_gelu [label="Expert 12 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert12_linear2 [label="Expert 12 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert12_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 12" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert13_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 13" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert13_linear1 [label="Expert 13 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert13_gelu [label="Expert 13 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert13_linear2 [label="Expert 13 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert13_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 13" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert14_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 14" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert14_linear1 [label="Expert 14 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert14_gelu [label="Expert 14 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert14_linear2 [label="Expert 14 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert14_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 14" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert15_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 15" fillcolor=lightyellow shape=parallelogram]
+	layer_0_expert15_linear1 [label="Expert 15 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert15_gelu [label="Expert 15 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert15_linear2 [label="Expert 15 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer_0_expert15_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 15" fillcolor=lightyellow shape=parallelogram]
+	layer_0_aggregation [label="Expert Aggregation\nInput: [1024, 10000, 8192] × 16\nOutput: [1024, 10000, 8192]\nGPU: 0-15" fillcolor=lightyellow shape=parallelogram]
+	layer_0_final_residual [label="Final Residual\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	layer_0_final_layernorm [label="Final LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 0-15" fillcolor=lightgreen shape=rectangle]
+	pipeline_comm_0_1 [label="Pipeline Communication\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 15→16" fillcolor=lightyellow shape=parallelogram]
+	layer_1_attention_qkv [label="QKV Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_attention_split [label="Split Heads\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_attention_matmul_qk [label="QK^T Matmul\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 16, 10000, 10000]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_attention_softmax [label="Softmax\nInput: [1024, 16, 10000, 10000]\nOutput: [1024, 16, 10000, 10000]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_attention_matmul_v [label="Attention Output\nInput: [1024, 16, 10000, 10000], [1024, 10000, 16, 512]\nOutput: [1024, 10000, 16, 512]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_attention_concat [label="Concat Heads\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 10000, 8192]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_attention_linear [label="Output Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_attention_residual [label="Residual Add\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_attention_layernorm [label="LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_gating [label="Global Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16]\nGPU: 16-31" fillcolor=lightcoral shape=diamond]
+	layer_1_token_routing [label="Token Routing\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 16-31 → Individual GPUs" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert0_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 16" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert0_linear1 [label="Expert 0 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 16" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert0_gelu [label="Expert 0 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 16" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert0_linear2 [label="Expert 0 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 16" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert0_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 16" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert1_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 17" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert1_linear1 [label="Expert 1 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 17" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert1_gelu [label="Expert 1 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 17" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert1_linear2 [label="Expert 1 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 17" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert1_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 17" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert2_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 18" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert2_linear1 [label="Expert 2 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 18" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert2_gelu [label="Expert 2 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 18" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert2_linear2 [label="Expert 2 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 18" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert2_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 18" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert3_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 19" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert3_linear1 [label="Expert 3 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 19" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert3_gelu [label="Expert 3 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 19" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert3_linear2 [label="Expert 3 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 19" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert3_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 19" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert4_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 20" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert4_linear1 [label="Expert 4 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 20" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert4_gelu [label="Expert 4 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 20" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert4_linear2 [label="Expert 4 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 20" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert4_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 20" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert5_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 21" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert5_linear1 [label="Expert 5 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 21" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert5_gelu [label="Expert 5 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 21" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert5_linear2 [label="Expert 5 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 21" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert5_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 21" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert6_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 22" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert6_linear1 [label="Expert 6 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 22" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert6_gelu [label="Expert 6 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 22" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert6_linear2 [label="Expert 6 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 22" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert6_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 22" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert7_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 23" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert7_linear1 [label="Expert 7 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 23" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert7_gelu [label="Expert 7 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 23" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert7_linear2 [label="Expert 7 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 23" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert7_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 23" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert8_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 24" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert8_linear1 [label="Expert 8 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 24" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert8_gelu [label="Expert 8 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 24" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert8_linear2 [label="Expert 8 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 24" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert8_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 24" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert9_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 25" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert9_linear1 [label="Expert 9 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 25" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert9_gelu [label="Expert 9 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 25" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert9_linear2 [label="Expert 9 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 25" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert9_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 25" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert10_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 26" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert10_linear1 [label="Expert 10 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 26" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert10_gelu [label="Expert 10 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 26" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert10_linear2 [label="Expert 10 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 26" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert10_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 26" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert11_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 27" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert11_linear1 [label="Expert 11 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 27" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert11_gelu [label="Expert 11 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 27" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert11_linear2 [label="Expert 11 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 27" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert11_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 27" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert12_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 28" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert12_linear1 [label="Expert 12 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 28" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert12_gelu [label="Expert 12 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 28" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert12_linear2 [label="Expert 12 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 28" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert12_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 28" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert13_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 29" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert13_linear1 [label="Expert 13 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 29" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert13_gelu [label="Expert 13 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 29" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert13_linear2 [label="Expert 13 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 29" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert13_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 29" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert14_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 30" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert14_linear1 [label="Expert 14 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 30" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert14_gelu [label="Expert 14 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 30" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert14_linear2 [label="Expert 14 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 30" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert14_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 30" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert15_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 31" fillcolor=lightyellow shape=parallelogram]
+	layer_1_expert15_linear1 [label="Expert 15 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 31" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert15_gelu [label="Expert 15 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 31" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert15_linear2 [label="Expert 15 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 31" fillcolor=lightgreen shape=rectangle]
+	layer_1_expert15_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 31" fillcolor=lightyellow shape=parallelogram]
+	layer_1_aggregation [label="Expert Aggregation\nInput: [1024, 10000, 8192] × 16\nOutput: [1024, 10000, 8192]\nGPU: 16-31" fillcolor=lightyellow shape=parallelogram]
+	layer_1_final_residual [label="Final Residual\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	layer_1_final_layernorm [label="Final LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 16-31" fillcolor=lightgreen shape=rectangle]
+	pipeline_comm_1_2 [label="Pipeline Communication\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 31→32" fillcolor=lightyellow shape=parallelogram]
+	layer_2_attention_qkv [label="QKV Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_attention_split [label="Split Heads\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_attention_matmul_qk [label="QK^T Matmul\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 16, 10000, 10000]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_attention_softmax [label="Softmax\nInput: [1024, 16, 10000, 10000]\nOutput: [1024, 16, 10000, 10000]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_attention_matmul_v [label="Attention Output\nInput: [1024, 16, 10000, 10000], [1024, 10000, 16, 512]\nOutput: [1024, 10000, 16, 512]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_attention_concat [label="Concat Heads\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 10000, 8192]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_attention_linear [label="Output Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_attention_residual [label="Residual Add\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_attention_layernorm [label="LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_gating [label="Global Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16]\nGPU: 32-47" fillcolor=lightcoral shape=diamond]
+	layer_2_token_routing [label="Token Routing\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 32-47 → Individual GPUs" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert0_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 32" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert0_linear1 [label="Expert 0 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 32" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert0_gelu [label="Expert 0 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 32" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert0_linear2 [label="Expert 0 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 32" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert0_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 32" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert1_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 33" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert1_linear1 [label="Expert 1 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 33" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert1_gelu [label="Expert 1 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 33" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert1_linear2 [label="Expert 1 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 33" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert1_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 33" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert2_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 34" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert2_linear1 [label="Expert 2 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 34" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert2_gelu [label="Expert 2 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 34" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert2_linear2 [label="Expert 2 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 34" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert2_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 34" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert3_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 35" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert3_linear1 [label="Expert 3 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 35" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert3_gelu [label="Expert 3 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 35" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert3_linear2 [label="Expert 3 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 35" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert3_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 35" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert4_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 36" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert4_linear1 [label="Expert 4 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 36" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert4_gelu [label="Expert 4 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 36" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert4_linear2 [label="Expert 4 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 36" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert4_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 36" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert5_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 37" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert5_linear1 [label="Expert 5 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 37" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert5_gelu [label="Expert 5 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 37" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert5_linear2 [label="Expert 5 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 37" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert5_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 37" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert6_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 38" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert6_linear1 [label="Expert 6 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 38" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert6_gelu [label="Expert 6 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 38" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert6_linear2 [label="Expert 6 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 38" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert6_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 38" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert7_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 39" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert7_linear1 [label="Expert 7 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 39" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert7_gelu [label="Expert 7 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 39" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert7_linear2 [label="Expert 7 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 39" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert7_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 39" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert8_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 40" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert8_linear1 [label="Expert 8 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 40" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert8_gelu [label="Expert 8 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 40" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert8_linear2 [label="Expert 8 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 40" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert8_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 40" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert9_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 41" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert9_linear1 [label="Expert 9 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 41" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert9_gelu [label="Expert 9 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 41" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert9_linear2 [label="Expert 9 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 41" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert9_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 41" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert10_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 42" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert10_linear1 [label="Expert 10 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 42" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert10_gelu [label="Expert 10 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 42" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert10_linear2 [label="Expert 10 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 42" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert10_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 42" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert11_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 43" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert11_linear1 [label="Expert 11 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 43" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert11_gelu [label="Expert 11 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 43" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert11_linear2 [label="Expert 11 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 43" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert11_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 43" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert12_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 44" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert12_linear1 [label="Expert 12 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 44" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert12_gelu [label="Expert 12 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 44" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert12_linear2 [label="Expert 12 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 44" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert12_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 44" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert13_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 45" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert13_linear1 [label="Expert 13 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 45" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert13_gelu [label="Expert 13 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 45" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert13_linear2 [label="Expert 13 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 45" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert13_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 45" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert14_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 46" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert14_linear1 [label="Expert 14 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 46" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert14_gelu [label="Expert 14 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 46" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert14_linear2 [label="Expert 14 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 46" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert14_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 46" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert15_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 47" fillcolor=lightyellow shape=parallelogram]
+	layer_2_expert15_linear1 [label="Expert 15 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 47" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert15_gelu [label="Expert 15 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 47" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert15_linear2 [label="Expert 15 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 47" fillcolor=lightgreen shape=rectangle]
+	layer_2_expert15_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 47" fillcolor=lightyellow shape=parallelogram]
+	layer_2_aggregation [label="Expert Aggregation\nInput: [1024, 10000, 8192] × 16\nOutput: [1024, 10000, 8192]\nGPU: 32-47" fillcolor=lightyellow shape=parallelogram]
+	layer_2_final_residual [label="Final Residual\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	layer_2_final_layernorm [label="Final LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 32-47" fillcolor=lightgreen shape=rectangle]
+	pipeline_comm_2_3 [label="Pipeline Communication\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 47→48" fillcolor=lightyellow shape=parallelogram]
+	layer_3_attention_qkv [label="QKV Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_attention_split [label="Split Heads\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16, 512]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_attention_matmul_qk [label="QK^T Matmul\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 16, 10000, 10000]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_attention_softmax [label="Softmax\nInput: [1024, 16, 10000, 10000]\nOutput: [1024, 16, 10000, 10000]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_attention_matmul_v [label="Attention Output\nInput: [1024, 16, 10000, 10000], [1024, 10000, 16, 512]\nOutput: [1024, 10000, 16, 512]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_attention_concat [label="Concat Heads\nInput: [1024, 10000, 16, 512]\nOutput: [1024, 10000, 8192]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_attention_linear [label="Output Linear\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_attention_residual [label="Residual Add\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_attention_layernorm [label="LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_gating [label="Global Gating\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 16]\nGPU: 48-63" fillcolor=lightcoral shape=diamond]
+	layer_3_token_routing [label="Token Routing\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 48-63 → Individual GPUs" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert0_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 48" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert0_linear1 [label="Expert 0 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 48" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert0_gelu [label="Expert 0 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 48" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert0_linear2 [label="Expert 0 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 48" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert0_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 48" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert1_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 49" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert1_linear1 [label="Expert 1 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 49" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert1_gelu [label="Expert 1 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 49" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert1_linear2 [label="Expert 1 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 49" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert1_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 49" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert2_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 50" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert2_linear1 [label="Expert 2 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 50" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert2_gelu [label="Expert 2 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 50" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert2_linear2 [label="Expert 2 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 50" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert2_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 50" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert3_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 51" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert3_linear1 [label="Expert 3 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 51" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert3_gelu [label="Expert 3 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 51" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert3_linear2 [label="Expert 3 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 51" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert3_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 51" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert4_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 52" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert4_linear1 [label="Expert 4 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 52" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert4_gelu [label="Expert 4 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 52" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert4_linear2 [label="Expert 4 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 52" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert4_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 52" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert5_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 53" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert5_linear1 [label="Expert 5 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 53" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert5_gelu [label="Expert 5 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 53" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert5_linear2 [label="Expert 5 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 53" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert5_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 53" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert6_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 54" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert6_linear1 [label="Expert 6 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 54" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert6_gelu [label="Expert 6 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 54" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert6_linear2 [label="Expert 6 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 54" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert6_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 54" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert7_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 55" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert7_linear1 [label="Expert 7 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 55" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert7_gelu [label="Expert 7 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 55" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert7_linear2 [label="Expert 7 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 55" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert7_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 55" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert8_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 56" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert8_linear1 [label="Expert 8 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 56" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert8_gelu [label="Expert 8 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 56" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert8_linear2 [label="Expert 8 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 56" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert8_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 56" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert9_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 57" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert9_linear1 [label="Expert 9 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 57" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert9_gelu [label="Expert 9 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 57" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert9_linear2 [label="Expert 9 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 57" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert9_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 57" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert10_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 58" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert10_linear1 [label="Expert 10 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 58" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert10_gelu [label="Expert 10 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 58" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert10_linear2 [label="Expert 10 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 58" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert10_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 58" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert11_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 59" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert11_linear1 [label="Expert 11 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 59" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert11_gelu [label="Expert 11 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 59" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert11_linear2 [label="Expert 11 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 59" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert11_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 59" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert12_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 60" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert12_linear1 [label="Expert 12 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 60" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert12_gelu [label="Expert 12 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 60" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert12_linear2 [label="Expert 12 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 60" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert12_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 60" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert13_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 61" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert13_linear1 [label="Expert 13 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 61" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert13_gelu [label="Expert 13 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 61" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert13_linear2 [label="Expert 13 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 61" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert13_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 61" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert14_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 62" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert14_linear1 [label="Expert 14 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 62" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert14_gelu [label="Expert 14 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 62" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert14_linear2 [label="Expert 14 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 62" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert14_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 62" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert15_gather [label="Gather Tokens\nInput: [1024, 10000, 8192]\nOutput: [batch_subset, 8192]\nGPU: 63" fillcolor=lightyellow shape=parallelogram]
+	layer_3_expert15_linear1 [label="Expert 15 Linear1\nInput: [batch_subset, 8192]\nOutput: [batch_subset, 32768]\nGPU: 63" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert15_gelu [label="Expert 15 GELU\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 32768]\nGPU: 63" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert15_linear2 [label="Expert 15 Linear2\nInput: [batch_subset, 32768]\nOutput: [batch_subset, 8192]\nGPU: 63" fillcolor=lightgreen shape=rectangle]
+	layer_3_expert15_scatter [label="Scatter Results\nInput: [batch_subset, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 63" fillcolor=lightyellow shape=parallelogram]
+	layer_3_aggregation [label="Expert Aggregation\nInput: [1024, 10000, 8192] × 16\nOutput: [1024, 10000, 8192]\nGPU: 48-63" fillcolor=lightyellow shape=parallelogram]
+	layer_3_final_residual [label="Final Residual\nInput: [1024, 10000, 8192], [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	layer_3_final_layernorm [label="Final LayerNorm\nInput: [1024, 10000, 8192]\nOutput: [1024, 10000, 8192]\nGPU: 48-63" fillcolor=lightgreen shape=rectangle]
+	output [label="Output\nInput: [batch_size=1024, seq_len=10000, dim=8192]\nGPU: All GPUs" fillcolor=lightblue shape=ellipse]
+	input -> layer_0_attention_qkv
+	layer_0_attention_qkv -> layer_0_attention_split
+	layer_0_attention_split -> layer_0_attention_matmul_qk
+	layer_0_attention_matmul_qk -> layer_0_attention_softmax
+	layer_0_attention_softmax -> layer_0_attention_matmul_v
+	layer_0_attention_matmul_v -> layer_0_attention_concat
+	layer_0_attention_concat -> layer_0_attention_linear
+	input -> layer_0_attention_residual
+	layer_0_attention_linear -> layer_0_attention_residual
+	layer_0_attention_residual -> layer_0_attention_layernorm
+	layer_0_attention_layernorm -> layer_0_gating
+	layer_0_attention_layernorm -> layer_0_token_routing
+	layer_0_token_routing -> layer_0_expert0_gather
+	layer_0_gating -> layer_0_expert0_gather [style=dashed]
+	layer_0_expert0_gather -> layer_0_expert0_linear1
+	layer_0_expert0_linear1 -> layer_0_expert0_gelu
+	layer_0_expert0_gelu -> layer_0_expert0_linear2
+	layer_0_expert0_linear2 -> layer_0_expert0_scatter
+	layer_0_expert0_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert1_gather
+	layer_0_gating -> layer_0_expert1_gather [style=dashed]
+	layer_0_expert1_gather -> layer_0_expert1_linear1
+	layer_0_expert1_linear1 -> layer_0_expert1_gelu
+	layer_0_expert1_gelu -> layer_0_expert1_linear2
+	layer_0_expert1_linear2 -> layer_0_expert1_scatter
+	layer_0_expert1_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert2_gather
+	layer_0_gating -> layer_0_expert2_gather [style=dashed]
+	layer_0_expert2_gather -> layer_0_expert2_linear1
+	layer_0_expert2_linear1 -> layer_0_expert2_gelu
+	layer_0_expert2_gelu -> layer_0_expert2_linear2
+	layer_0_expert2_linear2 -> layer_0_expert2_scatter
+	layer_0_expert2_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert3_gather
+	layer_0_gating -> layer_0_expert3_gather [style=dashed]
+	layer_0_expert3_gather -> layer_0_expert3_linear1
+	layer_0_expert3_linear1 -> layer_0_expert3_gelu
+	layer_0_expert3_gelu -> layer_0_expert3_linear2
+	layer_0_expert3_linear2 -> layer_0_expert3_scatter
+	layer_0_expert3_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert4_gather
+	layer_0_gating -> layer_0_expert4_gather [style=dashed]
+	layer_0_expert4_gather -> layer_0_expert4_linear1
+	layer_0_expert4_linear1 -> layer_0_expert4_gelu
+	layer_0_expert4_gelu -> layer_0_expert4_linear2
+	layer_0_expert4_linear2 -> layer_0_expert4_scatter
+	layer_0_expert4_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert5_gather
+	layer_0_gating -> layer_0_expert5_gather [style=dashed]
+	layer_0_expert5_gather -> layer_0_expert5_linear1
+	layer_0_expert5_linear1 -> layer_0_expert5_gelu
+	layer_0_expert5_gelu -> layer_0_expert5_linear2
+	layer_0_expert5_linear2 -> layer_0_expert5_scatter
+	layer_0_expert5_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert6_gather
+	layer_0_gating -> layer_0_expert6_gather [style=dashed]
+	layer_0_expert6_gather -> layer_0_expert6_linear1
+	layer_0_expert6_linear1 -> layer_0_expert6_gelu
+	layer_0_expert6_gelu -> layer_0_expert6_linear2
+	layer_0_expert6_linear2 -> layer_0_expert6_scatter
+	layer_0_expert6_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert7_gather
+	layer_0_gating -> layer_0_expert7_gather [style=dashed]
+	layer_0_expert7_gather -> layer_0_expert7_linear1
+	layer_0_expert7_linear1 -> layer_0_expert7_gelu
+	layer_0_expert7_gelu -> layer_0_expert7_linear2
+	layer_0_expert7_linear2 -> layer_0_expert7_scatter
+	layer_0_expert7_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert8_gather
+	layer_0_gating -> layer_0_expert8_gather [style=dashed]
+	layer_0_expert8_gather -> layer_0_expert8_linear1
+	layer_0_expert8_linear1 -> layer_0_expert8_gelu
+	layer_0_expert8_gelu -> layer_0_expert8_linear2
+	layer_0_expert8_linear2 -> layer_0_expert8_scatter
+	layer_0_expert8_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert9_gather
+	layer_0_gating -> layer_0_expert9_gather [style=dashed]
+	layer_0_expert9_gather -> layer_0_expert9_linear1
+	layer_0_expert9_linear1 -> layer_0_expert9_gelu
+	layer_0_expert9_gelu -> layer_0_expert9_linear2
+	layer_0_expert9_linear2 -> layer_0_expert9_scatter
+	layer_0_expert9_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert10_gather
+	layer_0_gating -> layer_0_expert10_gather [style=dashed]
+	layer_0_expert10_gather -> layer_0_expert10_linear1
+	layer_0_expert10_linear1 -> layer_0_expert10_gelu
+	layer_0_expert10_gelu -> layer_0_expert10_linear2
+	layer_0_expert10_linear2 -> layer_0_expert10_scatter
+	layer_0_expert10_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert11_gather
+	layer_0_gating -> layer_0_expert11_gather [style=dashed]
+	layer_0_expert11_gather -> layer_0_expert11_linear1
+	layer_0_expert11_linear1 -> layer_0_expert11_gelu
+	layer_0_expert11_gelu -> layer_0_expert11_linear2
+	layer_0_expert11_linear2 -> layer_0_expert11_scatter
+	layer_0_expert11_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert12_gather
+	layer_0_gating -> layer_0_expert12_gather [style=dashed]
+	layer_0_expert12_gather -> layer_0_expert12_linear1
+	layer_0_expert12_linear1 -> layer_0_expert12_gelu
+	layer_0_expert12_gelu -> layer_0_expert12_linear2
+	layer_0_expert12_linear2 -> layer_0_expert12_scatter
+	layer_0_expert12_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert13_gather
+	layer_0_gating -> layer_0_expert13_gather [style=dashed]
+	layer_0_expert13_gather -> layer_0_expert13_linear1
+	layer_0_expert13_linear1 -> layer_0_expert13_gelu
+	layer_0_expert13_gelu -> layer_0_expert13_linear2
+	layer_0_expert13_linear2 -> layer_0_expert13_scatter
+	layer_0_expert13_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert14_gather
+	layer_0_gating -> layer_0_expert14_gather [style=dashed]
+	layer_0_expert14_gather -> layer_0_expert14_linear1
+	layer_0_expert14_linear1 -> layer_0_expert14_gelu
+	layer_0_expert14_gelu -> layer_0_expert14_linear2
+	layer_0_expert14_linear2 -> layer_0_expert14_scatter
+	layer_0_expert14_scatter -> layer_0_aggregation
+	layer_0_token_routing -> layer_0_expert15_gather
+	layer_0_gating -> layer_0_expert15_gather [style=dashed]
+	layer_0_expert15_gather -> layer_0_expert15_linear1
+	layer_0_expert15_linear1 -> layer_0_expert15_gelu
+	layer_0_expert15_gelu -> layer_0_expert15_linear2
+	layer_0_expert15_linear2 -> layer_0_expert15_scatter
+	layer_0_expert15_scatter -> layer_0_aggregation
+	layer_0_aggregation -> layer_0_final_residual
+	layer_0_attention_layernorm -> layer_0_final_residual
+	layer_0_final_residual -> layer_0_final_layernorm
+	layer_0_final_layernorm -> pipeline_comm_0_1
+	pipeline_comm_0_1 -> layer_1_attention_qkv
+	layer_1_attention_qkv -> layer_1_attention_split
+	layer_1_attention_split -> layer_1_attention_matmul_qk
+	layer_1_attention_matmul_qk -> layer_1_attention_softmax
+	layer_1_attention_softmax -> layer_1_attention_matmul_v
+	layer_1_attention_matmul_v -> layer_1_attention_concat
+	layer_1_attention_concat -> layer_1_attention_linear
+	pipeline_comm_0_1 -> layer_1_attention_residual
+	layer_1_attention_linear -> layer_1_attention_residual
+	layer_1_attention_residual -> layer_1_attention_layernorm
+	layer_1_attention_layernorm -> layer_1_gating
+	layer_1_attention_layernorm -> layer_1_token_routing
+	layer_1_token_routing -> layer_1_expert0_gather
+	layer_1_gating -> layer_1_expert0_gather [style=dashed]
+	layer_1_expert0_gather -> layer_1_expert0_linear1
+	layer_1_expert0_linear1 -> layer_1_expert0_gelu
+	layer_1_expert0_gelu -> layer_1_expert0_linear2
+	layer_1_expert0_linear2 -> layer_1_expert0_scatter
+	layer_1_expert0_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert1_gather
+	layer_1_gating -> layer_1_expert1_gather [style=dashed]
+	layer_1_expert1_gather -> layer_1_expert1_linear1
+	layer_1_expert1_linear1 -> layer_1_expert1_gelu
+	layer_1_expert1_gelu -> layer_1_expert1_linear2
+	layer_1_expert1_linear2 -> layer_1_expert1_scatter
+	layer_1_expert1_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert2_gather
+	layer_1_gating -> layer_1_expert2_gather [style=dashed]
+	layer_1_expert2_gather -> layer_1_expert2_linear1
+	layer_1_expert2_linear1 -> layer_1_expert2_gelu
+	layer_1_expert2_gelu -> layer_1_expert2_linear2
+	layer_1_expert2_linear2 -> layer_1_expert2_scatter
+	layer_1_expert2_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert3_gather
+	layer_1_gating -> layer_1_expert3_gather [style=dashed]
+	layer_1_expert3_gather -> layer_1_expert3_linear1
+	layer_1_expert3_linear1 -> layer_1_expert3_gelu
+	layer_1_expert3_gelu -> layer_1_expert3_linear2
+	layer_1_expert3_linear2 -> layer_1_expert3_scatter
+	layer_1_expert3_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert4_gather
+	layer_1_gating -> layer_1_expert4_gather [style=dashed]
+	layer_1_expert4_gather -> layer_1_expert4_linear1
+	layer_1_expert4_linear1 -> layer_1_expert4_gelu
+	layer_1_expert4_gelu -> layer_1_expert4_linear2
+	layer_1_expert4_linear2 -> layer_1_expert4_scatter
+	layer_1_expert4_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert5_gather
+	layer_1_gating -> layer_1_expert5_gather [style=dashed]
+	layer_1_expert5_gather -> layer_1_expert5_linear1
+	layer_1_expert5_linear1 -> layer_1_expert5_gelu
+	layer_1_expert5_gelu -> layer_1_expert5_linear2
+	layer_1_expert5_linear2 -> layer_1_expert5_scatter
+	layer_1_expert5_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert6_gather
+	layer_1_gating -> layer_1_expert6_gather [style=dashed]
+	layer_1_expert6_gather -> layer_1_expert6_linear1
+	layer_1_expert6_linear1 -> layer_1_expert6_gelu
+	layer_1_expert6_gelu -> layer_1_expert6_linear2
+	layer_1_expert6_linear2 -> layer_1_expert6_scatter
+	layer_1_expert6_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert7_gather
+	layer_1_gating -> layer_1_expert7_gather [style=dashed]
+	layer_1_expert7_gather -> layer_1_expert7_linear1
+	layer_1_expert7_linear1 -> layer_1_expert7_gelu
+	layer_1_expert7_gelu -> layer_1_expert7_linear2
+	layer_1_expert7_linear2 -> layer_1_expert7_scatter
+	layer_1_expert7_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert8_gather
+	layer_1_gating -> layer_1_expert8_gather [style=dashed]
+	layer_1_expert8_gather -> layer_1_expert8_linear1
+	layer_1_expert8_linear1 -> layer_1_expert8_gelu
+	layer_1_expert8_gelu -> layer_1_expert8_linear2
+	layer_1_expert8_linear2 -> layer_1_expert8_scatter
+	layer_1_expert8_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert9_gather
+	layer_1_gating -> layer_1_expert9_gather [style=dashed]
+	layer_1_expert9_gather -> layer_1_expert9_linear1
+	layer_1_expert9_linear1 -> layer_1_expert9_gelu
+	layer_1_expert9_gelu -> layer_1_expert9_linear2
+	layer_1_expert9_linear2 -> layer_1_expert9_scatter
+	layer_1_expert9_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert10_gather
+	layer_1_gating -> layer_1_expert10_gather [style=dashed]
+	layer_1_expert10_gather -> layer_1_expert10_linear1
+	layer_1_expert10_linear1 -> layer_1_expert10_gelu
+	layer_1_expert10_gelu -> layer_1_expert10_linear2
+	layer_1_expert10_linear2 -> layer_1_expert10_scatter
+	layer_1_expert10_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert11_gather
+	layer_1_gating -> layer_1_expert11_gather [style=dashed]
+	layer_1_expert11_gather -> layer_1_expert11_linear1
+	layer_1_expert11_linear1 -> layer_1_expert11_gelu
+	layer_1_expert11_gelu -> layer_1_expert11_linear2
+	layer_1_expert11_linear2 -> layer_1_expert11_scatter
+	layer_1_expert11_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert12_gather
+	layer_1_gating -> layer_1_expert12_gather [style=dashed]
+	layer_1_expert12_gather -> layer_1_expert12_linear1
+	layer_1_expert12_linear1 -> layer_1_expert12_gelu
+	layer_1_expert12_gelu -> layer_1_expert12_linear2
+	layer_1_expert12_linear2 -> layer_1_expert12_scatter
+	layer_1_expert12_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert13_gather
+	layer_1_gating -> layer_1_expert13_gather [style=dashed]
+	layer_1_expert13_gather -> layer_1_expert13_linear1
+	layer_1_expert13_linear1 -> layer_1_expert13_gelu
+	layer_1_expert13_gelu -> layer_1_expert13_linear2
+	layer_1_expert13_linear2 -> layer_1_expert13_scatter
+	layer_1_expert13_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert14_gather
+	layer_1_gating -> layer_1_expert14_gather [style=dashed]
+	layer_1_expert14_gather -> layer_1_expert14_linear1
+	layer_1_expert14_linear1 -> layer_1_expert14_gelu
+	layer_1_expert14_gelu -> layer_1_expert14_linear2
+	layer_1_expert14_linear2 -> layer_1_expert14_scatter
+	layer_1_expert14_scatter -> layer_1_aggregation
+	layer_1_token_routing -> layer_1_expert15_gather
+	layer_1_gating -> layer_1_expert15_gather [style=dashed]
+	layer_1_expert15_gather -> layer_1_expert15_linear1
+	layer_1_expert15_linear1 -> layer_1_expert15_gelu
+	layer_1_expert15_gelu -> layer_1_expert15_linear2
+	layer_1_expert15_linear2 -> layer_1_expert15_scatter
+	layer_1_expert15_scatter -> layer_1_aggregation
+	layer_1_aggregation -> layer_1_final_residual
+	layer_1_attention_layernorm -> layer_1_final_residual
+	layer_1_final_residual -> layer_1_final_layernorm
+	layer_1_final_layernorm -> pipeline_comm_1_2
+	pipeline_comm_1_2 -> layer_2_attention_qkv
+	layer_2_final_layernorm -> pipeline_comm_2_3
+	pipeline_comm_2_3 -> layer_3_attention_qkv
+	layer_3_final_layernorm -> output
+}

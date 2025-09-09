@@ -1,0 +1,230 @@
+digraph proposed_moe {
+	rankdir=TB size="40,30"
+	input [label="Input\n[1024×10000×8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+	subgraph layer_0 {
+		label="Layer 0 (GPUs 0-15)"
+		gate_0 [label="Gating\nLayer 0\nGPU 0" fillcolor=yellow shape=diamond style=filled]
+		router_0 [label="Token Router\n[Cross-node]" fillcolor=orange shape=parallelogram style=filled]
+		gate_0 -> router_0
+		expert_0_0 [label="Expert 0\n[8192→32768→8192]\nGPU 0" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_0 [label="GPU 0" style=dashed]
+		expert_0_1 [label="Expert 1\n[8192→32768→8192]\nGPU 1" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_1 [label="GPU 1" style=dashed]
+		expert_0_2 [label="Expert 2\n[8192→32768→8192]\nGPU 2" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_2 [label="GPU 2" style=dashed]
+		expert_0_3 [label="Expert 3\n[8192→32768→8192]\nGPU 3" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_3 [label="GPU 3" style=dashed]
+		expert_0_4 [label="Expert 4\n[8192→32768→8192]\nGPU 4" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_4 [label="GPU 4" style=dashed]
+		expert_0_5 [label="Expert 5\n[8192→32768→8192]\nGPU 5" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_5 [label="GPU 5" style=dashed]
+		expert_0_6 [label="Expert 6\n[8192→32768→8192]\nGPU 6" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_6 [label="GPU 6" style=dashed]
+		expert_0_7 [label="Expert 7\n[8192→32768→8192]\nGPU 7" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_7 [label="GPU 7" style=dashed]
+		expert_0_8 [label="Expert 8\n[8192→32768→8192]\nGPU 8" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_8 [label="GPU 8" style=dashed]
+		expert_0_9 [label="Expert 9\n[8192→32768→8192]\nGPU 9" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_9 [label="GPU 9" style=dashed]
+		expert_0_10 [label="Expert 10\n[8192→32768→8192]\nGPU 10" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_10 [label="GPU 10" style=dashed]
+		expert_0_11 [label="Expert 11\n[8192→32768→8192]\nGPU 11" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_11 [label="GPU 11" style=dashed]
+		expert_0_12 [label="Expert 12\n[8192→32768→8192]\nGPU 12" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_12 [label="GPU 12" style=dashed]
+		expert_0_13 [label="Expert 13\n[8192→32768→8192]\nGPU 13" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_13 [label="GPU 13" style=dashed]
+		expert_0_14 [label="Expert 14\n[8192→32768→8192]\nGPU 14" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_14 [label="GPU 14" style=dashed]
+		expert_0_15 [label="Expert 15\n[8192→32768→8192]\nGPU 15" fillcolor=lightcoral shape=rectangle style=filled]
+		router_0 -> expert_0_15 [label="GPU 15" style=dashed]
+		agg_0 [label="Aggregate\nLayer 0" fillcolor=purple shape=parallelogram style=filled]
+		expert_0_0 -> agg_0
+		expert_0_1 -> agg_0
+		expert_0_2 -> agg_0
+		expert_0_3 -> agg_0
+		expert_0_4 -> agg_0
+		expert_0_5 -> agg_0
+		expert_0_6 -> agg_0
+		expert_0_7 -> agg_0
+		expert_0_8 -> agg_0
+		expert_0_9 -> agg_0
+		expert_0_10 -> agg_0
+		expert_0_11 -> agg_0
+		expert_0_12 -> agg_0
+		expert_0_13 -> agg_0
+		expert_0_14 -> agg_0
+		expert_0_15 -> agg_0
+	}
+	subgraph layer_1 {
+		label="Layer 1 (GPUs 16-31)"
+		gate_1 [label="Gating\nLayer 1\nGPU 16" fillcolor=yellow shape=diamond style=filled]
+		router_1 [label="Token Router\n[Cross-node]" fillcolor=orange shape=parallelogram style=filled]
+		gate_1 -> router_1
+		expert_1_0 [label="Expert 0\n[8192→32768→8192]\nGPU 16" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_0 [label="GPU 16" style=dashed]
+		expert_1_1 [label="Expert 1\n[8192→32768→8192]\nGPU 17" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_1 [label="GPU 17" style=dashed]
+		expert_1_2 [label="Expert 2\n[8192→32768→8192]\nGPU 18" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_2 [label="GPU 18" style=dashed]
+		expert_1_3 [label="Expert 3\n[8192→32768→8192]\nGPU 19" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_3 [label="GPU 19" style=dashed]
+		expert_1_4 [label="Expert 4\n[8192→32768→8192]\nGPU 20" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_4 [label="GPU 20" style=dashed]
+		expert_1_5 [label="Expert 5\n[8192→32768→8192]\nGPU 21" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_5 [label="GPU 21" style=dashed]
+		expert_1_6 [label="Expert 6\n[8192→32768→8192]\nGPU 22" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_6 [label="GPU 22" style=dashed]
+		expert_1_7 [label="Expert 7\n[8192→32768→8192]\nGPU 23" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_7 [label="GPU 23" style=dashed]
+		expert_1_8 [label="Expert 8\n[8192→32768→8192]\nGPU 24" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_8 [label="GPU 24" style=dashed]
+		expert_1_9 [label="Expert 9\n[8192→32768→8192]\nGPU 25" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_9 [label="GPU 25" style=dashed]
+		expert_1_10 [label="Expert 10\n[8192→32768→8192]\nGPU 26" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_10 [label="GPU 26" style=dashed]
+		expert_1_11 [label="Expert 11\n[8192→32768→8192]\nGPU 27" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_11 [label="GPU 27" style=dashed]
+		expert_1_12 [label="Expert 12\n[8192→32768→8192]\nGPU 28" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_12 [label="GPU 28" style=dashed]
+		expert_1_13 [label="Expert 13\n[8192→32768→8192]\nGPU 29" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_13 [label="GPU 29" style=dashed]
+		expert_1_14 [label="Expert 14\n[8192→32768→8192]\nGPU 30" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_14 [label="GPU 30" style=dashed]
+		expert_1_15 [label="Expert 15\n[8192→32768→8192]\nGPU 31" fillcolor=lightcoral shape=rectangle style=filled]
+		router_1 -> expert_1_15 [label="GPU 31" style=dashed]
+		agg_1 [label="Aggregate\nLayer 1" fillcolor=purple shape=parallelogram style=filled]
+		expert_1_0 -> agg_1
+		expert_1_1 -> agg_1
+		expert_1_2 -> agg_1
+		expert_1_3 -> agg_1
+		expert_1_4 -> agg_1
+		expert_1_5 -> agg_1
+		expert_1_6 -> agg_1
+		expert_1_7 -> agg_1
+		expert_1_8 -> agg_1
+		expert_1_9 -> agg_1
+		expert_1_10 -> agg_1
+		expert_1_11 -> agg_1
+		expert_1_12 -> agg_1
+		expert_1_13 -> agg_1
+		expert_1_14 -> agg_1
+		expert_1_15 -> agg_1
+	}
+	subgraph layer_2 {
+		label="Layer 2 (GPUs 32-47)"
+		gate_2 [label="Gating\nLayer 2\nGPU 32" fillcolor=yellow shape=diamond style=filled]
+		router_2 [label="Token Router\n[Cross-node]" fillcolor=orange shape=parallelogram style=filled]
+		gate_2 -> router_2
+		expert_2_0 [label="Expert 0\n[8192→32768→8192]\nGPU 32" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_0 [label="GPU 32" style=dashed]
+		expert_2_1 [label="Expert 1\n[8192→32768→8192]\nGPU 33" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_1 [label="GPU 33" style=dashed]
+		expert_2_2 [label="Expert 2\n[8192→32768→8192]\nGPU 34" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_2 [label="GPU 34" style=dashed]
+		expert_2_3 [label="Expert 3\n[8192→32768→8192]\nGPU 35" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_3 [label="GPU 35" style=dashed]
+		expert_2_4 [label="Expert 4\n[8192→32768→8192]\nGPU 36" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_4 [label="GPU 36" style=dashed]
+		expert_2_5 [label="Expert 5\n[8192→32768→8192]\nGPU 37" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_5 [label="GPU 37" style=dashed]
+		expert_2_6 [label="Expert 6\n[8192→32768→8192]\nGPU 38" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_6 [label="GPU 38" style=dashed]
+		expert_2_7 [label="Expert 7\n[8192→32768→8192]\nGPU 39" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_7 [label="GPU 39" style=dashed]
+		expert_2_8 [label="Expert 8\n[8192→32768→8192]\nGPU 40" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_8 [label="GPU 40" style=dashed]
+		expert_2_9 [label="Expert 9\n[8192→32768→8192]\nGPU 41" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_9 [label="GPU 41" style=dashed]
+		expert_2_10 [label="Expert 10\n[8192→32768→8192]\nGPU 42" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_10 [label="GPU 42" style=dashed]
+		expert_2_11 [label="Expert 11\n[8192→32768→8192]\nGPU 43" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_11 [label="GPU 43" style=dashed]
+		expert_2_12 [label="Expert 12\n[8192→32768→8192]\nGPU 44" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_12 [label="GPU 44" style=dashed]
+		expert_2_13 [label="Expert 13\n[8192→32768→8192]\nGPU 45" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_13 [label="GPU 45" style=dashed]
+		expert_2_14 [label="Expert 14\n[8192→32768→8192]\nGPU 46" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_14 [label="GPU 46" style=dashed]
+		expert_2_15 [label="Expert 15\n[8192→32768→8192]\nGPU 47" fillcolor=lightcoral shape=rectangle style=filled]
+		router_2 -> expert_2_15 [label="GPU 47" style=dashed]
+		agg_2 [label="Aggregate\nLayer 2" fillcolor=purple shape=parallelogram style=filled]
+		expert_2_0 -> agg_2
+		expert_2_1 -> agg_2
+		expert_2_2 -> agg_2
+		expert_2_3 -> agg_2
+		expert_2_4 -> agg_2
+		expert_2_5 -> agg_2
+		expert_2_6 -> agg_2
+		expert_2_7 -> agg_2
+		expert_2_8 -> agg_2
+		expert_2_9 -> agg_2
+		expert_2_10 -> agg_2
+		expert_2_11 -> agg_2
+		expert_2_12 -> agg_2
+		expert_2_13 -> agg_2
+		expert_2_14 -> agg_2
+		expert_2_15 -> agg_2
+	}
+	subgraph layer_3 {
+		label="Layer 3 (GPUs 48-63)"
+		gate_3 [label="Gating\nLayer 3\nGPU 48" fillcolor=yellow shape=diamond style=filled]
+		router_3 [label="Token Router\n[Cross-node]" fillcolor=orange shape=parallelogram style=filled]
+		gate_3 -> router_3
+		expert_3_0 [label="Expert 0\n[8192→32768→8192]\nGPU 48" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_0 [label="GPU 48" style=dashed]
+		expert_3_1 [label="Expert 1\n[8192→32768→8192]\nGPU 49" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_1 [label="GPU 49" style=dashed]
+		expert_3_2 [label="Expert 2\n[8192→32768→8192]\nGPU 50" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_2 [label="GPU 50" style=dashed]
+		expert_3_3 [label="Expert 3\n[8192→32768→8192]\nGPU 51" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_3 [label="GPU 51" style=dashed]
+		expert_3_4 [label="Expert 4\n[8192→32768→8192]\nGPU 52" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_4 [label="GPU 52" style=dashed]
+		expert_3_5 [label="Expert 5\n[8192→32768→8192]\nGPU 53" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_5 [label="GPU 53" style=dashed]
+		expert_3_6 [label="Expert 6\n[8192→32768→8192]\nGPU 54" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_6 [label="GPU 54" style=dashed]
+		expert_3_7 [label="Expert 7\n[8192→32768→8192]\nGPU 55" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_7 [label="GPU 55" style=dashed]
+		expert_3_8 [label="Expert 8\n[8192→32768→8192]\nGPU 56" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_8 [label="GPU 56" style=dashed]
+		expert_3_9 [label="Expert 9\n[8192→32768→8192]\nGPU 57" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_9 [label="GPU 57" style=dashed]
+		expert_3_10 [label="Expert 10\n[8192→32768→8192]\nGPU 58" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_10 [label="GPU 58" style=dashed]
+		expert_3_11 [label="Expert 11\n[8192→32768→8192]\nGPU 59" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_11 [label="GPU 59" style=dashed]
+		expert_3_12 [label="Expert 12\n[8192→32768→8192]\nGPU 60" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_12 [label="GPU 60" style=dashed]
+		expert_3_13 [label="Expert 13\n[8192→32768→8192]\nGPU 61" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_13 [label="GPU 61" style=dashed]
+		expert_3_14 [label="Expert 14\n[8192→32768→8192]\nGPU 62" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_14 [label="GPU 62" style=dashed]
+		expert_3_15 [label="Expert 15\n[8192→32768→8192]\nGPU 63" fillcolor=lightcoral shape=rectangle style=filled]
+		router_3 -> expert_3_15 [label="GPU 63" style=dashed]
+		agg_3 [label="Aggregate\nLayer 3" fillcolor=purple shape=parallelogram style=filled]
+		expert_3_0 -> agg_3
+		expert_3_1 -> agg_3
+		expert_3_2 -> agg_3
+		expert_3_3 -> agg_3
+		expert_3_4 -> agg_3
+		expert_3_5 -> agg_3
+		expert_3_6 -> agg_3
+		expert_3_7 -> agg_3
+		expert_3_8 -> agg_3
+		expert_3_9 -> agg_3
+		expert_3_10 -> agg_3
+		expert_3_11 -> agg_3
+		expert_3_12 -> agg_3
+		expert_3_13 -> agg_3
+		expert_3_14 -> agg_3
+		expert_3_15 -> agg_3
+	}
+	agg_0 -> gate_1
+	agg_1 -> gate_2
+	agg_2 -> gate_3
+	input -> gate_0
+	agg_3 -> output
+	output [label="Output\n[1024×10000×8192]" fillcolor=lightgreen shape=parallelogram style=filled]
+}

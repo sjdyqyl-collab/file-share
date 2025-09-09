@@ -1,0 +1,38 @@
+{
+  "baseline_dag": {
+    "graphviz_code_path": "/home/wzc/data/file-share/2025-09-09-13-57-56/baseline_moe_dag.dot",
+    "svg_image_path": "/home/wzc/data/file-share/2025-09-09-13-57-56/baseline_moe_dag.svg",
+    "description": "Baseline MoE deployment with TP=8, PP=2, 16 GPUs total, 4 experts per GPU"
+  },
+  "proposed_dag": {
+    "graphviz_code_path": "/home/wzc/data/file-share/2025-09-09-13-57-56/proposed_moe_dag.dot",
+    "svg_image_path": "/home/wzc/data/file-share/2025-09-09-13-57-56/proposed_moe_dag.svg",
+    "description": "Proposed large-scale expert parallelism with EP=64, 64 GPUs total, 1 expert per GPU"
+  },
+  "deployment_summary": {
+    "baseline": {
+      "total_gpus": 16,
+      "parallel_strategy": "TP=8, PP=2, EP=1",
+      "experts_per_gpu": 4,
+      "total_experts": 64,
+      "layers": 4,
+      "experts_per_layer": 16
+    },
+    "proposed": {
+      "total_gpus": 64,
+      "parallel_strategy": "EP=64, PP=4, TP=1",
+      "experts_per_gpu": 1,
+      "total_experts": 64,
+      "layers": 4,
+      "experts_per_layer": 16
+    }
+  },
+  "model_dimensions": {
+    "batch_size": 1024,
+    "sequence_length": 10000,
+    "token_dimension": 8192,
+    "mlp_hidden_dimension": 32768,
+    "attention_heads": 16,
+    "attention_head_dimension": 512
+  }
+}

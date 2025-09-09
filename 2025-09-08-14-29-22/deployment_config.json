@@ -1,0 +1,186 @@
+{
+  "models": {
+    "baseline_moe": {
+      "name": "4-layer MoE Baseline",
+      "layers": 4,
+      "experts_per_layer": 16,
+      "total_experts": 64,
+      "model_dimensions": {
+        "token_dimension": 8192,
+        "mha_heads": 16,
+        "mha_head_dimension": 512,
+        "mlp_hidden_size": 32768,
+        "precision": "FP16"
+      },
+      "batch_config": {
+        "sequences_per_batch": 1024,
+        "tokens_per_sequence": 10000
+      },
+      "parallel_strategy": {
+        "tensor_parallelism": 8,
+        "pipeline_parallelism": 2,
+        "expert_parallelism": 1,
+        "data_parallelism": 1
+      },
+      "device_mapping": {
+        "total_gpus": 16,
+        "gpu_type": "H100",
+        "placement_strategy": "colocated_experts",
+        "experts_per_gpu": 4,
+        "pipeline_stages": [
+          {
+            "stage_id": 0,
+            "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+            "layers": [0, 1],
+            "experts_per_gpu": 4
+          },
+          {
+            "stage_id": 1,
+            "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+            "layers": [2, 3],
+            "experts_per_gpu": 4
+          }
+        ],
+        "tensor_parallel_groups": [
+          [0, 1, 2, 3, 4, 5, 6, 7],
+          [8, 9, 10, 11, 12, 13, 14, 15]
+        ]
+      },
+      "communication_pattern": {
+        "intra_node": "nvlink",
+        "inter_node": "infiniband",
+        "overlap_communication": false,
+        "token_routing": "synchronous"
+      }
+    },
+    "proposed_large_ep_moe": {
+      "name": "4-layer MoE Large EP",
+      "layers": 4,
+      "experts_per_layer": 16,
+      "total_experts": 64,
+      "model_dimensions": {
+        "token_dimension": 8192,
+        "mha_heads": 16,
+        "mha_head_dimension": 512,
+        "mlp_hidden_size": 32768,
+        "precision": "FP16"
+      },
+      "batch_config": {
+        "sequences_per_batch": 1024,
+        "tokens_per_sequence": 10000
+      },
+      "parallel_strategy": {
+        "tensor_parallelism": 1,
+        "pipeline_parallelism": 1,
+        "expert_parallelism": 64,
+        "data_parallelism": 1,
+        "optional_tensor_parallelism": 2
+      },
+      "device_mapping": {
+        "total_gpus": 64,
+        "gpu_type": "H100",
+        "placement_strategy": "one_expert_per_gpu",
+        "experts_per_gpu": 1,
+        "expert_to_gpu_mapping": {
+          "layer_0": {
+            "expert_0": 0,
+            "expert_1": 1,
+            "expert_2": 2,
+            "expert_3": 3,
+            "expert_4": 4,
+            "expert_5": 5,
+            "expert_6": 6,
+            "expert_7": 7,
+            "expert_8": 8,
+            "expert_9": 9,
+            "expert_10": 10,
+            "expert_11": 11,
+            "expert_12": 12,
+            "expert_13": 13,
+            "expert_14": 14,
+            "expert_15": 15
+          },
+          "layer_1": {
+            "expert_0": 16,
+            "expert_1": 17,
+            "expert_2": 18,
+            "expert_3": 19,
+            "expert_4": 20,
+            "expert_5": 21,
+            "expert_6": 22,
+            "expert_7": 23,
+            "expert_8": 24,
+            "expert_9": 25,
+            "expert_10": 26,
+            "expert_11": 27,
+            "expert_12": 28,
+            "expert_13": 29,
+            "expert_14": 30,
+            "expert_15": 31
+          },
+          "layer_2": {
+            "expert_0": 32,
+            "expert_1": 33,
+            "expert_2": 34,
+            "expert_3": 35,
+            "expert_4": 36,
+            "expert_5": 37,
+            "expert_6": 38,
+            "expert_7": 39,
+            "expert_8": 40,
+            "expert_9": 41,
+            "expert_10": 42,
+            "expert_11": 43,
+            "expert_12": 44,
+            "expert_13": 45,
+            "expert_14": 46,
+            "expert_15": 47
+          },
+          "layer_3": {
+            "expert_0": 48,
+            "expert_1": 49,
+            "expert_2": 50,
+            "expert_3": 51,
+            "expert_4": 52,
+            "expert_5": 53,
+            "expert_6": 54,
+            "expert_7": 55,
+            "expert_8": 56,
+            "expert_9": 57,
+            "expert_10": 58,
+            "expert_11": 59,
+            "expert_12": 60,
+            "expert_13": 61,
+            "expert_14": 62,
+            "expert_15": 63
+          }
+        }
+      },
+      "communication_pattern": {
+        "intra_node": "nvlink",
+        "inter_node": "infiniband",
+        "overlap_communication": true,
+        "token_routing": "asynchronous",
+        "token_batching": true,
+        "topology_aware_routing": true
+      },
+      "load_balancing": {
+        "dynamic_gating": true,
+        "monitor_per_expert_load": true,
+        "adjust_gating_probabilities": true
+      }
+    }
+  },
+  "deployment_requirements": {
+    "minimum_ep_degree": 16,
+    "network_requirements": {
+      "intra_node_bandwidth": "nvlink",
+      "inter_node_bandwidth": "infiniband",
+      "latency_sensitive": true
+    },
+    "memory_requirements": {
+      "per_gpu_memory": "80GB H100",
+      "expert_memory_per_gpu": "sufficient_for_single_expert"
+    }
+  }
+}

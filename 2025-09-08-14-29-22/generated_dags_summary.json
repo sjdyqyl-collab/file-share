@@ -1,0 +1,22 @@
+{
+  "generated_dags": [
+    {
+      "name": "baseline_moe_dag",
+      "description": "4-layer MoE Baseline with 16 GPUs, TP=8, PP=2, 4 experts per GPU",
+      "dot_path": "/home/wzc/data/file-share/2025-09-08-14-29-22/baseline_moe_dag.dot",
+      "svg_path": "/home/wzc/data/file-share/2025-09-08-14-29-22/baseline_moe_dag.svg",
+      "total_gpus": 16,
+      "experts_per_gpu": 4,
+      "parallel_strategy": "TP=8, PP=2"
+    },
+    {
+      "name": "proposed_large_ep_moe_dag",
+      "description": "4-layer MoE Large EP with 64 GPUs, EP=64, 1 expert per GPU",
+      "dot_path": "/home/wzc/data/file-share/2025-09-08-14-29-22/proposed_large_ep_moe_dag.dot",
+      "svg_path": "/home/wzc/data/file-share/2025-09-08-14-29-22/proposed_large_ep_moe_dag.svg",
+      "total_gpus": 64,
+      "experts_per_gpu": 1,
+      "parallel_strategy": "EP=64"
+    }
+  ]
+}

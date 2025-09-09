@@ -1,0 +1,25 @@
+{
+  "generated_dags": [
+    {
+      "method": "proposed_layer_wise",
+      "description": "Layer-wise deployment strategy with 1 layer per GPU across 16 GPUs",
+      "dot_file": "/home/wzc/data/file-share/2025-09-08-19-28-27/layer_wise_deployment.dot",
+      "svg_file": "/home/wzc/data/file-share/2025-09-08-19-28-27/layer_wise_deployment.svg"
+    },
+    {
+      "method": "baseline_tensor_pipeline",
+      "description": "Baseline Tensor Parallelism (TP=8) + Pipeline Parallelism (PP=2) across 16 GPUs",
+      "dot_file": "/home/wzc/data/file-share/2025-09-08-19-28-27/baseline_tensor_pipeline_deployment.dot",
+      "svg_file": "/home/wzc/data/file-share/2025-09-08-19-28-27/baseline_tensor_pipeline_deployment.svg"
+    }
+  ],
+  "summary": {
+    "total_dags_generated": 2,
+    "methods_covered": ["proposed_layer_wise", "baseline_tensor_pipeline"],
+    "gpu_utilization": {
+      "proposed_layer_wise": "16 GPUs, 1 layer per GPU",
+      "baseline_tensor_pipeline": "16 GPUs, TP=8 + PP=2 (8 GPUs per stage)"
+    },
+    "file_formats": ["dot", "svg"]
+  }
+}

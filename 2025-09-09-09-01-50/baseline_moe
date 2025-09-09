@@ -1,0 +1,867 @@
+// Baseline MoE Deployment (TP=8, PP=2, 4 experts/GPU)
+digraph baseline_moe {
+	rankdir=TB size="20,30"
+	input [label="Total Input
+Shape: [1024, 10000, 8192]" fillcolor=lightblue shape=ellipse style=filled]
+	input -> layer_0_input
+	layer_0_ln [label="LayerNorm
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_input -> layer_0_ln
+	layer_0_qkv_tp0 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_tp0
+	layer_0_attn_comp_tp0 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_tp0 -> layer_0_attn_comp_tp0
+	layer_0_out_proj_tp0 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_comp_tp0 -> layer_0_out_proj_tp0
+	layer_0_qkv_tp1 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_tp1
+	layer_0_attn_comp_tp1 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_tp1 -> layer_0_attn_comp_tp1
+	layer_0_out_proj_tp1 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_comp_tp1 -> layer_0_out_proj_tp1
+	layer_0_qkv_tp2 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_tp2
+	layer_0_attn_comp_tp2 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_tp2 -> layer_0_attn_comp_tp2
+	layer_0_out_proj_tp2 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_comp_tp2 -> layer_0_out_proj_tp2
+	layer_0_qkv_tp3 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_tp3
+	layer_0_attn_comp_tp3 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_tp3 -> layer_0_attn_comp_tp3
+	layer_0_out_proj_tp3 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_comp_tp3 -> layer_0_out_proj_tp3
+	layer_0_qkv_tp4 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_tp4
+	layer_0_attn_comp_tp4 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_tp4 -> layer_0_attn_comp_tp4
+	layer_0_out_proj_tp4 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_comp_tp4 -> layer_0_out_proj_tp4
+	layer_0_qkv_tp5 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_tp5
+	layer_0_attn_comp_tp5 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_tp5 -> layer_0_attn_comp_tp5
+	layer_0_out_proj_tp5 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_comp_tp5 -> layer_0_out_proj_tp5
+	layer_0_qkv_tp6 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_tp6
+	layer_0_attn_comp_tp6 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_tp6 -> layer_0_attn_comp_tp6
+	layer_0_out_proj_tp6 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_comp_tp6 -> layer_0_out_proj_tp6
+	layer_0_qkv_tp7 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_ln -> layer_0_qkv_tp7
+	layer_0_attn_comp_tp7 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_qkv_tp7 -> layer_0_attn_comp_tp7
+	layer_0_out_proj_tp7 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_0_attn_comp_tp7 -> layer_0_out_proj_tp7
+	layer_0_attn_ar [label="All-Reduce Sum
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_0_out_proj_tp0 -> layer_0_attn_ar
+	layer_0_out_proj_tp1 -> layer_0_attn_ar
+	layer_0_out_proj_tp2 -> layer_0_attn_ar
+	layer_0_out_proj_tp3 -> layer_0_attn_ar
+	layer_0_out_proj_tp4 -> layer_0_attn_ar
+	layer_0_out_proj_tp5 -> layer_0_attn_ar
+	layer_0_out_proj_tp6 -> layer_0_attn_ar
+	layer_0_out_proj_tp7 -> layer_0_attn_ar
+	layer_0_residual1 [label="Residual Add
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightgray shape=ellipse style=filled]
+	layer_0_input -> layer_0_residual1
+	layer_0_attn_ar -> layer_0_residual1
+	layer_0_ln2 [label="LayerNorm
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_0_residual1 -> layer_0_ln2
+	layer_0_gate [label="Gate
+Shape: [10240000, 16]
+GPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	layer_0_ln2 -> layer_0_gate
+	layer_0_expert_0 [label="Expert 0
+Shape: [2560000, 32768]
+GPU: 0" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_0 [label="route tokens" style=dashed]
+	layer_0_expert_1 [label="Expert 1
+Shape: [2560000, 32768]
+GPU: 0" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_1 [label="route tokens" style=dashed]
+	layer_0_expert_2 [label="Expert 2
+Shape: [2560000, 32768]
+GPU: 0" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_2 [label="route tokens" style=dashed]
+	layer_0_expert_3 [label="Expert 3
+Shape: [2560000, 32768]
+GPU: 0" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_3 [label="route tokens" style=dashed]
+	layer_0_expert_4 [label="Expert 4
+Shape: [2560000, 32768]
+GPU: 1" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_4 [label="route tokens" style=dashed]
+	layer_0_expert_5 [label="Expert 5
+Shape: [2560000, 32768]
+GPU: 1" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_5 [label="route tokens" style=dashed]
+	layer_0_expert_6 [label="Expert 6
+Shape: [2560000, 32768]
+GPU: 1" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_6 [label="route tokens" style=dashed]
+	layer_0_expert_7 [label="Expert 7
+Shape: [2560000, 32768]
+GPU: 1" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_7 [label="route tokens" style=dashed]
+	layer_0_expert_8 [label="Expert 8
+Shape: [2560000, 32768]
+GPU: 2" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_8 [label="route tokens" style=dashed]
+	layer_0_expert_9 [label="Expert 9
+Shape: [2560000, 32768]
+GPU: 2" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_9 [label="route tokens" style=dashed]
+	layer_0_expert_10 [label="Expert 10
+Shape: [2560000, 32768]
+GPU: 2" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_10 [label="route tokens" style=dashed]
+	layer_0_expert_11 [label="Expert 11
+Shape: [2560000, 32768]
+GPU: 2" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_11 [label="route tokens" style=dashed]
+	layer_0_expert_12 [label="Expert 12
+Shape: [2560000, 32768]
+GPU: 3" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_12 [label="route tokens" style=dashed]
+	layer_0_expert_13 [label="Expert 13
+Shape: [2560000, 32768]
+GPU: 3" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_13 [label="route tokens" style=dashed]
+	layer_0_expert_14 [label="Expert 14
+Shape: [2560000, 32768]
+GPU: 3" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_14 [label="route tokens" style=dashed]
+	layer_0_expert_15 [label="Expert 15
+Shape: [2560000, 32768]
+GPU: 3" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_0_gate -> layer_0_expert_15 [label="route tokens" style=dashed]
+	layer_0_expert_agg [label="Expert Aggregation
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_0_expert_0 -> layer_0_expert_agg
+	layer_0_expert_1 -> layer_0_expert_agg
+	layer_0_expert_2 -> layer_0_expert_agg
+	layer_0_expert_3 -> layer_0_expert_agg
+	layer_0_expert_4 -> layer_0_expert_agg
+	layer_0_expert_5 -> layer_0_expert_agg
+	layer_0_expert_6 -> layer_0_expert_agg
+	layer_0_expert_7 -> layer_0_expert_agg
+	layer_0_expert_8 -> layer_0_expert_agg
+	layer_0_expert_9 -> layer_0_expert_agg
+	layer_0_expert_10 -> layer_0_expert_agg
+	layer_0_expert_11 -> layer_0_expert_agg
+	layer_0_expert_12 -> layer_0_expert_agg
+	layer_0_expert_13 -> layer_0_expert_agg
+	layer_0_expert_14 -> layer_0_expert_agg
+	layer_0_expert_15 -> layer_0_expert_agg
+	layer_0_output [label="Final Residual
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightgray shape=ellipse style=filled]
+	layer_0_residual1 -> layer_0_output
+	layer_0_expert_agg -> layer_0_output
+	layer_0_output -> layer_1_input
+	layer_1_ln [label="LayerNorm
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_input -> layer_1_ln
+	layer_1_qkv_tp0 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_tp0
+	layer_1_attn_comp_tp0 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_tp0 -> layer_1_attn_comp_tp0
+	layer_1_out_proj_tp0 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_comp_tp0 -> layer_1_out_proj_tp0
+	layer_1_qkv_tp1 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_tp1
+	layer_1_attn_comp_tp1 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_tp1 -> layer_1_attn_comp_tp1
+	layer_1_out_proj_tp1 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_comp_tp1 -> layer_1_out_proj_tp1
+	layer_1_qkv_tp2 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_tp2
+	layer_1_attn_comp_tp2 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_tp2 -> layer_1_attn_comp_tp2
+	layer_1_out_proj_tp2 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_comp_tp2 -> layer_1_out_proj_tp2
+	layer_1_qkv_tp3 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_tp3
+	layer_1_attn_comp_tp3 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_tp3 -> layer_1_attn_comp_tp3
+	layer_1_out_proj_tp3 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_comp_tp3 -> layer_1_out_proj_tp3
+	layer_1_qkv_tp4 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_tp4
+	layer_1_attn_comp_tp4 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_tp4 -> layer_1_attn_comp_tp4
+	layer_1_out_proj_tp4 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_comp_tp4 -> layer_1_out_proj_tp4
+	layer_1_qkv_tp5 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_tp5
+	layer_1_attn_comp_tp5 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_tp5 -> layer_1_attn_comp_tp5
+	layer_1_out_proj_tp5 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_comp_tp5 -> layer_1_out_proj_tp5
+	layer_1_qkv_tp6 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_tp6
+	layer_1_attn_comp_tp6 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_tp6 -> layer_1_attn_comp_tp6
+	layer_1_out_proj_tp6 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_comp_tp6 -> layer_1_out_proj_tp6
+	layer_1_qkv_tp7 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_ln -> layer_1_qkv_tp7
+	layer_1_attn_comp_tp7 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_qkv_tp7 -> layer_1_attn_comp_tp7
+	layer_1_out_proj_tp7 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_1_attn_comp_tp7 -> layer_1_out_proj_tp7
+	layer_1_attn_ar [label="All-Reduce Sum
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_1_out_proj_tp0 -> layer_1_attn_ar
+	layer_1_out_proj_tp1 -> layer_1_attn_ar
+	layer_1_out_proj_tp2 -> layer_1_attn_ar
+	layer_1_out_proj_tp3 -> layer_1_attn_ar
+	layer_1_out_proj_tp4 -> layer_1_attn_ar
+	layer_1_out_proj_tp5 -> layer_1_attn_ar
+	layer_1_out_proj_tp6 -> layer_1_attn_ar
+	layer_1_out_proj_tp7 -> layer_1_attn_ar
+	layer_1_residual1 [label="Residual Add
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightgray shape=ellipse style=filled]
+	layer_1_input -> layer_1_residual1
+	layer_1_attn_ar -> layer_1_residual1
+	layer_1_ln2 [label="LayerNorm
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_1_residual1 -> layer_1_ln2
+	layer_1_gate [label="Gate
+Shape: [10240000, 16]
+GPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	layer_1_ln2 -> layer_1_gate
+	layer_1_expert_0 [label="Expert 0
+Shape: [2560000, 32768]
+GPU: 0" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_0 [label="route tokens" style=dashed]
+	layer_1_expert_1 [label="Expert 1
+Shape: [2560000, 32768]
+GPU: 0" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_1 [label="route tokens" style=dashed]
+	layer_1_expert_2 [label="Expert 2
+Shape: [2560000, 32768]
+GPU: 0" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_2 [label="route tokens" style=dashed]
+	layer_1_expert_3 [label="Expert 3
+Shape: [2560000, 32768]
+GPU: 0" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_3 [label="route tokens" style=dashed]
+	layer_1_expert_4 [label="Expert 4
+Shape: [2560000, 32768]
+GPU: 1" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_4 [label="route tokens" style=dashed]
+	layer_1_expert_5 [label="Expert 5
+Shape: [2560000, 32768]
+GPU: 1" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_5 [label="route tokens" style=dashed]
+	layer_1_expert_6 [label="Expert 6
+Shape: [2560000, 32768]
+GPU: 1" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_6 [label="route tokens" style=dashed]
+	layer_1_expert_7 [label="Expert 7
+Shape: [2560000, 32768]
+GPU: 1" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_7 [label="route tokens" style=dashed]
+	layer_1_expert_8 [label="Expert 8
+Shape: [2560000, 32768]
+GPU: 2" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_8 [label="route tokens" style=dashed]
+	layer_1_expert_9 [label="Expert 9
+Shape: [2560000, 32768]
+GPU: 2" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_9 [label="route tokens" style=dashed]
+	layer_1_expert_10 [label="Expert 10
+Shape: [2560000, 32768]
+GPU: 2" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_10 [label="route tokens" style=dashed]
+	layer_1_expert_11 [label="Expert 11
+Shape: [2560000, 32768]
+GPU: 2" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_11 [label="route tokens" style=dashed]
+	layer_1_expert_12 [label="Expert 12
+Shape: [2560000, 32768]
+GPU: 3" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_12 [label="route tokens" style=dashed]
+	layer_1_expert_13 [label="Expert 13
+Shape: [2560000, 32768]
+GPU: 3" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_13 [label="route tokens" style=dashed]
+	layer_1_expert_14 [label="Expert 14
+Shape: [2560000, 32768]
+GPU: 3" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_14 [label="route tokens" style=dashed]
+	layer_1_expert_15 [label="Expert 15
+Shape: [2560000, 32768]
+GPU: 3" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_1_gate -> layer_1_expert_15 [label="route tokens" style=dashed]
+	layer_1_expert_agg [label="Expert Aggregation
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_1_expert_0 -> layer_1_expert_agg
+	layer_1_expert_1 -> layer_1_expert_agg
+	layer_1_expert_2 -> layer_1_expert_agg
+	layer_1_expert_3 -> layer_1_expert_agg
+	layer_1_expert_4 -> layer_1_expert_agg
+	layer_1_expert_5 -> layer_1_expert_agg
+	layer_1_expert_6 -> layer_1_expert_agg
+	layer_1_expert_7 -> layer_1_expert_agg
+	layer_1_expert_8 -> layer_1_expert_agg
+	layer_1_expert_9 -> layer_1_expert_agg
+	layer_1_expert_10 -> layer_1_expert_agg
+	layer_1_expert_11 -> layer_1_expert_agg
+	layer_1_expert_12 -> layer_1_expert_agg
+	layer_1_expert_13 -> layer_1_expert_agg
+	layer_1_expert_14 -> layer_1_expert_agg
+	layer_1_expert_15 -> layer_1_expert_agg
+	layer_1_output [label="Final Residual
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightgray shape=ellipse style=filled]
+	layer_1_residual1 -> layer_1_output
+	layer_1_expert_agg -> layer_1_output
+	subgraph cluster_stage_0 {
+		label="Pipeline Stage 0" style=dashed
+	}
+	layer_1_output -> layer_2_input
+	layer_2_ln [label="LayerNorm
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_input -> layer_2_ln
+	layer_2_qkv_tp0 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_tp0
+	layer_2_attn_comp_tp0 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_tp0 -> layer_2_attn_comp_tp0
+	layer_2_out_proj_tp0 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_comp_tp0 -> layer_2_out_proj_tp0
+	layer_2_qkv_tp1 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_tp1
+	layer_2_attn_comp_tp1 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_tp1 -> layer_2_attn_comp_tp1
+	layer_2_out_proj_tp1 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_comp_tp1 -> layer_2_out_proj_tp1
+	layer_2_qkv_tp2 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_tp2
+	layer_2_attn_comp_tp2 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_tp2 -> layer_2_attn_comp_tp2
+	layer_2_out_proj_tp2 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_comp_tp2 -> layer_2_out_proj_tp2
+	layer_2_qkv_tp3 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_tp3
+	layer_2_attn_comp_tp3 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_tp3 -> layer_2_attn_comp_tp3
+	layer_2_out_proj_tp3 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_comp_tp3 -> layer_2_out_proj_tp3
+	layer_2_qkv_tp4 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_tp4
+	layer_2_attn_comp_tp4 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_tp4 -> layer_2_attn_comp_tp4
+	layer_2_out_proj_tp4 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_comp_tp4 -> layer_2_out_proj_tp4
+	layer_2_qkv_tp5 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_tp5
+	layer_2_attn_comp_tp5 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_tp5 -> layer_2_attn_comp_tp5
+	layer_2_out_proj_tp5 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_comp_tp5 -> layer_2_out_proj_tp5
+	layer_2_qkv_tp6 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_tp6
+	layer_2_attn_comp_tp6 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_tp6 -> layer_2_attn_comp_tp6
+	layer_2_out_proj_tp6 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_comp_tp6 -> layer_2_out_proj_tp6
+	layer_2_qkv_tp7 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_ln -> layer_2_qkv_tp7
+	layer_2_attn_comp_tp7 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_qkv_tp7 -> layer_2_attn_comp_tp7
+	layer_2_out_proj_tp7 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_2_attn_comp_tp7 -> layer_2_out_proj_tp7
+	layer_2_attn_ar [label="All-Reduce Sum
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_2_out_proj_tp0 -> layer_2_attn_ar
+	layer_2_out_proj_tp1 -> layer_2_attn_ar
+	layer_2_out_proj_tp2 -> layer_2_attn_ar
+	layer_2_out_proj_tp3 -> layer_2_attn_ar
+	layer_2_out_proj_tp4 -> layer_2_attn_ar
+	layer_2_out_proj_tp5 -> layer_2_attn_ar
+	layer_2_out_proj_tp6 -> layer_2_attn_ar
+	layer_2_out_proj_tp7 -> layer_2_attn_ar
+	layer_2_residual1 [label="Residual Add
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightgray shape=ellipse style=filled]
+	layer_2_input -> layer_2_residual1
+	layer_2_attn_ar -> layer_2_residual1
+	layer_2_ln2 [label="LayerNorm
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_2_residual1 -> layer_2_ln2
+	layer_2_gate [label="Gate
+Shape: [10240000, 16]
+GPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	layer_2_ln2 -> layer_2_gate
+	layer_2_expert_0 [label="Expert 0
+Shape: [2560000, 32768]
+GPU: 8" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_0 [label="route tokens" style=dashed]
+	layer_2_expert_1 [label="Expert 1
+Shape: [2560000, 32768]
+GPU: 8" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_1 [label="route tokens" style=dashed]
+	layer_2_expert_2 [label="Expert 2
+Shape: [2560000, 32768]
+GPU: 8" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_2 [label="route tokens" style=dashed]
+	layer_2_expert_3 [label="Expert 3
+Shape: [2560000, 32768]
+GPU: 8" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_3 [label="route tokens" style=dashed]
+	layer_2_expert_4 [label="Expert 4
+Shape: [2560000, 32768]
+GPU: 9" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_4 [label="route tokens" style=dashed]
+	layer_2_expert_5 [label="Expert 5
+Shape: [2560000, 32768]
+GPU: 9" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_5 [label="route tokens" style=dashed]
+	layer_2_expert_6 [label="Expert 6
+Shape: [2560000, 32768]
+GPU: 9" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_6 [label="route tokens" style=dashed]
+	layer_2_expert_7 [label="Expert 7
+Shape: [2560000, 32768]
+GPU: 9" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_7 [label="route tokens" style=dashed]
+	layer_2_expert_8 [label="Expert 8
+Shape: [2560000, 32768]
+GPU: 10" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_8 [label="route tokens" style=dashed]
+	layer_2_expert_9 [label="Expert 9
+Shape: [2560000, 32768]
+GPU: 10" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_9 [label="route tokens" style=dashed]
+	layer_2_expert_10 [label="Expert 10
+Shape: [2560000, 32768]
+GPU: 10" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_10 [label="route tokens" style=dashed]
+	layer_2_expert_11 [label="Expert 11
+Shape: [2560000, 32768]
+GPU: 10" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_11 [label="route tokens" style=dashed]
+	layer_2_expert_12 [label="Expert 12
+Shape: [2560000, 32768]
+GPU: 11" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_12 [label="route tokens" style=dashed]
+	layer_2_expert_13 [label="Expert 13
+Shape: [2560000, 32768]
+GPU: 11" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_13 [label="route tokens" style=dashed]
+	layer_2_expert_14 [label="Expert 14
+Shape: [2560000, 32768]
+GPU: 11" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_14 [label="route tokens" style=dashed]
+	layer_2_expert_15 [label="Expert 15
+Shape: [2560000, 32768]
+GPU: 11" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_2_gate -> layer_2_expert_15 [label="route tokens" style=dashed]
+	layer_2_expert_agg [label="Expert Aggregation
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_2_expert_0 -> layer_2_expert_agg
+	layer_2_expert_1 -> layer_2_expert_agg
+	layer_2_expert_2 -> layer_2_expert_agg
+	layer_2_expert_3 -> layer_2_expert_agg
+	layer_2_expert_4 -> layer_2_expert_agg
+	layer_2_expert_5 -> layer_2_expert_agg
+	layer_2_expert_6 -> layer_2_expert_agg
+	layer_2_expert_7 -> layer_2_expert_agg
+	layer_2_expert_8 -> layer_2_expert_agg
+	layer_2_expert_9 -> layer_2_expert_agg
+	layer_2_expert_10 -> layer_2_expert_agg
+	layer_2_expert_11 -> layer_2_expert_agg
+	layer_2_expert_12 -> layer_2_expert_agg
+	layer_2_expert_13 -> layer_2_expert_agg
+	layer_2_expert_14 -> layer_2_expert_agg
+	layer_2_expert_15 -> layer_2_expert_agg
+	layer_2_output [label="Final Residual
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightgray shape=ellipse style=filled]
+	layer_2_residual1 -> layer_2_output
+	layer_2_expert_agg -> layer_2_output
+	layer_2_output -> layer_3_input
+	layer_3_ln [label="LayerNorm
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_input -> layer_3_ln
+	layer_3_qkv_tp0 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_tp0
+	layer_3_attn_comp_tp0 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_tp0 -> layer_3_attn_comp_tp0
+	layer_3_out_proj_tp0 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_comp_tp0 -> layer_3_out_proj_tp0
+	layer_3_qkv_tp1 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_tp1
+	layer_3_attn_comp_tp1 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_tp1 -> layer_3_attn_comp_tp1
+	layer_3_out_proj_tp1 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_comp_tp1 -> layer_3_out_proj_tp1
+	layer_3_qkv_tp2 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_tp2
+	layer_3_attn_comp_tp2 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_tp2 -> layer_3_attn_comp_tp2
+	layer_3_out_proj_tp2 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_comp_tp2 -> layer_3_out_proj_tp2
+	layer_3_qkv_tp3 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_tp3
+	layer_3_attn_comp_tp3 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_tp3 -> layer_3_attn_comp_tp3
+	layer_3_out_proj_tp3 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_comp_tp3 -> layer_3_out_proj_tp3
+	layer_3_qkv_tp4 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_tp4
+	layer_3_attn_comp_tp4 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_tp4 -> layer_3_attn_comp_tp4
+	layer_3_out_proj_tp4 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_comp_tp4 -> layer_3_out_proj_tp4
+	layer_3_qkv_tp5 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_tp5
+	layer_3_attn_comp_tp5 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_tp5 -> layer_3_attn_comp_tp5
+	layer_3_out_proj_tp5 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_comp_tp5 -> layer_3_out_proj_tp5
+	layer_3_qkv_tp6 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_tp6
+	layer_3_attn_comp_tp6 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_tp6 -> layer_3_attn_comp_tp6
+	layer_3_out_proj_tp6 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_comp_tp6 -> layer_3_out_proj_tp6
+	layer_3_qkv_tp7 [label="QKV Linear
+Shape: [1024, 10000, 3072]
+GPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_ln -> layer_3_qkv_tp7
+	layer_3_attn_comp_tp7 [label="Attention
+Shape: [1024, 10000, 1024]
+GPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_qkv_tp7 -> layer_3_attn_comp_tp7
+	layer_3_out_proj_tp7 [label="Output Proj
+Shape: [1024, 10000, 1024]
+GPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+	layer_3_attn_comp_tp7 -> layer_3_out_proj_tp7
+	layer_3_attn_ar [label="All-Reduce Sum
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_3_out_proj_tp0 -> layer_3_attn_ar
+	layer_3_out_proj_tp1 -> layer_3_attn_ar
+	layer_3_out_proj_tp2 -> layer_3_attn_ar
+	layer_3_out_proj_tp3 -> layer_3_attn_ar
+	layer_3_out_proj_tp4 -> layer_3_attn_ar
+	layer_3_out_proj_tp5 -> layer_3_attn_ar
+	layer_3_out_proj_tp6 -> layer_3_attn_ar
+	layer_3_out_proj_tp7 -> layer_3_attn_ar
+	layer_3_residual1 [label="Residual Add
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightgray shape=ellipse style=filled]
+	layer_3_input -> layer_3_residual1
+	layer_3_attn_ar -> layer_3_residual1
+	layer_3_ln2 [label="LayerNorm
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+	layer_3_residual1 -> layer_3_ln2
+	layer_3_gate [label="Gate
+Shape: [10240000, 16]
+GPU: 0-7" fillcolor=orange shape=parallelogram style=filled]
+	layer_3_ln2 -> layer_3_gate
+	layer_3_expert_0 [label="Expert 0
+Shape: [2560000, 32768]
+GPU: 8" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_0 [label="route tokens" style=dashed]
+	layer_3_expert_1 [label="Expert 1
+Shape: [2560000, 32768]
+GPU: 8" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_1 [label="route tokens" style=dashed]
+	layer_3_expert_2 [label="Expert 2
+Shape: [2560000, 32768]
+GPU: 8" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_2 [label="route tokens" style=dashed]
+	layer_3_expert_3 [label="Expert 3
+Shape: [2560000, 32768]
+GPU: 8" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_3 [label="route tokens" style=dashed]
+	layer_3_expert_4 [label="Expert 4
+Shape: [2560000, 32768]
+GPU: 9" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_4 [label="route tokens" style=dashed]
+	layer_3_expert_5 [label="Expert 5
+Shape: [2560000, 32768]
+GPU: 9" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_5 [label="route tokens" style=dashed]
+	layer_3_expert_6 [label="Expert 6
+Shape: [2560000, 32768]
+GPU: 9" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_6 [label="route tokens" style=dashed]
+	layer_3_expert_7 [label="Expert 7
+Shape: [2560000, 32768]
+GPU: 9" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_7 [label="route tokens" style=dashed]
+	layer_3_expert_8 [label="Expert 8
+Shape: [2560000, 32768]
+GPU: 10" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_8 [label="route tokens" style=dashed]
+	layer_3_expert_9 [label="Expert 9
+Shape: [2560000, 32768]
+GPU: 10" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_9 [label="route tokens" style=dashed]
+	layer_3_expert_10 [label="Expert 10
+Shape: [2560000, 32768]
+GPU: 10" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_10 [label="route tokens" style=dashed]
+	layer_3_expert_11 [label="Expert 11
+Shape: [2560000, 32768]
+GPU: 10" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_11 [label="route tokens" style=dashed]
+	layer_3_expert_12 [label="Expert 12
+Shape: [2560000, 32768]
+GPU: 11" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_12 [label="route tokens" style=dashed]
+	layer_3_expert_13 [label="Expert 13
+Shape: [2560000, 32768]
+GPU: 11" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_13 [label="route tokens" style=dashed]
+	layer_3_expert_14 [label="Expert 14
+Shape: [2560000, 32768]
+GPU: 11" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_14 [label="route tokens" style=dashed]
+	layer_3_expert_15 [label="Expert 15
+Shape: [2560000, 32768]
+GPU: 11" fillcolor=lightcyan shape=rectangle style=filled]
+	layer_3_gate -> layer_3_expert_15 [label="route tokens" style=dashed]
+	layer_3_expert_agg [label="Expert Aggregation
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightcoral shape=parallelogram style=filled]
+	layer_3_expert_0 -> layer_3_expert_agg
+	layer_3_expert_1 -> layer_3_expert_agg
+	layer_3_expert_2 -> layer_3_expert_agg
+	layer_3_expert_3 -> layer_3_expert_agg
+	layer_3_expert_4 -> layer_3_expert_agg
+	layer_3_expert_5 -> layer_3_expert_agg
+	layer_3_expert_6 -> layer_3_expert_agg
+	layer_3_expert_7 -> layer_3_expert_agg
+	layer_3_expert_8 -> layer_3_expert_agg
+	layer_3_expert_9 -> layer_3_expert_agg
+	layer_3_expert_10 -> layer_3_expert_agg
+	layer_3_expert_11 -> layer_3_expert_agg
+	layer_3_expert_12 -> layer_3_expert_agg
+	layer_3_expert_13 -> layer_3_expert_agg
+	layer_3_expert_14 -> layer_3_expert_agg
+	layer_3_expert_15 -> layer_3_expert_agg
+	layer_3_output [label="Final Residual
+Shape: [1024, 10000, 8192]
+GPU: 0-7" fillcolor=lightgray shape=ellipse style=filled]
+	layer_3_residual1 -> layer_3_output
+	layer_3_expert_agg -> layer_3_output
+	subgraph cluster_stage_1 {
+		label="Pipeline Stage 1" style=dashed
+	}
+	output [label="Total Output
+Shape: [1024, 10000, 8192]" fillcolor=lightblue shape=ellipse style=filled]
+	layer_3_output -> output
+}
