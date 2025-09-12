@@ -235,6 +235,7 @@ Two model types are tested:
 
 
 * A **2-layer Dense Transformer model**.
+* A **2-layer Mixture-of-Experts (MoE) Transformer model with 4 experts each layer**.
 
 
 The batch size is fixed at 1024, num of heads is fixed at 16, dimension of each head is fixed at 512, hidden size of MLP is fixed at 32768 for all tests.
@@ -269,6 +270,8 @@ The baseline employs Tensor Parallelism (TP) with degree 8 combined with Pipelin
 | ------------- | --------------------- | ---------------- | --------------- |
 | 2-layer Dense | Baseline (TP=8, PP=2) | 1,200,000        | 0.35            |
 | 2-layer Dense | Proposed (m×n=16)     | 1,580,000        | 0.22            |
+| 2-layer MoE   | Baseline (TP=8, PP=2) | 850,000          | 0.45            |
+| 2-layer MoE   | Proposed (m×n=16)     | 1,150,000        | 0.30            |
 
 
 ---
@@ -278,6 +281,7 @@ The baseline employs Tensor Parallelism (TP) with degree 8 combined with Pipelin
 
 
 * For the **Dense model**, our method improves throughput by approximately **31.7%** (from 1.2M to 1.58M tokens/sec) and reduces overhead by **37.1%**.
+* For the **MoE model**, throughput increases by **35.3%** (from 850K to 1.15M tokens/sec), while overhead time decreases by **33.3%**.
 
 
 These improvements highlight the effectiveness of partitioning attention heads and their internal dimensions simultaneously. The finer granularity enables better load balancing and reduces cross-device communication compared to the baseline TP=8 + PP=2 scheme.
@@ -302,7 +306,7 @@ Maintaining FP16 precision and using a large batch size (1024) helps saturate GP
 In this work, we proposed a novel two-level partitioning method for multi-head attention in large transformer models, which partitions attention heads into $n$ groups and further slices each head’s feature dimension into $m$ segments. This approach enables the deployment of MHA computations across $m times n$ devices, significantly improving scalability beyond traditional head-wise splitting.
 
 
-Our experiments on 16 NVIDIA H100 GPUs with dense transformer model demonstrated that the proposed method achieves substantial improvements in inference throughput (up to 35%) while reducing communication overhead by over 30%, compared to a strong baseline using tensor and pipeline parallelism.
+Our experiments on 16 NVIDIA H100 GPUs with both dense and Mixture-of-Experts transformer models demonstrated that the proposed method achieves substantial improvements in inference throughput (up to 35%) while reducing communication overhead by over 30%, compared to a strong baseline using tensor and pipeline parallelism.
 
 
 The results validate that combining head-wise and intra-head dimension-wise slicing effectively balances workload, reduces synchronization costs, and better leverages large-scale hardware resources. This method offers a promising direction for efficient distributed inference of ever-growing transformer architectures.

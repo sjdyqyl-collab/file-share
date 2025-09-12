@@ -1,0 +1,170 @@
+{
+  "paper": "SP - Ring Attention + Sequence Parallelism",
+  "baseline_method": {
+    "name": "Tensor Parallelism + Pipeline Parallelism",
+    "parameters": {
+      "tensor_parallelism": 8,
+      "pipeline_parallelism": 2,
+      "total_gpus": 16,
+      "precision": "FP16",
+      "batch_size": 1024,
+      "heads": 16,
+      "head_dimension": 512,
+      "mlp_hidden_size": 32768
+    },
+    "parallel_strategies": {
+      "tensor_parallelism": {
+        "type": "tensor_sharding",
+        "parameters": {
+          "sharding_dimension": "hidden",
+          "world_size": 8,
+          "sharding_factor": 8
+        }
+      },
+      "pipeline_parallelism": {
+        "type": "layer_partitioning",
+        "parameters": {
+          "num_stages": 2,
+          "layers_per_stage": 2,
+          "total_layers": 4
+        }
+      }
+    },
+    "module_splitting": {
+      "mha_module": {
+        "split_method": "head_wise",
+        "heads_per_device": 2,
+        "total_heads": 16,
+        "attention_head_dimension": 512,
+        "projection_weights_sharding": "tensor_parallel"
+      },
+      "ffn_module": {
+        "split_method": "tensor_parallelism",
+        "sharding_factor": 8,
+        "mlp_hidden_sharding": true
+      },
+      "layer_norm": {
+        "split_method": "replicated",
+        "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+      }
+    },
+    "device_mapping": {
+      "tensor_parallel_group_0": {
+        "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+        "role": "tensor_parallel_shard_stage_0",
+        "layers": [0, 1]
+      },
+      "tensor_parallel_group_1": {
+        "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+        "role": "tensor_parallel_shard_stage_1",
+        "layers": [2, 3]
+      }
+    }
+  },
+  "proposed_method": {
+    "name": "Ring Attention + Sequence Parallelism",
+    "parameters": {
+      "sequence_parallelism": 16,
+      "ring_attention": true,
+      "total_gpus": 16,
+      "precision": "FP16",
+      "batch_size": 1024,
+      "heads": 16,
+      "head_dimension": 512,
+      "mlp_hidden_size": 32768,
+      "sequence_length": "L"
+    },
+    "parallel_strategies": {
+      "sequence_parallelism": {
+        "type": "sequence_splitting",
+        "parameters": {
+          "split_dimension": "sequence_length",
+          "world_size": 16,
+          "tokens_per_device": "L/16",
+          "sequence_chunks": 16
+        }
+      },
+      "ring_attention": {
+        "type": "communication_optimization",
+        "parameters": {
+          "topology": "ring",
+          "communication_pattern": "peer_to_peer",
+          "stages": 16,
+          "communication_volume_per_stage": "(L/16) * d_model"
+        }
+      }
+    },
+    "module_splitting": {
+      "mha_module": {
+        "split_method": "sequence_parallel",
+        "sequence_split": true,
+        "heads_per_device": 16,
+        "total_heads": 16,
+        "attention_head_dimension": 512,
+        "query_projection": "sequence_parallel_shard",
+        "key_projection": "sequence_parallel_shard",
+        "value_projection": "sequence_parallel_shard",
+        "output_projection": "sequence_parallel_shard"
+      },
+      "ffn_module": {
+        "split_method": "sequence_parallel",
+        "sequence_split": true,
+        "mlp_hidden_size": 32768,
+        "gate_proj": "sequence_parallel_shard",
+        "up_proj": "sequence_parallel_shard",
+        "down_proj": "sequence_parallel_shard"
+      },
+      "layer_norm": {
+        "split_method": "sequence_parallel",
+        "sequence_shard": true
+      }
+    },
+    "device_mapping": {
+      "sequence_parallel_group": {
+        "gpus": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        "role": "sequence_parallel_shard",
+        "sequence_chunk_mapping": {
+          "device_0": {"tokens": "0_to_L/16", "sequence_range": "[0, L/16)"},
+          "device_1": {"tokens": "L/16_to_2L/16", "sequence_range": "[L/16, 2L/16)"},
+          "device_2": {"tokens": "2L/16_to_3L/16", "sequence_range": "[2L/16, 3L/16)"},
+          "device_3": {"tokens": "3L/16_to_4L/16", "sequence_range": "[3L/16, 4L/16)"},
+          "device_4": {"tokens": "4L/16_to_5L/16", "sequence_range": "[4L/16, 5L/16)"},
+          "device_5": {"tokens": "5L/16_to_6L/16", "sequence_range": "[5L/16, 6L/16)"},
+          "device_6": {"tokens": "6L/16_to_7L/16", "sequence_range": "[6L/16, 7L/16)"},
+          "device_7": {"tokens": "7L/16_to_8L/16", "sequence_range": "[7L/16, 8L/16)"},
+          "device_8": {"tokens": "8L/16_to_9L/16", "sequence_range": "[8L/16, 9L/16)"},
+          "device_9": {"tokens": "9L/16_to_10L/16", "sequence_range": "[9L/16, 10L/16)"},
+          "device_10": {"tokens": "10L/16_to_11L/16", "sequence_range": "[10L/16, 11L/16)"},
+          "device_11": {"tokens": "11L/16_to_12L/16", "sequence_range": "[11L/16, 12L/16)"},
+          "device_12": {"tokens": "12L/16_to_13L/16", "sequence_range": "[12L/16, 13L/16)"},
+          "device_13": {"tokens": "13L/16_to_14L/16", "sequence_range": "[13L/16, 14L/16)"},
+          "device_14": {"tokens": "14L/16_to_15L/16", "sequence_range": "[14L/16, 15L/16)"},
+          "device_15": {"tokens": "15L/16_to_L", "sequence_range": "[15L/16, L)"}
+        }
+      },
+      "ring_communication": {
+        "topology": "ring",
+        "device_order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        "communication_stages": 16,
+        "ring_neighbors": {
+          "device_0": {"next": 1, "prev": 15},
+          "device_1": {"next": 2, "prev": 0},
+          "device_2": {"next": 3, "prev": 1},
+          "device_3": {"next": 4, "prev": 2},
+          "device_4": {"next": 5, "prev": 3},
+          "device_5": {"next": 6, "prev": 4},
+          "device_6": {"next": 7, "prev": 5},
+          "device_7": {"next": 8, "prev": 6},
+          "device_8": {"next": 9, "prev": 7},
+          "device_9": {"next": 10, "prev": 8},
+          "device_10": {"next": 11, "prev": 9},
+          "device_11": {"next": 12, "prev": 10},
+          "device_12": {"next": 13, "prev": 11},
+          "device_13": {"next": 14, "prev": 12},
+          "device_14": {"next": 15, "prev": 13},
+          "device_15": {"next": 0, "prev": 14}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,324 @@
+{
+  "paper": "PP - Layer-wise Partitioning for Cache Fitting",
+  "baseline_method": {
+    "name": "Tensor Parallelism + Pipeline Parallelism",
+    "parameters": {
+      "tensor_parallelism": 8,
+      "pipeline_parallelism": 2,
+      "total_gpus": 16,
+      "precision": "FP16",
+      "batch_size": 1024,
+      "heads": 16,
+      "head_dimension": 512,
+      "mlp_hidden_size": 32768,
+      "total_layers": 16
+    },
+    "parallel_strategies": {
+      "tensor_parallelism": {
+        "type": "tensor_sharding",
+        "parameters": {
+          "sharding_dimension": "hidden",
+          "world_size": 8,
+          "sharding_factor": 8
+        }
+      },
+      "pipeline_parallelism": {
+        "type": "layer_partitioning",
+        "parameters": {
+          "num_stages": 2,
+          "layers_per_stage": 8,
+          "total_layers": 16
+        }
+      }
+    },
+    "module_splitting": {
+      "layer_groups": {
+        "group_0": {
+          "layers": [0, 1, 2, 3, 4, 5, 6, 7],
+          "memory_footprint": "estimated_per_group"
+        },
+        "group_1": {
+          "layers": [8, 9, 10, 11, 12, 13, 14, 15],
+          "memory_footprint": "estimated_per_group"
+        }
+      },
+      "mha_module": {
+        "split_method": "tensor_parallelism",
+        "heads_per_device": 2,
+        "total_heads": 16,
+        "attention_head_dimension": 512
+      },
+      "ffn_module": {
+        "split_method": "tensor_parallelism",
+        "sharding_factor": 8,
+        "mlp_hidden_sharding": true
+      }
+    },
+    "device_mapping": {
+      "pipeline_stage_0": {
+        "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+        "role": "layers_0_to_7",
+        "tensor_parallel_group": [0, 1, 2, 3, 4, 5, 6, 7]
+      },
+      "pipeline_stage_1": {
+        "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+        "role": "layers_8_to_15",
+        "tensor_parallel_group": [8, 9, 10, 11, 12, 13, 14, 15]
+      }
+    }
+  },
+  "proposed_method": {
+    "name": "Layer-wise Cache-Fitting Partitioning",
+    "parameters": {
+      "cache_capacity": "SRAM_or_L2_cache_size",
+      "partitioning_algorithm": "greedy_aggregation",
+      "total_gpus": 16,
+      "precision": "FP16",
+      "batch_size": 1024,
+      "heads": 16,
+      "head_dimension": 512,
+      "mlp_hidden_size": 32768,
+      "total_layers": 16
+    },
+    "parallel_strategies": {
+      "layer_partitioning": {
+        "type": "cache_aware_layer_splitting",
+        "parameters": {
+          "partitioning_method": "greedy_aggregation",
+          "cache_constraint": "SRAM_or_L2_capacity",
+          "memory_footprint_estimation": "layer_wise"
+        }
+      },
+      "memory_optimization": {
+        "type": "cache_fitting",
+        "parameters": {
+          "target_memory": "SRAM_or_L2",
+          "memory_reduction_factor": "P"
+        }
+      }
+    },
+    "module_splitting": {
+      "memory_footprint_estimation": {
+        "weight_size": "num_parameters * datatype_size",
+        "activation_size": "batch_size * sequence_length * hidden_size",
+        "buffer_size": "operator_workspace",
+        "total_per_layer": "weight_size + activation_size + buffer_size"
+      },
+      "layer_partitioning": {
+        "partition_0": {
+          "layers": [0],
+          "memory_footprint": "estimated_within_cache",
+          "cache_fitting": true
+        },
+        "partition_1": {
+          "layers": [1],
+          "memory_footprint": "estimated_within_cache",
+          "cache_fitting": true
+        },
+        "partition_2": {
+          "layers": [2],
+          "memory_footprint": "estimated_within_cache",
+          "cache_fitting": true
+        },
+        "partition_3": {
+          "layers": [3],
+          "memory_footprint": "estimated_within_cache",
+          "cache_fitting": true
+        },
+        "partition_4": {
+          "layers": [4],
+          "memory_footprint": "estimated_within_cache",
+          "cache_fitting": true
+        },
+        "partition_5": {
+          "layers": [5],
+          "memory_footprint": "estimated_within_cache",
+          "cache_fitting": true
+        },
+        "partition_6": {
+          "layers": [6],
+          "memory_footprint": "estimated_within_cache",
+          "cache_fitting": true
+        },
+        "partition_7": {
+          "layers": [7],
+          "memory_footprint": "estimated_within_cache",
+          "cache_fitting": true
+        },
+        "partition_8": {
+            "layers": [8],
+            "memory_footprint": "estimated_within_cache",
+            "cache_fitting": true
+        },
+        "partition_9": {
+            "layers": [9],
+            "memory_footprint": "estimated_within_cache",
+            "cache_fitting": true
+        },
+        "partition_10": {
+            "layers": [10],
+            "memory_footprint": "estimated_within_cache",
+            "cache_fitting": true
+        },
+        "partition_11": {
+            "layers": [11],
+            "memory_footprint": "estimated_within_cache",
+            "cache_fitting": true
+        },
+        "partition_12": {
+            "layers": [12],
+            "memory_footprint": "estimated_within_cache",
+            "cache_fitting": true
+        },
+        "partition_13": {
+            "layers": [13],
+            "memory_footprint": "estimated_within_cache",
+            "cache_fitting": true
+        },
+        "partition_14": {
+            "layers": [14],
+            "memory_footprint": "estimated_within_cache",
+            "cache_fitting": true
+        },
+        "partition_15": {
+            "layers": [15],
+            "memory_footprint": "estimated_within_cache",
+            "cache_fitting": true
+        }
+      },
+      "mha_module": {
+        "split_method": "layer_wise_replication",
+        "heads_per_partition": 16,
+        "total_heads": 16,
+        "attention_head_dimension": 512,
+        "cache_fitting": true
+      },
+      "ffn_module": {
+        "split_method": "layer_wise_replication",
+        "mlp_hidden_size": 32768,
+        "cache_fitting": true
+      }
+    },
+    "device_mapping": {
+      "layer_partition_0": {
+        "gpu": 0,
+        "role": "layers_0",
+        "memory_constraint": "SRAM_or_L2_cache",
+        "cache_fitting": true,
+        "layers": [0]
+      },
+      "layer_partition_1": {
+        "gpu": 1,
+        "role": "layers_1",
+        "memory_constraint": "SRAM_or_L2_cache",
+        "cache_fitting": true,
+        "layers": [1]
+      },
+      "layer_partition_2": {
+        "gpu": 2,
+        "role": "layers_2",
+        "memory_constraint": "SRAM_or_L2_cache",
+        "cache_fitting": true,
+        "layers": [2]
+      },
+      "layer_partition_3": {
+        "gpu": 3,
+        "role": "layers_3",
+        "memory_constraint": "SRAM_or_L2_cache",
+        "cache_fitting": true,
+        "layers": [3]
+      },
+      "layer_partition_4": {
+        "gpu": 4,
+        "role": "layers_4",
+        "memory_constraint": "SRAM_or_L2_cache",
+        "cache_fitting": true,
+        "layers": [4]
+      },
+      "layer_partition_5": {
+        "gpu": 5,
+        "role": "layers_5",
+        "memory_constraint": "SRAM_or_L2_cache",
+        "cache_fitting": true,
+        "layers": [5]
+      },
+      "layer_partition_6": {
+        "gpu": 6,
+        "role": "layers_6",
+        "memory_constraint": "SRAM_or_L2_cache",
+        "cache_fitting": true,
+        "layers": [6]
+      },
+      "layer_partition_7": {
+        "gpu": 7,
+        "role": "layers_7",
+        "memory_constraint": "SRAM_or_L2_cache",
+        "cache_fitting": true,
+        "layers": [7]
+      },
+      "layer_partition_8": {
+          "gpu": 8,
+          "role": "layers_8",
+          "memory_constraint": "SRAM_or_L2_cache",
+          "cache_fitting": true,
+          "layers": [8]
+      },
+      "layer_partition_9": {
+          "gpu": 9,
+          "role": "layers_9",
+          "memory_constraint": "SRAM_or_L2_cache",
+          "cache_fitting": true,
+          "layers": [9]
+      },
+      "layer_partition_10": {
+          "gpu": 10,
+          "role": "layers_10",
+          "memory_constraint": "SRAM_or_L2_cache",
+          "cache_fitting": true,
+          "layers": [10]
+      },
+      "layer_partition_11": {
+          "gpu": 11,
+          "role": "layers_11",
+          "memory_constraint": "SRAM_or_L2_cache",
+          "cache_fitting": true,
+          "layers": [11]
+      },
+      "layer_partition_12": {
+          "gpu": 12,
+          "role": "layers_12",
+          "memory_constraint": "SRAM_or_L2_cache",
+          "cache_fitting": true,
+          "layers": [12]
+      },
+      "layer_partition_13": {
+          "gpu": 13,
+          "role": "layers_13",
+          "memory_constraint": "SRAM_or_L2_cache",
+          "cache_fitting": true,
+          "layers": [13]
+      },
+      "layer_partition_14": {
+          "gpu": 14,
+          "role": "layers_14",
+          "memory_constraint": "SRAM_or_L2_cache",
+          "cache_fitting": true,
+          "layers": [14]
+      },
+      "layer_partition_15": {
+          "gpu": 15,
+          "role": "layers_15",
+          "memory_constraint": "SRAM_or_L2_cache",
+          "cache_fitting": true,
+          "layers": [15]
+      }
+    },
+    "communication_strategy": {
+      "inter_partition": {
+        "type": "activation_transfer",
+        "pattern": "sequential",
+        "bandwidth_optimization": true
+      }
+    }
+  }
+}

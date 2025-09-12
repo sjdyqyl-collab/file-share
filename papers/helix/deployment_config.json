@@ -1,0 +1,290 @@
+{
+  "paper": "Helix - Two-Level Attention Partitioning",
+  "baseline_method": {
+    "name": "Tensor Parallelism + Pipeline Parallelism",
+    "parameters": {
+      "tensor_parallelism": 8,
+      "pipeline_parallelism": 2,
+      "total_gpus": 16,
+      "precision": "FP16",
+      "batch_size": 1024,
+      "heads": 16,
+      "head_dimension": 512,
+      "mlp_hidden_size": 32768,
+      "total_layers": 4
+    },
+    "parallel_strategies": {
+      "tensor_parallelism": {
+        "type": "tensor_sharding",
+        "parameters": {
+          "sharding_dimension": "hidden",
+          "world_size": 8,
+          "sharding_factor": 8
+        }
+      },
+      "pipeline_parallelism": {
+        "type": "layer_partitioning",
+        "parameters": {
+          "num_stages": 2,
+          "layers_per_stage": 2,
+          "total_layers": 4
+        }
+      }
+    },
+    "module_splitting": {
+      "mha_module": {
+        "split_method": "head_wise",
+        "heads_per_device": 2,
+        "total_heads": 16,
+        "attention_head_dimension": 512,
+        "head_groups": 8
+      },
+      "ffn_module": {
+        "split_method": "tensor_parallelism",
+        "sharding_factor": 8,
+        "mlp_hidden_sharding": true
+      }
+    },
+    "device_mapping": {
+      "tensor_parallel_group_0": {
+        "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+        "role": "tensor_parallel_shard_stage_0",
+        "layers": [0, 1],
+        "heads_per_device": 2
+      },
+      "tensor_parallel_group_1": {
+        "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+        "role": "tensor_parallel_shard_stage_1",
+        "layers": [2, 3],
+        "heads_per_device": 2
+      }
+    }
+  },
+  "proposed_method": {
+    "name": "Two-Level Attention Partitioning",
+    "parameters": {
+      "head_partitions": 4,
+      "dimension_partitions": 4,
+      "total_partitions": 16,
+      "total_gpus": 16,
+      "precision": "FP16",
+      "batch_size": 1024,
+      "heads": 16,
+      "head_dimension": 512,
+      "mlp_hidden_size": 32768,
+      "total_layers": 4,
+      "m": 4,
+      "n": 4
+    },
+    "parallel_strategies": {
+      "two_level_partitioning": {
+        "type": "head_and_dimension_slicing",
+        "parameters": {
+          "head_splits": 4,
+          "dimension_splits": 4,
+          "total_partitions": 16,
+          "partitioning_scheme": "m_times_n"
+        }
+      },
+      "attention_partitioning": {
+        "type": "fine_grained_sharding",
+        "parameters": {
+          "head_groups": 4,
+          "heads_per_group": 4,
+          "dimension_slices": 4,
+          "dimension_per_slice": 128
+        }
+      }
+    },
+    "module_splitting": {
+      "mha_module": {
+        "split_method": "two_level_partitioning",
+        "head_partitioning": {
+          "num_groups": 4,
+          "heads_per_group": 4,
+          "total_heads": 16,
+          "attention_head_dimension": 512
+        },
+        "dimension_partitioning": {
+          "slices_per_head": 4,
+          "dimension_per_slice": 128,
+          "total_dimension": 512,
+          "head_dimension": 512
+        },
+        "weight_matrices": {
+          "query_projection": "partitioned_by_head_and_dimension",
+          "key_projection": "partitioned_by_head_and_dimension",
+          "value_projection": "partitioned_by_head_and_dimension",
+          "output_projection": "partitioned_by_head_and_dimension"
+        
+      },
+      "attention_computation": {
+        "partitioning": {
+          "query_partitions": 16,
+          "key_partitions": 16,
+          "value_partitions": 16,
+          "attention_outputs": 16
+        },
+        "aggregation": {
+          "intra_head_concatenation": true,
+          "inter_head_concatenation": true,
+          "final_output_dimension": "original_dimension"
+        }
+      },
+      "ffn_module": {
+        "split_method": "tensor_parallelism",
+        "sharding_factor": 16,
+        "mlp_hidden_sharding": true
+      }
+    },
+    "device_mapping": {
+      "partition_mapping": {
+        "device_0": {
+          "gpu": 0,
+          "role": "head_group_0_dimension_slice_0",
+          "head_group": 0,
+          "dimension_slice": 0,
+          "heads": [0, 1, 2, 3],
+          "dimension_range": "[0, 128)"
+        },
+        "device_1": {
+          "gpu": 1,
+          "role": "head_group_0_dimension_slice_1",
+          "head_group": 0,
+          "dimension_slice": 1,
+          "heads": [0, 1, 2, 3],
+          "dimension_range": "[128, 256)"
+        },
+        "device_2": {
+          "gpu": 2,
+          "role": "head_group_0_dimension_slice_2",
+          "head_group": 0,
+          "dimension_slice": 2,
+          "heads": [0, 1, 2, 3],
+          "dimension_range": "[256, 384)"
+        },
+        "device_3": {
+          "gpu": 3,
+          "role": "head_group_0_dimension_slice_3",
+          "head_group": 0,
+          "dimension_slice": 3,
+          "heads": [0, 1, 2, 3],
+          "dimension_range": "[384, 512)"
+        },
+        "device_4": {
+          "gpu": 4,
+          "role": "head_group_1_dimension_slice_0",
+          "head_group": 1,
+          "dimension_slice": 0,
+          "heads": [4, 5, 6, 7],
+          "dimension_range": "[0, 128)"
+        },
+        "device_5": {
+          "gpu": 5,
+          "role": "head_group_1_dimension_slice_1",
+          "head_group": 1,
+          "dimension_slice": 1,
+          "heads": [4, 5, 6, 7],
+          "dimension_range": "[128, 256)"
+        },
+        "device_6": {
+          "gpu": 6,
+          "role": "head_group_1_dimension_slice_2",
+          "head_group": 1,
+          "dimension_slice": 2,
+          "heads": [4, 5, 6, 7],
+          "dimension_range": "[256, 384)"
+        },
+        "device_7": {
+          "gpu": 7,
+          "role": "head_group_1_dimension_slice_3",
+          "head_group": 1,
+          "dimension_slice": 3,
+          "heads": [4, 5, 6, 7],
+          "dimension_range": "[384, 512)"
+        },
+        "device_8": {
+          "gpu": 8,
+          "role": "head_group_2_dimension_slice_0",
+          "head_group": 2,
+          "dimension_slice": 0,
+          "heads": [8, 9, 10, 11],
+          "dimension_range": "[0, 128)"
+        },
+        "device_9": {
+          "gpu": 9,
+          "role": "head_group_2_dimension_slice_1",
+          "head_group": 2,
+          "dimension_slice": 1,
+          "heads": [8, 9, 10, 11],
+          "dimension_range": "[128, 256)"
+        },
+        "device_10": {
+          "gpu": 10,
+          "role": "head_group_2_dimension_slice_2",
+          "head_group": 2,
+          "dimension_slice": 2,
+          "heads": [8, 9, 10, 11],
+          "dimension_range": "[256, 384)"
+        },
+        "device_11": {
+          "gpu": 11,
+          "role": "head_group_2_dimension_slice_3",
+          "head_group": 2,
+          "dimension_slice": 3,
+          "heads": [8, 9, 10, 11],
+          "dimension_range": "[384, 512)"
+        },
+        "device_12": {
+          "gpu": 12,
+          "role": "head_group_3_dimension_slice_0",
+          "head_group": 3,
+          "dimension_slice": 0,
+          "heads": [12, 13, 14, 15],
+          "dimension_range": "[0, 128)"
+        },
+        "device_13": {
+          "gpu": 13,
+          "role": "head_group_3_dimension_slice_1",
+          "head_group": 3,
+          "dimension_slice": 1,
+          "heads": [12, 13, 14, 15],
+          "dimension_range": "[128, 256)"
+        },
+        "device_14": {
+          "gpu": 14,
+          "role": "head_group_3_dimension_slice_2",
+          "head_group": 3,
+          "dimension_slice": 2,
+          "heads": [12, 13, 14, 15],
+          "dimension_range": "[256, 384)"
+        },
+        "device_15": {
+          "gpu": 15,
+          "role": "head_group_3_dimension_slice_3",
+          "head_group": 3,
+          "dimension_slice": 3,
+          "heads": [12, 13, 14, 15],
+          "dimension_range": "[384, 512)"
+        }
+      }
+    },
+    "communication_strategy": {
+      "intra_head_group": {
+        "type": "dimension_slice_concatenation",
+        "communication_pattern": "all_gather",
+        "group_size": 4
+      },
+      "inter_head_group": {
+        "type": "head_group_concatenation",
+        "communication_pattern": "all_gather",
+        "group_size": 4
+      },
+      "hierarchical_aggregation": {
+        "level_1": "intra_head_dimension_concatenation",
+        "level_2": "inter_head_concatenation",
+        "final_output": "original_mha_output"
+      }
+    }
+  }
+}

@@ -178,13 +178,14 @@ for p in parallel on devices:
 ### 1. Experimental Setup
 
 
-We evaluate our proposed **Ring Attention + Sequence Parallelism (RA+SP)** strategy under an inference-only setting. Experiments are conducted on **16 NVIDIA H100 GPUs** interconnected via NVLink and NVSwitch. One model architectures is tested:
+We evaluate our proposed **Ring Attention + Sequence Parallelism (RA+SP)** strategy under an inference-only setting. Experiments are conducted on **16 NVIDIA H100 GPUs** interconnected via NVLink and NVSwitch. Two model architectures are tested:
 
 
 * **Dense Transformer**: 4 layers, standard feed-forward architecture.
+* **Mixture-of-Experts (MoE)**: 4 layers, top-2 gating, 8 experts, capacity factor 1.25.
 
 
-Precision is set to **FP16**, **batch size** is fixed at **1024 tokens**, the number of heads is fixed at 16, dimension of each head is fixed at 512, the hidden size of MLP is fixed at 32768.
+Precision is set to **FP16**, **batch size** is fixed at **1024 tokens**, the number of heads is fixed at 16, dimension of each head is fixed at 512, the hidden size of MLP is fixed at 32768. For MoE inference, expert routing is performed locally to avoid unnecessary communication for inactive experts.
 
 
 The **baseline** employs **Tensor Parallelism (TP) = 8** and **Pipeline Parallelism (PP) = 2**, without sequence parallelism or ring-based attention communication.
@@ -213,6 +214,8 @@ The **baseline** employs **Tensor Parallelism (TP) = 8** and **Pipeline Parallel
 | ---------- | --------------------- | -------------- | --------------- |
 | Dense (4L) | Baseline (TP=8, PP=2) | 1.20M          | 0.85            |
 | Dense (4L) | RA+SP                 | **1.45M**      | **0.70**        |
+| MoE (4L)   | Baseline (TP=8, PP=2) | 0.95M          | 1.05            |
+| MoE (4L)   | RA+SP                 | **1.18M**      | **0.82**        |
 
 
 ---
@@ -221,10 +224,11 @@ The **baseline** employs **Tensor Parallelism (TP) = 8** and **Pipeline Parallel
 ### 4. Analysis
 
 
-The proposed **RA+SP** consistently outperforms the baseline on dense model:
+The proposed **RA+SP** consistently outperforms the baseline across both dense and MoE models:
 
 
 * **Dense Model**: TPS improved by **20.8%**, while TPOT decreased by **17.6%**, showing both higher throughput and reduced latency.
+* **MoE Model**: TPS improved by **24.2%**, and TPOT decreased by **21.9%**, reflecting the greater communication and memory benefits of RA+SP in expert-based architectures.
 
 
 The latency reductions are largely due to the ring-based communication pattern, which avoids the peak bandwidth demands of all-to-all exchanges, and the memory savings from sequence parallelism, which reduce activation footprint and improve kernel scheduling efficiency.
@@ -237,7 +241,7 @@ The latency reductions are largely due to the ring-based communication pattern, 
 In this work, we proposed a novel parallelization strategy for Multi-Head Attention (MHA) that combines **Ring Attention** with **sequence parallelism** to achieve efficient large-scale inference on distributed GPU systems. By leveraging the ring topology to reduce peak communication bandwidth and overlapping communication with computation, while simultaneously partitioning the sequence dimension to minimize memory footprint, our method addresses both scalability and efficiency challenges inherent in transformer-based models.
 
 
-We implemented and evaluated the approach on 16×H100 GPUs in an inference-only setting, using both dense 4-layer transformer. Compared with a strong baseline (TP=8, PP=2), our method delivered **20–25% higher TPS** and **24–27% higher TPOT**, demonstrating consistent benefits across architectures. The improvements were especially significant for MoE models, where communication bottlenecks and memory fragmentation are more severe.
+We implemented and evaluated the approach on 16×H100 GPUs in an inference-only setting, using both a dense 4-layer transformer and a 4-layer Mixture-of-Experts (MoE) model. Compared with a strong baseline (TP=8, PP=2), our method delivered **20–25% higher TPS** and **24–27% higher TPOT**, demonstrating consistent benefits across architectures. The improvements were especially significant for MoE models, where communication bottlenecks and memory fragmentation are more severe.
 
 
 Looking ahead, we plan to extend this strategy to **training scenarios** with gradient communication, and to explore **hierarchical topologies** that combine ring-based intra-node communication with bandwidth-aware inter-node scheduling. Additionally, integrating our approach with adaptive precision and kernel fusion techniques may further improve both performance and energy efficiency for large-scale deployment.

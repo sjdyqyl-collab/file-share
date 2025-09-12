@@ -208,9 +208,13 @@ Our method provides:
 We evaluate the proposed large-scale cross-node expert parallelism method in an **inference-only** setting using H100 GPUs. The model and configuration are as follows:
 
 
-* **Model**: 4-layer Mixture-of-Experts (MoE), 64 experts per layer
+* **Model**: 4-layer Mixture-of-Experts (MoE), 16 experts per layer, each expert is a MLP
 * **Precision**: FP16
-* **Batch size**: 1024 tokens per forward pass
+* **Batch size**: Each batch consists of 1024 sequences.
+* **Sequence Length**: 10000 tokens per sequence.
+* **Token Dimension**: The dimension of each token is 8192.
+* **Dimension of MHA**: The number of heads is 16 and the dimension of each heads is 512
+* **Hidden size of MLP**: The hidden is of MLP is 32768
 
 
 **Metrics:**
