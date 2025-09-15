@@ -1,0 +1,274 @@
+{
+  "models": {
+    "baseline": {
+      "name": "2-layer Dense Transformer Baseline",
+      "parallel_strategy": {
+        "type": "tensor_parallelism_plus_pipeline_parallelism",
+        "tensor_parallel_degree": 8,
+        "pipeline_parallel_degree": 2,
+        "total_devices": 16
+      },
+      "model_configuration": {
+        "layers": 2,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "embedding_dimension": 8192,
+        "mlp_hidden_size": 32768,
+        "batch_size": 1024,
+        "precision": "FP16"
+      },
+      "module_mapping": {
+        "tensor_parallel_group_1": {
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+          "modules": [
+            "layer_1_attention_heads_0_1",
+            "layer_1_attention_heads_2_3", 
+            "layer_1_attention_heads_4_5",
+            "layer_1_attention_heads_6_7",
+            "layer_2_attention_heads_0_1",
+            "layer_2_attention_heads_2_3",
+            "layer_2_attention_heads_4_5", 
+            "layer_2_attention_heads_6_7"
+          ]
+        },
+        "tensor_parallel_group_2": {
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+          "modules": [
+            "layer_1_attention_heads_8_9",
+            "layer_1_attention_heads_10_11",
+            "layer_1_attention_heads_12_13", 
+            "layer_1_attention_heads_14_15",
+            "layer_2_attention_heads_8_9",
+            "layer_2_attention_heads_10_11",
+            "layer_2_attention_heads_12_13",
+            "layer_2_attention_heads_14_15"
+          ]
+        }
+      }
+    },
+    "proposed": {
+      "name": "2-layer Dense Transformer with Two-Level Attention Partitioning",
+      "parallel_strategy": {
+        "type": "two_level_attention_partitioning",
+        "head_partitions": 4,
+        "dimension_partitions": 4,
+        "total_partitions": 16,
+        "total_devices": 16,
+        "partition_mapping": "one_to_one"
+      },
+      "model_configuration": {
+        "layers": 2,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "embedding_dimension": 8192,
+        "mlp_hidden_size": 32768,
+        "batch_size": 1024,
+        "precision": "FP16"
+      },
+      "partitioning_details": {
+        "heads_per_group": 4,
+        "dimensions_per_slice": 128,
+        "total_dimensions_per_partition": 512
+      },
+      "module_mapping": {
+        "partition_0_0": {
+          "device": 0,
+          "modules": [
+            "layer_1_attention_group_0_dim_slice_0",
+            "layer_2_attention_group_0_dim_slice_0"
+          ],
+          "parameters": {
+            "heads": [0, 1, 2, 3],
+            "dimensions": [0, 127],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_0_1": {
+          "device": 1,
+          "modules": [
+            "layer_1_attention_group_0_dim_slice_1", 
+            "layer_2_attention_group_0_dim_slice_1"
+          ],
+          "parameters": {
+            "heads": [0, 1, 2, 3],
+            "dimensions": [128, 255],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_0_2": {
+          "device": 2,
+          "modules": [
+            "layer_1_attention_group_0_dim_slice_2",
+            "layer_2_attention_group_0_dim_slice_2"
+          ],
+          "parameters": {
+            "heads": [0, 1, 2, 3],
+            "dimensions": [256, 383],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_0_3": {
+          "device": 3,
+          "modules": [
+            "layer_1_attention_group_0_dim_slice_3",
+            "layer_2_attention_group_0_dim_slice_3"
+          ],
+          "parameters": {
+            "heads": [0, 1, 2, 3],
+            "dimensions": [384, 511],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_1_0": {
+          "device": 4,
+          "modules": [
+            "layer_1_attention_group_1_dim_slice_0",
+            "layer_2_attention_group_1_dim_slice_0"
+          ],
+          "parameters": {
+            "heads": [4, 5, 6, 7],
+            "dimensions": [0, 127],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_1_1": {
+          "device": 5,
+          "modules": [
+            "layer_1_attention_group_1_dim_slice_1",
+            "layer_2_attention_group_1_dim_slice_1"
+          ],
+          "parameters": {
+            "heads": [4, 5, 6, 7],
+            "dimensions": [128, 255],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_1_2": {
+          "device": 6,
+          "modules": [
+            "layer_1_attention_group_1_dim_slice_2",
+            "layer_2_attention_group_1_dim_slice_2"
+          ],
+          "parameters": {
+            "heads": [4, 5, 6, 7],
+            "dimensions": [256, 383],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_1_3": {
+          "device": 7,
+          "modules": [
+            "layer_1_attention_group_1_dim_slice_3",
+            "layer_2_attention_group_1_dim_slice_3"
+          ],
+          "parameters": {
+            "heads": [4, 5, 6, 7],
+            "dimensions": [384, 511],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_2_0": {
+          "device": 8,
+          "modules": [
+            "layer_1_attention_group_2_dim_slice_0",
+            "layer_2_attention_group_2_dim_slice_0"
+          ],
+          "parameters": {
+            "heads": [8, 9, 10, 11],
+            "dimensions": [0, 127],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_2_1": {
+          "device": 9,
+          "modules": [
+            "layer_1_attention_group_2_dim_slice_1",
+            "layer_2_attention_group_2_dim_slice_1"
+          ],
+          "parameters": {
+            "heads": [8, 9, 10, 11],
+            "dimensions": [128, 255],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_2_2": {
+          "device": 10,
+          "modules": [
+            "layer_1_attention_group_2_dim_slice_2",
+            "layer_2_attention_group_2_dim_slice_2"
+          ],
+          "parameters": {
+            "heads": [8, 9, 10, 11],
+            "dimensions": [256, 383],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_2_3": {
+          "device": 11,
+          "modules": [
+            "layer_1_attention_group_2_dim_slice_3",
+            "layer_2_attention_group_2_dim_slice_3"
+          ],
+          "parameters": {
+            "heads": [8, 9, 10, 11],
+            "dimensions": [384, 511],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_3_0": {
+          "device": 12,
+          "modules": [
+            "layer_1_attention_group_3_dim_slice_0",
+            "layer_2_attention_group_3_dim_slice_0"
+          ],
+          "parameters": {
+            "heads": [12, 13, 14, 15],
+            "dimensions": [0, 127],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_3_1": {
+          "device": 13,
+          "modules": [
+            "layer_1_attention_group_3_dim_slice_1",
+            "layer_2_attention_group_3_dim_slice_1"
+          ],
+          "parameters": {
+            "heads": [12, 13, 14, 15],
+            "dimensions": [128, 255],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_3_2": {
+          "device": 14,
+          "modules": [
+            "layer_1_attention_group_3_dim_slice_2",
+            "layer_2_attention_group_3_dim_slice_2"
+          ],
+          "parameters": {
+            "heads": [12, 13, 14, 15],
+            "dimensions": [256, 383],
+            "weight_shape": [2048, 2048]
+          }
+        },
+        "partition_3_3": {
+          "device": 15,
+          "modules": [
+            "layer_1_attention_group_3_dim_slice_3",
+            "layer_2_attention_group_3_dim_slice_3"
+          ],
+          "parameters": {
+            "heads": [12, 13, 14, 15],
+            "dimensions": [384, 511],
+            "weight_shape": [2048, 2048]
+          }
+        }
+      },
+      "communication_pattern": {
+        "input_distribution": "broadcast_to_all_partitions",
+        "intra_group_concatenation": "reduce_scatter_within_head_groups",
+        "final_concatenation": "all_gather_across_groups"
+      }
+    }
+  }
+}

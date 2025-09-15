@@ -1,0 +1,304 @@
+// Proposed Cross-Node Expert Parallelism
+digraph proposed_moe_deployment {
+	rankdir=TB size="30,40"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	input [label="Total Input\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgreen shape=ellipse]
+	node [fillcolor=lightcoral]
+	layer1_mha [label="Layer 1 MHA\nInput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nGPU: all GPUs" shape=rectangle]
+	layer1_gate [label="Layer 1 Gate Selection\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: routing decisions\nGPU: all GPUs" fillcolor=lightpink shape=parallelogram]
+	layer1_expert_0 [label="Layer 1 Expert 0\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 0" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_1 [label="Layer 1 Expert 1\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 1" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_2 [label="Layer 1 Expert 2\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 2" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_3 [label="Layer 1 Expert 3\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 3" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_4 [label="Layer 1 Expert 4\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 4" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_5 [label="Layer 1 Expert 5\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 5" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_6 [label="Layer 1 Expert 6\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 6" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_7 [label="Layer 1 Expert 7\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 7" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_8 [label="Layer 1 Expert 8\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 8" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_9 [label="Layer 1 Expert 9\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 9" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_10 [label="Layer 1 Expert 10\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 10" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_11 [label="Layer 1 Expert 11\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 11" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_12 [label="Layer 1 Expert 12\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 12" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_13 [label="Layer 1 Expert 13\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 13" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_14 [label="Layer 1 Expert 14\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 14" fillcolor=lightyellow shape=rectangle]
+	layer1_expert_15 [label="Layer 1 Expert 15\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 15" fillcolor=lightyellow shape=rectangle]
+	layer1_token_routing [label="Layer 1 Token Routing\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: distributed tokens\nGPU: all GPUs" fillcolor=lightgray shape=ellipse]
+	layer1_token_aggregation [label="Layer 1 Token Aggregation\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgray shape=ellipse]
+	layer1_residual [label="Layer 1 Residual Add\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgreen shape=rectangle]
+	node [fillcolor=lightcoral]
+	layer2_mha [label="Layer 2 MHA\nInput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nGPU: all GPUs" shape=rectangle]
+	layer2_gate [label="Layer 2 Gate Selection\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: routing decisions\nGPU: all GPUs" fillcolor=lightpink shape=parallelogram]
+	layer2_expert_16 [label="Layer 2 Expert 0\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 16" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_17 [label="Layer 2 Expert 1\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 17" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_18 [label="Layer 2 Expert 2\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 18" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_19 [label="Layer 2 Expert 3\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 19" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_20 [label="Layer 2 Expert 4\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 20" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_21 [label="Layer 2 Expert 5\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 21" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_22 [label="Layer 2 Expert 6\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 22" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_23 [label="Layer 2 Expert 7\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 23" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_24 [label="Layer 2 Expert 8\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 24" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_25 [label="Layer 2 Expert 9\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 25" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_26 [label="Layer 2 Expert 10\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 26" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_27 [label="Layer 2 Expert 11\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 27" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_28 [label="Layer 2 Expert 12\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 28" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_29 [label="Layer 2 Expert 13\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 29" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_30 [label="Layer 2 Expert 14\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 30" fillcolor=lightyellow shape=rectangle]
+	layer2_expert_31 [label="Layer 2 Expert 15\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 31" fillcolor=lightyellow shape=rectangle]
+	layer2_token_routing [label="Layer 2 Token Routing\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: distributed tokens\nGPU: all GPUs" fillcolor=lightgray shape=ellipse]
+	layer2_token_aggregation [label="Layer 2 Token Aggregation\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgray shape=ellipse]
+	layer2_residual [label="Layer 2 Residual Add\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgreen shape=rectangle]
+	node [fillcolor=lightcoral]
+	layer3_mha [label="Layer 3 MHA\nInput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nGPU: all GPUs" shape=rectangle]
+	layer3_gate [label="Layer 3 Gate Selection\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: routing decisions\nGPU: all GPUs" fillcolor=lightpink shape=parallelogram]
+	layer3_expert_32 [label="Layer 3 Expert 0\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 32" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_33 [label="Layer 3 Expert 1\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 33" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_34 [label="Layer 3 Expert 2\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 34" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_35 [label="Layer 3 Expert 3\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 35" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_36 [label="Layer 3 Expert 4\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 36" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_37 [label="Layer 3 Expert 5\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 37" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_38 [label="Layer 3 Expert 6\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 38" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_39 [label="Layer 3 Expert 7\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 39" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_40 [label="Layer 3 Expert 8\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 40" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_41 [label="Layer 3 Expert 9\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 41" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_42 [label="Layer 3 Expert 10\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 42" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_43 [label="Layer 3 Expert 11\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 43" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_44 [label="Layer 3 Expert 12\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 44" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_45 [label="Layer 3 Expert 13\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 45" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_46 [label="Layer 3 Expert 14\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 46" fillcolor=lightyellow shape=rectangle]
+	layer3_expert_47 [label="Layer 3 Expert 15\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 47" fillcolor=lightyellow shape=rectangle]
+	layer3_token_routing [label="Layer 3 Token Routing\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: distributed tokens\nGPU: all GPUs" fillcolor=lightgray shape=ellipse]
+	layer3_token_aggregation [label="Layer 3 Token Aggregation\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgray shape=ellipse]
+	layer3_residual [label="Layer 3 Residual Add\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgreen shape=rectangle]
+	node [fillcolor=lightcoral]
+	layer4_mha [label="Layer 4 MHA\nInput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nGPU: all GPUs" shape=rectangle]
+	layer4_gate [label="Layer 4 Gate Selection\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: routing decisions\nGPU: all GPUs" fillcolor=lightpink shape=parallelogram]
+	layer4_expert_48 [label="Layer 4 Expert 0\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 48" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_49 [label="Layer 4 Expert 1\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 49" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_50 [label="Layer 4 Expert 2\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 50" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_51 [label="Layer 4 Expert 3\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 51" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_52 [label="Layer 4 Expert 4\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 52" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_53 [label="Layer 4 Expert 5\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 53" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_54 [label="Layer 4 Expert 6\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 54" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_55 [label="Layer 4 Expert 7\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 55" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_56 [label="Layer 4 Expert 8\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 56" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_57 [label="Layer 4 Expert 9\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 57" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_58 [label="Layer 4 Expert 10\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 58" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_59 [label="Layer 4 Expert 11\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 59" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_60 [label="Layer 4 Expert 12\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 60" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_61 [label="Layer 4 Expert 13\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 61" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_62 [label="Layer 4 Expert 14\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 62" fillcolor=lightyellow shape=rectangle]
+	layer4_expert_63 [label="Layer 4 Expert 15\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 63" fillcolor=lightyellow shape=rectangle]
+	layer4_token_routing [label="Layer 4 Token Routing\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: distributed tokens\nGPU: all GPUs" fillcolor=lightgray shape=ellipse]
+	layer4_token_aggregation [label="Layer 4 Token Aggregation\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgray shape=ellipse]
+	layer4_residual [label="Layer 4 Residual Add\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgreen shape=rectangle]
+	output [label="Total Output\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgreen shape=ellipse]
+	input -> layer1_mha
+	layer1_mha -> layer1_gate
+	layer1_gate -> layer1_expert_0 [style=dashed]
+	layer1_token_routing -> layer1_expert_0
+	layer1_expert_0 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_1 [style=dashed]
+	layer1_token_routing -> layer1_expert_1
+	layer1_expert_1 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_2 [style=dashed]
+	layer1_token_routing -> layer1_expert_2
+	layer1_expert_2 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_3 [style=dashed]
+	layer1_token_routing -> layer1_expert_3
+	layer1_expert_3 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_4 [style=dashed]
+	layer1_token_routing -> layer1_expert_4
+	layer1_expert_4 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_5 [style=dashed]
+	layer1_token_routing -> layer1_expert_5
+	layer1_expert_5 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_6 [style=dashed]
+	layer1_token_routing -> layer1_expert_6
+	layer1_expert_6 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_7 [style=dashed]
+	layer1_token_routing -> layer1_expert_7
+	layer1_expert_7 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_8 [style=dashed]
+	layer1_token_routing -> layer1_expert_8
+	layer1_expert_8 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_9 [style=dashed]
+	layer1_token_routing -> layer1_expert_9
+	layer1_expert_9 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_10 [style=dashed]
+	layer1_token_routing -> layer1_expert_10
+	layer1_expert_10 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_11 [style=dashed]
+	layer1_token_routing -> layer1_expert_11
+	layer1_expert_11 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_12 [style=dashed]
+	layer1_token_routing -> layer1_expert_12
+	layer1_expert_12 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_13 [style=dashed]
+	layer1_token_routing -> layer1_expert_13
+	layer1_expert_13 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_14 [style=dashed]
+	layer1_token_routing -> layer1_expert_14
+	layer1_expert_14 -> layer1_token_aggregation
+	layer1_gate -> layer1_expert_15 [style=dashed]
+	layer1_token_routing -> layer1_expert_15
+	layer1_expert_15 -> layer1_token_aggregation
+	layer1_mha -> layer1_token_routing
+	layer1_token_aggregation -> layer1_residual
+	layer1_residual -> layer2_mha
+	layer2_mha -> layer2_gate
+	layer2_gate -> layer2_expert_16 [style=dashed]
+	layer2_token_routing -> layer2_expert_16
+	layer2_expert_16 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_17 [style=dashed]
+	layer2_token_routing -> layer2_expert_17
+	layer2_expert_17 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_18 [style=dashed]
+	layer2_token_routing -> layer2_expert_18
+	layer2_expert_18 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_19 [style=dashed]
+	layer2_token_routing -> layer2_expert_19
+	layer2_expert_19 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_20 [style=dashed]
+	layer2_token_routing -> layer2_expert_20
+	layer2_expert_20 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_21 [style=dashed]
+	layer2_token_routing -> layer2_expert_21
+	layer2_expert_21 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_22 [style=dashed]
+	layer2_token_routing -> layer2_expert_22
+	layer2_expert_22 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_23 [style=dashed]
+	layer2_token_routing -> layer2_expert_23
+	layer2_expert_23 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_24 [style=dashed]
+	layer2_token_routing -> layer2_expert_24
+	layer2_expert_24 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_25 [style=dashed]
+	layer2_token_routing -> layer2_expert_25
+	layer2_expert_25 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_26 [style=dashed]
+	layer2_token_routing -> layer2_expert_26
+	layer2_expert_26 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_27 [style=dashed]
+	layer2_token_routing -> layer2_expert_27
+	layer2_expert_27 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_28 [style=dashed]
+	layer2_token_routing -> layer2_expert_28
+	layer2_expert_28 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_29 [style=dashed]
+	layer2_token_routing -> layer2_expert_29
+	layer2_expert_29 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_30 [style=dashed]
+	layer2_token_routing -> layer2_expert_30
+	layer2_expert_30 -> layer2_token_aggregation
+	layer2_gate -> layer2_expert_31 [style=dashed]
+	layer2_token_routing -> layer2_expert_31
+	layer2_expert_31 -> layer2_token_aggregation
+	layer2_mha -> layer2_token_routing
+	layer2_token_aggregation -> layer2_residual
+	layer2_residual -> layer3_mha
+	layer3_mha -> layer3_gate
+	layer3_gate -> layer3_expert_32 [style=dashed]
+	layer3_token_routing -> layer3_expert_32
+	layer3_expert_32 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_33 [style=dashed]
+	layer3_token_routing -> layer3_expert_33
+	layer3_expert_33 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_34 [style=dashed]
+	layer3_token_routing -> layer3_expert_34
+	layer3_expert_34 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_35 [style=dashed]
+	layer3_token_routing -> layer3_expert_35
+	layer3_expert_35 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_36 [style=dashed]
+	layer3_token_routing -> layer3_expert_36
+	layer3_expert_36 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_37 [style=dashed]
+	layer3_token_routing -> layer3_expert_37
+	layer3_expert_37 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_38 [style=dashed]
+	layer3_token_routing -> layer3_expert_38
+	layer3_expert_38 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_39 [style=dashed]
+	layer3_token_routing -> layer3_expert_39
+	layer3_expert_39 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_40 [style=dashed]
+	layer3_token_routing -> layer3_expert_40
+	layer3_expert_40 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_41 [style=dashed]
+	layer3_token_routing -> layer3_expert_41
+	layer3_expert_41 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_42 [style=dashed]
+	layer3_token_routing -> layer3_expert_42
+	layer3_expert_42 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_43 [style=dashed]
+	layer3_token_routing -> layer3_expert_43
+	layer3_expert_43 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_44 [style=dashed]
+	layer3_token_routing -> layer3_expert_44
+	layer3_expert_44 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_45 [style=dashed]
+	layer3_token_routing -> layer3_expert_45
+	layer3_expert_45 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_46 [style=dashed]
+	layer3_token_routing -> layer3_expert_46
+	layer3_expert_46 -> layer3_token_aggregation
+	layer3_gate -> layer3_expert_47 [style=dashed]
+	layer3_token_routing -> layer3_expert_47
+	layer3_expert_47 -> layer3_token_aggregation
+	layer3_mha -> layer3_token_routing
+	layer3_token_aggregation -> layer3_residual
+	layer3_residual -> layer4_mha
+	layer4_mha -> layer4_gate
+	layer4_gate -> layer4_expert_48 [style=dashed]
+	layer4_token_routing -> layer4_expert_48
+	layer4_expert_48 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_49 [style=dashed]
+	layer4_token_routing -> layer4_expert_49
+	layer4_expert_49 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_50 [style=dashed]
+	layer4_token_routing -> layer4_expert_50
+	layer4_expert_50 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_51 [style=dashed]
+	layer4_token_routing -> layer4_expert_51
+	layer4_expert_51 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_52 [style=dashed]
+	layer4_token_routing -> layer4_expert_52
+	layer4_expert_52 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_53 [style=dashed]
+	layer4_token_routing -> layer4_expert_53
+	layer4_expert_53 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_54 [style=dashed]
+	layer4_token_routing -> layer4_expert_54
+	layer4_expert_54 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_55 [style=dashed]
+	layer4_token_routing -> layer4_expert_55
+	layer4_expert_55 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_56 [style=dashed]
+	layer4_token_routing -> layer4_expert_56
+	layer4_expert_56 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_57 [style=dashed]
+	layer4_token_routing -> layer4_expert_57
+	layer4_expert_57 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_58 [style=dashed]
+	layer4_token_routing -> layer4_expert_58
+	layer4_expert_58 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_59 [style=dashed]
+	layer4_token_routing -> layer4_expert_59
+	layer4_expert_59 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_60 [style=dashed]
+	layer4_token_routing -> layer4_expert_60
+	layer4_expert_60 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_61 [style=dashed]
+	layer4_token_routing -> layer4_expert_61
+	layer4_expert_61 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_62 [style=dashed]
+	layer4_token_routing -> layer4_expert_62
+	layer4_expert_62 -> layer4_token_aggregation
+	layer4_gate -> layer4_expert_63 [style=dashed]
+	layer4_token_routing -> layer4_expert_63
+	layer4_expert_63 -> layer4_token_aggregation
+	layer4_mha -> layer4_token_routing
+	layer4_token_aggregation -> layer4_residual
+	layer4_residual -> output
+}

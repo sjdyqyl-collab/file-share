@@ -1,0 +1,1281 @@
+// Proposed 2-layer Transformer with Two-Level Attention Partitioning
+digraph proposed_transformer {
+	compound=true rankdir=TB splines=ortho
+	subgraph cluster_gpu_0 {
+		color=blue label="GPU 0\nGroup 0, Slice 0" style=rounded
+	}
+	subgraph cluster_gpu_1 {
+		color=blue label="GPU 1\nGroup 0, Slice 1" style=rounded
+	}
+	subgraph cluster_gpu_2 {
+		color=blue label="GPU 2\nGroup 0, Slice 2" style=rounded
+	}
+	subgraph cluster_gpu_3 {
+		color=blue label="GPU 3\nGroup 0, Slice 3" style=rounded
+	}
+	subgraph cluster_gpu_4 {
+		color=blue label="GPU 4\nGroup 1, Slice 0" style=rounded
+	}
+	subgraph cluster_gpu_5 {
+		color=blue label="GPU 5\nGroup 1, Slice 1" style=rounded
+	}
+	subgraph cluster_gpu_6 {
+		color=blue label="GPU 6\nGroup 1, Slice 2" style=rounded
+	}
+	subgraph cluster_gpu_7 {
+		color=blue label="GPU 7\nGroup 1, Slice 3" style=rounded
+	}
+	subgraph cluster_gpu_8 {
+		color=blue label="GPU 8\nGroup 2, Slice 0" style=rounded
+	}
+	subgraph cluster_gpu_9 {
+		color=blue label="GPU 9\nGroup 2, Slice 1" style=rounded
+	}
+	subgraph cluster_gpu_10 {
+		color=blue label="GPU 10\nGroup 2, Slice 2" style=rounded
+	}
+	subgraph cluster_gpu_11 {
+		color=blue label="GPU 11\nGroup 2, Slice 3" style=rounded
+	}
+	subgraph cluster_gpu_12 {
+		color=blue label="GPU 12\nGroup 3, Slice 0" style=rounded
+	}
+	subgraph cluster_gpu_13 {
+		color=blue label="GPU 13\nGroup 3, Slice 1" style=rounded
+	}
+	subgraph cluster_gpu_14 {
+		color=blue label="GPU 14\nGroup 3, Slice 2" style=rounded
+	}
+	subgraph cluster_gpu_15 {
+		color=blue label="GPU 15\nGroup 3, Slice 3" style=rounded
+	}
+	input [label="Input
+[batch_size=1024, seq_len=?, embedding_dim=8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	broadcast [label="Broadcast Input
+[1024, ?, 8192]
+to all GPUs" fillcolor=orange shape=parallelogram style=filled]
+	q_proj_l1_g0 [label="Q Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g0 [label="K Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g0 [label="V Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g0 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 0-3\nDims 0-127" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g0 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 0" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g0 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 0" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g0 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 0" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_0 [label="Local Residual L1
+[1024, ?, 512]
+GPU 0" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_0 {
+	}
+	q_proj_l1_g1 [label="Q Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g1 [label="K Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g1 [label="V Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g1 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 0-3\nDims 128-255" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g1 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 1" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g1 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 1" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g1 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 1" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_1 [label="Local Residual L1
+[1024, ?, 512]
+GPU 1" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_1 {
+	}
+	q_proj_l1_g2 [label="Q Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g2 [label="K Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g2 [label="V Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g2 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 0-3\nDims 256-383" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g2 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 2" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g2 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 2" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g2 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 2" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_2 [label="Local Residual L1
+[1024, ?, 512]
+GPU 2" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_2 {
+	}
+	q_proj_l1_g3 [label="Q Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g3 [label="K Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g3 [label="V Projection L1
+[1024, ?, 512]
+Heads 0-3\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g3 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 0-3\nDims 384-511" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g3 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 3" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g3 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 3" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g3 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 3" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_3 [label="Local Residual L1
+[1024, ?, 512]
+GPU 3" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_3 {
+	}
+	q_proj_l1_g4 [label="Q Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g4 [label="K Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g4 [label="V Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g4 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 4-7\nDims 0-127" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g4 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 4" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g4 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 4" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g4 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 4" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_4 [label="Local Residual L1
+[1024, ?, 512]
+GPU 4" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_4 {
+	}
+	q_proj_l1_g5 [label="Q Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g5 [label="K Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g5 [label="V Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g5 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 4-7\nDims 128-255" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g5 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 5" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g5 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 5" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g5 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 5" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_5 [label="Local Residual L1
+[1024, ?, 512]
+GPU 5" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_5 {
+	}
+	q_proj_l1_g6 [label="Q Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g6 [label="K Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g6 [label="V Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g6 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 4-7\nDims 256-383" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g6 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 6" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g6 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 6" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g6 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 6" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_6 [label="Local Residual L1
+[1024, ?, 512]
+GPU 6" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_6 {
+	}
+	q_proj_l1_g7 [label="Q Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g7 [label="K Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g7 [label="V Projection L1
+[1024, ?, 512]
+Heads 4-7\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g7 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 4-7\nDims 384-511" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g7 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 7" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g7 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 7" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g7 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 7" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_7 [label="Local Residual L1
+[1024, ?, 512]
+GPU 7" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_7 {
+	}
+	q_proj_l1_g8 [label="Q Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g8 [label="K Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g8 [label="V Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g8 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 8-11\nDims 0-127" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g8 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 8" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g8 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 8" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g8 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 8" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_8 [label="Local Residual L1
+[1024, ?, 512]
+GPU 8" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_8 {
+	}
+	q_proj_l1_g9 [label="Q Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g9 [label="K Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g9 [label="V Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g9 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 8-11\nDims 128-255" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g9 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 9" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g9 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 9" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g9 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 9" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_9 [label="Local Residual L1
+[1024, ?, 512]
+GPU 9" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_9 {
+	}
+	q_proj_l1_g10 [label="Q Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g10 [label="K Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g10 [label="V Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g10 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 8-11\nDims 256-383" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g10 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 10" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g10 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 10" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g10 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 10" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_10 [label="Local Residual L1
+[1024, ?, 512]
+GPU 10" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_10 {
+	}
+	q_proj_l1_g11 [label="Q Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g11 [label="K Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g11 [label="V Projection L1
+[1024, ?, 512]
+Heads 8-11\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g11 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 8-11\nDims 384-511" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g11 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 11" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g11 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 11" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g11 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 11" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_11 [label="Local Residual L1
+[1024, ?, 512]
+GPU 11" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_11 {
+	}
+	q_proj_l1_g12 [label="Q Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g12 [label="K Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g12 [label="V Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g12 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 12-15\nDims 0-127" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g12 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 12" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g12 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 12" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g12 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 12" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_12 [label="Local Residual L1
+[1024, ?, 512]
+GPU 12" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_12 {
+	}
+	q_proj_l1_g13 [label="Q Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g13 [label="K Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g13 [label="V Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g13 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 12-15\nDims 128-255" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g13 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 13" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g13 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 13" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g13 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 13" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_13 [label="Local Residual L1
+[1024, ?, 512]
+GPU 13" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_13 {
+	}
+	q_proj_l1_g14 [label="Q Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g14 [label="K Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g14 [label="V Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g14 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 12-15\nDims 256-383" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g14 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 14" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g14 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 14" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g14 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 14" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_14 [label="Local Residual L1
+[1024, ?, 512]
+GPU 14" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_14 {
+	}
+	q_proj_l1_g15 [label="Q Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l1_g15 [label="K Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l1_g15 [label="V Projection L1
+[1024, ?, 512]
+Heads 12-15\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l1_g15 [label="Attention L1
+[1024, ?, 4, 128]
+Heads 12-15\nDims 384-511" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l1_g15 [label="MLP FC L1
+[1024, ?, 8192]
+Partition 15" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l1_g15 [label="MLP GELU L1
+[1024, ?, 8192]
+Partition 15" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l1_g15 [label="MLP Projection L1
+[1024, ?, 8192]
+Partition 15" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l1_local_15 [label="Local Residual L1
+[1024, ?, 512]
+GPU 15" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_15 {
+	}
+	concat_dims_l1_g0 [label="Concat Dims L1
+[1024, ?, 4, 512]
+Head Group 0" fillcolor=purple shape=parallelogram style=filled]
+	concat_dims_l1_g1 [label="Concat Dims L1
+[1024, ?, 4, 512]
+Head Group 1" fillcolor=purple shape=parallelogram style=filled]
+	concat_dims_l1_g2 [label="Concat Dims L1
+[1024, ?, 4, 512]
+Head Group 2" fillcolor=purple shape=parallelogram style=filled]
+	concat_dims_l1_g3 [label="Concat Dims L1
+[1024, ?, 4, 512]
+Head Group 3" fillcolor=purple shape=parallelogram style=filled]
+	concat_heads_l1 [label="Concat Head Groups L1
+[1024, ?, 16, 512]\nAll Groups" fillcolor=purple shape=parallelogram style=filled]
+	q_proj_l2_g0 [label="Q Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g0 [label="K Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g0 [label="V Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g0 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 0-3\nDims 0-127" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g0 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 0" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g0 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 0" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g0 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 0" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_0 [label="Local Residual L2
+[1024, ?, 512]
+GPU 0" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_0 {
+	}
+	q_proj_l2_g1 [label="Q Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g1 [label="K Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g1 [label="V Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g1 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 0-3\nDims 128-255" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g1 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 1" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g1 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 1" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g1 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 1" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_1 [label="Local Residual L2
+[1024, ?, 512]
+GPU 1" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_1 {
+	}
+	q_proj_l2_g2 [label="Q Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g2 [label="K Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g2 [label="V Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g2 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 0-3\nDims 256-383" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g2 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 2" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g2 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 2" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g2 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 2" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_2 [label="Local Residual L2
+[1024, ?, 512]
+GPU 2" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_2 {
+	}
+	q_proj_l2_g3 [label="Q Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g3 [label="K Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g3 [label="V Projection L2
+[1024, ?, 512]
+Heads 0-3\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g3 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 0-3\nDims 384-511" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g3 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 3" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g3 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 3" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g3 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 3" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_3 [label="Local Residual L2
+[1024, ?, 512]
+GPU 3" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_3 {
+	}
+	q_proj_l2_g4 [label="Q Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g4 [label="K Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g4 [label="V Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g4 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 4-7\nDims 0-127" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g4 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 4" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g4 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 4" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g4 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 4" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_4 [label="Local Residual L2
+[1024, ?, 512]
+GPU 4" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_4 {
+	}
+	q_proj_l2_g5 [label="Q Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g5 [label="K Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g5 [label="V Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g5 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 4-7\nDims 128-255" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g5 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 5" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g5 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 5" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g5 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 5" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_5 [label="Local Residual L2
+[1024, ?, 512]
+GPU 5" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_5 {
+	}
+	q_proj_l2_g6 [label="Q Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g6 [label="K Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g6 [label="V Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g6 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 4-7\nDims 256-383" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g6 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 6" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g6 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 6" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g6 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 6" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_6 [label="Local Residual L2
+[1024, ?, 512]
+GPU 6" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_6 {
+	}
+	q_proj_l2_g7 [label="Q Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g7 [label="K Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g7 [label="V Projection L2
+[1024, ?, 512]
+Heads 4-7\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g7 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 4-7\nDims 384-511" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g7 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 7" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g7 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 7" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g7 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 7" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_7 [label="Local Residual L2
+[1024, ?, 512]
+GPU 7" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_7 {
+	}
+	q_proj_l2_g8 [label="Q Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g8 [label="K Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g8 [label="V Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g8 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 8-11\nDims 0-127" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g8 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 8" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g8 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 8" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g8 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 8" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_8 [label="Local Residual L2
+[1024, ?, 512]
+GPU 8" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_8 {
+	}
+	q_proj_l2_g9 [label="Q Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g9 [label="K Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g9 [label="V Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g9 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 8-11\nDims 128-255" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g9 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 9" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g9 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 9" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g9 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 9" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_9 [label="Local Residual L2
+[1024, ?, 512]
+GPU 9" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_9 {
+	}
+	q_proj_l2_g10 [label="Q Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g10 [label="K Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g10 [label="V Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g10 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 8-11\nDims 256-383" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g10 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 10" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g10 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 10" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g10 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 10" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_10 [label="Local Residual L2
+[1024, ?, 512]
+GPU 10" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_10 {
+	}
+	q_proj_l2_g11 [label="Q Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g11 [label="K Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g11 [label="V Projection L2
+[1024, ?, 512]
+Heads 8-11\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g11 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 8-11\nDims 384-511" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g11 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 11" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g11 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 11" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g11 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 11" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_11 [label="Local Residual L2
+[1024, ?, 512]
+GPU 11" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_11 {
+	}
+	q_proj_l2_g12 [label="Q Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g12 [label="K Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g12 [label="V Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 0-127" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g12 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 12-15\nDims 0-127" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g12 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 12" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g12 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 12" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g12 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 12" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_12 [label="Local Residual L2
+[1024, ?, 512]
+GPU 12" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_12 {
+	}
+	q_proj_l2_g13 [label="Q Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g13 [label="K Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g13 [label="V Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 128-255" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g13 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 12-15\nDims 128-255" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g13 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 13" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g13 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 13" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g13 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 13" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_13 [label="Local Residual L2
+[1024, ?, 512]
+GPU 13" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_13 {
+	}
+	q_proj_l2_g14 [label="Q Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g14 [label="K Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g14 [label="V Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 256-383" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g14 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 12-15\nDims 256-383" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g14 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 14" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g14 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 14" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g14 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 14" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_14 [label="Local Residual L2
+[1024, ?, 512]
+GPU 14" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_14 {
+	}
+	q_proj_l2_g15 [label="Q Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	k_proj_l2_g15 [label="K Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	v_proj_l2_g15 [label="V Projection L2
+[1024, ?, 512]
+Heads 12-15\nDims 384-511" fillcolor=lightblue shape=rectangle style=filled]
+	attn_l2_g15 [label="Attention L2
+[1024, ?, 4, 128]
+Heads 12-15\nDims 384-511" fillcolor=yellow shape=rectangle style=filled]
+	mlp_fc_l2_g15 [label="MLP FC L2
+[1024, ?, 8192]
+Partition 15" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_gelu_l2_g15 [label="MLP GELU L2
+[1024, ?, 8192]
+Partition 15" fillcolor=lightcoral shape=rectangle style=filled]
+	mlp_proj_l2_g15 [label="MLP Projection L2
+[1024, ?, 8192]
+Partition 15" fillcolor=lightcoral shape=rectangle style=filled]
+	residual_l2_local_15 [label="Local Residual L2
+[1024, ?, 512]
+GPU 15" fillcolor=lightgray shape=parallelogram style=filled]
+	subgraph cluster_gpu_15 {
+	}
+	concat_dims_l2_g0 [label="Concat Dims L2
+[1024, ?, 4, 512]
+Head Group 0" fillcolor=purple shape=parallelogram style=filled]
+	concat_dims_l2_g1 [label="Concat Dims L2
+[1024, ?, 4, 512]
+Head Group 1" fillcolor=purple shape=parallelogram style=filled]
+	concat_dims_l2_g2 [label="Concat Dims L2
+[1024, ?, 4, 512]
+Head Group 2" fillcolor=purple shape=parallelogram style=filled]
+	concat_dims_l2_g3 [label="Concat Dims L2
+[1024, ?, 4, 512]
+Head Group 3" fillcolor=purple shape=parallelogram style=filled]
+	concat_heads_l2 [label="Concat Head Groups L2
+[1024, ?, 16, 512]\nAll Groups" fillcolor=purple shape=parallelogram style=filled]
+	output [label="Output
+[batch_size=1024, seq_len=?, embedding_dim=8192]" fillcolor=lightgreen shape=ellipse style=filled]
+	input -> broadcast
+	broadcast -> q_proj_l1_g0
+	broadcast -> k_proj_l1_g0
+	broadcast -> v_proj_l1_g0
+	q_proj_l1_g0 -> attn_l1_g0
+	k_proj_l1_g0 -> attn_l1_g0
+	v_proj_l1_g0 -> attn_l1_g0
+	attn_l1_g0 -> residual_l1_local_0
+	residual_l1_local_0 -> mlp_fc_l1_g0
+	mlp_fc_l1_g0 -> mlp_gelu_l1_g0
+	mlp_gelu_l1_g0 -> mlp_proj_l1_g0
+	mlp_proj_l1_g0 -> concat_dims_l1_g0
+	broadcast -> q_proj_l1_g1
+	broadcast -> k_proj_l1_g1
+	broadcast -> v_proj_l1_g1
+	q_proj_l1_g1 -> attn_l1_g1
+	k_proj_l1_g1 -> attn_l1_g1
+	v_proj_l1_g1 -> attn_l1_g1
+	attn_l1_g1 -> residual_l1_local_1
+	residual_l1_local_1 -> mlp_fc_l1_g1
+	mlp_fc_l1_g1 -> mlp_gelu_l1_g1
+	mlp_gelu_l1_g1 -> mlp_proj_l1_g1
+	mlp_proj_l1_g1 -> concat_dims_l1_g0
+	broadcast -> q_proj_l1_g2
+	broadcast -> k_proj_l1_g2
+	broadcast -> v_proj_l1_g2
+	q_proj_l1_g2 -> attn_l1_g2
+	k_proj_l1_g2 -> attn_l1_g2
+	v_proj_l1_g2 -> attn_l1_g2
+	attn_l1_g2 -> residual_l1_local_2
+	residual_l1_local_2 -> mlp_fc_l1_g2
+	mlp_fc_l1_g2 -> mlp_gelu_l1_g2
+	mlp_gelu_l1_g2 -> mlp_proj_l1_g2
+	mlp_proj_l1_g2 -> concat_dims_l1_g0
+	broadcast -> q_proj_l1_g3
+	broadcast -> k_proj_l1_g3
+	broadcast -> v_proj_l1_g3
+	q_proj_l1_g3 -> attn_l1_g3
+	k_proj_l1_g3 -> attn_l1_g3
+	v_proj_l1_g3 -> attn_l1_g3
+	attn_l1_g3 -> residual_l1_local_3
+	residual_l1_local_3 -> mlp_fc_l1_g3
+	mlp_fc_l1_g3 -> mlp_gelu_l1_g3
+	mlp_gelu_l1_g3 -> mlp_proj_l1_g3
+	mlp_proj_l1_g3 -> concat_dims_l1_g0
+	broadcast -> q_proj_l1_g4
+	broadcast -> k_proj_l1_g4
+	broadcast -> v_proj_l1_g4
+	q_proj_l1_g4 -> attn_l1_g4
+	k_proj_l1_g4 -> attn_l1_g4
+	v_proj_l1_g4 -> attn_l1_g4
+	attn_l1_g4 -> residual_l1_local_4
+	residual_l1_local_4 -> mlp_fc_l1_g4
+	mlp_fc_l1_g4 -> mlp_gelu_l1_g4
+	mlp_gelu_l1_g4 -> mlp_proj_l1_g4
+	mlp_proj_l1_g4 -> concat_dims_l1_g1
+	broadcast -> q_proj_l1_g5
+	broadcast -> k_proj_l1_g5
+	broadcast -> v_proj_l1_g5
+	q_proj_l1_g5 -> attn_l1_g5
+	k_proj_l1_g5 -> attn_l1_g5
+	v_proj_l1_g5 -> attn_l1_g5
+	attn_l1_g5 -> residual_l1_local_5
+	residual_l1_local_5 -> mlp_fc_l1_g5
+	mlp_fc_l1_g5 -> mlp_gelu_l1_g5
+	mlp_gelu_l1_g5 -> mlp_proj_l1_g5
+	mlp_proj_l1_g5 -> concat_dims_l1_g1
+	broadcast -> q_proj_l1_g6
+	broadcast -> k_proj_l1_g6
+	broadcast -> v_proj_l1_g6
+	q_proj_l1_g6 -> attn_l1_g6
+	k_proj_l1_g6 -> attn_l1_g6
+	v_proj_l1_g6 -> attn_l1_g6
+	attn_l1_g6 -> residual_l1_local_6
+	residual_l1_local_6 -> mlp_fc_l1_g6
+	mlp_fc_l1_g6 -> mlp_gelu_l1_g6
+	mlp_gelu_l1_g6 -> mlp_proj_l1_g6
+	mlp_proj_l1_g6 -> concat_dims_l1_g1
+	broadcast -> q_proj_l1_g7
+	broadcast -> k_proj_l1_g7
+	broadcast -> v_proj_l1_g7
+	q_proj_l1_g7 -> attn_l1_g7
+	k_proj_l1_g7 -> attn_l1_g7
+	v_proj_l1_g7 -> attn_l1_g7
+	attn_l1_g7 -> residual_l1_local_7
+	residual_l1_local_7 -> mlp_fc_l1_g7
+	mlp_fc_l1_g7 -> mlp_gelu_l1_g7
+	mlp_gelu_l1_g7 -> mlp_proj_l1_g7
+	mlp_proj_l1_g7 -> concat_dims_l1_g1
+	broadcast -> q_proj_l1_g8
+	broadcast -> k_proj_l1_g8
+	broadcast -> v_proj_l1_g8
+	q_proj_l1_g8 -> attn_l1_g8
+	k_proj_l1_g8 -> attn_l1_g8
+	v_proj_l1_g8 -> attn_l1_g8
+	attn_l1_g8 -> residual_l1_local_8
+	residual_l1_local_8 -> mlp_fc_l1_g8
+	mlp_fc_l1_g8 -> mlp_gelu_l1_g8
+	mlp_gelu_l1_g8 -> mlp_proj_l1_g8
+	mlp_proj_l1_g8 -> concat_dims_l1_g2
+	broadcast -> q_proj_l1_g9
+	broadcast -> k_proj_l1_g9
+	broadcast -> v_proj_l1_g9
+	q_proj_l1_g9 -> attn_l1_g9
+	k_proj_l1_g9 -> attn_l1_g9
+	v_proj_l1_g9 -> attn_l1_g9
+	attn_l1_g9 -> residual_l1_local_9
+	residual_l1_local_9 -> mlp_fc_l1_g9
+	mlp_fc_l1_g9 -> mlp_gelu_l1_g9
+	mlp_gelu_l1_g9 -> mlp_proj_l1_g9
+	mlp_proj_l1_g9 -> concat_dims_l1_g2
+	broadcast -> q_proj_l1_g10
+	broadcast -> k_proj_l1_g10
+	broadcast -> v_proj_l1_g10
+	q_proj_l1_g10 -> attn_l1_g10
+	k_proj_l1_g10 -> attn_l1_g10
+	v_proj_l1_g10 -> attn_l1_g10
+	attn_l1_g10 -> residual_l1_local_10
+	residual_l1_local_10 -> mlp_fc_l1_g10
+	mlp_fc_l1_g10 -> mlp_gelu_l1_g10
+	mlp_gelu_l1_g10 -> mlp_proj_l1_g10
+	mlp_proj_l1_g10 -> concat_dims_l1_g2
+	broadcast -> q_proj_l1_g11
+	broadcast -> k_proj_l1_g11
+	broadcast -> v_proj_l1_g11
+	q_proj_l1_g11 -> attn_l1_g11
+	k_proj_l1_g11 -> attn_l1_g11
+	v_proj_l1_g11 -> attn_l1_g11
+	attn_l1_g11 -> residual_l1_local_11
+	residual_l1_local_11 -> mlp_fc_l1_g11
+	mlp_fc_l1_g11 -> mlp_gelu_l1_g11
+	mlp_gelu_l1_g11 -> mlp_proj_l1_g11
+	mlp_proj_l1_g11 -> concat_dims_l1_g2
+	broadcast -> q_proj_l1_g12
+	broadcast -> k_proj_l1_g12
+	broadcast -> v_proj_l1_g12
+	q_proj_l1_g12 -> attn_l1_g12
+	k_proj_l1_g12 -> attn_l1_g12
+	v_proj_l1_g12 -> attn_l1_g12
+	attn_l1_g12 -> residual_l1_local_12
+	residual_l1_local_12 -> mlp_fc_l1_g12
+	mlp_fc_l1_g12 -> mlp_gelu_l1_g12
+	mlp_gelu_l1_g12 -> mlp_proj_l1_g12
+	mlp_proj_l1_g12 -> concat_dims_l1_g3
+	broadcast -> q_proj_l1_g13
+	broadcast -> k_proj_l1_g13
+	broadcast -> v_proj_l1_g13
+	q_proj_l1_g13 -> attn_l1_g13
+	k_proj_l1_g13 -> attn_l1_g13
+	v_proj_l1_g13 -> attn_l1_g13
+	attn_l1_g13 -> residual_l1_local_13
+	residual_l1_local_13 -> mlp_fc_l1_g13
+	mlp_fc_l1_g13 -> mlp_gelu_l1_g13
+	mlp_gelu_l1_g13 -> mlp_proj_l1_g13
+	mlp_proj_l1_g13 -> concat_dims_l1_g3
+	broadcast -> q_proj_l1_g14
+	broadcast -> k_proj_l1_g14
+	broadcast -> v_proj_l1_g14
+	q_proj_l1_g14 -> attn_l1_g14
+	k_proj_l1_g14 -> attn_l1_g14
+	v_proj_l1_g14 -> attn_l1_g14
+	attn_l1_g14 -> residual_l1_local_14
+	residual_l1_local_14 -> mlp_fc_l1_g14
+	mlp_fc_l1_g14 -> mlp_gelu_l1_g14
+	mlp_gelu_l1_g14 -> mlp_proj_l1_g14
+	mlp_proj_l1_g14 -> concat_dims_l1_g3
+	broadcast -> q_proj_l1_g15
+	broadcast -> k_proj_l1_g15
+	broadcast -> v_proj_l1_g15
+	q_proj_l1_g15 -> attn_l1_g15
+	k_proj_l1_g15 -> attn_l1_g15
+	v_proj_l1_g15 -> attn_l1_g15
+	attn_l1_g15 -> residual_l1_local_15
+	residual_l1_local_15 -> mlp_fc_l1_g15
+	mlp_fc_l1_g15 -> mlp_gelu_l1_g15
+	mlp_gelu_l1_g15 -> mlp_proj_l1_g15
+	mlp_proj_l1_g15 -> concat_dims_l1_g3
+	concat_dims_l1_g0 -> concat_heads_l1
+	concat_dims_l1_g1 -> concat_heads_l1
+	concat_dims_l1_g2 -> concat_heads_l1
+	concat_dims_l1_g3 -> concat_heads_l1
+	concat_heads_l1 -> q_proj_l2_g0
+	concat_heads_l1 -> k_proj_l2_g0
+	concat_heads_l1 -> v_proj_l2_g0
+	q_proj_l2_g0 -> attn_l2_g0
+	k_proj_l2_g0 -> attn_l2_g0
+	v_proj_l2_g0 -> attn_l2_g0
+	attn_l2_g0 -> residual_l2_local_0
+	residual_l2_local_0 -> mlp_fc_l2_g0
+	mlp_fc_l2_g0 -> mlp_gelu_l2_g0
+	mlp_gelu_l2_g0 -> mlp_proj_l2_g0
+	mlp_proj_l2_g0 -> concat_dims_l2_g0
+	concat_heads_l1 -> q_proj_l2_g1
+	concat_heads_l1 -> k_proj_l2_g1
+	concat_heads_l1 -> v_proj_l2_g1
+	q_proj_l2_g1 -> attn_l2_g1
+	k_proj_l2_g1 -> attn_l2_g1
+	v_proj_l2_g1 -> attn_l2_g1
+	attn_l2_g1 -> residual_l2_local_1
+	residual_l2_local_1 -> mlp_fc_l2_g1
+	mlp_fc_l2_g1 -> mlp_gelu_l2_g1
+	mlp_gelu_l2_g1 -> mlp_proj_l2_g1
+	mlp_proj_l2_g1 -> concat_dims_l2_g0
+	concat_heads_l1 -> q_proj_l2_g2
+	concat_heads_l1 -> k_proj_l2_g2
+	concat_heads_l1 -> v_proj_l2_g2
+	q_proj_l2_g2 -> attn_l2_g2
+	k_proj_l2_g2 -> attn_l2_g2
+	v_proj_l2_g2 -> attn_l2_g2
+	attn_l2_g2 -> residual_l2_local_2
+	residual_l2_local_2 -> mlp_fc_l2_g2
+	mlp_fc_l2_g2 -> mlp_gelu_l2_g2
+	mlp_gelu_l2_g2 -> mlp_proj_l2_g2
+	mlp_proj_l2_g2 -> concat_dims_l2_g0
+	concat_heads_l1 -> q_proj_l2_g3
+	concat_heads_l1 -> k_proj_l2_g3
+	concat_heads_l1 -> v_proj_l2_g3
+	q_proj_l2_g3 -> attn_l2_g3
+	k_proj_l2_g3 -> attn_l2_g3
+	v_proj_l2_g3 -> attn_l2_g3
+	attn_l2_g3 -> residual_l2_local_3
+	residual_l2_local_3 -> mlp_fc_l2_g3
+	mlp_fc_l2_g3 -> mlp_gelu_l2_g3
+	mlp_gelu_l2_g3 -> mlp_proj_l2_g3
+	mlp_proj_l2_g3 -> concat_dims_l2_g0
+	concat_heads_l1 -> q_proj_l2_g4
+	concat_heads_l1 -> k_proj_l2_g4
+	concat_heads_l1 -> v_proj_l2_g4
+	q_proj_l2_g4 -> attn_l2_g4
+	k_proj_l2_g4 -> attn_l2_g4
+	v_proj_l2_g4 -> attn_l2_g4
+	attn_l2_g4 -> residual_l2_local_4
+	residual_l2_local_4 -> mlp_fc_l2_g4
+	mlp_fc_l2_g4 -> mlp_gelu_l2_g4
+	mlp_gelu_l2_g4 -> mlp_proj_l2_g4
+	mlp_proj_l2_g4 -> concat_dims_l2_g1
+	concat_heads_l1 -> q_proj_l2_g5
+	concat_heads_l1 -> k_proj_l2_g5
+	concat_heads_l1 -> v_proj_l2_g5
+	q_proj_l2_g5 -> attn_l2_g5
+	k_proj_l2_g5 -> attn_l2_g5
+	v_proj_l2_g5 -> attn_l2_g5
+	attn_l2_g5 -> residual_l2_local_5
+	residual_l2_local_5 -> mlp_fc_l2_g5
+	mlp_fc_l2_g5 -> mlp_gelu_l2_g5
+	mlp_gelu_l2_g5 -> mlp_proj_l2_g5
+	mlp_proj_l2_g5 -> concat_dims_l2_g1
+	concat_heads_l1 -> q_proj_l2_g6
+	concat_heads_l1 -> k_proj_l2_g6
+	concat_heads_l1 -> v_proj_l2_g6
+	q_proj_l2_g6 -> attn_l2_g6
+	k_proj_l2_g6 -> attn_l2_g6
+	v_proj_l2_g6 -> attn_l2_g6
+	attn_l2_g6 -> residual_l2_local_6
+	residual_l2_local_6 -> mlp_fc_l2_g6
+	mlp_fc_l2_g6 -> mlp_gelu_l2_g6
+	mlp_gelu_l2_g6 -> mlp_proj_l2_g6
+	mlp_proj_l2_g6 -> concat_dims_l2_g1
+	concat_heads_l1 -> q_proj_l2_g7
+	concat_heads_l1 -> k_proj_l2_g7
+	concat_heads_l1 -> v_proj_l2_g7
+	q_proj_l2_g7 -> attn_l2_g7
+	k_proj_l2_g7 -> attn_l2_g7
+	v_proj_l2_g7 -> attn_l2_g7
+	attn_l2_g7 -> residual_l2_local_7
+	residual_l2_local_7 -> mlp_fc_l2_g7
+	mlp_fc_l2_g7 -> mlp_gelu_l2_g7
+	mlp_gelu_l2_g7 -> mlp_proj_l2_g7
+	mlp_proj_l2_g7 -> concat_dims_l2_g1
+	concat_heads_l1 -> q_proj_l2_g8
+	concat_heads_l1 -> k_proj_l2_g8
+	concat_heads_l1 -> v_proj_l2_g8
+	q_proj_l2_g8 -> attn_l2_g8
+	k_proj_l2_g8 -> attn_l2_g8
+	v_proj_l2_g8 -> attn_l2_g8
+	attn_l2_g8 -> residual_l2_local_8
+	residual_l2_local_8 -> mlp_fc_l2_g8
+	mlp_fc_l2_g8 -> mlp_gelu_l2_g8
+	mlp_gelu_l2_g8 -> mlp_proj_l2_g8
+	mlp_proj_l2_g8 -> concat_dims_l2_g2
+	concat_heads_l1 -> q_proj_l2_g9
+	concat_heads_l1 -> k_proj_l2_g9
+	concat_heads_l1 -> v_proj_l2_g9
+	q_proj_l2_g9 -> attn_l2_g9
+	k_proj_l2_g9 -> attn_l2_g9
+	v_proj_l2_g9 -> attn_l2_g9
+	attn_l2_g9 -> residual_l2_local_9
+	residual_l2_local_9 -> mlp_fc_l2_g9
+	mlp_fc_l2_g9 -> mlp_gelu_l2_g9
+	mlp_gelu_l2_g9 -> mlp_proj_l2_g9
+	mlp_proj_l2_g9 -> concat_dims_l2_g2
+	concat_heads_l1 -> q_proj_l2_g10
+	concat_heads_l1 -> k_proj_l2_g10
+	concat_heads_l1 -> v_proj_l2_g10
+	q_proj_l2_g10 -> attn_l2_g10
+	k_proj_l2_g10 -> attn_l2_g10
+	v_proj_l2_g10 -> attn_l2_g10
+	attn_l2_g10 -> residual_l2_local_10
+	residual_l2_local_10 -> mlp_fc_l2_g10
+	mlp_fc_l2_g10 -> mlp_gelu_l2_g10
+	mlp_gelu_l2_g10 -> mlp_proj_l2_g10
+	mlp_proj_l2_g10 -> concat_dims_l2_g2
+	concat_heads_l1 -> q_proj_l2_g11
+	concat_heads_l1 -> k_proj_l2_g11
+	concat_heads_l1 -> v_proj_l2_g11
+	q_proj_l2_g11 -> attn_l2_g11
+	k_proj_l2_g11 -> attn_l2_g11
+	v_proj_l2_g11 -> attn_l2_g11
+	attn_l2_g11 -> residual_l2_local_11
+	residual_l2_local_11 -> mlp_fc_l2_g11
+	mlp_fc_l2_g11 -> mlp_gelu_l2_g11
+	mlp_gelu_l2_g11 -> mlp_proj_l2_g11
+	mlp_proj_l2_g11 -> concat_dims_l2_g2
+	concat_heads_l1 -> q_proj_l2_g12
+	concat_heads_l1 -> k_proj_l2_g12
+	concat_heads_l1 -> v_proj_l2_g12
+	q_proj_l2_g12 -> attn_l2_g12
+	k_proj_l2_g12 -> attn_l2_g12
+	v_proj_l2_g12 -> attn_l2_g12
+	attn_l2_g12 -> residual_l2_local_12
+	residual_l2_local_12 -> mlp_fc_l2_g12
+	mlp_fc_l2_g12 -> mlp_gelu_l2_g12
+	mlp_gelu_l2_g12 -> mlp_proj_l2_g12
+	mlp_proj_l2_g12 -> concat_dims_l2_g3
+	concat_heads_l1 -> q_proj_l2_g13
+	concat_heads_l1 -> k_proj_l2_g13
+	concat_heads_l1 -> v_proj_l2_g13
+	q_proj_l2_g13 -> attn_l2_g13
+	k_proj_l2_g13 -> attn_l2_g13
+	v_proj_l2_g13 -> attn_l2_g13
+	attn_l2_g13 -> residual_l2_local_13
+	residual_l2_local_13 -> mlp_fc_l2_g13
+	mlp_fc_l2_g13 -> mlp_gelu_l2_g13
+	mlp_gelu_l2_g13 -> mlp_proj_l2_g13
+	mlp_proj_l2_g13 -> concat_dims_l2_g3
+	concat_heads_l1 -> q_proj_l2_g14
+	concat_heads_l1 -> k_proj_l2_g14
+	concat_heads_l1 -> v_proj_l2_g14
+	q_proj_l2_g14 -> attn_l2_g14
+	k_proj_l2_g14 -> attn_l2_g14
+	v_proj_l2_g14 -> attn_l2_g14
+	attn_l2_g14 -> residual_l2_local_14
+	residual_l2_local_14 -> mlp_fc_l2_g14
+	mlp_fc_l2_g14 -> mlp_gelu_l2_g14
+	mlp_gelu_l2_g14 -> mlp_proj_l2_g14
+	mlp_proj_l2_g14 -> concat_dims_l2_g3
+	concat_heads_l1 -> q_proj_l2_g15
+	concat_heads_l1 -> k_proj_l2_g15
+	concat_heads_l1 -> v_proj_l2_g15
+	q_proj_l2_g15 -> attn_l2_g15
+	k_proj_l2_g15 -> attn_l2_g15
+	v_proj_l2_g15 -> attn_l2_g15
+	attn_l2_g15 -> residual_l2_local_15
+	residual_l2_local_15 -> mlp_fc_l2_g15
+	mlp_fc_l2_g15 -> mlp_gelu_l2_g15
+	mlp_gelu_l2_g15 -> mlp_proj_l2_g15
+	mlp_proj_l2_g15 -> concat_dims_l2_g3
+	concat_dims_l2_g0 -> concat_heads_l2
+	concat_dims_l2_g1 -> concat_heads_l2
+	concat_dims_l2_g2 -> concat_heads_l2
+	concat_dims_l2_g3 -> concat_heads_l2
+	concat_heads_l2 -> output
+}

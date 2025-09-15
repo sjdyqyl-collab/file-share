@@ -1,0 +1,18 @@
+{
+  "baseline_dag": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-15-09-14-37/baseline_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-15-09-14-37/baseline_dag.svg",
+    "description": "Baseline MoE deployment with TP=8, PP=2 using 16 GPUs, 4 experts per GPU"
+  },
+  "proposed_dag": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-15-09-14-37/proposed_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-15-09-14-37/proposed_dag.svg",
+    "description": "Proposed cross-node expert parallelism using 64 GPUs, 1 expert per GPU"
+  },
+  "generated_files": [
+    "/home/wzc/data/file-share/2025-09-15-09-14-37/baseline_dag.dot",
+    "/home/wzc/data/file-share/2025-09-15-09-14-37/baseline_dag.svg",
+    "/home/wzc/data/file-share/2025-09-15-09-14-37/proposed_dag.dot",
+    "/home/wzc/data/file-share/2025-09-15-09-14-37/proposed_dag.svg"
+  ]
+}

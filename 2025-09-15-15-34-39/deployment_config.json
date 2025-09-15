@@ -1,0 +1,224 @@
+{
+  "deployment_config": {
+    "models": {
+      "hunyuan_video_13b": {
+        "model_name": "HunyuanVideo-13B",
+        "parameters": {
+          "hidden_size": 6144,
+          "num_attention_heads": 48,
+          "num_layers": 40,
+          "ffn_hidden_size": 16384,
+          "vocab_size": 64007,
+          "max_sequence_length": 131072
+        },
+        "input_specifications": {
+          "resolution": "720p",
+          "video_length": "8s",
+          "fps": 16,
+          "total_tokens": 110000,
+          "frame_tokens": 92160,
+          "text_tokens": 128
+        },
+        "sparse_attention": {
+          "method": "AdaSpa",
+          "sparsity_ratio": 0.8,
+          "block_size": 64,
+          "warmup_steps": 10,
+          "search_steps": [10, 30],
+          "head_adaptive": true,
+          "lse_cache": true
+        },
+        "parallel_strategy": {
+          "type": "tensor_parallelism",
+          "devices": 8,
+          "partitioning": {
+            "attention_heads": {
+              "type": "row_parallel",
+              "heads_per_device": 6,
+              "head_dim": 128,
+              "device_mapping": {
+                "device_0": [0, 1, 2, 3, 4, 5],
+                "device_1": [6, 7, 8, 9, 10, 11],
+                "device_2": [12, 13, 14, 15, 16, 17],
+                "device_3": [18, 19, 20, 21, 22, 23],
+                "device_4": [24, 25, 26, 27, 28, 29],
+                "device_5": [30, 31, 32, 33, 34, 35],
+                "device_6": [36, 37, 38, 39, 40, 41],
+                "device_7": [42, 43, 44, 45, 46, 47]
+              }
+            },
+            "mlp_layers": {
+              "type": "column_row_parallel",
+              "ffn_hidden_size_per_device": 2048,
+              "device_mapping": {
+                "device_0": {"first_linear": [0, 2047], "second_linear": [0, 2047]},
+                "device_1": {"first_linear": [2048, 4095], "second_linear": [2048, 4095]},
+                "device_2": {"first_linear": [4096, 6143], "second_linear": [4096, 6143]},
+                "device_3": {"first_linear": [6144, 8191], "second_linear": [6144, 8191]},
+                "device_4": {"first_linear": [8192, 10239], "second_linear": [8192, 10239]},
+                "device_5": {"first_linear": [10240, 12287], "second_linear": [10240, 12287]},
+                "device_6": {"first_linear": [12288, 14335], "second_linear": [12288, 14335]},
+                "device_7": {"first_linear": [14336, 16383], "second_linear": [14336, 16383]}
+              }
+            }
+          }
+        }
+      },
+      "cogvideox1_5_5b": {
+        "model_name": "CogVideoX1.5-5B",
+        "parameters": {
+          "hidden_size": 4096,
+          "num_attention_heads": 32,
+          "num_layers": 30,
+          "ffn_hidden_size": 11008,
+          "vocab_size": 64007,
+          "max_sequence_length": 131072
+        },
+        "input_specifications": {
+          "resolution": "720p",
+          "video_length": "10s",
+          "fps": 16,
+          "total_tokens": 138240,
+          "frame_tokens": 115200,
+          "text_tokens": 128
+        },
+        "sparse_attention": {
+          "method": "AdaSpa",
+          "sparsity_ratio": 0.8,
+          "block_size": 64,
+          "warmup_steps": 10,
+          "search_steps": [10, 30],
+          "head_adaptive": true,
+          "lse_cache": true
+        },
+        "parallel_strategy": {
+          "type": "tensor_parallelism",
+          "devices": 4,
+          "partitioning": {
+            "attention_heads": {
+              "type": "row_parallel",
+              "heads_per_device": 8,
+              "head_dim": 128,
+              "device_mapping": {
+                "device_0": [0, 1, 2, 3, 4, 5, 6, 7],
+                "device_1": [8, 9, 10, 11, 12, 13, 14, 15],
+                "device_2": [16, 17, 18, 19, 20, 21, 22, 23],
+                "device_3": [24, 25, 26, 27, 28, 29, 30, 31]
+              }
+            },
+            "mlp_layers": {
+              "type": "column_row_parallel",
+              "ffn_hidden_size_per_device": 2752,
+              "device_mapping": {
+                "device_0": {"first_linear": [0, 2751], "second_linear": [0, 2751]},
+                "device_1": {"first_linear": [2752, 5503], "second_linear": [2752, 5503]},
+                "device_2": {"first_linear": [5504, 8255], "second_linear": [5504, 8255]},
+                "device_3": {"first_linear": [8256, 11007], "second_linear": [8256, 11007]}
+              }
+            }
+          }
+        }
+      }
+    },
+    "baseline_models": {
+      "sparse_videogen": {
+        "method": "static_pattern",
+        "sparsity_ratio": 0.8,
+        "pattern_type": "spatial_temporal",
+        "parallel_strategy": {
+          "type": "tensor_parallelism",
+          "devices": 8,
+          "partitioning": "same_as_hunyuan"
+        }
+      },
+      "minference": {
+        "method": "dynamic_pattern_approximate",
+        "sparsity_ratio": 0.8,
+        "search_type": "offline_approximate",
+        "parallel_strategy": {
+          "type": "tensor_parallelism",
+          "devices": 8,
+          "partitioning": "same_as_hunyuan"
+        }
+      }
+    },
+    "adaspa_implementation": {
+      "kernel_specs": {
+        "fused_online_search": {
+          "memory_requirement": "O(L²) for full attention during search",
+          "computation_blocks": [
+            "flash_attention_kernel",
+            "lse_computation_kernel",
+            "block_sum_computation_kernel"
+          ],
+          "device_mapping": "distributed across all devices"
+        },
+        "lse_cached_search": {
+          "memory_requirement": "O(L) for LSE cache",
+          "computation_blocks": [
+            "lse_reuse_kernel",
+            "block_mask_generation_kernel"
+          ],
+          "device_mapping": "distributed across all devices"
+        },
+        "head_adaptive_attention": {
+          "memory_requirement": "O((L/B)²) per head for block masks",
+          "computation_blocks": [
+            "per_head_mask_kernel",
+            "head_adaptive_computation_kernel"
+          ],
+          "device_mapping": "distributed with tensor parallelism"
+        }
+      },
+      "optimization_techniques": {
+        "text_sink": {
+          "enabled": true,
+          "indices": "all video-text, text-video, text-text attention pairs",
+          "memory_overhead": "O(t×L) where t=text tokens"
+        },
+        "row_wise_uniform": {
+          "enabled": true,
+          "selection_criteria": "ensure each query attends to same number of keys",
+          "implementation": "per-row block selection"
+        }
+      },
+      "memory_optimization": {
+        "attention_cache": {
+          "type": "block_sparse_attention",
+          "memory_reduction": "80% due to 0.8 sparsity",
+          "cache_strategy": "lse_caching_across_steps"
+        },
+        "gradient_checkpointing": {
+          "enabled": true,
+          "tradeoff": "compute vs memory"
+        }
+      }
+    },
+    "deployment_workflow": {
+      "initialization": {
+        "step_1": "load_model_weights",
+        "step_2": "setup_tensor_parallel",
+        "step_3": "initialize_adaspa_handlers",
+        "step_4": "warmup_full_attention_steps"
+      },
+      "inference_pipeline": {
+        "step_1": "text_encoding",
+        "step_2": "initial_noise_generation",
+        "step_3": "denoising_loop_50_steps",
+        "step_4": "adaspa_search_at_steps_10_30",
+        "step_5": "sparse_attention_computation",
+        "step_6": "video_decoding"
+      },
+      "device_utilization": {
+        "memory_per_device": {
+          "hunyuan_13b": "~48GB per A100-80GB",
+          "cogvideox1_5_5b": "~32GB per A100-80GB"
+        },
+        "compute_utilization": {
+          "attention_computation": "reduced by 80% due to sparsity",
+          "overall_speedup": "1.78x for HunyuanVideo, 1.66x for CogVideoX1.5-5B"
+        }
+      }
+    }
+  }
+}

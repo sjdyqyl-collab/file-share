@@ -1,0 +1,483 @@
+digraph MoE_Baseline_TP8_PP2 {
+	nodesep=0.8 rankdir=TB ranksep=1.5
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=yellow shape=parallelogram style=filled]
+	input [label="Total Input\nInput: [batch_size=1024, seq_len=10000, hidden=8192]\nGPU: all" fillcolor=lightblue shape=ellipse]
+	split_pp [label="Split for Pipeline\nInput: [batch_size=1024, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: all" fillcolor=yellow shape=parallelogram]
+	layer0_input [label="Layer 0 Input\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=lightblue shape=ellipse]
+	layer0_mha_qkv [label="QKV Linear\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, heads=16, d_k=64]\nGPU: 0-7 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer0_mha_attn [label="Multi-Head Attention\nInput: [batch_size=512, seq_len=10000, heads=16, d_k=64]\nOutput: [batch_size=512, seq_len=10000, hidden=1024]\nGPU: 0-7 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer0_mha_concat [label="Concat Heads\nInput: [batch_size=512, seq_len=10000, hidden=1024]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7 (TP=8)" fillcolor=yellow shape=parallelogram]
+	layer0_mha_proj [label="Output Projection\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer0_mha_residual [label="Residual Add\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=yellow shape=parallelogram]
+	layer0_gate [label="Top-2 Gating\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, expert_indices]\nGPU: 0-7 (replicated)" fillcolor=yellow shape=parallelogram]
+	layer0_expert0 [label="Expert 0\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer0_expert1 [label="Expert 1\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer0_expert2 [label="Expert 2\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer0_expert3 [label="Expert 3\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer0_expert4 [label="Expert 4\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer0_expert5 [label="Expert 5\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer0_expert6 [label="Expert 6\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer0_expert7 [label="Expert 7\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer0_expert8 [label="Expert 8\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer0_expert9 [label="Expert 9\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer0_expert10 [label="Expert 10\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer0_expert11 [label="Expert 11\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer0_expert12 [label="Expert 12\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer0_expert13 [label="Expert 13\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer0_expert14 [label="Expert 14\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer0_expert15 [label="Expert 15\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer0_expert16 [label="Expert 16\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer0_expert17 [label="Expert 17\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer0_expert18 [label="Expert 18\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer0_expert19 [label="Expert 19\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer0_expert20 [label="Expert 20\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer0_expert21 [label="Expert 21\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer0_expert22 [label="Expert 22\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer0_expert23 [label="Expert 23\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer0_expert24 [label="Expert 24\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer0_expert25 [label="Expert 25\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer0_expert26 [label="Expert 26\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer0_expert27 [label="Expert 27\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer0_expert28 [label="Expert 28\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer0_expert29 [label="Expert 29\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer0_expert30 [label="Expert 30\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer0_expert31 [label="Expert 31\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer0_expert_agg [label="Expert Aggregation\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=yellow shape=parallelogram]
+	layer0_ffn_residual [label="Residual Add\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=yellow shape=parallelogram]
+	layer0_output [label="Layer 0 Output\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=lightblue shape=ellipse]
+	layer1_input [label="Layer 1 Input\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=lightblue shape=ellipse]
+	layer1_mha_qkv [label="QKV Linear\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, heads=16, d_k=64]\nGPU: 0-7 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer1_mha_attn [label="Multi-Head Attention\nInput: [batch_size=512, seq_len=10000, heads=16, d_k=64]\nOutput: [batch_size=512, seq_len=10000, hidden=1024]\nGPU: 0-7 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer1_mha_concat [label="Concat Heads\nInput: [batch_size=512, seq_len=10000, hidden=1024]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7 (TP=8)" fillcolor=yellow shape=parallelogram]
+	layer1_mha_proj [label="Output Projection\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer1_mha_residual [label="Residual Add\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=yellow shape=parallelogram]
+	layer1_gate [label="Top-2 Gating\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, expert_indices]\nGPU: 0-7 (replicated)" fillcolor=yellow shape=parallelogram]
+	layer1_expert32 [label="Expert 32\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer1_expert33 [label="Expert 33\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer1_expert34 [label="Expert 34\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer1_expert35 [label="Expert 35\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer1_expert36 [label="Expert 36\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer1_expert37 [label="Expert 37\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer1_expert38 [label="Expert 38\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer1_expert39 [label="Expert 39\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer1_expert40 [label="Expert 40\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer1_expert41 [label="Expert 41\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer1_expert42 [label="Expert 42\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer1_expert43 [label="Expert 43\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer1_expert44 [label="Expert 44\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer1_expert45 [label="Expert 45\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer1_expert46 [label="Expert 46\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer1_expert47 [label="Expert 47\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer1_expert48 [label="Expert 48\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer1_expert49 [label="Expert 49\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer1_expert50 [label="Expert 50\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer1_expert51 [label="Expert 51\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer1_expert52 [label="Expert 52\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer1_expert53 [label="Expert 53\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer1_expert54 [label="Expert 54\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer1_expert55 [label="Expert 55\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer1_expert56 [label="Expert 56\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer1_expert57 [label="Expert 57\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer1_expert58 [label="Expert 58\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer1_expert59 [label="Expert 59\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer1_expert60 [label="Expert 60\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer1_expert61 [label="Expert 61\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer1_expert62 [label="Expert 62\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer1_expert63 [label="Expert 63\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer1_expert_agg [label="Expert Aggregation\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=yellow shape=parallelogram]
+	layer1_ffn_residual [label="Residual Add\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=yellow shape=parallelogram]
+	layer1_output [label="Layer 1 Output\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 0-7" fillcolor=lightblue shape=ellipse]
+	pipeline_send [label="Send to Stage 1\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 7 → 8" fillcolor=yellow shape=parallelogram]
+	layer2_input [label="Layer 2 Input\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=lightblue shape=ellipse]
+	layer2_mha_qkv [label="QKV Linear\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, heads=16, d_k=64]\nGPU: 8-15 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer2_mha_attn [label="Multi-Head Attention\nInput: [batch_size=512, seq_len=10000, heads=16, d_k=64]\nOutput: [batch_size=512, seq_len=10000, hidden=1024]\nGPU: 8-15 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer2_mha_concat [label="Concat Heads\nInput: [batch_size=512, seq_len=10000, hidden=1024]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15 (TP=8)" fillcolor=yellow shape=parallelogram]
+	layer2_mha_proj [label="Output Projection\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer2_mha_residual [label="Residual Add\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=yellow shape=parallelogram]
+	layer2_gate [label="Top-2 Gating\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, expert_indices]\nGPU: 8-15 (replicated)" fillcolor=yellow shape=parallelogram]
+	layer2_expert64 [label="Expert 64\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer2_expert65 [label="Expert 65\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer2_expert66 [label="Expert 66\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer2_expert67 [label="Expert 67\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer2_expert68 [label="Expert 68\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer2_expert69 [label="Expert 69\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer2_expert70 [label="Expert 70\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer2_expert71 [label="Expert 71\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer2_expert72 [label="Expert 72\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer2_expert73 [label="Expert 73\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer2_expert74 [label="Expert 74\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer2_expert75 [label="Expert 75\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer2_expert76 [label="Expert 76\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer2_expert77 [label="Expert 77\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer2_expert78 [label="Expert 78\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer2_expert79 [label="Expert 79\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer2_expert80 [label="Expert 80\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer2_expert81 [label="Expert 81\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer2_expert82 [label="Expert 82\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer2_expert83 [label="Expert 83\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer2_expert84 [label="Expert 84\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer2_expert85 [label="Expert 85\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer2_expert86 [label="Expert 86\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer2_expert87 [label="Expert 87\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer2_expert88 [label="Expert 88\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer2_expert89 [label="Expert 89\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer2_expert90 [label="Expert 90\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer2_expert91 [label="Expert 91\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer2_expert92 [label="Expert 92\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer2_expert93 [label="Expert 93\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer2_expert94 [label="Expert 94\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer2_expert95 [label="Expert 95\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer2_expert_agg [label="Expert Aggregation\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=yellow shape=parallelogram]
+	layer2_ffn_residual [label="Residual Add\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=yellow shape=parallelogram]
+	layer2_output [label="Layer 2 Output\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=lightblue shape=ellipse]
+	layer3_input [label="Layer 3 Input\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=lightblue shape=ellipse]
+	layer3_mha_qkv [label="QKV Linear\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, heads=16, d_k=64]\nGPU: 8-15 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer3_mha_attn [label="Multi-Head Attention\nInput: [batch_size=512, seq_len=10000, heads=16, d_k=64]\nOutput: [batch_size=512, seq_len=10000, hidden=1024]\nGPU: 8-15 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer3_mha_concat [label="Concat Heads\nInput: [batch_size=512, seq_len=10000, hidden=1024]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15 (TP=8)" fillcolor=yellow shape=parallelogram]
+	layer3_mha_proj [label="Output Projection\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15 (TP=8)" fillcolor=lightgreen shape=rectangle]
+	layer3_mha_residual [label="Residual Add\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=yellow shape=parallelogram]
+	layer3_gate [label="Top-2 Gating\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, expert_indices]\nGPU: 8-15 (replicated)" fillcolor=yellow shape=parallelogram]
+	layer3_expert96 [label="Expert 96\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer3_expert97 [label="Expert 97\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer3_expert98 [label="Expert 98\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer3_expert99 [label="Expert 99\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer3_expert100 [label="Expert 100\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer3_expert101 [label="Expert 101\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer3_expert102 [label="Expert 102\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer3_expert103 [label="Expert 103\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer3_expert104 [label="Expert 104\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer3_expert105 [label="Expert 105\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer3_expert106 [label="Expert 106\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer3_expert107 [label="Expert 107\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer3_expert108 [label="Expert 108\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer3_expert109 [label="Expert 109\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer3_expert110 [label="Expert 110\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer3_expert111 [label="Expert 111\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer3_expert112 [label="Expert 112\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer3_expert113 [label="Expert 113\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer3_expert114 [label="Expert 114\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer3_expert115 [label="Expert 115\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer3_expert116 [label="Expert 116\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer3_expert117 [label="Expert 117\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer3_expert118 [label="Expert 118\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer3_expert119 [label="Expert 119\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer3_expert120 [label="Expert 120\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer3_expert121 [label="Expert 121\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer3_expert122 [label="Expert 122\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer3_expert123 [label="Expert 123\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer3_expert124 [label="Expert 124\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer3_expert125 [label="Expert 125\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer3_expert126 [label="Expert 126\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer3_expert127 [label="Expert 127\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer3_expert_agg [label="Expert Aggregation\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=yellow shape=parallelogram]
+	layer3_ffn_residual [label="Residual Add\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=yellow shape=parallelogram]
+	layer3_output [label="Layer 3 Output\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=512, seq_len=10000, hidden=8192]\nGPU: 8-15" fillcolor=lightblue shape=ellipse]
+	aggregate_pp [label="Aggregate Pipeline\nInput: [batch_size=512, seq_len=10000, hidden=8192]\nOutput: [batch_size=1024, seq_len=10000, hidden=8192]\nGPU: all" fillcolor=yellow shape=parallelogram]
+	output [label="Total Output\nInput: [batch_size=1024, seq_len=10000, hidden=8192]\nGPU: all" fillcolor=lightblue shape=ellipse]
+	input -> split_pp
+	split_pp -> layer0_input
+	layer0_input -> layer0_mha_qkv
+	layer0_mha_qkv -> layer0_mha_attn
+	layer0_mha_attn -> layer0_mha_concat
+	layer0_mha_concat -> layer0_mha_proj
+	layer0_input -> layer0_mha_residual
+	layer0_mha_proj -> layer0_mha_residual
+	layer0_mha_residual -> layer0_gate
+	layer0_gate -> layer0_expert0 [style=dashed]
+	layer0_gate -> layer0_expert1 [style=dashed]
+	layer0_gate -> layer0_expert2 [style=dashed]
+	layer0_gate -> layer0_expert3 [style=dashed]
+	layer0_gate -> layer0_expert4 [style=dashed]
+	layer0_gate -> layer0_expert5 [style=dashed]
+	layer0_gate -> layer0_expert6 [style=dashed]
+	layer0_gate -> layer0_expert7 [style=dashed]
+	layer0_gate -> layer0_expert8 [style=dashed]
+	layer0_gate -> layer0_expert9 [style=dashed]
+	layer0_gate -> layer0_expert10 [style=dashed]
+	layer0_gate -> layer0_expert11 [style=dashed]
+	layer0_gate -> layer0_expert12 [style=dashed]
+	layer0_gate -> layer0_expert13 [style=dashed]
+	layer0_gate -> layer0_expert14 [style=dashed]
+	layer0_gate -> layer0_expert15 [style=dashed]
+	layer0_gate -> layer0_expert16 [style=dashed]
+	layer0_gate -> layer0_expert17 [style=dashed]
+	layer0_gate -> layer0_expert18 [style=dashed]
+	layer0_gate -> layer0_expert19 [style=dashed]
+	layer0_gate -> layer0_expert20 [style=dashed]
+	layer0_gate -> layer0_expert21 [style=dashed]
+	layer0_gate -> layer0_expert22 [style=dashed]
+	layer0_gate -> layer0_expert23 [style=dashed]
+	layer0_gate -> layer0_expert24 [style=dashed]
+	layer0_gate -> layer0_expert25 [style=dashed]
+	layer0_gate -> layer0_expert26 [style=dashed]
+	layer0_gate -> layer0_expert27 [style=dashed]
+	layer0_gate -> layer0_expert28 [style=dashed]
+	layer0_gate -> layer0_expert29 [style=dashed]
+	layer0_gate -> layer0_expert30 [style=dashed]
+	layer0_gate -> layer0_expert31 [style=dashed]
+	layer0_expert0 -> layer0_expert_agg
+	layer0_expert1 -> layer0_expert_agg
+	layer0_expert2 -> layer0_expert_agg
+	layer0_expert3 -> layer0_expert_agg
+	layer0_expert4 -> layer0_expert_agg
+	layer0_expert5 -> layer0_expert_agg
+	layer0_expert6 -> layer0_expert_agg
+	layer0_expert7 -> layer0_expert_agg
+	layer0_expert8 -> layer0_expert_agg
+	layer0_expert9 -> layer0_expert_agg
+	layer0_expert10 -> layer0_expert_agg
+	layer0_expert11 -> layer0_expert_agg
+	layer0_expert12 -> layer0_expert_agg
+	layer0_expert13 -> layer0_expert_agg
+	layer0_expert14 -> layer0_expert_agg
+	layer0_expert15 -> layer0_expert_agg
+	layer0_expert16 -> layer0_expert_agg
+	layer0_expert17 -> layer0_expert_agg
+	layer0_expert18 -> layer0_expert_agg
+	layer0_expert19 -> layer0_expert_agg
+	layer0_expert20 -> layer0_expert_agg
+	layer0_expert21 -> layer0_expert_agg
+	layer0_expert22 -> layer0_expert_agg
+	layer0_expert23 -> layer0_expert_agg
+	layer0_expert24 -> layer0_expert_agg
+	layer0_expert25 -> layer0_expert_agg
+	layer0_expert26 -> layer0_expert_agg
+	layer0_expert27 -> layer0_expert_agg
+	layer0_expert28 -> layer0_expert_agg
+	layer0_expert29 -> layer0_expert_agg
+	layer0_expert30 -> layer0_expert_agg
+	layer0_expert31 -> layer0_expert_agg
+	layer0_expert_agg -> layer0_ffn_residual
+	layer0_mha_residual -> layer0_ffn_residual
+	layer0_ffn_residual -> layer0_output
+	layer0_output -> layer1_input
+	layer1_input -> layer1_mha_qkv
+	layer1_mha_qkv -> layer1_mha_attn
+	layer1_mha_attn -> layer1_mha_concat
+	layer1_mha_concat -> layer1_mha_proj
+	layer1_input -> layer1_mha_residual
+	layer1_mha_proj -> layer1_mha_residual
+	layer1_mha_residual -> layer1_gate
+	layer1_gate -> layer1_expert32 [style=dashed]
+	layer1_gate -> layer1_expert33 [style=dashed]
+	layer1_gate -> layer1_expert34 [style=dashed]
+	layer1_gate -> layer1_expert35 [style=dashed]
+	layer1_gate -> layer1_expert36 [style=dashed]
+	layer1_gate -> layer1_expert37 [style=dashed]
+	layer1_gate -> layer1_expert38 [style=dashed]
+	layer1_gate -> layer1_expert39 [style=dashed]
+	layer1_gate -> layer1_expert40 [style=dashed]
+	layer1_gate -> layer1_expert41 [style=dashed]
+	layer1_gate -> layer1_expert42 [style=dashed]
+	layer1_gate -> layer1_expert43 [style=dashed]
+	layer1_gate -> layer1_expert44 [style=dashed]
+	layer1_gate -> layer1_expert45 [style=dashed]
+	layer1_gate -> layer1_expert46 [style=dashed]
+	layer1_gate -> layer1_expert47 [style=dashed]
+	layer1_gate -> layer1_expert48 [style=dashed]
+	layer1_gate -> layer1_expert49 [style=dashed]
+	layer1_gate -> layer1_expert50 [style=dashed]
+	layer1_gate -> layer1_expert51 [style=dashed]
+	layer1_gate -> layer1_expert52 [style=dashed]
+	layer1_gate -> layer1_expert53 [style=dashed]
+	layer1_gate -> layer1_expert54 [style=dashed]
+	layer1_gate -> layer1_expert55 [style=dashed]
+	layer1_gate -> layer1_expert56 [style=dashed]
+	layer1_gate -> layer1_expert57 [style=dashed]
+	layer1_gate -> layer1_expert58 [style=dashed]
+	layer1_gate -> layer1_expert59 [style=dashed]
+	layer1_gate -> layer1_expert60 [style=dashed]
+	layer1_gate -> layer1_expert61 [style=dashed]
+	layer1_gate -> layer1_expert62 [style=dashed]
+	layer1_gate -> layer1_expert63 [style=dashed]
+	layer1_expert32 -> layer1_expert_agg
+	layer1_expert33 -> layer1_expert_agg
+	layer1_expert34 -> layer1_expert_agg
+	layer1_expert35 -> layer1_expert_agg
+	layer1_expert36 -> layer1_expert_agg
+	layer1_expert37 -> layer1_expert_agg
+	layer1_expert38 -> layer1_expert_agg
+	layer1_expert39 -> layer1_expert_agg
+	layer1_expert40 -> layer1_expert_agg
+	layer1_expert41 -> layer1_expert_agg
+	layer1_expert42 -> layer1_expert_agg
+	layer1_expert43 -> layer1_expert_agg
+	layer1_expert44 -> layer1_expert_agg
+	layer1_expert45 -> layer1_expert_agg
+	layer1_expert46 -> layer1_expert_agg
+	layer1_expert47 -> layer1_expert_agg
+	layer1_expert48 -> layer1_expert_agg
+	layer1_expert49 -> layer1_expert_agg
+	layer1_expert50 -> layer1_expert_agg
+	layer1_expert51 -> layer1_expert_agg
+	layer1_expert52 -> layer1_expert_agg
+	layer1_expert53 -> layer1_expert_agg
+	layer1_expert54 -> layer1_expert_agg
+	layer1_expert55 -> layer1_expert_agg
+	layer1_expert56 -> layer1_expert_agg
+	layer1_expert57 -> layer1_expert_agg
+	layer1_expert58 -> layer1_expert_agg
+	layer1_expert59 -> layer1_expert_agg
+	layer1_expert60 -> layer1_expert_agg
+	layer1_expert61 -> layer1_expert_agg
+	layer1_expert62 -> layer1_expert_agg
+	layer1_expert63 -> layer1_expert_agg
+	layer1_expert_agg -> layer1_ffn_residual
+	layer1_mha_residual -> layer1_ffn_residual
+	layer1_ffn_residual -> layer1_output
+	layer1_output -> pipeline_send
+	pipeline_send -> layer2_input
+	layer2_input -> layer2_mha_qkv
+	layer2_mha_qkv -> layer2_mha_attn
+	layer2_mha_attn -> layer2_mha_concat
+	layer2_mha_concat -> layer2_mha_proj
+	layer2_input -> layer2_mha_residual
+	layer2_mha_proj -> layer2_mha_residual
+	layer2_mha_residual -> layer2_gate
+	layer2_gate -> layer2_expert64 [style=dashed]
+	layer2_gate -> layer2_expert65 [style=dashed]
+	layer2_gate -> layer2_expert66 [style=dashed]
+	layer2_gate -> layer2_expert67 [style=dashed]
+	layer2_gate -> layer2_expert68 [style=dashed]
+	layer2_gate -> layer2_expert69 [style=dashed]
+	layer2_gate -> layer2_expert70 [style=dashed]
+	layer2_gate -> layer2_expert71 [style=dashed]
+	layer2_gate -> layer2_expert72 [style=dashed]
+	layer2_gate -> layer2_expert73 [style=dashed]
+	layer2_gate -> layer2_expert74 [style=dashed]
+	layer2_gate -> layer2_expert75 [style=dashed]
+	layer2_gate -> layer2_expert76 [style=dashed]
+	layer2_gate -> layer2_expert77 [style=dashed]
+	layer2_gate -> layer2_expert78 [style=dashed]
+	layer2_gate -> layer2_expert79 [style=dashed]
+	layer2_gate -> layer2_expert80 [style=dashed]
+	layer2_gate -> layer2_expert81 [style=dashed]
+	layer2_gate -> layer2_expert82 [style=dashed]
+	layer2_gate -> layer2_expert83 [style=dashed]
+	layer2_gate -> layer2_expert84 [style=dashed]
+	layer2_gate -> layer2_expert85 [style=dashed]
+	layer2_gate -> layer2_expert86 [style=dashed]
+	layer2_gate -> layer2_expert87 [style=dashed]
+	layer2_gate -> layer2_expert88 [style=dashed]
+	layer2_gate -> layer2_expert89 [style=dashed]
+	layer2_gate -> layer2_expert90 [style=dashed]
+	layer2_gate -> layer2_expert91 [style=dashed]
+	layer2_gate -> layer2_expert92 [style=dashed]
+	layer2_gate -> layer2_expert93 [style=dashed]
+	layer2_gate -> layer2_expert94 [style=dashed]
+	layer2_gate -> layer2_expert95 [style=dashed]
+	layer2_expert64 -> layer2_expert_agg
+	layer2_expert65 -> layer2_expert_agg
+	layer2_expert66 -> layer2_expert_agg
+	layer2_expert67 -> layer2_expert_agg
+	layer2_expert68 -> layer2_expert_agg
+	layer2_expert69 -> layer2_expert_agg
+	layer2_expert70 -> layer2_expert_agg
+	layer2_expert71 -> layer2_expert_agg
+	layer2_expert72 -> layer2_expert_agg
+	layer2_expert73 -> layer2_expert_agg
+	layer2_expert74 -> layer2_expert_agg
+	layer2_expert75 -> layer2_expert_agg
+	layer2_expert76 -> layer2_expert_agg
+	layer2_expert77 -> layer2_expert_agg
+	layer2_expert78 -> layer2_expert_agg
+	layer2_expert79 -> layer2_expert_agg
+	layer2_expert80 -> layer2_expert_agg
+	layer2_expert81 -> layer2_expert_agg
+	layer2_expert82 -> layer2_expert_agg
+	layer2_expert83 -> layer2_expert_agg
+	layer2_expert84 -> layer2_expert_agg
+	layer2_expert85 -> layer2_expert_agg
+	layer2_expert86 -> layer2_expert_agg
+	layer2_expert87 -> layer2_expert_agg
+	layer2_expert88 -> layer2_expert_agg
+	layer2_expert89 -> layer2_expert_agg
+	layer2_expert90 -> layer2_expert_agg
+	layer2_expert91 -> layer2_expert_agg
+	layer2_expert92 -> layer2_expert_agg
+	layer2_expert93 -> layer2_expert_agg
+	layer2_expert94 -> layer2_expert_agg
+	layer2_expert95 -> layer2_expert_agg
+	layer2_expert_agg -> layer2_ffn_residual
+	layer2_mha_residual -> layer2_ffn_residual
+	layer2_ffn_residual -> layer2_output
+	layer2_output -> layer3_input
+	layer3_input -> layer3_mha_qkv
+	layer3_mha_qkv -> layer3_mha_attn
+	layer3_mha_attn -> layer3_mha_concat
+	layer3_mha_concat -> layer3_mha_proj
+	layer3_input -> layer3_mha_residual
+	layer3_mha_proj -> layer3_mha_residual
+	layer3_mha_residual -> layer3_gate
+	layer3_gate -> layer3_expert96 [style=dashed]
+	layer3_gate -> layer3_expert97 [style=dashed]
+	layer3_gate -> layer3_expert98 [style=dashed]
+	layer3_gate -> layer3_expert99 [style=dashed]
+	layer3_gate -> layer3_expert100 [style=dashed]
+	layer3_gate -> layer3_expert101 [style=dashed]
+	layer3_gate -> layer3_expert102 [style=dashed]
+	layer3_gate -> layer3_expert103 [style=dashed]
+	layer3_gate -> layer3_expert104 [style=dashed]
+	layer3_gate -> layer3_expert105 [style=dashed]
+	layer3_gate -> layer3_expert106 [style=dashed]
+	layer3_gate -> layer3_expert107 [style=dashed]
+	layer3_gate -> layer3_expert108 [style=dashed]
+	layer3_gate -> layer3_expert109 [style=dashed]
+	layer3_gate -> layer3_expert110 [style=dashed]
+	layer3_gate -> layer3_expert111 [style=dashed]
+	layer3_gate -> layer3_expert112 [style=dashed]
+	layer3_gate -> layer3_expert113 [style=dashed]
+	layer3_gate -> layer3_expert114 [style=dashed]
+	layer3_gate -> layer3_expert115 [style=dashed]
+	layer3_gate -> layer3_expert116 [style=dashed]
+	layer3_gate -> layer3_expert117 [style=dashed]
+	layer3_gate -> layer3_expert118 [style=dashed]
+	layer3_gate -> layer3_expert119 [style=dashed]
+	layer3_gate -> layer3_expert120 [style=dashed]
+	layer3_gate -> layer3_expert121 [style=dashed]
+	layer3_gate -> layer3_expert122 [style=dashed]
+	layer3_gate -> layer3_expert123 [style=dashed]
+	layer3_gate -> layer3_expert124 [style=dashed]
+	layer3_gate -> layer3_expert125 [style=dashed]
+	layer3_gate -> layer3_expert126 [style=dashed]
+	layer3_gate -> layer3_expert127 [style=dashed]
+	layer3_expert96 -> layer3_expert_agg
+	layer3_expert97 -> layer3_expert_agg
+	layer3_expert98 -> layer3_expert_agg
+	layer3_expert99 -> layer3_expert_agg
+	layer3_expert100 -> layer3_expert_agg
+	layer3_expert101 -> layer3_expert_agg
+	layer3_expert102 -> layer3_expert_agg
+	layer3_expert103 -> layer3_expert_agg
+	layer3_expert104 -> layer3_expert_agg
+	layer3_expert105 -> layer3_expert_agg
+	layer3_expert106 -> layer3_expert_agg
+	layer3_expert107 -> layer3_expert_agg
+	layer3_expert108 -> layer3_expert_agg
+	layer3_expert109 -> layer3_expert_agg
+	layer3_expert110 -> layer3_expert_agg
+	layer3_expert111 -> layer3_expert_agg
+	layer3_expert112 -> layer3_expert_agg
+	layer3_expert113 -> layer3_expert_agg
+	layer3_expert114 -> layer3_expert_agg
+	layer3_expert115 -> layer3_expert_agg
+	layer3_expert116 -> layer3_expert_agg
+	layer3_expert117 -> layer3_expert_agg
+	layer3_expert118 -> layer3_expert_agg
+	layer3_expert119 -> layer3_expert_agg
+	layer3_expert120 -> layer3_expert_agg
+	layer3_expert121 -> layer3_expert_agg
+	layer3_expert122 -> layer3_expert_agg
+	layer3_expert123 -> layer3_expert_agg
+	layer3_expert124 -> layer3_expert_agg
+	layer3_expert125 -> layer3_expert_agg
+	layer3_expert126 -> layer3_expert_agg
+	layer3_expert127 -> layer3_expert_agg
+	layer3_expert_agg -> layer3_ffn_residual
+	layer3_mha_residual -> layer3_ffn_residual
+	layer3_ffn_residual -> layer3_output
+	layer3_output -> aggregate_pp
+	aggregate_pp -> output
+}

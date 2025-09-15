@@ -1,0 +1,311 @@
+digraph MoE_Proposed_EP64_PP4 {
+	nodesep=0.8 rankdir=TB ranksep=1.5
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=yellow shape=parallelogram style=filled]
+	input [label="Total Input\nInput: [batch_size=1024, seq_len=10000, hidden=8192]\nGPU: all" fillcolor=lightblue shape=ellipse]
+	split_pp [label="Split for 4-Stage Pipeline\nInput: [batch_size=1024, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: all" fillcolor=yellow shape=parallelogram]
+	layer0_input [label="Layer 0 Input\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 0-15" fillcolor=lightblue shape=ellipse]
+	layer0_mha_qkv [label="QKV Linear\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, heads=16, d_k=512]\nGPU: 0-15 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer0_mha_attn [label="Multi-Head Attention\nInput: [batch_size=256, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 0-15 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer0_mha_proj [label="Output Projection\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 0-15 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer0_mha_residual [label="Residual Add\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 0-15" fillcolor=yellow shape=parallelogram]
+	layer0_gate [label="Top-2 Gating\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, expert_indices]\nGPU: 0-15 (distributed)" fillcolor=yellow shape=parallelogram]
+	layer0_token_split [label="Token Split by Expert\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 0-15" fillcolor=yellow shape=parallelogram]
+	layer0_async_send [label="Async Token Send\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: cross-device routing" fillcolor=yellow shape=parallelogram]
+	layer0_expert0 [label="Expert 0\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle]
+	layer0_expert1 [label="Expert 1\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle]
+	layer0_expert2 [label="Expert 2\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle]
+	layer0_expert3 [label="Expert 3\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle]
+	layer0_expert4 [label="Expert 4\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle]
+	layer0_expert5 [label="Expert 5\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle]
+	layer0_expert6 [label="Expert 6\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle]
+	layer0_expert7 [label="Expert 7\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle]
+	layer0_expert8 [label="Expert 8\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle]
+	layer0_expert9 [label="Expert 9\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle]
+	layer0_expert10 [label="Expert 10\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle]
+	layer0_expert11 [label="Expert 11\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle]
+	layer0_expert12 [label="Expert 12\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle]
+	layer0_expert13 [label="Expert 13\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle]
+	layer0_expert14 [label="Expert 14\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle]
+	layer0_expert15 [label="Expert 15\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle]
+	layer0_async_recv [label="Async Token Receive\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: cross-device routing" fillcolor=yellow shape=parallelogram]
+	layer0_expert_agg [label="Expert Aggregation\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 0-15" fillcolor=yellow shape=parallelogram]
+	layer0_ffn_residual [label="Residual Add\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 0-15" fillcolor=yellow shape=parallelogram]
+	layer0_output [label="Layer 0 Output\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 0-15" fillcolor=lightblue shape=ellipse]
+	pipeline_send0 [label="Send to Stage 1\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 15 → 16" fillcolor=yellow shape=parallelogram]
+	layer1_input [label="Layer 1 Input\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 16-31" fillcolor=lightblue shape=ellipse]
+	layer1_mha_qkv [label="QKV Linear\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, heads=16, d_k=512]\nGPU: 16-31 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer1_mha_attn [label="Multi-Head Attention\nInput: [batch_size=256, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 16-31 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer1_mha_proj [label="Output Projection\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 16-31 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer1_mha_residual [label="Residual Add\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 16-31" fillcolor=yellow shape=parallelogram]
+	layer1_gate [label="Top-2 Gating\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, expert_indices]\nGPU: 16-31 (distributed)" fillcolor=yellow shape=parallelogram]
+	layer1_token_split [label="Token Split by Expert\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 16-31" fillcolor=yellow shape=parallelogram]
+	layer1_async_send [label="Async Token Send\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: cross-device routing" fillcolor=yellow shape=parallelogram]
+	layer1_expert16 [label="Expert 16\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 16" fillcolor=lightgreen shape=rectangle]
+	layer1_expert17 [label="Expert 17\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 17" fillcolor=lightgreen shape=rectangle]
+	layer1_expert18 [label="Expert 18\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 18" fillcolor=lightgreen shape=rectangle]
+	layer1_expert19 [label="Expert 19\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 19" fillcolor=lightgreen shape=rectangle]
+	layer1_expert20 [label="Expert 20\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 20" fillcolor=lightgreen shape=rectangle]
+	layer1_expert21 [label="Expert 21\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 21" fillcolor=lightgreen shape=rectangle]
+	layer1_expert22 [label="Expert 22\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 22" fillcolor=lightgreen shape=rectangle]
+	layer1_expert23 [label="Expert 23\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 23" fillcolor=lightgreen shape=rectangle]
+	layer1_expert24 [label="Expert 24\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 24" fillcolor=lightgreen shape=rectangle]
+	layer1_expert25 [label="Expert 25\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 25" fillcolor=lightgreen shape=rectangle]
+	layer1_expert26 [label="Expert 26\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 26" fillcolor=lightgreen shape=rectangle]
+	layer1_expert27 [label="Expert 27\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 27" fillcolor=lightgreen shape=rectangle]
+	layer1_expert28 [label="Expert 28\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 28" fillcolor=lightgreen shape=rectangle]
+	layer1_expert29 [label="Expert 29\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 29" fillcolor=lightgreen shape=rectangle]
+	layer1_expert30 [label="Expert 30\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 30" fillcolor=lightgreen shape=rectangle]
+	layer1_expert31 [label="Expert 31\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 31" fillcolor=lightgreen shape=rectangle]
+	layer1_async_recv [label="Async Token Receive\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: cross-device routing" fillcolor=yellow shape=parallelogram]
+	layer1_expert_agg [label="Expert Aggregation\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 16-31" fillcolor=yellow shape=parallelogram]
+	layer1_ffn_residual [label="Residual Add\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 16-31" fillcolor=yellow shape=parallelogram]
+	layer1_output [label="Layer 1 Output\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 16-31" fillcolor=lightblue shape=ellipse]
+	pipeline_send1 [label="Send to Stage 2\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 31 → 32" fillcolor=yellow shape=parallelogram]
+	layer2_input [label="Layer 2 Input\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 32-47" fillcolor=lightblue shape=ellipse]
+	layer2_mha_qkv [label="QKV Linear\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, heads=16, d_k=512]\nGPU: 32-47 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer2_mha_attn [label="Multi-Head Attention\nInput: [batch_size=256, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 32-47 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer2_mha_proj [label="Output Projection\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 32-47 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer2_mha_residual [label="Residual Add\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 32-47" fillcolor=yellow shape=parallelogram]
+	layer2_gate [label="Top-2 Gating\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, expert_indices]\nGPU: 32-47 (distributed)" fillcolor=yellow shape=parallelogram]
+	layer2_token_split [label="Token Split by Expert\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 32-47" fillcolor=yellow shape=parallelogram]
+	layer2_async_send [label="Async Token Send\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: cross-device routing" fillcolor=yellow shape=parallelogram]
+	layer2_expert32 [label="Expert 32\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 32" fillcolor=lightgreen shape=rectangle]
+	layer2_expert33 [label="Expert 33\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 33" fillcolor=lightgreen shape=rectangle]
+	layer2_expert34 [label="Expert 34\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 34" fillcolor=lightgreen shape=rectangle]
+	layer2_expert35 [label="Expert 35\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 35" fillcolor=lightgreen shape=rectangle]
+	layer2_expert36 [label="Expert 36\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 36" fillcolor=lightgreen shape=rectangle]
+	layer2_expert37 [label="Expert 37\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 37" fillcolor=lightgreen shape=rectangle]
+	layer2_expert38 [label="Expert 38\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 38" fillcolor=lightgreen shape=rectangle]
+	layer2_expert39 [label="Expert 39\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 39" fillcolor=lightgreen shape=rectangle]
+	layer2_expert40 [label="Expert 40\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 40" fillcolor=lightgreen shape=rectangle]
+	layer2_expert41 [label="Expert 41\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 41" fillcolor=lightgreen shape=rectangle]
+	layer2_expert42 [label="Expert 42\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 42" fillcolor=lightgreen shape=rectangle]
+	layer2_expert43 [label="Expert 43\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 43" fillcolor=lightgreen shape=rectangle]
+	layer2_expert44 [label="Expert 44\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 44" fillcolor=lightgreen shape=rectangle]
+	layer2_expert45 [label="Expert 45\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 45" fillcolor=lightgreen shape=rectangle]
+	layer2_expert46 [label="Expert 46\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 46" fillcolor=lightgreen shape=rectangle]
+	layer2_expert47 [label="Expert 47\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 47" fillcolor=lightgreen shape=rectangle]
+	layer2_async_recv [label="Async Token Receive\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: cross-device routing" fillcolor=yellow shape=parallelogram]
+	layer2_expert_agg [label="Expert Aggregation\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 32-47" fillcolor=yellow shape=parallelogram]
+	layer2_ffn_residual [label="Residual Add\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 32-47" fillcolor=yellow shape=parallelogram]
+	layer2_output [label="Layer 2 Output\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 32-47" fillcolor=lightblue shape=ellipse]
+	pipeline_send2 [label="Send to Stage 3\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 47 → 48" fillcolor=yellow shape=parallelogram]
+	layer3_input [label="Layer 3 Input\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 48-63" fillcolor=lightblue shape=ellipse]
+	layer3_mha_qkv [label="QKV Linear\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, heads=16, d_k=512]\nGPU: 48-63 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer3_mha_attn [label="Multi-Head Attention\nInput: [batch_size=256, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 48-63 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer3_mha_proj [label="Output Projection\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 48-63 (replicated)" fillcolor=lightgreen shape=rectangle]
+	layer3_mha_residual [label="Residual Add\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 48-63" fillcolor=yellow shape=parallelogram]
+	layer3_gate [label="Top-2 Gating\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, expert_indices]\nGPU: 48-63 (distributed)" fillcolor=yellow shape=parallelogram]
+	layer3_token_split [label="Token Split by Expert\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 48-63" fillcolor=yellow shape=parallelogram]
+	layer3_async_send [label="Async Token Send\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: cross-device routing" fillcolor=yellow shape=parallelogram]
+	layer3_expert48 [label="Expert 48\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 48" fillcolor=lightgreen shape=rectangle]
+	layer3_expert49 [label="Expert 49\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 49" fillcolor=lightgreen shape=rectangle]
+	layer3_expert50 [label="Expert 50\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 50" fillcolor=lightgreen shape=rectangle]
+	layer3_expert51 [label="Expert 51\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 51" fillcolor=lightgreen shape=rectangle]
+	layer3_expert52 [label="Expert 52\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 52" fillcolor=lightgreen shape=rectangle]
+	layer3_expert53 [label="Expert 53\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 53" fillcolor=lightgreen shape=rectangle]
+	layer3_expert54 [label="Expert 54\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 54" fillcolor=lightgreen shape=rectangle]
+	layer3_expert55 [label="Expert 55\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 55" fillcolor=lightgreen shape=rectangle]
+	layer3_expert56 [label="Expert 56\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 56" fillcolor=lightgreen shape=rectangle]
+	layer3_expert57 [label="Expert 57\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 57" fillcolor=lightgreen shape=rectangle]
+	layer3_expert58 [label="Expert 58\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 58" fillcolor=lightgreen shape=rectangle]
+	layer3_expert59 [label="Expert 59\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 59" fillcolor=lightgreen shape=rectangle]
+	layer3_expert60 [label="Expert 60\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 60" fillcolor=lightgreen shape=rectangle]
+	layer3_expert61 [label="Expert 61\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 61" fillcolor=lightgreen shape=rectangle]
+	layer3_expert62 [label="Expert 62\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 62" fillcolor=lightgreen shape=rectangle]
+	layer3_expert63 [label="Expert 63\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [variable_batch, variable_seq, hidden=8192]\nGPU: 63" fillcolor=lightgreen shape=rectangle]
+	layer3_async_recv [label="Async Token Receive\nInput: [variable_batch, variable_seq, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: cross-device routing" fillcolor=yellow shape=parallelogram]
+	layer3_expert_agg [label="Expert Aggregation\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 48-63" fillcolor=yellow shape=parallelogram]
+	layer3_ffn_residual [label="Residual Add\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 48-63" fillcolor=yellow shape=parallelogram]
+	layer3_output [label="Layer 3 Output\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=256, seq_len=10000, hidden=8192]\nGPU: 48-63" fillcolor=lightblue shape=ellipse]
+	aggregate_pp [label="Aggregate Pipeline\nInput: [batch_size=256, seq_len=10000, hidden=8192]\nOutput: [batch_size=1024, seq_len=10000, hidden=8192]\nGPU: all" fillcolor=yellow shape=parallelogram]
+	output [label="Total Output\nInput: [batch_size=1024, seq_len=10000, hidden=8192]\nGPU: all" fillcolor=lightblue shape=ellipse]
+	input -> split_pp
+	split_pp -> layer0_input
+	layer0_input -> layer0_mha_qkv
+	layer0_mha_qkv -> layer0_mha_attn
+	layer0_mha_attn -> layer0_mha_proj
+	layer0_input -> layer0_mha_residual
+	layer0_mha_proj -> layer0_mha_residual
+	layer0_mha_residual -> layer0_gate
+	layer0_gate -> layer0_token_split
+	layer0_token_split -> layer0_async_send
+	layer0_async_send -> layer0_expert0 [style=dashed]
+	layer0_expert0 -> layer0_async_recv
+	layer0_async_send -> layer0_expert1 [style=dashed]
+	layer0_expert1 -> layer0_async_recv
+	layer0_async_send -> layer0_expert2 [style=dashed]
+	layer0_expert2 -> layer0_async_recv
+	layer0_async_send -> layer0_expert3 [style=dashed]
+	layer0_expert3 -> layer0_async_recv
+	layer0_async_send -> layer0_expert4 [style=dashed]
+	layer0_expert4 -> layer0_async_recv
+	layer0_async_send -> layer0_expert5 [style=dashed]
+	layer0_expert5 -> layer0_async_recv
+	layer0_async_send -> layer0_expert6 [style=dashed]
+	layer0_expert6 -> layer0_async_recv
+	layer0_async_send -> layer0_expert7 [style=dashed]
+	layer0_expert7 -> layer0_async_recv
+	layer0_async_send -> layer0_expert8 [style=dashed]
+	layer0_expert8 -> layer0_async_recv
+	layer0_async_send -> layer0_expert9 [style=dashed]
+	layer0_expert9 -> layer0_async_recv
+	layer0_async_send -> layer0_expert10 [style=dashed]
+	layer0_expert10 -> layer0_async_recv
+	layer0_async_send -> layer0_expert11 [style=dashed]
+	layer0_expert11 -> layer0_async_recv
+	layer0_async_send -> layer0_expert12 [style=dashed]
+	layer0_expert12 -> layer0_async_recv
+	layer0_async_send -> layer0_expert13 [style=dashed]
+	layer0_expert13 -> layer0_async_recv
+	layer0_async_send -> layer0_expert14 [style=dashed]
+	layer0_expert14 -> layer0_async_recv
+	layer0_async_send -> layer0_expert15 [style=dashed]
+	layer0_expert15 -> layer0_async_recv
+	layer0_async_recv -> layer0_expert_agg
+	layer0_expert_agg -> layer0_ffn_residual
+	layer0_mha_residual -> layer0_ffn_residual
+	layer0_ffn_residual -> layer0_output
+	layer0_output -> pipeline_send0
+	pipeline_send0 -> layer1_input
+	layer1_input -> layer1_mha_qkv
+	layer1_mha_qkv -> layer1_mha_attn
+	layer1_mha_attn -> layer1_mha_proj
+	layer1_input -> layer1_mha_residual
+	layer1_mha_proj -> layer1_mha_residual
+	layer1_mha_residual -> layer1_gate
+	layer1_gate -> layer1_token_split
+	layer1_token_split -> layer1_async_send
+	layer1_async_send -> layer1_expert16 [style=dashed]
+	layer1_expert16 -> layer1_async_recv
+	layer1_async_send -> layer1_expert17 [style=dashed]
+	layer1_expert17 -> layer1_async_recv
+	layer1_async_send -> layer1_expert18 [style=dashed]
+	layer1_expert18 -> layer1_async_recv
+	layer1_async_send -> layer1_expert19 [style=dashed]
+	layer1_expert19 -> layer1_async_recv
+	layer1_async_send -> layer1_expert20 [style=dashed]
+	layer1_expert20 -> layer1_async_recv
+	layer1_async_send -> layer1_expert21 [style=dashed]
+	layer1_expert21 -> layer1_async_recv
+	layer1_async_send -> layer1_expert22 [style=dashed]
+	layer1_expert22 -> layer1_async_recv
+	layer1_async_send -> layer1_expert23 [style=dashed]
+	layer1_expert23 -> layer1_async_recv
+	layer1_async_send -> layer1_expert24 [style=dashed]
+	layer1_expert24 -> layer1_async_recv
+	layer1_async_send -> layer1_expert25 [style=dashed]
+	layer1_expert25 -> layer1_async_recv
+	layer1_async_send -> layer1_expert26 [style=dashed]
+	layer1_expert26 -> layer1_async_recv
+	layer1_async_send -> layer1_expert27 [style=dashed]
+	layer1_expert27 -> layer1_async_recv
+	layer1_async_send -> layer1_expert28 [style=dashed]
+	layer1_expert28 -> layer1_async_recv
+	layer1_async_send -> layer1_expert29 [style=dashed]
+	layer1_expert29 -> layer1_async_recv
+	layer1_async_send -> layer1_expert30 [style=dashed]
+	layer1_expert30 -> layer1_async_recv
+	layer1_async_send -> layer1_expert31 [style=dashed]
+	layer1_expert31 -> layer1_async_recv
+	layer1_async_recv -> layer1_expert_agg
+	layer1_expert_agg -> layer1_ffn_residual
+	layer1_mha_residual -> layer1_ffn_residual
+	layer1_ffn_residual -> layer1_output
+	layer1_output -> pipeline_send1
+	pipeline_send1 -> layer2_input
+	layer2_input -> layer2_mha_qkv
+	layer2_mha_qkv -> layer2_mha_attn
+	layer2_mha_attn -> layer2_mha_proj
+	layer2_input -> layer2_mha_residual
+	layer2_mha_proj -> layer2_mha_residual
+	layer2_mha_residual -> layer2_gate
+	layer2_gate -> layer2_token_split
+	layer2_token_split -> layer2_async_send
+	layer2_async_send -> layer2_expert32 [style=dashed]
+	layer2_expert32 -> layer2_async_recv
+	layer2_async_send -> layer2_expert33 [style=dashed]
+	layer2_expert33 -> layer2_async_recv
+	layer2_async_send -> layer2_expert34 [style=dashed]
+	layer2_expert34 -> layer2_async_recv
+	layer2_async_send -> layer2_expert35 [style=dashed]
+	layer2_expert35 -> layer2_async_recv
+	layer2_async_send -> layer2_expert36 [style=dashed]
+	layer2_expert36 -> layer2_async_recv
+	layer2_async_send -> layer2_expert37 [style=dashed]
+	layer2_expert37 -> layer2_async_recv
+	layer2_async_send -> layer2_expert38 [style=dashed]
+	layer2_expert38 -> layer2_async_recv
+	layer2_async_send -> layer2_expert39 [style=dashed]
+	layer2_expert39 -> layer2_async_recv
+	layer2_async_send -> layer2_expert40 [style=dashed]
+	layer2_expert40 -> layer2_async_recv
+	layer2_async_send -> layer2_expert41 [style=dashed]
+	layer2_expert41 -> layer2_async_recv
+	layer2_async_send -> layer2_expert42 [style=dashed]
+	layer2_expert42 -> layer2_async_recv
+	layer2_async_send -> layer2_expert43 [style=dashed]
+	layer2_expert43 -> layer2_async_recv
+	layer2_async_send -> layer2_expert44 [style=dashed]
+	layer2_expert44 -> layer2_async_recv
+	layer2_async_send -> layer2_expert45 [style=dashed]
+	layer2_expert45 -> layer2_async_recv
+	layer2_async_send -> layer2_expert46 [style=dashed]
+	layer2_expert46 -> layer2_async_recv
+	layer2_async_send -> layer2_expert47 [style=dashed]
+	layer2_expert47 -> layer2_async_recv
+	layer2_async_recv -> layer2_expert_agg
+	layer2_expert_agg -> layer2_ffn_residual
+	layer2_mha_residual -> layer2_ffn_residual
+	layer2_ffn_residual -> layer2_output
+	layer2_output -> pipeline_send2
+	pipeline_send2 -> layer3_input
+	layer3_input -> layer3_mha_qkv
+	layer3_mha_qkv -> layer3_mha_attn
+	layer3_mha_attn -> layer3_mha_proj
+	layer3_input -> layer3_mha_residual
+	layer3_mha_proj -> layer3_mha_residual
+	layer3_mha_residual -> layer3_gate
+	layer3_gate -> layer3_token_split
+	layer3_token_split -> layer3_async_send
+	layer3_async_send -> layer3_expert48 [style=dashed]
+	layer3_expert48 -> layer3_async_recv
+	layer3_async_send -> layer3_expert49 [style=dashed]
+	layer3_expert49 -> layer3_async_recv
+	layer3_async_send -> layer3_expert50 [style=dashed]
+	layer3_expert50 -> layer3_async_recv
+	layer3_async_send -> layer3_expert51 [style=dashed]
+	layer3_expert51 -> layer3_async_recv
+	layer3_async_send -> layer3_expert52 [style=dashed]
+	layer3_expert52 -> layer3_async_recv
+	layer3_async_send -> layer3_expert53 [style=dashed]
+	layer3_expert53 -> layer3_async_recv
+	layer3_async_send -> layer3_expert54 [style=dashed]
+	layer3_expert54 -> layer3_async_recv
+	layer3_async_send -> layer3_expert55 [style=dashed]
+	layer3_expert55 -> layer3_async_recv
+	layer3_async_send -> layer3_expert56 [style=dashed]
+	layer3_expert56 -> layer3_async_recv
+	layer3_async_send -> layer3_expert57 [style=dashed]
+	layer3_expert57 -> layer3_async_recv
+	layer3_async_send -> layer3_expert58 [style=dashed]
+	layer3_expert58 -> layer3_async_recv
+	layer3_async_send -> layer3_expert59 [style=dashed]
+	layer3_expert59 -> layer3_async_recv
+	layer3_async_send -> layer3_expert60 [style=dashed]
+	layer3_expert60 -> layer3_async_recv
+	layer3_async_send -> layer3_expert61 [style=dashed]
+	layer3_expert61 -> layer3_async_recv
+	layer3_async_send -> layer3_expert62 [style=dashed]
+	layer3_expert62 -> layer3_async_recv
+	layer3_async_send -> layer3_expert63 [style=dashed]
+	layer3_expert63 -> layer3_async_recv
+	layer3_async_recv -> layer3_expert_agg
+	layer3_expert_agg -> layer3_ffn_residual
+	layer3_mha_residual -> layer3_ffn_residual
+	layer3_ffn_residual -> layer3_output
+	layer3_output -> aggregate_pp
+	aggregate_pp -> output
+}

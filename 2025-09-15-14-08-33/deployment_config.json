@@ -1,0 +1,191 @@
+{
+  "models": {
+    "baseline": {
+      "name": "Dense Transformer Baseline",
+      "layers": 4,
+      "hidden_size": 8192,
+      "num_heads": 16,
+      "head_dim": 512,
+      "mlp_hidden_size": 32768,
+      "vocab_size": 50257,
+      "max_sequence_length": 10000,
+      "precision": "fp16",
+      "batch_size": 1024,
+      "parallel_strategy": {
+        "type": "hybrid",
+        "tensor_parallelism": {
+          "degree": 8,
+          "partition_dim": "hidden",
+          "method": "column_row_parallel"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "num_layers": 4,
+          "layers_per_stage": [2, 2],
+          "schedule": "1f1b"
+        }
+      },
+      "device_mapping": {
+        "pipeline_stage_0": {
+          "layers": [0, 1],
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+          "tensor_parallel_group": [0, 1, 2, 3, 4, 5, 6, 7]
+        },
+        "pipeline_stage_1": {
+          "layers": [2, 3],
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+          "tensor_parallel_group": [8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      },
+      "modules": {
+        "attention": {
+          "type": "multi_head_attention",
+          "num_heads": 16,
+          "head_dim": 512,
+          "tensor_parallel_config": {
+            "query_key_value": {
+              "partition": "column_parallel",
+              "weight_shape": [8192, 8192],
+              "partitioned_shape": [8192, 1024]
+            },
+            "dense": {
+              "partition": "row_parallel",
+              "weight_shape": [8192, 8192],
+              "partitioned_shape": [1024, 8192]
+            }
+          }
+        },
+        "mlp": {
+          "type": "feed_forward",
+          "hidden_size": 32768,
+          "tensor_parallel_config": {
+            "dense_h_to_4h": {
+              "partition": "column_parallel",
+              "weight_shape": [32768, 8192],
+              "partitioned_shape": [4096, 8192]
+            },
+            "dense_4h_to_h": {
+              "partition": "row_parallel",
+              "weight_shape": [8192, 32768],
+              "partitioned_shape": [8192, 4096]
+            }
+          }
+        }
+      }
+    },
+    "ring_attention_sp": {
+      "name": "Dense Transformer with Ring Attention + Sequence Parallelism",
+      "layers": 4,
+      "hidden_size": 8192,
+      "num_heads": 16,
+      "head_dim": 512,
+      "mlp_hidden_size": 32768,
+      "vocab_size": 50257,
+      "max_sequence_length": 10000,
+      "precision": "fp16",
+      "batch_size": 1024,
+      "parallel_strategy": {
+        "type": "ring_sequence_parallel",
+        "sequence_parallelism": {
+          "degree": 16,
+          "sequence_split_dim": "length",
+          "tokens_per_device": 625
+        },
+        "ring_attention": {
+          "topology": "ring",
+          "num_stages": 16,
+          "communication_pattern": "peer_to_peer",
+          "overlap": true
+        }
+      },
+      "device_mapping": {
+        "ring_devices": {
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "sequence_chunks": {
+            "device_0": {"start": 0, "end": 625},
+            "device_1": {"start": 625, "end": 1250},
+            "device_2": {"start": 1250, "end": 1875},
+            "device_3": {"start": 1875, "end": 2500},
+            "device_4": {"start": 2500, "end": 3125},
+            "device_5": {"start": 3125, "end": 3750},
+            "device_6": {"start": 3750, "end": 4375},
+            "device_7": {"start": 4375, "end": 5000},
+            "device_8": {"start": 5000, "end": 5625},
+            "device_9": {"start": 5625, "end": 6250},
+            "device_10": {"start": 6250, "end": 6875},
+            "device_11": {"start": 6875, "end": 7500},
+            "device_12": {"start": 7500, "end": 8125},
+            "device_13": {"start": 8125, "end": 8750},
+            "device_14": {"start": 8750, "end": 9375},
+            "device_15": {"start": 9375, "end": 10000}
+          },
+          "ring_order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      },
+      "modules": {
+        "attention": {
+          "type": "ring_multi_head_attention",
+          "num_heads": 16,
+          "head_dim": 512,
+          "sequence_parallel_config": {
+            "query_projection": {
+              "weight_shape": [8192, 8192],
+              "input_sequence_slice": "local_tokens",
+              "output_shape": [1024, 625, 8192]
+            },
+            "key_projection": {
+              "weight_shape": [8192, 8192],
+              "input_sequence_slice": "local_tokens",
+              "output_shape": [1024, 625, 8192]
+            },
+            "value_projection": {
+              "weight_shape": [8192, 8192],
+              "input_sequence_slice": "local_tokens",
+              "output_shape": [1024, 625, 8192]
+            },
+            "attention_computation": {
+              "type": "ring_attention",
+              "local_query_shape": [1024, 625, 8192],
+              "local_key_shape": [1024, 625, 8192],
+              "local_value_shape": [1024, 625, 8192],
+              "ring_stages": 16,
+              "communication_volume_per_stage": "625 * 8192 * 2 bytes"
+            },
+            "output_projection": {
+              "weight_shape": [8192, 8192],
+              "input_shape": [1024, 625, 8192],
+              "output_shape": [1024, 625, 8192]
+            }
+          }
+        },
+        "mlp": {
+          "type": "sequence_parallel_mlp",
+          "hidden_size": 32768,
+          "sequence_parallel_config": {
+            "dense_h_to_4h": {
+              "weight_shape": [32768, 8192],
+              "input_sequence_slice": "local_tokens",
+              "output_shape": [1024, 625, 32768]
+            },
+            "activation": {
+              "type": "gelu",
+              "input_shape": [1024, 625, 32768]
+            },
+            "dense_4h_to_h": {
+              "weight_shape": [8192, 32768],
+              "input_shape": [1024, 625, 32768],
+              "output_shape": [1024, 625, 8192]
+            }
+          }
+        }
+      },
+      "communication": {
+        "backend": "NCCL",
+        "primitives": ["send", "recv"],
+        "overlap": true,
+        "precision": "fp16",
+        "fused_kernels": ["projection", "softmax"]
+      }
+    }
+  }
+}

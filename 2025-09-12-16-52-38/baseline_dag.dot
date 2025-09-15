@@ -1,0 +1,424 @@
+// Baseline: Tensor Parallelism (TP=8) + Pipeline Parallelism (PP=2)
+digraph {
+	rankdir=TB size="20,20"
+	subgraph cluster_pipeline_stage_0 {
+		color=blue label="Pipeline Stage 0 (GPU 0-7)" style=rounded
+		input_0 [label="Input
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=lightblue shape=ellipse style=filled]
+		layer0_qkv_proj_0 [label="QKV Projection GPU0
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_qkv_proj_1 [label="QKV Projection GPU1
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_qkv_proj_2 [label="QKV Projection GPU2
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_qkv_proj_3 [label="QKV Projection GPU3
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_qkv_proj_4 [label="QKV Projection GPU4
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_qkv_proj_5 [label="QKV Projection GPU5
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_qkv_proj_6 [label="QKV Projection GPU6
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_qkv_proj_7 [label="QKV Projection GPU7
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_attention_0 [label="Attention GPU0
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer0_attention_1 [label="Attention GPU1
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer0_attention_2 [label="Attention GPU2
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer0_attention_3 [label="Attention GPU3
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer0_attention_4 [label="Attention GPU4
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer0_attention_5 [label="Attention GPU5
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer0_attention_6 [label="Attention GPU6
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer0_attention_7 [label="Attention GPU7
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer0_out_proj_0 [label="Output Projection GPU0
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_out_proj_1 [label="Output Projection GPU1
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_out_proj_2 [label="Output Projection GPU2
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_out_proj_3 [label="Output Projection GPU3
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_out_proj_4 [label="Output Projection GPU4
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_out_proj_5 [label="Output Projection GPU5
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_out_proj_6 [label="Output Projection GPU6
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_out_proj_7 [label="Output Projection GPU7
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_allreduce [label="All-Reduce
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+		layer0_residual [label="Residual Add
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=pink shape=parallelogram style=filled]
+		layer0_layernorm [label="Layer Norm
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=lightgray shape=rectangle style=filled]
+		layer0_mlp_linear1_0 [label="MLP Linear1 GPU0
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear1_1 [label="MLP Linear1 GPU1
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear1_2 [label="MLP Linear1 GPU2
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear1_3 [label="MLP Linear1 GPU3
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear1_4 [label="MLP Linear1 GPU4
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear1_5 [label="MLP Linear1 GPU5
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear1_6 [label="MLP Linear1 GPU6
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear1_7 [label="MLP Linear1 GPU7
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_activation [label="GELU
+[batch_size=1024, seq_len=?, ffn_hidden=32768]" fillcolor=lightgray shape=rectangle style=filled]
+		layer0_mlp_linear2_0 [label="MLP Linear2 GPU0
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear2_1 [label="MLP Linear2 GPU1
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear2_2 [label="MLP Linear2 GPU2
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear2_3 [label="MLP Linear2 GPU3
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear2_4 [label="MLP Linear2 GPU4
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear2_5 [label="MLP Linear2 GPU5
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear2_6 [label="MLP Linear2 GPU6
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_linear2_7 [label="MLP Linear2 GPU7
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_mlp_allreduce [label="All-Reduce
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+		layer0_mlp_residual [label="Residual Add
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=pink shape=parallelogram style=filled]
+		pipeline_send_0_1 [label="Send to Stage 1
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=cyan shape=ellipse style=filled]
+	}
+	subgraph cluster_pipeline_stage_1 {
+		color=red label="Pipeline Stage 1 (GPU 8-15)" style=rounded
+		pipeline_recv_1_0 [label="Receive from Stage 0
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=cyan shape=ellipse style=filled]
+		layer1_qkv_proj_0 [label="QKV Projection GPU8
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_qkv_proj_1 [label="QKV Projection GPU9
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_qkv_proj_2 [label="QKV Projection GPU10
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_qkv_proj_3 [label="QKV Projection GPU11
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_qkv_proj_4 [label="QKV Projection GPU12
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_qkv_proj_5 [label="QKV Projection GPU13
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_qkv_proj_6 [label="QKV Projection GPU14
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_qkv_proj_7 [label="QKV Projection GPU15
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_attention_0 [label="Attention GPU8
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer1_attention_1 [label="Attention GPU9
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer1_attention_2 [label="Attention GPU10
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer1_attention_3 [label="Attention GPU11
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer1_attention_4 [label="Attention GPU12
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer1_attention_5 [label="Attention GPU13
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer1_attention_6 [label="Attention GPU14
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer1_attention_7 [label="Attention GPU15
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, heads=2, d_k=512]" fillcolor=yellow shape=rectangle style=filled]
+		layer1_out_proj_0 [label="Output Projection GPU8
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_out_proj_1 [label="Output Projection GPU9
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_out_proj_2 [label="Output Projection GPU10
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_out_proj_3 [label="Output Projection GPU11
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_out_proj_4 [label="Output Projection GPU12
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_out_proj_5 [label="Output Projection GPU13
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_out_proj_6 [label="Output Projection GPU14
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_out_proj_7 [label="Output Projection GPU15
+Input: [batch_size=1024, seq_len=?, heads=2, d_k=512]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_allreduce [label="All-Reduce
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+		layer1_residual [label="Residual Add
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=pink shape=parallelogram style=filled]
+		layer1_layernorm [label="Layer Norm
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=lightgray shape=rectangle style=filled]
+		layer1_mlp_linear1_0 [label="MLP Linear1 GPU8
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear1_1 [label="MLP Linear1 GPU9
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear1_2 [label="MLP Linear1 GPU10
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear1_3 [label="MLP Linear1 GPU11
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear1_4 [label="MLP Linear1 GPU12
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear1_5 [label="MLP Linear1 GPU13
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear1_6 [label="MLP Linear1 GPU14
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear1_7 [label="MLP Linear1 GPU15
+Input: [batch_size=1024, seq_len=?, D=8192]
+Output: [batch_size=1024, seq_len=?, ffn_hidden=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_activation [label="GELU
+[batch_size=1024, seq_len=?, ffn_hidden=32768]" fillcolor=lightgray shape=rectangle style=filled]
+		layer1_mlp_linear2_0 [label="MLP Linear2 GPU8
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear2_1 [label="MLP Linear2 GPU9
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear2_2 [label="MLP Linear2 GPU10
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear2_3 [label="MLP Linear2 GPU11
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear2_4 [label="MLP Linear2 GPU12
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear2_5 [label="MLP Linear2 GPU13
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear2_6 [label="MLP Linear2 GPU14
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_linear2_7 [label="MLP Linear2 GPU15
+Input: [batch_size=1024, seq_len=?, ffn_hidden=4096]
+Output: [batch_size=1024, seq_len=?, D=1024]" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_mlp_allreduce [label="All-Reduce
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=orange shape=parallelogram style=filled]
+		layer1_mlp_residual [label="Residual Add
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=pink shape=parallelogram style=filled]
+		final_output [label="Final Output
+[batch_size=1024, seq_len=?, D=8192]" fillcolor=lightblue shape=ellipse style=filled]
+	}
+	input_0 -> layer0_qkv_proj_0
+	layer0_qkv_proj_0 -> layer0_attention_0
+	layer0_attention_0 -> layer0_out_proj_0
+	layer0_out_proj_0 -> layer0_allreduce
+	input_0 -> layer0_qkv_proj_1
+	layer0_qkv_proj_1 -> layer0_attention_1
+	layer0_attention_1 -> layer0_out_proj_1
+	layer0_out_proj_1 -> layer0_allreduce
+	input_0 -> layer0_qkv_proj_2
+	layer0_qkv_proj_2 -> layer0_attention_2
+	layer0_attention_2 -> layer0_out_proj_2
+	layer0_out_proj_2 -> layer0_allreduce
+	input_0 -> layer0_qkv_proj_3
+	layer0_qkv_proj_3 -> layer0_attention_3
+	layer0_attention_3 -> layer0_out_proj_3
+	layer0_out_proj_3 -> layer0_allreduce
+	input_0 -> layer0_qkv_proj_4
+	layer0_qkv_proj_4 -> layer0_attention_4
+	layer0_attention_4 -> layer0_out_proj_4
+	layer0_out_proj_4 -> layer0_allreduce
+	input_0 -> layer0_qkv_proj_5
+	layer0_qkv_proj_5 -> layer0_attention_5
+	layer0_attention_5 -> layer0_out_proj_5
+	layer0_out_proj_5 -> layer0_allreduce
+	input_0 -> layer0_qkv_proj_6
+	layer0_qkv_proj_6 -> layer0_attention_6
+	layer0_attention_6 -> layer0_out_proj_6
+	layer0_out_proj_6 -> layer0_allreduce
+	input_0 -> layer0_qkv_proj_7
+	layer0_qkv_proj_7 -> layer0_attention_7
+	layer0_attention_7 -> layer0_out_proj_7
+	layer0_out_proj_7 -> layer0_allreduce
+	layer0_allreduce -> layer0_residual
+	input_0 -> layer0_residual
+	layer0_residual -> layer0_layernorm
+	layer0_layernorm -> layer0_mlp_linear1_0
+	layer0_mlp_linear1_0 -> layer0_mlp_activation
+	layer0_mlp_activation -> layer0_mlp_linear2_0
+	layer0_mlp_linear2_0 -> layer0_mlp_allreduce
+	layer0_layernorm -> layer0_mlp_linear1_1
+	layer0_mlp_linear1_1 -> layer0_mlp_activation
+	layer0_mlp_activation -> layer0_mlp_linear2_1
+	layer0_mlp_linear2_1 -> layer0_mlp_allreduce
+	layer0_layernorm -> layer0_mlp_linear1_2
+	layer0_mlp_linear1_2 -> layer0_mlp_activation
+	layer0_mlp_activation -> layer0_mlp_linear2_2
+	layer0_mlp_linear2_2 -> layer0_mlp_allreduce
+	layer0_layernorm -> layer0_mlp_linear1_3
+	layer0_mlp_linear1_3 -> layer0_mlp_activation
+	layer0_mlp_activation -> layer0_mlp_linear2_3
+	layer0_mlp_linear2_3 -> layer0_mlp_allreduce
+	layer0_layernorm -> layer0_mlp_linear1_4
+	layer0_mlp_linear1_4 -> layer0_mlp_activation
+	layer0_mlp_activation -> layer0_mlp_linear2_4
+	layer0_mlp_linear2_4 -> layer0_mlp_allreduce
+	layer0_layernorm -> layer0_mlp_linear1_5
+	layer0_mlp_linear1_5 -> layer0_mlp_activation
+	layer0_mlp_activation -> layer0_mlp_linear2_5
+	layer0_mlp_linear2_5 -> layer0_mlp_allreduce
+	layer0_layernorm -> layer0_mlp_linear1_6
+	layer0_mlp_linear1_6 -> layer0_mlp_activation
+	layer0_mlp_activation -> layer0_mlp_linear2_6
+	layer0_mlp_linear2_6 -> layer0_mlp_allreduce
+	layer0_layernorm -> layer0_mlp_linear1_7
+	layer0_mlp_linear1_7 -> layer0_mlp_activation
+	layer0_mlp_activation -> layer0_mlp_linear2_7
+	layer0_mlp_linear2_7 -> layer0_mlp_allreduce
+	layer0_mlp_allreduce -> layer0_mlp_residual
+	layer0_residual -> layer0_mlp_residual
+	layer0_mlp_residual -> pipeline_send_0_1
+	pipeline_send_0_1 -> pipeline_recv_1_0
+	pipeline_recv_1_0 -> layer1_qkv_proj_0
+	pipeline_recv_1_0 -> layer1_qkv_proj_0
+	layer1_qkv_proj_0 -> layer1_attention_0
+	layer1_attention_0 -> layer1_out_proj_0
+	layer1_out_proj_0 -> layer1_allreduce
+	pipeline_recv_1_0 -> layer1_qkv_proj_1
+	layer1_qkv_proj_1 -> layer1_attention_1
+	layer1_attention_1 -> layer1_out_proj_1
+	layer1_out_proj_1 -> layer1_allreduce
+	pipeline_recv_1_0 -> layer1_qkv_proj_2
+	layer1_qkv_proj_2 -> layer1_attention_2
+	layer1_attention_2 -> layer1_out_proj_2
+	layer1_out_proj_2 -> layer1_allreduce
+	pipeline_recv_1_0 -> layer1_qkv_proj_3
+	layer1_qkv_proj_3 -> layer1_attention_3
+	layer1_attention_3 -> layer1_out_proj_3
+	layer1_out_proj_3 -> layer1_allreduce
+	pipeline_recv_1_0 -> layer1_qkv_proj_4
+	layer1_qkv_proj_4 -> layer1_attention_4
+	layer1_attention_4 -> layer1_out_proj_4
+	layer1_out_proj_4 -> layer1_allreduce
+	pipeline_recv_1_0 -> layer1_qkv_proj_5
+	layer1_qkv_proj_5 -> layer1_attention_5
+	layer1_attention_5 -> layer1_out_proj_5
+	layer1_out_proj_5 -> layer1_allreduce
+	pipeline_recv_1_0 -> layer1_qkv_proj_6
+	layer1_qkv_proj_6 -> layer1_attention_6
+	layer1_attention_6 -> layer1_out_proj_6
+	layer1_out_proj_6 -> layer1_allreduce
+	pipeline_recv_1_0 -> layer1_qkv_proj_7
+	layer1_qkv_proj_7 -> layer1_attention_7
+	layer1_attention_7 -> layer1_out_proj_7
+	layer1_out_proj_7 -> layer1_allreduce
+	layer1_allreduce -> layer1_residual
+	pipeline_recv_1_0 -> layer1_residual
+	layer1_residual -> layer1_layernorm
+	layer1_layernorm -> layer1_mlp_linear1_0
+	layer1_mlp_linear1_0 -> layer1_mlp_activation
+	layer1_mlp_activation -> layer1_mlp_linear2_0
+	layer1_mlp_linear2_0 -> layer1_mlp_allreduce
+	layer1_layernorm -> layer1_mlp_linear1_1
+	layer1_mlp_linear1_1 -> layer1_mlp_activation
+	layer1_mlp_activation -> layer1_mlp_linear2_1
+	layer1_mlp_linear2_1 -> layer1_mlp_allreduce
+	layer1_layernorm -> layer1_mlp_linear1_2
+	layer1_mlp_linear1_2 -> layer1_mlp_activation
+	layer1_mlp_activation -> layer1_mlp_linear2_2
+	layer1_mlp_linear2_2 -> layer1_mlp_allreduce
+	layer1_layernorm -> layer1_mlp_linear1_3
+	layer1_mlp_linear1_3 -> layer1_mlp_activation
+	layer1_mlp_activation -> layer1_mlp_linear2_3
+	layer1_mlp_linear2_3 -> layer1_mlp_allreduce
+	layer1_layernorm -> layer1_mlp_linear1_4
+	layer1_mlp_linear1_4 -> layer1_mlp_activation
+	layer1_mlp_activation -> layer1_mlp_linear2_4
+	layer1_mlp_linear2_4 -> layer1_mlp_allreduce
+	layer1_layernorm -> layer1_mlp_linear1_5
+	layer1_mlp_linear1_5 -> layer1_mlp_activation
+	layer1_mlp_activation -> layer1_mlp_linear2_5
+	layer1_mlp_linear2_5 -> layer1_mlp_allreduce
+	layer1_layernorm -> layer1_mlp_linear1_6
+	layer1_mlp_linear1_6 -> layer1_mlp_activation
+	layer1_mlp_activation -> layer1_mlp_linear2_6
+	layer1_mlp_linear2_6 -> layer1_mlp_allreduce
+	layer1_layernorm -> layer1_mlp_linear1_7
+	layer1_mlp_linear1_7 -> layer1_mlp_activation
+	layer1_mlp_activation -> layer1_mlp_linear2_7
+	layer1_mlp_linear2_7 -> layer1_mlp_allreduce
+	layer1_mlp_allreduce -> layer1_mlp_residual
+	layer1_residual -> layer1_mlp_residual
+	layer1_mlp_residual -> final_output
+}

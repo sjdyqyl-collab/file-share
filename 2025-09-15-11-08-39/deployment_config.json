@@ -1,0 +1,234 @@
+{
+  "models": {
+    "baseline": {
+      "name": "Dense Transformer Baseline",
+      "architecture": {
+        "layers": 4,
+        "hidden_size": 8192,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768,
+        "sequence_length": 10000,
+        "batch_size": 1024,
+        "precision": "fp16"
+      },
+      "parallel_strategy": {
+        "type": "hybrid",
+        "tensor_parallelism": {
+          "degree": 8,
+          "strategy": "column_row_parallel",
+          "parameters": {
+            "attention": {
+              "query_key_value": "column_parallel",
+              "dense": "row_parallel"
+            },
+            "mlp": {
+              "gate_proj": "column_parallel",
+              "up_proj": "column_parallel",
+              "down_proj": "row_parallel"
+            }
+          }
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": [
+            {"layers": [0, 1]},
+            {"layers": [2, 3]}
+          ]
+        }
+      },
+      "device_mapping": {
+        "total_devices": 16,
+        "mapping_strategy": "hybrid_tp_pp",
+        "device_groups": [
+          {
+            "group_id": 0,
+            "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+            "pipeline_stage": 0,
+            "tensor_parallel_group": [0, 1, 2, 3, 4, 5, 6, 7]
+          },
+          {
+            "group_id": 1,
+            "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+            "pipeline_stage": 1,
+            "tensor_parallel_group": [8, 9, 10, 11, 12, 13, 14, 15]
+          }
+        ]
+      },
+      "memory_requirements": {
+        "activation_memory_per_device": "L * d_model / (tp * pp)",
+        "parameter_memory_per_device": "total_params / (tp * pp)"
+      }
+    },
+    "ring_attention_sp": {
+      "name": "Dense Transformer with Ring Attention + Sequence Parallelism",
+      "architecture": {
+        "layers": 4,
+        "hidden_size": 8192,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768,
+        "sequence_length": 10000,
+        "batch_size": 1024,
+        "precision": "fp16"
+      },
+      "parallel_strategy": {
+        "type": "ring_sequence_parallelism",
+        "sequence_parallelism": {
+          "degree": 16,
+          "sequence_split": "uniform",
+          "tokens_per_device": 625,
+          "dimensions": {
+            "input": "B * (L/P) * d_model",
+            "query": "B * (L/P) * d_model",
+            "key": "B * (L/P) * d_model",
+            "value": "B * (L/P) * d_model"
+          }
+        },
+        "ring_attention": {
+          "ring_size": 16,
+          "communication_pattern": "sequential_peer_to_peer",
+          "stages": 16,
+          "buffer_size": "B * (L/P) * d_model",
+          "overlap": true
+        }
+      },
+      "module_division": {
+        "embedding": {
+          "type": "sequence_parallel",
+          "distribution": "split_along_sequence_dim",
+          "parameters": {
+            "weight": ["vocab_size", "d_model"],
+            "input": ["B", "L/P", "d_model"]
+          }
+        },
+        "attention": {
+          "type": "ring_attention",
+          "modules": {
+            "query_projection": {
+              "weight": ["d_model", "d_model"],
+              "input": ["B", "L/P", "d_model"],
+              "output": ["B", "L/P", "d_model"]
+            },
+            "key_projection": {
+              "weight": ["d_model", "d_model"],
+              "input": ["B", "L/P", "d_model"],
+              "output": ["B", "L/P", "d_model"]
+            },
+            "value_projection": {
+              "weight": ["d_model", "d_model"],
+              "input": ["B", "L/P", "d_model"],
+              "output": ["B", "L/P", "d_model"]
+            },
+            "attention_computation": {
+              "query": ["B", "L/P", "d_model"],
+              "key_blocks": ["B", "L/P", "d_model"],
+              "value_blocks": ["B", "L/P", "d_model"],
+              "output": ["B", "L/P", "d_model"]
+            },
+            "output_projection": {
+              "weight": ["d_model", "d_model"],
+              "input": ["B", "L/P", "d_model"],
+              "output": ["B", "L/P", "d_model"]
+            }
+          }
+        },
+        "mlp": {
+          "type": "sequence_parallel",
+          "modules": {
+            "gate_proj": {
+              "weight": ["d_model", "32768"],
+              "input": ["B", "L/P", "d_model"],
+              "output": ["B", "L/P", "32768"]
+            },
+            "up_proj": {
+              "weight": ["d_model", "32768"],
+              "input": ["B", "L/P", "d_model"],
+              "output": ["B", "L/P", "32768"]
+            },
+            "down_proj": {
+              "weight": ["32768", "d_model"],
+              "input": ["B", "L/P", "32768"],
+              "output": ["B", "L/P", "d_model"]
+            }
+          }
+        },
+        "layer_norm": {
+          "type": "sequence_parallel",
+          "parameters": ["d_model"],
+          "input": ["B", "L/P", "d_model"]
+        }
+      },
+      "device_mapping": {
+        "total_devices": 16,
+        "mapping_strategy": "ring_sequence_parallel",
+        "ring_topology": [
+          {"device_id": 0, "next_device": 1, "prev_device": 15},
+          {"device_id": 1, "next_device": 2, "prev_device": 0},
+          {"device_id": 2, "next_device": 3, "prev_device": 1},
+          {"device_id": 3, "next_device": 4, "prev_device": 2},
+          {"device_id": 4, "next_device": 5, "prev_device": 3},
+          {"device_id": 5, "next_device": 6, "prev_device": 4},
+          {"device_id": 6, "next_device": 7, "prev_device": 5},
+          {"device_id": 7, "next_device": 8, "prev_device": 6},
+          {"device_id": 8, "next_device": 9, "prev_device": 7},
+          {"device_id": 9, "next_device": 10, "prev_device": 8},
+          {"device_id": 10, "next_device": 11, "prev_device": 9},
+          {"device_id": 11, "next_device": 12, "prev_device": 10},
+          {"device_id": 12, "next_device": 13, "prev_device": 11},
+          {"device_id": 13, "next_device": 14, "prev_device": 12},
+          {"device_id": 14, "next_device": 15, "prev_device": 13},
+          {"device_id": 15, "next_device": 0, "prev_device": 14}
+        ],
+        "sequence_partition": {
+          "device_0": {"tokens": [0, 624]},
+          "device_1": {"tokens": [625, 1249]},
+          "device_2": {"tokens": [1250, 1874]},
+          "device_3": {"tokens": [1875, 2499]},
+          "device_4": {"tokens": [2500, 3124]},
+          "device_5": {"tokens": [3125, 3749]},
+          "device_6": {"tokens": [3750, 4374]},
+          "device_7": {"tokens": [4375, 4999]},
+          "device_8": {"tokens": [5000, 5624]},
+          "device_9": {"tokens": [5625, 6249]},
+          "device_10": {"tokens": [6250, 6874]},
+          "device_11": {"tokens": [6875, 7499]},
+          "device_12": {"tokens": [7500, 8124]},
+          "device_13": {"tokens": [8125, 8749]},
+          "device_14": {"tokens": [8750, 9374]},
+          "device_15": {"tokens": [9375, 9999]}
+        }
+      },
+      "communication_specifications": {
+        "protocol": "NCCL_send_recv",
+        "buffer_size": "B * (L/P) * d_model = 1024 * 625 * 8192 bytes",
+        "precision": "fp16",
+        "overlap": {
+          "computation": "attention_computation",
+          "communication": "KV_block_transfer"
+        },
+        "ring_stages": 16,
+        "messages_per_stage": 1
+      },
+      "memory_requirements": {
+        "activation_memory_per_device": "(L/P) * B * d_model = 625 * 1024 * 8192 bytes",
+        "parameter_memory_per_device": "total_params",
+        "communication_buffer": "B * (L/P) * d_model * 2 = 10.24 MB per buffer"
+      }
+    }
+  },
+  "deployment_notes": {
+    "prerequisites": [
+      "NCCL 2.18+ or MPI with point-to-point support",
+      "CUDA 11.8+ with H100 support",
+      "NVLink/NVSwitch interconnect",
+      "fp16 tensor core support"
+    ],
+    "performance_tuning": {
+      "sequence_length_threshold": 16000,
+      "optimal_device_count": 16,
+      "memory_efficiency": "sequence_parallelism_reduces_by_P",
+      "communication_efficiency": "ring_topology_vs_all_gather"
+    }
+  }
+}

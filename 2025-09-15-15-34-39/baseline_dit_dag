@@ -1,0 +1,77 @@
+// Baseline DiT with Full Attention
+digraph baseline_dit {
+	rankdir=TB size="20,20"
+	input [label="Input Video Tokens" fillcolor=lightblue shape=ellipse style=filled]
+	embed [label="Token Embedding
+Input: [batch_size=?, seq_len=?, channels=?]
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=lightgreen shape=rectangle style=filled]
+	pos_enc [label="3D Positional Encoding
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=lightgreen shape=rectangle style=filled]
+	ln1_1 [label="LayerNorm 1
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=yellow shape=rectangle style=filled]
+	q_proj1 [label="Query Projection
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, num_heads=?, d_k=?]" fillcolor=lightcoral shape=rectangle style=filled]
+	k_proj1 [label="Key Projection
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, num_heads=?, d_k=?]" fillcolor=lightcoral shape=rectangle style=filled]
+	v_proj1 [label="Value Projection
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, num_heads=?, d_v=?]" fillcolor=lightcoral shape=rectangle style=filled]
+	attention1 [label="Full Attention
+Input Q: [batch_size=?, seq_len=?, num_heads=?, d_k=?]
+Input K: [batch_size=?, seq_len=?, num_heads=?, d_k=?]
+Input V: [batch_size=?, seq_len=?, num_heads=?, d_v=?]
+Output: [batch_size=?, seq_len=?, num_heads=?, d_v=?]" fillcolor=orange shape=rectangle style=filled]
+	out_proj1 [label="Output Projection
+Input: [batch_size=?, seq_len=?, num_heads=?, d_v=?]
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=lightcoral shape=rectangle style=filled]
+	res1 [label="Residual Add 1
+Input: [batch_size=?, seq_len=?, hidden_size=?] x2
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=lightblue shape=parallelogram style=filled]
+	ln1_2 [label="LayerNorm 2
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=yellow shape=rectangle style=filled]
+	ffn1_1 [label="FFN Linear 1
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, ffn_hidden=?]" fillcolor=lightcoral shape=rectangle style=filled]
+	gelu1 [label="GELU Activation
+Input: [batch_size=?, seq_len=?, ffn_hidden=?]
+Output: [batch_size=?, seq_len=?, ffn_hidden=?]" fillcolor=lightgreen shape=rectangle style=filled]
+	ffn1_2 [label="FFN Linear 2
+Input: [batch_size=?, seq_len=?, ffn_hidden=?]
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=lightcoral shape=rectangle style=filled]
+	res2 [label="Residual Add 2
+Input: [batch_size=?, seq_len=?, hidden_size=?] x2
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=lightblue shape=parallelogram style=filled]
+	layer_norm_final [label="Final LayerNorm
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, hidden_size=?]" fillcolor=yellow shape=rectangle style=filled]
+	output_proj [label="Output Projection
+Input: [batch_size=?, seq_len=?, hidden_size=?]
+Output: [batch_size=?, seq_len=?, output_channels=?]" fillcolor=lightgreen shape=rectangle style=filled]
+	output [label="Output Video" fillcolor=lightblue shape=ellipse style=filled]
+	input -> embed
+	embed -> pos_enc
+	pos_enc -> ln1_1
+	ln1_1 -> q_proj1
+	ln1_1 -> k_proj1
+	ln1_1 -> v_proj1
+	q_proj1 -> attention1
+	k_proj1 -> attention1
+	v_proj1 -> attention1
+	attention1 -> out_proj1
+	out_proj1 -> res1
+	pos_enc -> res1
+	res1 -> ln1_2
+	ln1_2 -> ffn1_1
+	ffn1_1 -> gelu1
+	gelu1 -> ffn1_2
+	ffn1_2 -> res2
+	res1 -> res2
+	res2 -> layer_norm_final
+	layer_norm_final -> output_proj
+	output_proj -> output
+}

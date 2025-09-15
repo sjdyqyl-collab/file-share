@@ -1,0 +1,299 @@
+{
+  "models": {
+    "baseline": {
+      "name": "Dense Transformer Baseline",
+      "layers": 4,
+      "parallel_strategy": {
+        "type": "tensor_parallelism_pipeline_parallelism",
+        "tensor_parallelism": {
+          "degree": 8,
+          "partition_dim": "hidden"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "num_stages": 2
+        }
+      },
+      "parameters": {
+        "batch_size": 1024,
+        "sequence_length": 10000,
+        "hidden_size": 8192,
+        "num_heads": 16,
+        "head_dim": 512,
+        "mlp_hidden_size": 32768,
+        "precision": "fp16"
+      },
+      "modules": {
+        "embeddings": {
+          "type": "embedding",
+          "params": {"vocab_size": 32000, "hidden_size": 8192},
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+        },
+        "layers": [
+          {
+            "layer_id": 0,
+            "type": "transformer_layer",
+            "pipeline_stage": 0,
+            "attention": {
+              "type": "multi_head_attention",
+              "tensor_parallel_degree": 8,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "tensor_parallel_degree": 8,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+            }
+          },
+          {
+            "layer_id": 1,
+            "type": "transformer_layer", 
+            "pipeline_stage": 0,
+            "attention": {
+              "type": "multi_head_attention",
+              "tensor_parallel_degree": 8,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "tensor_parallel_degree": 8,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7]
+            }
+          },
+          {
+            "layer_id": 2,
+            "type": "transformer_layer",
+            "pipeline_stage": 1,
+            "attention": {
+              "type": "multi_head_attention",
+              "tensor_parallel_degree": 8,
+              "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "tensor_parallel_degree": 8,
+              "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          },
+          {
+            "layer_id": 3,
+            "type": "transformer_layer",
+            "pipeline_stage": 1,
+            "attention": {
+              "type": "multi_head_attention",
+              "tensor_parallel_degree": 8,
+              "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "tensor_parallel_degree": 8,
+              "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          }
+        ],
+        "output_layer": {
+          "type": "linear",
+          "params": {"input_size": 8192, "output_size": 32000},
+          "tensor_parallel_degree": 8,
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      }
+    },
+    "proposed": {
+      "name": "Dense Transformer with Ring Attention + Sequence Parallelism",
+      "layers": 4,
+      "parallel_strategy": {
+        "type": "ring_attention_sequence_parallelism",
+        "ring_attention": {
+          "ring_size": 16,
+          "sequence_parallel_degree": 16,
+          "sequence_chunk_size": 625
+        }
+      },
+      "parameters": {
+        "batch_size": 1024,
+        "sequence_length": 10000,
+        "sequence_chunk_per_device": 625,
+        "hidden_size": 8192,
+        "num_heads": 16,
+        "head_dim": 512,
+        "mlp_hidden_size": 32768,
+        "precision": "fp16"
+      },
+      "modules": {
+        "embeddings": {
+          "type": "embedding",
+          "params": {"vocab_size": 32000, "hidden_size": 8192},
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        },
+        "layers": [
+          {
+            "layer_id": 0,
+            "type": "transformer_layer",
+            "attention": {
+              "type": "ring_multi_head_attention",
+              "ring_size": 16,
+              "sequence_parallel_degree": 16,
+              "sequence_chunk_size": 625,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+              "ring_topology": {
+                "device_0": {"next": 1, "prev": 15},
+                "device_1": {"next": 2, "prev": 0},
+                "device_2": {"next": 3, "prev": 1},
+                "device_3": {"next": 4, "prev": 2},
+                "device_4": {"next": 5, "prev": 3},
+                "device_5": {"next": 6, "prev": 4},
+                "device_6": {"next": 7, "prev": 5},
+                "device_7": {"next": 8, "prev": 6},
+                "device_8": {"next": 9, "prev": 7},
+                "device_9": {"next": 10, "prev": 8},
+                "device_10": {"next": 11, "prev": 9},
+                "device_11": {"next": 12, "prev": 10},
+                "device_12": {"next": 13, "prev": 11},
+                "device_13": {"next": 14, "prev": 12},
+                "device_14": {"next": 15, "prev": 13},
+                "device_15": {"next": 0, "prev": 14}
+              }
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "tensor_parallel_degree": 16,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          },
+          {
+            "layer_id": 1,
+            "type": "transformer_layer",
+            "attention": {
+              "type": "ring_multi_head_attention",
+              "ring_size": 16,
+              "sequence_parallel_degree": 16,
+              "sequence_chunk_size": 625,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+              "ring_topology": {
+                "device_0": {"next": 1, "prev": 15},
+                "device_1": {"next": 2, "prev": 0},
+                "device_2": {"next": 3, "prev": 1},
+                "device_3": {"next": 4, "prev": 2},
+                "device_4": {"next": 5, "prev": 3},
+                "device_5": {"next": 6, "prev": 4},
+                "device_6": {"next": 7, "prev": 5},
+                "device_7": {"next": 8, "prev": 6},
+                "device_8": {"next": 9, "prev": 7},
+                "device_9": {"next": 10, "prev": 8},
+                "device_10": {"next": 11, "prev": 9},
+                "device_11": {"next": 12, "prev": 10},
+                "device_12": {"next": 13, "prev": 11},
+                "device_13": {"next": 14, "prev": 12},
+                "device_14": {"next": 15, "prev": 13},
+                "device_15": {"next": 0, "prev": 14}
+              }
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "tensor_parallel_degree": 16,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          },
+          {
+            "layer_id": 2,
+            "type": "transformer_layer",
+            "attention": {
+              "type": "ring_multi_head_attention",
+              "ring_size": 16,
+              "sequence_parallel_degree": 16,
+              "sequence_chunk_size": 625,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+              "ring_topology": {
+                "device_0": {"next": 1, "prev": 15},
+                "device_1": {"next": 2, "prev": 0},
+                "device_2": {"next": 3, "prev": 1},
+                "device_3": {"next": 4, "prev": 2},
+                "device_4": {"next": 5, "prev": 3},
+                "device_5": {"next": 6, "prev": 4},
+                "device_6": {"next": 7, "prev": 5},
+                "device_7": {"next": 8, "prev": 6},
+                "device_8": {"next": 9, "prev": 7},
+                "device_9": {"next": 10, "prev": 8},
+                "device_10": {"next": 11, "prev": 9},
+                "device_11": {"next": 12, "prev": 10},
+                "device_12": {"next": 13, "prev": 11},
+                "device_13": {"next": 14, "prev": 12},
+                "device_14": {"next": 15, "prev": 13},
+                "device_15": {"next": 0, "prev": 14}
+              }
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "tensor_parallel_degree": 16,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          },
+          {
+            "layer_id": 3,
+            "type": "transformer_layer",
+            "attention": {
+              "type": "ring_multi_head_attention",
+              "ring_size": 16,
+              "sequence_parallel_degree": 16,
+              "sequence_chunk_size": 625,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+              "ring_topology": {
+                "device_0": {"next": 1, "prev": 15},
+                "device_1": {"next": 2, "prev": 0},
+                "device_2": {"next": 3, "prev": 1},
+                "device_3": {"next": 4, "prev": 2},
+                "device_4": {"next": 5, "prev": 3},
+                "device_5": {"next": 6, "prev": 4},
+                "device_6": {"next": 7, "prev": 5},
+                "device_7": {"next": 8, "prev": 6},
+                "device_8": {"next": 9, "prev": 7},
+                "device_9": {"next": 10, "prev": 8},
+                "device_10": {"next": 11, "prev": 9},
+                "device_11": {"next": 12, "prev": 10},
+                "device_12": {"next": 13, "prev": 11},
+                "device_13": {"next": 14, "prev": 12},
+                "device_14": {"next": 15, "prev": 13},
+                "device_15": {"next": 0, "prev": 14}
+              }
+            },
+            "mlp": {
+              "type": "feed_forward",
+              "tensor_parallel_degree": 16,
+              "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            }
+          }
+        ],
+        "output_layer": {
+          "type": "linear",
+          "params": {"input_size": 8192, "output_size": 32000},
+          "tensor_parallel_degree": 16,
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        }
+      }
+    }
+  },
+  "communication": {
+    "baseline": {
+      "type": "all_reduce",
+      "backend": "nccl",
+      "operations": ["all_reduce", "all_gather", "reduce_scatter"]
+    },
+    "proposed": {
+      "type": "ring_communication",
+      "backend": "nccl",
+      "primitives": ["send", "recv"],
+      "overlap": true,
+      "buffer_size": "625 * 8192 * 2 bytes"
+    }
+  },
+  "memory": {
+    "baseline": {
+      "activation_memory_per_device": "10000 * 8192 * 2 bytes"
+    },
+    "proposed": {
+      "activation_memory_per_device": "625 * 8192 * 2 bytes",
+      "reduction_factor": 16
+    }
+  }
+}

@@ -1,0 +1,214 @@
+// Baseline MoE Deployment (TP=8, PP=2)
+digraph baseline_moe_deployment {
+	rankdir=TB size="20,30"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	input [label="Total Input\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgreen shape=ellipse]
+	node [fillcolor=lightcoral]
+	stage1_mha [label="Pipeline Stage 1 MHA\nInput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nGPU: 0-7" shape=rectangle]
+	stage1_expert_0_0 [label="Expert 0\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 0" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_0_1 [label="Expert 1\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 0" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_0_2 [label="Expert 2\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 0" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_0_3 [label="Expert 3\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 0" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_1_0 [label="Expert 4\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 1" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_1_1 [label="Expert 5\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 1" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_1_2 [label="Expert 6\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 1" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_1_3 [label="Expert 7\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 1" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_2_0 [label="Expert 8\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 2" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_2_1 [label="Expert 9\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 2" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_2_2 [label="Expert 10\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 2" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_2_3 [label="Expert 11\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 2" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_3_0 [label="Expert 12\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 3" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_3_1 [label="Expert 13\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 3" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_3_2 [label="Expert 14\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 3" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_3_3 [label="Expert 15\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 3" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_4_0 [label="Expert 16\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 4" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_4_1 [label="Expert 17\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 4" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_4_2 [label="Expert 18\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 4" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_4_3 [label="Expert 19\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 4" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_5_0 [label="Expert 20\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 5" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_5_1 [label="Expert 21\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 5" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_5_2 [label="Expert 22\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 5" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_5_3 [label="Expert 23\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 5" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_6_0 [label="Expert 24\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 6" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_6_1 [label="Expert 25\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 6" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_6_2 [label="Expert 26\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 6" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_6_3 [label="Expert 27\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 6" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_7_0 [label="Expert 28\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 7" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_7_1 [label="Expert 29\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 7" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_7_2 [label="Expert 30\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 7" fillcolor=lightyellow shape=rectangle]
+	stage1_expert_7_3 [label="Expert 31\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 7" fillcolor=lightyellow shape=rectangle]
+	stage1_gate [label="Gate Selection\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: routing decisions\nGPU: 0-7" fillcolor=lightpink shape=parallelogram]
+	stage1_residual [label="Residual Add\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 0-7" fillcolor=lightgreen shape=rectangle]
+	comm_stage1_to_stage2 [label="Cross-Stage Communication\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 0-7 → 8-15" fillcolor=lightgray shape=ellipse]
+	node [fillcolor=lightcoral]
+	stage2_mha [label="Pipeline Stage 2 MHA\nInput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nOutput: [batch_size=1024, seq_len=10000, heads=16, d_k=512]\nGPU: 8-15" shape=rectangle]
+	stage2_expert_8_0 [label="Expert 32\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 8" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_8_1 [label="Expert 33\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 8" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_8_2 [label="Expert 34\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 8" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_8_3 [label="Expert 35\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 8" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_9_0 [label="Expert 36\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 9" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_9_1 [label="Expert 37\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 9" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_9_2 [label="Expert 38\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 9" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_9_3 [label="Expert 39\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 9" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_10_0 [label="Expert 40\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 10" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_10_1 [label="Expert 41\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 10" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_10_2 [label="Expert 42\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 10" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_10_3 [label="Expert 43\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 10" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_11_0 [label="Expert 44\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 11" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_11_1 [label="Expert 45\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 11" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_11_2 [label="Expert 46\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 11" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_11_3 [label="Expert 47\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 11" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_12_0 [label="Expert 48\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 12" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_12_1 [label="Expert 49\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 12" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_12_2 [label="Expert 50\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 12" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_12_3 [label="Expert 51\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 12" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_13_0 [label="Expert 52\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 13" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_13_1 [label="Expert 53\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 13" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_13_2 [label="Expert 54\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 13" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_13_3 [label="Expert 55\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 13" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_14_0 [label="Expert 56\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 14" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_14_1 [label="Expert 57\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 14" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_14_2 [label="Expert 58\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 14" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_14_3 [label="Expert 59\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 14" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_15_0 [label="Expert 60\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 15" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_15_1 [label="Expert 61\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 15" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_15_2 [label="Expert 62\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 15" fillcolor=lightyellow shape=rectangle]
+	stage2_expert_15_3 [label="Expert 63\nInput: [batch_size=1024, seq_len=10000, token_dim=1024]\nOutput: [batch_size=1024, seq_len=10000, token_dim=1024]\nGPU: 15" fillcolor=lightyellow shape=rectangle]
+	stage2_gate [label="Gate Selection\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: routing decisions\nGPU: 8-15" fillcolor=lightpink shape=parallelogram]
+	stage2_residual [label="Residual Add\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nOutput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: 8-15" fillcolor=lightgreen shape=rectangle]
+	output [label="Total Output\nInput: [batch_size=1024, seq_len=10000, token_dim=8192]\nGPU: all GPUs" fillcolor=lightgreen shape=ellipse]
+	input -> stage1_mha
+	stage1_mha -> stage1_gate
+	stage1_gate -> stage1_expert_0_0 [style=dashed]
+	stage1_gate -> stage1_expert_0_1 [style=dashed]
+	stage1_gate -> stage1_expert_0_2 [style=dashed]
+	stage1_gate -> stage1_expert_0_3 [style=dashed]
+	stage1_gate -> stage1_expert_1_0 [style=dashed]
+	stage1_gate -> stage1_expert_1_1 [style=dashed]
+	stage1_gate -> stage1_expert_1_2 [style=dashed]
+	stage1_gate -> stage1_expert_1_3 [style=dashed]
+	stage1_gate -> stage1_expert_2_0 [style=dashed]
+	stage1_gate -> stage1_expert_2_1 [style=dashed]
+	stage1_gate -> stage1_expert_2_2 [style=dashed]
+	stage1_gate -> stage1_expert_2_3 [style=dashed]
+	stage1_gate -> stage1_expert_3_0 [style=dashed]
+	stage1_gate -> stage1_expert_3_1 [style=dashed]
+	stage1_gate -> stage1_expert_3_2 [style=dashed]
+	stage1_gate -> stage1_expert_3_3 [style=dashed]
+	stage1_gate -> stage1_expert_4_0 [style=dashed]
+	stage1_gate -> stage1_expert_4_1 [style=dashed]
+	stage1_gate -> stage1_expert_4_2 [style=dashed]
+	stage1_gate -> stage1_expert_4_3 [style=dashed]
+	stage1_gate -> stage1_expert_5_0 [style=dashed]
+	stage1_gate -> stage1_expert_5_1 [style=dashed]
+	stage1_gate -> stage1_expert_5_2 [style=dashed]
+	stage1_gate -> stage1_expert_5_3 [style=dashed]
+	stage1_gate -> stage1_expert_6_0 [style=dashed]
+	stage1_gate -> stage1_expert_6_1 [style=dashed]
+	stage1_gate -> stage1_expert_6_2 [style=dashed]
+	stage1_gate -> stage1_expert_6_3 [style=dashed]
+	stage1_gate -> stage1_expert_7_0 [style=dashed]
+	stage1_gate -> stage1_expert_7_1 [style=dashed]
+	stage1_gate -> stage1_expert_7_2 [style=dashed]
+	stage1_gate -> stage1_expert_7_3 [style=dashed]
+	stage1_expert_0_0 -> stage1_residual
+	stage1_expert_0_1 -> stage1_residual
+	stage1_expert_0_2 -> stage1_residual
+	stage1_expert_0_3 -> stage1_residual
+	stage1_expert_1_0 -> stage1_residual
+	stage1_expert_1_1 -> stage1_residual
+	stage1_expert_1_2 -> stage1_residual
+	stage1_expert_1_3 -> stage1_residual
+	stage1_expert_2_0 -> stage1_residual
+	stage1_expert_2_1 -> stage1_residual
+	stage1_expert_2_2 -> stage1_residual
+	stage1_expert_2_3 -> stage1_residual
+	stage1_expert_3_0 -> stage1_residual
+	stage1_expert_3_1 -> stage1_residual
+	stage1_expert_3_2 -> stage1_residual
+	stage1_expert_3_3 -> stage1_residual
+	stage1_expert_4_0 -> stage1_residual
+	stage1_expert_4_1 -> stage1_residual
+	stage1_expert_4_2 -> stage1_residual
+	stage1_expert_4_3 -> stage1_residual
+	stage1_expert_5_0 -> stage1_residual
+	stage1_expert_5_1 -> stage1_residual
+	stage1_expert_5_2 -> stage1_residual
+	stage1_expert_5_3 -> stage1_residual
+	stage1_expert_6_0 -> stage1_residual
+	stage1_expert_6_1 -> stage1_residual
+	stage1_expert_6_2 -> stage1_residual
+	stage1_expert_6_3 -> stage1_residual
+	stage1_expert_7_0 -> stage1_residual
+	stage1_expert_7_1 -> stage1_residual
+	stage1_expert_7_2 -> stage1_residual
+	stage1_expert_7_3 -> stage1_residual
+	stage1_residual -> comm_stage1_to_stage2
+	comm_stage1_to_stage2 -> stage2_mha
+	stage2_mha -> stage2_gate
+	stage2_gate -> stage2_expert_8_0 [style=dashed]
+	stage2_gate -> stage2_expert_8_1 [style=dashed]
+	stage2_gate -> stage2_expert_8_2 [style=dashed]
+	stage2_gate -> stage2_expert_8_3 [style=dashed]
+	stage2_gate -> stage2_expert_9_0 [style=dashed]
+	stage2_gate -> stage2_expert_9_1 [style=dashed]
+	stage2_gate -> stage2_expert_9_2 [style=dashed]
+	stage2_gate -> stage2_expert_9_3 [style=dashed]
+	stage2_gate -> stage2_expert_10_0 [style=dashed]
+	stage2_gate -> stage2_expert_10_1 [style=dashed]
+	stage2_gate -> stage2_expert_10_2 [style=dashed]
+	stage2_gate -> stage2_expert_10_3 [style=dashed]
+	stage2_gate -> stage2_expert_11_0 [style=dashed]
+	stage2_gate -> stage2_expert_11_1 [style=dashed]
+	stage2_gate -> stage2_expert_11_2 [style=dashed]
+	stage2_gate -> stage2_expert_11_3 [style=dashed]
+	stage2_gate -> stage2_expert_12_0 [style=dashed]
+	stage2_gate -> stage2_expert_12_1 [style=dashed]
+	stage2_gate -> stage2_expert_12_2 [style=dashed]
+	stage2_gate -> stage2_expert_12_3 [style=dashed]
+	stage2_gate -> stage2_expert_13_0 [style=dashed]
+	stage2_gate -> stage2_expert_13_1 [style=dashed]
+	stage2_gate -> stage2_expert_13_2 [style=dashed]
+	stage2_gate -> stage2_expert_13_3 [style=dashed]
+	stage2_gate -> stage2_expert_14_0 [style=dashed]
+	stage2_gate -> stage2_expert_14_1 [style=dashed]
+	stage2_gate -> stage2_expert_14_2 [style=dashed]
+	stage2_gate -> stage2_expert_14_3 [style=dashed]
+	stage2_gate -> stage2_expert_15_0 [style=dashed]
+	stage2_gate -> stage2_expert_15_1 [style=dashed]
+	stage2_gate -> stage2_expert_15_2 [style=dashed]
+	stage2_gate -> stage2_expert_15_3 [style=dashed]
+	stage2_expert_8_0 -> stage2_residual
+	stage2_expert_8_1 -> stage2_residual
+	stage2_expert_8_2 -> stage2_residual
+	stage2_expert_8_3 -> stage2_residual
+	stage2_expert_9_0 -> stage2_residual
+	stage2_expert_9_1 -> stage2_residual
+	stage2_expert_9_2 -> stage2_residual
+	stage2_expert_9_3 -> stage2_residual
+	stage2_expert_10_0 -> stage2_residual
+	stage2_expert_10_1 -> stage2_residual
+	stage2_expert_10_2 -> stage2_residual
+	stage2_expert_10_3 -> stage2_residual
+	stage2_expert_11_0 -> stage2_residual
+	stage2_expert_11_1 -> stage2_residual
+	stage2_expert_11_2 -> stage2_residual
+	stage2_expert_11_3 -> stage2_residual
+	stage2_expert_12_0 -> stage2_residual
+	stage2_expert_12_1 -> stage2_residual
+	stage2_expert_12_2 -> stage2_residual
+	stage2_expert_12_3 -> stage2_residual
+	stage2_expert_13_0 -> stage2_residual
+	stage2_expert_13_1 -> stage2_residual
+	stage2_expert_13_2 -> stage2_residual
+	stage2_expert_13_3 -> stage2_residual
+	stage2_expert_14_0 -> stage2_residual
+	stage2_expert_14_1 -> stage2_residual
+	stage2_expert_14_2 -> stage2_residual
+	stage2_expert_14_3 -> stage2_residual
+	stage2_expert_15_0 -> stage2_residual
+	stage2_expert_15_1 -> stage2_residual
+	stage2_expert_15_2 -> stage2_residual
+	stage2_expert_15_3 -> stage2_residual
+	stage2_residual -> output
+}

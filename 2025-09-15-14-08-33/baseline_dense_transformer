@@ -1,0 +1,888 @@
+// Dense Transformer Baseline with TP=8, PP=2
+digraph baseline_dense_transformer {
+	rankdir=TB size="20,20"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	edge [fontsize=10]
+	subgraph cluster_input {
+		label="Global Input" style=dashed
+		input_tokens [label="Input Tokens
+Input: [batch_size=1024, seq_len=10000]
+GPU: all GPUs" fillcolor=lightgreen shape=ellipse]
+		embedding [label="Token Embedding
+Input: [batch_size=1024, seq_len=10000]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: all GPUs" shape=rectangle]
+		position_embed [label="Position Embedding
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: all GPUs" shape=rectangle]
+	}
+	subgraph cluster_stage0 {
+		label="Pipeline Stage 0 (Devices 0-7)" style=rounded
+		subgraph cluster_layer0 {
+			label="Layer 0"
+			ln0 [label="LayerNorm 0
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightyellow]
+			qkv0_0 [label="QKV Projection 0
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, qkv=1024]
+GPU: 0" fillcolor=lightcoral]
+			qkv0_1 [label="QKV Projection 1
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, qkv=1024]
+GPU: 1" fillcolor=lightcoral]
+			qkv0_2 [label="QKV Projection 2
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, qkv=1024]
+GPU: 2" fillcolor=lightcoral]
+			qkv0_3 [label="QKV Projection 3
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, qkv=1024]
+GPU: 3" fillcolor=lightcoral]
+			qkv0_4 [label="QKV Projection 4
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, qkv=1024]
+GPU: 4" fillcolor=lightcoral]
+			qkv0_5 [label="QKV Projection 5
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, qkv=1024]
+GPU: 5" fillcolor=lightcoral]
+			qkv0_6 [label="QKV Projection 6
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, qkv=1024]
+GPU: 6" fillcolor=lightcoral]
+			qkv0_7 [label="QKV Projection 7
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, qkv=1024]
+GPU: 7" fillcolor=lightcoral]
+			attn0_0 [label="Scaled Dot-Product Attention 0
+Input: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+Output: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+GPU: 0" fillcolor=lightcoral]
+			attn0_1 [label="Scaled Dot-Product Attention 1
+Input: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+Output: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+GPU: 1" fillcolor=lightcoral]
+			attn0_2 [label="Scaled Dot-Product Attention 2
+Input: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+Output: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+GPU: 2" fillcolor=lightcoral]
+			attn0_3 [label="Scaled Dot-Product Attention 3
+Input: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+Output: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+GPU: 3" fillcolor=lightcoral]
+			attn0_4 [label="Scaled Dot-Product Attention 4
+Input: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+Output: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+GPU: 4" fillcolor=lightcoral]
+			attn0_5 [label="Scaled Dot-Product Attention 5
+Input: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+Output: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+GPU: 5" fillcolor=lightcoral]
+			attn0_6 [label="Scaled Dot-Product Attention 6
+Input: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+Output: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+GPU: 6" fillcolor=lightcoral]
+			attn0_7 [label="Scaled Dot-Product Attention 7
+Input: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+Output: [batch_size=1024, seq_len=10000, heads=2, head_dim=512]
+GPU: 7" fillcolor=lightcoral]
+			out0_0 [label="Output Projection 0
+Input: [batch_size=1024, seq_len=10000, hidden=1024]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0" fillcolor=lightcoral]
+			out0_1 [label="Output Projection 1
+Input: [batch_size=1024, seq_len=10000, hidden=1024]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 1" fillcolor=lightcoral]
+			out0_2 [label="Output Projection 2
+Input: [batch_size=1024, seq_len=10000, hidden=1024]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 2" fillcolor=lightcoral]
+			out0_3 [label="Output Projection 3
+Input: [batch_size=1024, seq_len=10000, hidden=1024]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 3" fillcolor=lightcoral]
+			out0_4 [label="Output Projection 4
+Input: [batch_size=1024, seq_len=10000, hidden=1024]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 4" fillcolor=lightcoral]
+			out0_5 [label="Output Projection 5
+Input: [batch_size=1024, seq_len=10000, hidden=1024]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 5" fillcolor=lightcoral]
+			out0_6 [label="Output Projection 6
+Input: [batch_size=1024, seq_len=10000, hidden=1024]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 6" fillcolor=lightcoral]
+			out0_7 [label="Output Projection 7
+Input: [batch_size=1024, seq_len=10000, hidden=1024]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 7" fillcolor=lightcoral]
+			ar0 [label="All-Reduce
+Input: [batch_size=1024, seq_len=10000, hidden=8192]×8
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0-7" fillcolor=orange shape=parallelogram]
+			res0 [label="Residual Add
+Input: [batch_size=1024, seq_len=10000, hidden=8192]×2
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightgreen shape=ellipse]
+			ln1 [label="LayerNorm 1
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightyellow]
+			mlp1_0_0 [label="MLP Linear 4h 0
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 0" fillcolor=lightblue]
+			gelu0_0 [label="GELU 0
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 0" fillcolor=lightblue]
+			mlp2_0_0 [label="MLP Linear h 0
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0" fillcolor=lightblue]
+			mlp1_0_1 [label="MLP Linear 4h 1
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 1" fillcolor=lightblue]
+			gelu0_1 [label="GELU 1
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 1" fillcolor=lightblue]
+			mlp2_0_1 [label="MLP Linear h 1
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 1" fillcolor=lightblue]
+			mlp1_0_2 [label="MLP Linear 4h 2
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 2" fillcolor=lightblue]
+			gelu0_2 [label="GELU 2
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 2" fillcolor=lightblue]
+			mlp2_0_2 [label="MLP Linear h 2
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 2" fillcolor=lightblue]
+			mlp1_0_3 [label="MLP Linear 4h 3
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 3" fillcolor=lightblue]
+			gelu0_3 [label="GELU 3
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 3" fillcolor=lightblue]
+			mlp2_0_3 [label="MLP Linear h 3
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 3" fillcolor=lightblue]
+			mlp1_0_4 [label="MLP Linear 4h 4
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 4" fillcolor=lightblue]
+			gelu0_4 [label="GELU 4
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 4" fillcolor=lightblue]
+			mlp2_0_4 [label="MLP Linear h 4
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 4" fillcolor=lightblue]
+			mlp1_0_5 [label="MLP Linear 4h 5
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 5" fillcolor=lightblue]
+			gelu0_5 [label="GELU 5
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 5" fillcolor=lightblue]
+			mlp2_0_5 [label="MLP Linear h 5
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 5" fillcolor=lightblue]
+			mlp1_0_6 [label="MLP Linear 4h 6
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 6" fillcolor=lightblue]
+			gelu0_6 [label="GELU 6
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 6" fillcolor=lightblue]
+			mlp2_0_6 [label="MLP Linear h 6
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 6" fillcolor=lightblue]
+			mlp1_0_7 [label="MLP Linear 4h 7
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 7" fillcolor=lightblue]
+			gelu0_7 [label="GELU 7
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, ffn=4096]
+GPU: 7" fillcolor=lightblue]
+			mlp2_0_7 [label="MLP Linear h 7
+Input: [batch_size=1024, seq_len=10000, ffn=4096]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 7" fillcolor=lightblue]
+			ar1 [label="All-Reduce
+Input: [batch_size=1024, seq_len=10000, hidden=8192]×8
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0-7" fillcolor=orange shape=parallelogram]
+			res1 [label="Residual Add
+Input: [batch_size=1024, seq_len=10000, hidden=8192]×2
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightgreen shape=ellipse]
+		}
+		subgraph cluster_layer1 {
+			label="Layer 1"
+			ln2 [label="LayerNorm 2
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightyellow]
+			qkv1_0 [label="QKV Projection 0
+GPU: 0" fillcolor=lightcoral]
+			attn1_0 [label="Attention 0
+GPU: 0" fillcolor=lightcoral]
+			out1_0 [label="Output Projection 0
+GPU: 0" fillcolor=lightcoral]
+			qkv1_1 [label="QKV Projection 1
+GPU: 1" fillcolor=lightcoral]
+			attn1_1 [label="Attention 1
+GPU: 1" fillcolor=lightcoral]
+			out1_1 [label="Output Projection 1
+GPU: 1" fillcolor=lightcoral]
+			qkv1_2 [label="QKV Projection 2
+GPU: 2" fillcolor=lightcoral]
+			attn1_2 [label="Attention 2
+GPU: 2" fillcolor=lightcoral]
+			out1_2 [label="Output Projection 2
+GPU: 2" fillcolor=lightcoral]
+			qkv1_3 [label="QKV Projection 3
+GPU: 3" fillcolor=lightcoral]
+			attn1_3 [label="Attention 3
+GPU: 3" fillcolor=lightcoral]
+			out1_3 [label="Output Projection 3
+GPU: 3" fillcolor=lightcoral]
+			qkv1_4 [label="QKV Projection 4
+GPU: 4" fillcolor=lightcoral]
+			attn1_4 [label="Attention 4
+GPU: 4" fillcolor=lightcoral]
+			out1_4 [label="Output Projection 4
+GPU: 4" fillcolor=lightcoral]
+			qkv1_5 [label="QKV Projection 5
+GPU: 5" fillcolor=lightcoral]
+			attn1_5 [label="Attention 5
+GPU: 5" fillcolor=lightcoral]
+			out1_5 [label="Output Projection 5
+GPU: 5" fillcolor=lightcoral]
+			qkv1_6 [label="QKV Projection 6
+GPU: 6" fillcolor=lightcoral]
+			attn1_6 [label="Attention 6
+GPU: 6" fillcolor=lightcoral]
+			out1_6 [label="Output Projection 6
+GPU: 6" fillcolor=lightcoral]
+			qkv1_7 [label="QKV Projection 7
+GPU: 7" fillcolor=lightcoral]
+			attn1_7 [label="Attention 7
+GPU: 7" fillcolor=lightcoral]
+			out1_7 [label="Output Projection 7
+GPU: 7" fillcolor=lightcoral]
+			ar2 [label="All-Reduce
+GPU: 0-7" fillcolor=orange shape=parallelogram]
+			res2 [label="Residual Add
+GPU: 0-7" fillcolor=lightgreen shape=ellipse]
+			ln3 [label="LayerNorm 3
+GPU: 0-7" fillcolor=lightyellow]
+			mlp1_1_0 [label="MLP Linear 4h 0
+GPU: 0" fillcolor=lightblue]
+			gelu1_0 [label="GELU 0
+GPU: 0" fillcolor=lightblue]
+			mlp2_1_0 [label="MLP Linear h 0
+GPU: 0" fillcolor=lightblue]
+			mlp1_1_1 [label="MLP Linear 4h 1
+GPU: 1" fillcolor=lightblue]
+			gelu1_1 [label="GELU 1
+GPU: 1" fillcolor=lightblue]
+			mlp2_1_1 [label="MLP Linear h 1
+GPU: 1" fillcolor=lightblue]
+			mlp1_1_2 [label="MLP Linear 4h 2
+GPU: 2" fillcolor=lightblue]
+			gelu1_2 [label="GELU 2
+GPU: 2" fillcolor=lightblue]
+			mlp2_1_2 [label="MLP Linear h 2
+GPU: 2" fillcolor=lightblue]
+			mlp1_1_3 [label="MLP Linear 4h 3
+GPU: 3" fillcolor=lightblue]
+			gelu1_3 [label="GELU 3
+GPU: 3" fillcolor=lightblue]
+			mlp2_1_3 [label="MLP Linear h 3
+GPU: 3" fillcolor=lightblue]
+			mlp1_1_4 [label="MLP Linear 4h 4
+GPU: 4" fillcolor=lightblue]
+			gelu1_4 [label="GELU 4
+GPU: 4" fillcolor=lightblue]
+			mlp2_1_4 [label="MLP Linear h 4
+GPU: 4" fillcolor=lightblue]
+			mlp1_1_5 [label="MLP Linear 4h 5
+GPU: 5" fillcolor=lightblue]
+			gelu1_5 [label="GELU 5
+GPU: 5" fillcolor=lightblue]
+			mlp2_1_5 [label="MLP Linear h 5
+GPU: 5" fillcolor=lightblue]
+			mlp1_1_6 [label="MLP Linear 4h 6
+GPU: 6" fillcolor=lightblue]
+			gelu1_6 [label="GELU 6
+GPU: 6" fillcolor=lightblue]
+			mlp2_1_6 [label="MLP Linear h 6
+GPU: 6" fillcolor=lightblue]
+			mlp1_1_7 [label="MLP Linear 4h 7
+GPU: 7" fillcolor=lightblue]
+			gelu1_7 [label="GELU 7
+GPU: 7" fillcolor=lightblue]
+			mlp2_1_7 [label="MLP Linear h 7
+GPU: 7" fillcolor=lightblue]
+			ar3 [label="All-Reduce
+GPU: 0-7" fillcolor=orange shape=parallelogram]
+			res3 [label="Residual Add
+GPU: 0-7" fillcolor=lightgreen shape=ellipse]
+		}
+	}
+	subgraph cluster_pipeline_comm {
+		label="Pipeline Communication" style=dashed
+		pipe_send [label="Send Activations
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 0-7 → 8-15" fillcolor=orange shape=parallelogram]
+	}
+	subgraph cluster_stage1 {
+		label="Pipeline Stage 1 (Devices 8-15)" style=rounded
+		subgraph cluster_layer2 {
+			label="Layer 2"
+			ln4 [label="LayerNorm 4
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 8-15" fillcolor=lightyellow]
+			qkv2_8 [label="QKV Projection 8
+GPU: 8" fillcolor=lightcoral]
+			attn2_8 [label="Attention 8
+GPU: 8" fillcolor=lightcoral]
+			out2_8 [label="Output Projection 8
+GPU: 8" fillcolor=lightcoral]
+			qkv2_9 [label="QKV Projection 9
+GPU: 9" fillcolor=lightcoral]
+			attn2_9 [label="Attention 9
+GPU: 9" fillcolor=lightcoral]
+			out2_9 [label="Output Projection 9
+GPU: 9" fillcolor=lightcoral]
+			qkv2_10 [label="QKV Projection 10
+GPU: 10" fillcolor=lightcoral]
+			attn2_10 [label="Attention 10
+GPU: 10" fillcolor=lightcoral]
+			out2_10 [label="Output Projection 10
+GPU: 10" fillcolor=lightcoral]
+			qkv2_11 [label="QKV Projection 11
+GPU: 11" fillcolor=lightcoral]
+			attn2_11 [label="Attention 11
+GPU: 11" fillcolor=lightcoral]
+			out2_11 [label="Output Projection 11
+GPU: 11" fillcolor=lightcoral]
+			qkv2_12 [label="QKV Projection 12
+GPU: 12" fillcolor=lightcoral]
+			attn2_12 [label="Attention 12
+GPU: 12" fillcolor=lightcoral]
+			out2_12 [label="Output Projection 12
+GPU: 12" fillcolor=lightcoral]
+			qkv2_13 [label="QKV Projection 13
+GPU: 13" fillcolor=lightcoral]
+			attn2_13 [label="Attention 13
+GPU: 13" fillcolor=lightcoral]
+			out2_13 [label="Output Projection 13
+GPU: 13" fillcolor=lightcoral]
+			qkv2_14 [label="QKV Projection 14
+GPU: 14" fillcolor=lightcoral]
+			attn2_14 [label="Attention 14
+GPU: 14" fillcolor=lightcoral]
+			out2_14 [label="Output Projection 14
+GPU: 14" fillcolor=lightcoral]
+			qkv2_15 [label="QKV Projection 15
+GPU: 15" fillcolor=lightcoral]
+			attn2_15 [label="Attention 15
+GPU: 15" fillcolor=lightcoral]
+			out2_15 [label="Output Projection 15
+GPU: 15" fillcolor=lightcoral]
+			ar4 [label="All-Reduce
+GPU: 8-15" fillcolor=orange shape=parallelogram]
+			res4 [label="Residual Add
+GPU: 8-15" fillcolor=lightgreen shape=ellipse]
+			ln5 [label="LayerNorm 5
+GPU: 8-15" fillcolor=lightyellow]
+			mlp1_2_8 [label="MLP Linear 4h 8
+GPU: 8" fillcolor=lightblue]
+			gelu2_8 [label="GELU 8
+GPU: 8" fillcolor=lightblue]
+			mlp2_2_8 [label="MLP Linear h 8
+GPU: 8" fillcolor=lightblue]
+			mlp1_2_9 [label="MLP Linear 4h 9
+GPU: 9" fillcolor=lightblue]
+			gelu2_9 [label="GELU 9
+GPU: 9" fillcolor=lightblue]
+			mlp2_2_9 [label="MLP Linear h 9
+GPU: 9" fillcolor=lightblue]
+			mlp1_2_10 [label="MLP Linear 4h 10
+GPU: 10" fillcolor=lightblue]
+			gelu2_10 [label="GELU 10
+GPU: 10" fillcolor=lightblue]
+			mlp2_2_10 [label="MLP Linear h 10
+GPU: 10" fillcolor=lightblue]
+			mlp1_2_11 [label="MLP Linear 4h 11
+GPU: 11" fillcolor=lightblue]
+			gelu2_11 [label="GELU 11
+GPU: 11" fillcolor=lightblue]
+			mlp2_2_11 [label="MLP Linear h 11
+GPU: 11" fillcolor=lightblue]
+			mlp1_2_12 [label="MLP Linear 4h 12
+GPU: 12" fillcolor=lightblue]
+			gelu2_12 [label="GELU 12
+GPU: 12" fillcolor=lightblue]
+			mlp2_2_12 [label="MLP Linear h 12
+GPU: 12" fillcolor=lightblue]
+			mlp1_2_13 [label="MLP Linear 4h 13
+GPU: 13" fillcolor=lightblue]
+			gelu2_13 [label="GELU 13
+GPU: 13" fillcolor=lightblue]
+			mlp2_2_13 [label="MLP Linear h 13
+GPU: 13" fillcolor=lightblue]
+			mlp1_2_14 [label="MLP Linear 4h 14
+GPU: 14" fillcolor=lightblue]
+			gelu2_14 [label="GELU 14
+GPU: 14" fillcolor=lightblue]
+			mlp2_2_14 [label="MLP Linear h 14
+GPU: 14" fillcolor=lightblue]
+			mlp1_2_15 [label="MLP Linear 4h 15
+GPU: 15" fillcolor=lightblue]
+			gelu2_15 [label="GELU 15
+GPU: 15" fillcolor=lightblue]
+			mlp2_2_15 [label="MLP Linear h 15
+GPU: 15" fillcolor=lightblue]
+			ar5 [label="All-Reduce
+GPU: 8-15" fillcolor=orange shape=parallelogram]
+			res5 [label="Residual Add
+GPU: 8-15" fillcolor=lightgreen shape=ellipse]
+		}
+		subgraph cluster_layer3 {
+			label="Layer 3"
+			ln6 [label="LayerNorm 6
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 8-15" fillcolor=lightyellow]
+			qkv3_8 [label="QKV Projection 8
+GPU: 8" fillcolor=lightcoral]
+			attn3_8 [label="Attention 8
+GPU: 8" fillcolor=lightcoral]
+			out3_8 [label="Output Projection 8
+GPU: 8" fillcolor=lightcoral]
+			qkv3_9 [label="QKV Projection 9
+GPU: 9" fillcolor=lightcoral]
+			attn3_9 [label="Attention 9
+GPU: 9" fillcolor=lightcoral]
+			out3_9 [label="Output Projection 9
+GPU: 9" fillcolor=lightcoral]
+			qkv3_10 [label="QKV Projection 10
+GPU: 10" fillcolor=lightcoral]
+			attn3_10 [label="Attention 10
+GPU: 10" fillcolor=lightcoral]
+			out3_10 [label="Output Projection 10
+GPU: 10" fillcolor=lightcoral]
+			qkv3_11 [label="QKV Projection 11
+GPU: 11" fillcolor=lightcoral]
+			attn3_11 [label="Attention 11
+GPU: 11" fillcolor=lightcoral]
+			out3_11 [label="Output Projection 11
+GPU: 11" fillcolor=lightcoral]
+			qkv3_12 [label="QKV Projection 12
+GPU: 12" fillcolor=lightcoral]
+			attn3_12 [label="Attention 12
+GPU: 12" fillcolor=lightcoral]
+			out3_12 [label="Output Projection 12
+GPU: 12" fillcolor=lightcoral]
+			qkv3_13 [label="QKV Projection 13
+GPU: 13" fillcolor=lightcoral]
+			attn3_13 [label="Attention 13
+GPU: 13" fillcolor=lightcoral]
+			out3_13 [label="Output Projection 13
+GPU: 13" fillcolor=lightcoral]
+			qkv3_14 [label="QKV Projection 14
+GPU: 14" fillcolor=lightcoral]
+			attn3_14 [label="Attention 14
+GPU: 14" fillcolor=lightcoral]
+			out3_14 [label="Output Projection 14
+GPU: 14" fillcolor=lightcoral]
+			qkv3_15 [label="QKV Projection 15
+GPU: 15" fillcolor=lightcoral]
+			attn3_15 [label="Attention 15
+GPU: 15" fillcolor=lightcoral]
+			out3_15 [label="Output Projection 15
+GPU: 15" fillcolor=lightcoral]
+			ar6 [label="All-Reduce
+GPU: 8-15" fillcolor=orange shape=parallelogram]
+			res6 [label="Residual Add
+GPU: 8-15" fillcolor=lightgreen shape=ellipse]
+			ln7 [label="LayerNorm 7
+GPU: 8-15" fillcolor=lightyellow]
+			mlp1_3_8 [label="MLP Linear 4h 8
+GPU: 8" fillcolor=lightblue]
+			gelu3_8 [label="GELU 8
+GPU: 8" fillcolor=lightblue]
+			mlp2_3_8 [label="MLP Linear h 8
+GPU: 8" fillcolor=lightblue]
+			mlp1_3_9 [label="MLP Linear 4h 9
+GPU: 9" fillcolor=lightblue]
+			gelu3_9 [label="GELU 9
+GPU: 9" fillcolor=lightblue]
+			mlp2_3_9 [label="MLP Linear h 9
+GPU: 9" fillcolor=lightblue]
+			mlp1_3_10 [label="MLP Linear 4h 10
+GPU: 10" fillcolor=lightblue]
+			gelu3_10 [label="GELU 10
+GPU: 10" fillcolor=lightblue]
+			mlp2_3_10 [label="MLP Linear h 10
+GPU: 10" fillcolor=lightblue]
+			mlp1_3_11 [label="MLP Linear 4h 11
+GPU: 11" fillcolor=lightblue]
+			gelu3_11 [label="GELU 11
+GPU: 11" fillcolor=lightblue]
+			mlp2_3_11 [label="MLP Linear h 11
+GPU: 11" fillcolor=lightblue]
+			mlp1_3_12 [label="MLP Linear 4h 12
+GPU: 12" fillcolor=lightblue]
+			gelu3_12 [label="GELU 12
+GPU: 12" fillcolor=lightblue]
+			mlp2_3_12 [label="MLP Linear h 12
+GPU: 12" fillcolor=lightblue]
+			mlp1_3_13 [label="MLP Linear 4h 13
+GPU: 13" fillcolor=lightblue]
+			gelu3_13 [label="GELU 13
+GPU: 13" fillcolor=lightblue]
+			mlp2_3_13 [label="MLP Linear h 13
+GPU: 13" fillcolor=lightblue]
+			mlp1_3_14 [label="MLP Linear 4h 14
+GPU: 14" fillcolor=lightblue]
+			gelu3_14 [label="GELU 14
+GPU: 14" fillcolor=lightblue]
+			mlp2_3_14 [label="MLP Linear h 14
+GPU: 14" fillcolor=lightblue]
+			mlp1_3_15 [label="MLP Linear 4h 15
+GPU: 15" fillcolor=lightblue]
+			gelu3_15 [label="GELU 15
+GPU: 15" fillcolor=lightblue]
+			mlp2_3_15 [label="MLP Linear h 15
+GPU: 15" fillcolor=lightblue]
+			ar7 [label="All-Reduce
+GPU: 8-15" fillcolor=orange shape=parallelogram]
+			res7 [label="Residual Add
+GPU: 8-15" fillcolor=lightgreen shape=ellipse]
+		}
+	}
+	subgraph cluster_output {
+		label="Global Output" style=dashed
+		final_ln [label="Final LayerNorm
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, hidden=8192]
+GPU: 8-15" fillcolor=lightyellow]
+		output [label="Output Projection
+Input: [batch_size=1024, seq_len=10000, hidden=8192]
+Output: [batch_size=1024, seq_len=10000, vocab=50257]
+GPU: 8-15" fillcolor=lightgreen shape=ellipse]
+	}
+	input_tokens -> embedding
+	embedding -> position_embed
+	position_embed -> ln0
+	ln0 -> qkv0_0
+	qkv0_0 -> attn0_0
+	attn0_0 -> out0_0
+	out0_0 -> ar0
+	ln0 -> qkv0_1
+	qkv0_1 -> attn0_1
+	attn0_1 -> out0_1
+	out0_1 -> ar0
+	ln0 -> qkv0_2
+	qkv0_2 -> attn0_2
+	attn0_2 -> out0_2
+	out0_2 -> ar0
+	ln0 -> qkv0_3
+	qkv0_3 -> attn0_3
+	attn0_3 -> out0_3
+	out0_3 -> ar0
+	ln0 -> qkv0_4
+	qkv0_4 -> attn0_4
+	attn0_4 -> out0_4
+	out0_4 -> ar0
+	ln0 -> qkv0_5
+	qkv0_5 -> attn0_5
+	attn0_5 -> out0_5
+	out0_5 -> ar0
+	ln0 -> qkv0_6
+	qkv0_6 -> attn0_6
+	attn0_6 -> out0_6
+	out0_6 -> ar0
+	ln0 -> qkv0_7
+	qkv0_7 -> attn0_7
+	attn0_7 -> out0_7
+	out0_7 -> ar0
+	ar0 -> res0
+	position_embed -> res0
+	res0 -> ln1
+	ln1 -> mlp1_0_0
+	mlp1_0_0 -> gelu0_0
+	gelu0_0 -> mlp2_0_0
+	mlp2_0_0 -> ar1
+	ln1 -> mlp1_0_1
+	mlp1_0_1 -> gelu0_1
+	gelu0_1 -> mlp2_0_1
+	mlp2_0_1 -> ar1
+	ln1 -> mlp1_0_2
+	mlp1_0_2 -> gelu0_2
+	gelu0_2 -> mlp2_0_2
+	mlp2_0_2 -> ar1
+	ln1 -> mlp1_0_3
+	mlp1_0_3 -> gelu0_3
+	gelu0_3 -> mlp2_0_3
+	mlp2_0_3 -> ar1
+	ln1 -> mlp1_0_4
+	mlp1_0_4 -> gelu0_4
+	gelu0_4 -> mlp2_0_4
+	mlp2_0_4 -> ar1
+	ln1 -> mlp1_0_5
+	mlp1_0_5 -> gelu0_5
+	gelu0_5 -> mlp2_0_5
+	mlp2_0_5 -> ar1
+	ln1 -> mlp1_0_6
+	mlp1_0_6 -> gelu0_6
+	gelu0_6 -> mlp2_0_6
+	mlp2_0_6 -> ar1
+	ln1 -> mlp1_0_7
+	mlp1_0_7 -> gelu0_7
+	gelu0_7 -> mlp2_0_7
+	mlp2_0_7 -> ar1
+	ar1 -> res1
+	res0 -> res1
+	res1 -> ln2
+	ln2 -> qkv1_0
+	qkv1_0 -> attn1_0
+	attn1_0 -> out1_0
+	out1_0 -> ar2
+	ln2 -> qkv1_1
+	qkv1_1 -> attn1_1
+	attn1_1 -> out1_1
+	out1_1 -> ar2
+	ln2 -> qkv1_2
+	qkv1_2 -> attn1_2
+	attn1_2 -> out1_2
+	out1_2 -> ar2
+	ln2 -> qkv1_3
+	qkv1_3 -> attn1_3
+	attn1_3 -> out1_3
+	out1_3 -> ar2
+	ln2 -> qkv1_4
+	qkv1_4 -> attn1_4
+	attn1_4 -> out1_4
+	out1_4 -> ar2
+	ln2 -> qkv1_5
+	qkv1_5 -> attn1_5
+	attn1_5 -> out1_5
+	out1_5 -> ar2
+	ln2 -> qkv1_6
+	qkv1_6 -> attn1_6
+	attn1_6 -> out1_6
+	out1_6 -> ar2
+	ln2 -> qkv1_7
+	qkv1_7 -> attn1_7
+	attn1_7 -> out1_7
+	out1_7 -> ar2
+	ar2 -> res2
+	res1 -> res2
+	res2 -> ln3
+	ln3 -> mlp1_1_0
+	mlp1_1_0 -> gelu1_0
+	gelu1_0 -> mlp2_1_0
+	mlp2_1_0 -> ar3
+	ln3 -> mlp1_1_1
+	mlp1_1_1 -> gelu1_1
+	gelu1_1 -> mlp2_1_1
+	mlp2_1_1 -> ar3
+	ln3 -> mlp1_1_2
+	mlp1_1_2 -> gelu1_2
+	gelu1_2 -> mlp2_1_2
+	mlp2_1_2 -> ar3
+	ln3 -> mlp1_1_3
+	mlp1_1_3 -> gelu1_3
+	gelu1_3 -> mlp2_1_3
+	mlp2_1_3 -> ar3
+	ln3 -> mlp1_1_4
+	mlp1_1_4 -> gelu1_4
+	gelu1_4 -> mlp2_1_4
+	mlp2_1_4 -> ar3
+	ln3 -> mlp1_1_5
+	mlp1_1_5 -> gelu1_5
+	gelu1_5 -> mlp2_1_5
+	mlp2_1_5 -> ar3
+	ln3 -> mlp1_1_6
+	mlp1_1_6 -> gelu1_6
+	gelu1_6 -> mlp2_1_6
+	mlp2_1_6 -> ar3
+	ln3 -> mlp1_1_7
+	mlp1_1_7 -> gelu1_7
+	gelu1_7 -> mlp2_1_7
+	mlp2_1_7 -> ar3
+	ar3 -> res3
+	res2 -> res3
+	res3 -> pipe_send
+	pipe_send -> ln4
+	pipe_send -> ln4
+	ln4 -> qkv2_8
+	qkv2_8 -> attn2_8
+	attn2_8 -> out2_8
+	out2_8 -> ar4
+	ln4 -> qkv2_9
+	qkv2_9 -> attn2_9
+	attn2_9 -> out2_9
+	out2_9 -> ar4
+	ln4 -> qkv2_10
+	qkv2_10 -> attn2_10
+	attn2_10 -> out2_10
+	out2_10 -> ar4
+	ln4 -> qkv2_11
+	qkv2_11 -> attn2_11
+	attn2_11 -> out2_11
+	out2_11 -> ar4
+	ln4 -> qkv2_12
+	qkv2_12 -> attn2_12
+	attn2_12 -> out2_12
+	out2_12 -> ar4
+	ln4 -> qkv2_13
+	qkv2_13 -> attn2_13
+	attn2_13 -> out2_13
+	out2_13 -> ar4
+	ln4 -> qkv2_14
+	qkv2_14 -> attn2_14
+	attn2_14 -> out2_14
+	out2_14 -> ar4
+	ln4 -> qkv2_15
+	qkv2_15 -> attn2_15
+	attn2_15 -> out2_15
+	out2_15 -> ar4
+	ar4 -> res4
+	pipe_send -> res4
+	res4 -> ln5
+	ln5 -> mlp1_2_8
+	mlp1_2_8 -> gelu2_8
+	gelu2_8 -> mlp2_2_8
+	mlp2_2_8 -> ar5
+	ln5 -> mlp1_2_9
+	mlp1_2_9 -> gelu2_9
+	gelu2_9 -> mlp2_2_9
+	mlp2_2_9 -> ar5
+	ln5 -> mlp1_2_10
+	mlp1_2_10 -> gelu2_10
+	gelu2_10 -> mlp2_2_10
+	mlp2_2_10 -> ar5
+	ln5 -> mlp1_2_11
+	mlp1_2_11 -> gelu2_11
+	gelu2_11 -> mlp2_2_11
+	mlp2_2_11 -> ar5
+	ln5 -> mlp1_2_12
+	mlp1_2_12 -> gelu2_12
+	gelu2_12 -> mlp2_2_12
+	mlp2_2_12 -> ar5
+	ln5 -> mlp1_2_13
+	mlp1_2_13 -> gelu2_13
+	gelu2_13 -> mlp2_2_13
+	mlp2_2_13 -> ar5
+	ln5 -> mlp1_2_14
+	mlp1_2_14 -> gelu2_14
+	gelu2_14 -> mlp2_2_14
+	mlp2_2_14 -> ar5
+	ln5 -> mlp1_2_15
+	mlp1_2_15 -> gelu2_15
+	gelu2_15 -> mlp2_2_15
+	mlp2_2_15 -> ar5
+	ar5 -> res5
+	res4 -> res5
+	res5 -> ln6
+	ln6 -> qkv3_8
+	qkv3_8 -> attn3_8
+	attn3_8 -> out3_8
+	out3_8 -> ar6
+	ln6 -> qkv3_9
+	qkv3_9 -> attn3_9
+	attn3_9 -> out3_9
+	out3_9 -> ar6
+	ln6 -> qkv3_10
+	qkv3_10 -> attn3_10
+	attn3_10 -> out3_10
+	out3_10 -> ar6
+	ln6 -> qkv3_11
+	qkv3_11 -> attn3_11
+	attn3_11 -> out3_11
+	out3_11 -> ar6
+	ln6 -> qkv3_12
+	qkv3_12 -> attn3_12
+	attn3_12 -> out3_12
+	out3_12 -> ar6
+	ln6 -> qkv3_13
+	qkv3_13 -> attn3_13
+	attn3_13 -> out3_13
+	out3_13 -> ar6
+	ln6 -> qkv3_14
+	qkv3_14 -> attn3_14
+	attn3_14 -> out3_14
+	out3_14 -> ar6
+	ln6 -> qkv3_15
+	qkv3_15 -> attn3_15
+	attn3_15 -> out3_15
+	out3_15 -> ar6
+	ar6 -> res6
+	res5 -> res6
+	res6 -> ln7
+	ln7 -> mlp1_3_8
+	mlp1_3_8 -> gelu3_8
+	gelu3_8 -> mlp2_3_8
+	mlp2_3_8 -> ar7
+	ln7 -> mlp1_3_9
+	mlp1_3_9 -> gelu3_9
+	gelu3_9 -> mlp2_3_9
+	mlp2_3_9 -> ar7
+	ln7 -> mlp1_3_10
+	mlp1_3_10 -> gelu3_10
+	gelu3_10 -> mlp2_3_10
+	mlp2_3_10 -> ar7
+	ln7 -> mlp1_3_11
+	mlp1_3_11 -> gelu3_11
+	gelu3_11 -> mlp2_3_11
+	mlp2_3_11 -> ar7
+	ln7 -> mlp1_3_12
+	mlp1_3_12 -> gelu3_12
+	gelu3_12 -> mlp2_3_12
+	mlp2_3_12 -> ar7
+	ln7 -> mlp1_3_13
+	mlp1_3_13 -> gelu3_13
+	gelu3_13 -> mlp2_3_13
+	mlp2_3_13 -> ar7
+	ln7 -> mlp1_3_14
+	mlp1_3_14 -> gelu3_14
+	gelu3_14 -> mlp2_3_14
+	mlp2_3_14 -> ar7
+	ln7 -> mlp1_3_15
+	mlp1_3_15 -> gelu3_15
+	gelu3_15 -> mlp2_3_15
+	mlp2_3_15 -> ar7
+	ar7 -> res7
+	res6 -> res7
+	res7 -> final_ln
+	final_ln -> output
+}

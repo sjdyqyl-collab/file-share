@@ -1,0 +1,331 @@
+{
+  "deployment_configurations": {
+    "baseline_tensor_pipeline_parallelism": {
+      "name": "Baseline TP=8, PP=2",
+      "description": "Standard tensor parallelism with pipeline parallelism",
+      "total_gpus": 16,
+      "parallel_strategy": {
+        "tensor_parallelism": {
+          "degree": 8,
+          "method": "row_and_column_parallel",
+          "communication": "all_reduce"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2,
+          "micro_batch_size": 1
+        }
+      },
+      "model_architecture": {
+        "layers": 16,
+        "hidden_size": 8192,
+        "precision": "FP16",
+        "batch_size": 1024,
+        "sequence_length": 10000,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768
+      },
+      "modules": {
+        "pipeline_stage_0": {
+          "device_mapping": [0, 1, 2, 3, 4, 5, 6, 7],
+          "layers": [0, 1, 2, 3, 4, 5, 6, 7],
+          "tensor_parallel_group": {
+            "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+            "weight_partitioning": "column_then_row_parallel"
+          },
+          "memory_estimation": {
+            "weights_per_layer_mb": 134.2,
+            "activations_per_layer_mb": 16.8,
+            "buffers_per_layer_mb": 3.0,
+            "total_per_layer_mb": 154.0,
+            "total_stage_mb": 1232.0
+          }
+        },
+        "pipeline_stage_1": {
+          "device_mapping": [8, 9, 10, 11, 12, 13, 14, 15],
+          "layers": [8, 9, 10, 11, 12, 13, 14, 15],
+          "tensor_parallel_group": {
+            "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+            "weight_partitioning": "column_then_row_parallel"
+          },
+          "memory_estimation": {
+            "weights_per_layer_mb": 134.2,
+            "activations_per_layer_mb": 16.8,
+            "buffers_per_layer_mb": 3.0,
+            "total_per_layer_mb": 154.0,
+            "total_stage_mb": 1232.0
+          }
+        }
+      },
+      "communication_pattern": {
+        "intra_stage": "all_reduce_every_layer",
+        "inter_stage": "send_recv_activations",
+        "bandwidth_requirement": "high"
+      }
+    },
+    "proposed_layer_wise": {
+      "name": "Proposed Layer-wise Partitioning",
+      "description": "Layer-wise partitioning with cache constraint",
+      "total_gpus": 16,
+      "parallel_strategy": {
+        "layer_wise_parallelism": {
+          "method": "greedy_layer_aggregation",
+          "constraint": "cache_capacity",
+          "cache_capacity_mb": 200,
+          "partitioning_algorithm": "greedy_contiguous"
+        }
+      },
+      "model_architecture": {
+        "layers": 16,
+        "hidden_size": 8192,
+        "precision": "FP16",
+        "batch_size": 1024,
+        "sequence_length": 10000,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768
+      },
+      "modules": {
+        "layer_partition_0": {
+          "device_mapping": [0],
+          "layers": [0],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 0
+        },
+        "layer_partition_1": {
+          "device_mapping": [1],
+          "layers": [1],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 1
+        },
+        "layer_partition_2": {
+          "device_mapping": [2],
+          "layers": [2],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 2
+        },
+        "layer_partition_3": {
+          "device_mapping": [3],
+          "layers": [3],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 3
+        },
+        "layer_partition_4": {
+          "device_mapping": [4],
+          "layers": [4],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 4
+        },
+        "layer_partition_5": {
+          "device_mapping": [5],
+          "layers": [5],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 5
+        },
+        "layer_partition_6": {
+          "device_mapping": [6],
+          "layers": [6],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 6
+        },
+        "layer_partition_7": {
+          "device_mapping": [7],
+          "layers": [7],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 7
+        },
+        "layer_partition_8": {
+          "device_mapping": [8],
+          "layers": [8],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 8
+        },
+        "layer_partition_9": {
+          "device_mapping": [9],
+          "layers": [9],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 9
+        },
+        "layer_partition_10": {
+          "device_mapping": [10],
+          "layers": [10],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 10
+        },
+        "layer_partition_11": {
+          "device_mapping": [11],
+          "layers": [11],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 11
+        },
+        "layer_partition_12": {
+          "device_mapping": [12],
+          "layers": [12],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 12
+        },
+        "layer_partition_13": {
+          "device_mapping": [13],
+          "layers": [13],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 13
+        },
+        "layer_partition_14": {
+          "device_mapping": [14],
+          "layers": [14],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 14
+        },
+        "layer_partition_15": {
+          "device_mapping": [15],
+          "layers": [15],
+          "memory_allocation": {
+            "weights_mb": 134.2,
+            "activations_mb": 16.8,
+            "buffers_mb": 3.0,
+            "total_mb": 154.0,
+            "cache_utilization": 77.0
+          },
+          "execution_order": 15
+        }
+      },
+      "communication_pattern": {
+        "inter_partition": "send_recv_activations_only",
+        "frequency": "between_consecutive_partitions",
+        "bandwidth_requirement": "low",
+        "latency_optimization": true
+      },
+      "memory_optimization": {
+        "cache_fitting": true,
+        "pre_allocation": true,
+        "contiguous_memory": true,
+        "cache_alignment": true
+      }
+    }
+  },
+  "performance_comparison": {
+    "baseline": {
+      "tps_tokens_per_second": 12800,
+      "tpot_milliseconds": 0.078
+    },
+    "proposed": {
+      "tps_tokens_per_second": 15360,
+      "tpot_milliseconds": 0.065,
+      "improvement": {
+        "tps_percentage": 20,
+        "tpot_percentage": -17
+      }
+    }
+  },
+  "implementation_notes": {
+    "memory_calculation": {
+      "formula": "size(layer) = weight_size + activation_size + buffer_size",
+      "weight_size": "parameters × 2 bytes (FP16)",
+      "activation_size": "output_features × batch_size × 2 bytes",
+      "buffer_size": "operator_workspace_mb"
+    },
+    "edge_cases": {
+      "single_layer_exceeds_cache": "use_intra_layer_partitioning_or_compression",
+      "variable_layer_sizes": "adjust_partitioning_heuristics",
+      "dynamic_workloads": "runtime_profiling_and_adaptation"
+    },
+    "deployment_steps": [
+      "1. Calculate memory footprint for each layer",
+      "2. Apply partitioning algorithm with cache constraint",
+      "3. Map partitions to available devices",
+      "4. Pre-allocate memory in device cache",
+      "5. Execute with minimal inter-device communication"
+    ]
+  }
+}

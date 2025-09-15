@@ -1,0 +1,18 @@
+{
+  "baseline_dag": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-15-14-08-33/baseline_dense_transformer.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-15-14-08-33/baseline_dense_transformer.svg",
+    "description": "Dense Transformer Baseline with Tensor Parallelism (TP=8) + Pipeline Parallelism (PP=2) across 16 GPUs"
+  },
+  "ring_attention_sp_dag": {
+    "dot_file": "/home/wzc/data/file-share/2025-09-15-14-08-33/ring_attention_sp_transformer.dot",
+    "svg_file": "/home/wzc/data/file-share/2025-09-15-14-08-33/ring_attention_sp_transformer.svg",
+    "description": "Ring Attention + Sequence Parallelism across 16 GPUs"
+  },
+  "verification": {
+    "baseline_dag_valid": true,
+    "ring_attention_sp_dag_valid": true,
+    "both_dags_acyclic": true,
+    "all_nodes_connected": true
+  }
+}
