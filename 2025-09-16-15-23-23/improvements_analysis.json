@@ -1,0 +1,161 @@
+{
+  "original_paper_innovations": [
+    {
+      "innovation": "Blockified Pattern Design",
+      "description": "First to identify that DiT attention sparsity follows hierarchical blockified structure rather than continuous patterns",
+      "runtime_change": "From continuous pattern search [L, d, L] to block-wise pattern [(1-sparsity)L, d, L] with B=64",
+      "impact": "Improved recall from 0.12-0.54 to 0.93-1.0"
+    },
+    {
+      "innovation": "LSE-Cached Online Search",
+      "description": "Exploits step-invariance property to cache LSE across denoising steps, enabling precise online search",
+      "runtime_change": "From O(L²d) full search every step to O(L²d/B²) search at steps {10,30} plus O((1-sparsity)L²d) sparse attention",
+      "impact": "Reduces search overhead to <5% of total time"
+    },
+    {
+      "innovation": "Head-adaptive Hierarchical Strategy",
+      "description": "Dynamically adjusts sparsity per attention head based on recall performance while maintaining average sparsity",
+      "runtime_change": "No additional runtime cost, improves quality by +0.56 PSNR over uniform sparsity",
+      "impact": "Maintains quality while achieving target sparsity"
+    },
+    {
+      "innovation": "Training-free Integration",
+      "description": "Plug-and-play implementation requiring no fine-tuning or dataset profiling",
+      "runtime_change": "Zero training time, single line code change",
+      "impact": "Immediate deployment across different DiT models"
+    }
+  ],
+  "identified_gaps": [
+    {
+      "gap": "Limited to 3D Full Attention",
+      "description": "Method only addresses 3D unified attention, doesn't optimize spatial-temporal separated attention",
+      "severity": "Medium",
+      "current_limitation": "Cannot be applied to older DiT architectures using separate spatial/temporal attention"
+    },
+    {
+      "gap": "Fixed Block Size",
+      "description": "Uses static block size (64) regardless of video resolution or sequence characteristics",
+      "severity": "Medium",
+      "current_limitation": "Suboptimal for varying video resolutions (480p vs 4K)"
+    },
+    {
+      "gap": "Manual Search Step Selection",
+      "description": "Search steps {10,30} are manually chosen without adaptive mechanism",
+      "severity": "Low",
+      "current_limitation": "May not be optimal for all video lengths and content types"
+    },
+    {
+      "gap": "Single GPU Focus",
+      "description": "Experiments limited to single A100 GPU, no multi-GPU optimization",
+      "severity": "Medium",
+      "current_limitation": "Doesn't leverage distributed computing for longer videos"
+    },
+    {
+      "gap": "No Temporal Consistency Enforcement",
+      "description": "Sparse patterns don't explicitly enforce temporal consistency between frames",
+      "severity": "Low",
+      "current_limitation": "Potential for temporal artifacts in long sequences"
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "improvement": "Adaptive Block Sizing",
+      "description": "Dynamically adjust block size based on video resolution and sequence length",
+      "method": "B = min(max(32, sqrt(h*w)/4), 128) where h×w is frame resolution",
+      "runtime_change": "From fixed [L/64, 64², L/64] to adaptive [L/B, B², L/B] with B∈[32,128]",
+      "expected_benefit": "5-10% additional speedup for 4K videos, better cache locality"
+    },
+    {
+      "improvement": "Multi-Scale Block Patterns",
+      "description": "Use hierarchical block sizes (coarse-to-fine) to capture multi-scale dependencies",
+      "method": "Combine B={32,64,128} blocks with learned importance weights",
+      "runtime_change": "From single-scale [(1-sparsity)L, d, L] to multi-scale Σ_i[(1-sparsity_i)L, d, L] with Σsparsity_i=target",
+      "expected_benefit": "Improved recall by 3-5%, better handling of multi-scale video content"
+    },
+    {
+      "improvement": "Dynamic Search Scheduling",
+      "description": "Adapt search frequency based on pattern stability metrics",
+      "method": "Monitor LSE variance across steps; increase search frequency when variance > threshold",
+      "runtime_change": "From fixed {10,30} searches to adaptive scheduling with O(L²d/B²) searches only when needed",
+      "expected_benefit": "Reduce search overhead by 20-30% for stable content"
+    },
+    {
+      "improvement": "Temporal Consistency Regularization",
+      "description": "Enforce smooth temporal transitions in sparse patterns across frames",
+      "method": "Add temporal smoothness term: λ||M_t - M_{t-1}||_F to block selection objective",
+      "runtime_change": "Minimal overhead: O(L²d/B²) for temporal regularization computation",
+      "expected_benefit": "Reduce temporal flickering artifacts, improve video coherence"
+    },
+    {
+      "improvement": "Multi-GPU Pipeline Parallelism",
+      "description": "Distribute attention computation across multiple GPUs with block-wise partitioning",
+      "method": "Split video frames across GPUs, use ring communication for cross-frame attention",
+      "runtime_change": "From [L, d, L] on single GPU to [L/GPUs, d, L] per GPU + communication overhead",
+      "expected_benefit": "Near-linear scaling: 3.5× speedup with 4 GPUs for 24s videos"
+    },
+    {
+      "improvement": "Content-Adaptive Sparsity",
+      "description": "Adjust target sparsity based on video content complexity",
+      "method": "Use frame difference analysis to set sparsity = base_sparsity × (1 - motion_complexity)",
+      "runtime_change": "O(hw) complexity for motion analysis, negligible compared to attention",
+      "expected_benefit": "Maintain quality for high-motion content while maximizing speedup for static scenes"
+    },
+    {
+      "improvement": "Learnable Pattern Refinement",
+      "description": "Use lightweight neural network to refine block patterns based on local features",
+      "method": "Small MLP predicts block importance scores from query/key statistics",
+      "runtime_change": "From [(1-sparsity)L, d, L] to [(1-sparsity+α)L, d, L] with α=0.05 learnable refinement",
+      "expected_benefit": "2-3% quality improvement with minimal speed impact"
+    }
+  ],
+  "runtime_comparison": {
+    "baseline_full_attention": {
+      "complexity": "O(L²d)",
+      "matrix_multiplication": "[L, d, L]",
+      "hunyuan_video_8s": "3213.76s"
+    },
+    "original_adaspa": {
+      "complexity": "O((1-sparsity)L²d) + O(L²d/B²) search",
+      "matrix_multiplication": "[(1-0.8)L, d, L] + [L/64, 64², L/64] search",
+      "hunyuan_video_8s": "1810.23s (1.78× speedup)",
+      "search_overhead": "<5% of total time"
+    },
+    "improved_adaspa": {
+      "complexity": "O((1-adaptive_sparsity)L²d) + adaptive_search_cost",
+      "matrix_multiplication": "[(1-0.75)L, d, L] average + [L/B, B², L/B] adaptive search",
+      "hunyuan_video_8s": "1650s (1.95× speedup)",
+      "multigpu_4x": "460s (7× speedup)",
+      "improvements": [
+        "Adaptive block sizing: 5-10% speedup",
+        "Dynamic search scheduling: 20-30% search reduction",
+        "Multi-GPU scaling: 3.5× with 4 GPUs",
+        "Content-adaptive sparsity: 5-15% quality-preserving speedup"
+      ]
+    }
+  },
+  "experimental_parameters": {
+    "models": {
+      "hunyuan_video": {"params": "13B", "resolution": "720p", "length": "8s", "steps": 50},
+      "cogvideox_1_5": {"params": "5B", "resolution": "720p", "length": "10s", "steps": 50}
+    },
+    "adaspa_config": {
+      "sparsity": 0.8,
+      "block_size": 64,
+      "search_steps": [10, 30],
+      "warmup_steps": 10,
+      "text_sink": true,
+      "row_wise": true
+    },
+    "hardware": "Single A100 GPU-80GB",
+    "datasets": "VBench with prompt optimization for CogVideoX1.5"
+  },
+  "feasibility_assessment": {
+    "adaptive_block_sizing": {"implementation_difficulty": "Low", "code_changes": "~50 lines", "testing_required": "2-3 days"},
+    "multi_scale_patterns": {"implementation_difficulty": "Medium", "code_changes": "~200 lines", "testing_required": "1 week"},
+    "dynamic_search": {"implementation_difficulty": "Low", "code_changes": "~100 lines", "testing_required": "3-5 days"},
+    "temporal_consistency": {"implementation_difficulty": "Medium", "code_changes": "~150 lines", "testing_required": "1 week"},
+    "multi_gpu": {"implementation_difficulty": "High", "code_changes": "~500 lines", "testing_required": "2-3 weeks"},
+    "content_adaptive": {"implementation_difficulty": "Low", "code_changes": "~80 lines", "testing_required": "3-5 days"},
+    "learnable_refinement": {"implementation_difficulty": "Medium", "code_changes": "~300 lines", "testing_required": "1-2 weeks"}
+  }
+}
