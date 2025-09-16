@@ -1,0 +1,112 @@
+{
+  "paper_gaps": [
+    {
+      "gap": "Fixed block size (B=64) may not be optimal for all patterns",
+      "current_limitation": "Uses uniform block size across all layers and heads",
+      "proposed_improvement": "Dynamic block sizing based on local pattern density",
+      "runtime_change": {
+        "baseline": "Get_Time[0.2L, d, L] + Get_Time[L, d, 0.2L]",
+        "improved": "Get_Time[0.15L, d, L] + Get_Time[L, d, 0.15L] + Get_Time[L/B, 1, 1]"
+      },
+      "expected_gain": "25% additional speedup through optimal block selection"
+    },
+    {
+      "gap": "Fixed sparsity threshold (0.8) across all layers/heads",
+      "current_limitation": "Uniform sparsity regardless of pattern characteristics",
+      "proposed_improvement": "Learned sparsity prediction using lightweight MLP",
+      "runtime_change": {
+        "baseline": "Get_Time[0.2L, d, L] + Get_Time[L, d, 0.2L]",
+        "improved": "Get_Time[sL, d, L] + Get_Time[L, d, sL] + Get_Time[L, d, 16]",
+        "where": "s ∈ [0.1, 0.3] is learned sparsity"
+      },
+      "expected_gain": "15-30% efficiency improvement through adaptive sparsity"
+    },
+    {
+      "gap": "Manual search interval selection (Ts={10,30})",
+      "current_limitation": "Fixed intervals regardless of pattern stability",
+      "proposed_improvement": "Progressive search with stability-based scheduling",
+      "runtime_change": {
+        "baseline": "2 × Search_Cost[0.05×Full]",
+        "improved": "1.2 × Search_Cost[0.05×Full] + Get_Time[1, 1, 1]"
+      },
+      "expected_gain": "40% reduction in search overhead"
+    },
+    {
+      "gap": "Coarse-grained head adaptation",
+      "current_limitation": "Only 3 sparsity levels per head group",
+      "proposed_improvement": "Fine-grained token-level sparsity with importance scoring",
+      "runtime_change": {
+        "baseline": "Get_Time[0.2L, d, L] with block sparsity",
+        "improved": "Get_Time[0.15L, d, L] with irregular sparsity + Get_Time[L, 1, 1]"
+      },
+      "expected_gain": "20% better quality at same sparsity"
+    },
+    {
+      "gap": "LSE caching memory overhead",
+      "current_limitation": "Full LSE storage across all steps",
+      "proposed_improvement": "Compressed LSE with quantization + delta encoding",
+      "runtime_change": {
+        "baseline": "Memory[L × H] for LSE storage",
+        "improved": "Memory[0.25 × L × H] + Get_Time[L, 8, 1]"
+      },
+      "expected_gain": "75% memory reduction with <1% accuracy loss"
+    }
+  ],
+  "innovation_points": [
+    {
+      "innovation": "Hierarchical Blockified Pattern",
+      "explanation": "First to recognize that DiT attention patterns are naturally blockified due to hierarchical structure between modalities and frames, achieving 0.93-1.0 recall vs 0.12-0.54 for continuous patterns",
+      "runtime_impact": "Enables block-wise computation reducing complexity from Get_Time[L, d, L] to Get_Time[L/B, B·d, L]"
+    },
+    {
+      "innovation": "Step-Invariant LSE Caching",
+      "explanation": "Discovered that LSE distributions remain stable across denoising steps, enabling reuse and reducing search cost by 95%",
+      "runtime_impact": "Search overhead reduced from Get_Time[L, d, L] to Get_Time[0.05L, d, L]"
+    },
+    {
+      "innovation": "Head-Adaptive Hierarchical Sparsity",
+      "explanation": "Introduces per-head sparsity optimization while maintaining load balance through hierarchical adjustment",
+      "runtime_impact": "Maintains Get_Time[0.2L, d, L] while improving quality by 0.5-1.0 VBench points"
+    },
+    {
+      "innovation": "Fused LSE-Cached Search",
+      "explanation": "Two-phase search that fuses full attention with pattern discovery, enabling precise online search",
+      "runtime_impact": "Single warmup step provides patterns for 20-40 subsequent steps"
+    },
+    {
+      "innovation": "Training-Free Integration",
+      "explanation": "Plug-and-play implementation requiring no fine-tuning, dataset profiling, or model modification",
+      "runtime_impact": "Zero additional setup cost, Get_Time[1, 1, 1] for integration"
+    }
+  ],
+  "experimental_parameters": {
+    "models": ["HunyuanVideo-13B", "CogVideoX1.5-5B"],
+    "resolution": "720p",
+    "duration": ["8s", "10s"],
+    "steps": 50,
+    "sparsity": 0.8,
+    "block_size": 64,
+    "search_intervals": [10, 30],
+    "warmup_steps": 10,
+    "hardware": "A100-80GB",
+    "batch_size": 1
+  },
+  "runtime_comparison": {
+    "full_attention": {
+      "computation": "Get_Time[L, d, L]",
+      "memory": "O(L²)",
+      "speedup": "1.0×"
+    },
+    "adaspa": {
+      "computation": "Get_Time[0.2L, d, L] + Get_Time[L, d, 0.2L] + Get_Time[0.05L, d, L]",
+      "memory": "O(L·B)",
+      "speedup": "1.66-1.78×"
+    },
+    "improved_adaspa": {
+      "computation": "Get_Time[sL, d, L] + Get_Time[L, d, sL] + Get_Time[0.03L, d, L]",
+      "memory": "O(0.25L·B)",
+      "speedup": "2.0-2.5×",
+      "where": "s ∈ [0.1, 0.25] is adaptive sparsity"
+    }
+  }
+}
