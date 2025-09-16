@@ -1,0 +1,95 @@
+{
+  "original_innovations": [
+    {
+      "name": "Dynamic Pattern with Blockified Structure",
+      "description": "Introduces a blockified pattern to efficiently capture hierarchical sparsity in DiTs, addressing the limitation of continuous patterns in hierarchical structures",
+      "explanation": "Unlike traditional continuous sparse patterns (col, diag) that fail with DiTs' hierarchical organization, the blockified pattern divides attention into frame regions and captures local continuous structures while maintaining global block-level sparsity",
+      "runtime_improvement": "Reduces complexity from O(L²d) to O((1-sparsity)L²d)"
+    },
+    {
+      "name": "Fused LSE-Cached Online Search",
+      "description": "First method to enable precise online search without training or profiling by leveraging LSE invariance across denoising steps",
+      "explanation": "Exploits the observation that sparse patterns and LSE distributions remain invariant across denoising steps, enabling caching of LSE values to reduce search time by 50%",
+      "runtime_improvement": "Search time reduced to <5% of full attention generation time"
+    },
+    {
+      "name": "Head-adaptive Hierarchical Block Sparse Attention",
+      "description": "Adapts sparsity levels per attention head based on their individual characteristics while maintaining computational balance",
+      "explanation": "Identifies heads with high/low recall and adjusts their sparsity levels hierarchically, improving accuracy without changing average sparsity",
+      "runtime_improvement": "Maintains same computational load while improving quality"
+    }
+  ],
+  "identified_gaps": [
+    {
+      "gap": "Limited to 3D Full Attention mechanism",
+      "description": "Method is specifically designed for 3D Full Attention and may not generalize to other attention mechanisms like Spatial-Temporal Attention",
+      "severity": "Medium"
+    },
+    {
+      "gap": "Fixed block size limitation",
+      "description": "Uses fixed block_size=64 which may not be optimal for all video resolutions or aspect ratios",
+      "severity": "Medium"
+    },
+    {
+      "gap": "Single GPU evaluation",
+      "description": "Experiments conducted on single A100 GPU, missing distributed/multi-GPU scenarios",
+      "severity": "Low"
+    },
+    {
+      "gap": "Limited model scope",
+      "description": "Only tested on HunyuanVideo and CogVideoX1.5-5B, missing broader model validation",
+      "severity": "Low"
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "name": "Adaptive Block Size Selection",
+      "description": "Dynamic block size selection based on video resolution and content characteristics",
+      "implementation": "Add heuristic to select optimal block_size ∈ {32, 64, 128} based on frame resolution (h×w) and content complexity metrics",
+      "expected_runtime": "Get_Time(L, L, d) with adaptive block size B ∈ {32,64,128}",
+      "benefit": "Improve recall by 5-10% for varying resolutions"
+    },
+    {
+      "name": "Multi-Modal Attention Fusion",
+      "description": "Extend method to handle additional modalities (audio, depth) beyond video-text",
+      "implementation": "Modify hierarchical structure to include audio tokens and depth maps, extending block pattern to 4D (video-text-audio-depth)",
+      "expected_runtime": "Get_Time(L', L', d) where L' = f·h·w + t + a + d (a=audio tokens, d=depth tokens)",
+      "benefit": "Enable sparse attention for multimodal video generation"
+    },
+    {
+      "name": "Progressive Sparsity Scheduling",
+      "description": "Dynamic sparsity adjustment during denoising process based on noise levels",
+      "implementation": "Implement sparsity scheduler that increases sparsity as noise decreases: sparsity_t = sparsity_base + α(1 - σ_t/σ_0)",
+      "expected_runtime": "Get_Time(L, L, d) with time-varying sparsity sparsity_t",
+      "benefit": "Further 10-15% speedup with maintained quality"
+    },
+    {
+      "name": "Distributed Sparse Attention",
+      "description": "Extend method for multi-GPU/distributed inference with efficient communication",
+      "implementation": "Implement block-wise partitioning across GPUs with halo exchange for boundary blocks, maintaining sparsity patterns across devices",
+      "expected_runtime": "Get_Time(L/n_gpu, L, d) for n_gpu devices with communication overhead",
+      "benefit": "Enable generation of longer videos (>1 minute) with linear scaling"
+    },
+    {
+      "name": "Learnable Pattern Refinement",
+      "description": "Lightweight learned refinement of sparse patterns using meta-networks",
+      "implementation": "Add small MLP (2 layers, 128 hidden units) to refine block selection based on content features, trained with distillation loss",
+      "expected_runtime": "Get_Time(L, L, d) + O(L·d) for MLP inference",
+      "benefit": "Improve recall by 3-5% with minimal overhead"
+    }
+  ],
+  "experimental_parameters": {
+    "models": ["HunyuanVideo (13B)", "CogVideoX1.5-5B"],
+    "video_specs": {
+      "HunyuanVideo": "720p, 8-second, 16FPS",
+      "CogVideoX1.5-5B": "720p, 10-second, 16FPS"
+    },
+    "default_config": {
+      "sparsity": 0.8,
+      "block_size": 64,
+      "search_steps": [10, 30],
+      "warmup_steps": 10
+    },
+    "hardware": "Single A100 GPU-80GB"
+  }
+}

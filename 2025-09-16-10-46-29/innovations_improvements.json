@@ -1,0 +1,186 @@
+{
+  "paper_innovations": [
+    {
+      "id": 1,
+      "name": "Dynamic Pattern + Online Precise Search",
+      "description": "First method to combine dynamic sparse patterns with precise online search for DiTs",
+      "novelty": "Addresses the unique hierarchical sparsity in DiTs that static and approximate methods fail to capture",
+      "technical_details": {
+        "approach": "Real-time computation of optimal sparse indices using block-wise attention",
+        "complexity": "O((1-sparsity)L²d) vs O(L²d) for full attention",
+        "runtime_representation": "Get_Time(0.2L, 0.2L, d) for sparse computation"
+      },
+      "benefits": ["Maintains high fidelity", "Eliminates offline profiling", "Adapts to input variations"]
+    },
+    {
+      "id": 2,
+      "name": "Blockified Pattern for Hierarchical Sparsity",
+      "description": "Introduces block-wise sparse patterns to capture DiTs' hierarchical structure",
+      "novelty": "Recognizes that continuous patterns fail due to modality boundaries and frame structure",
+      "technical_details": {
+        "block_size": 64,
+        "partitioning": "L/B chunks where B=64",
+        "recall_improvement": "0.93 vs 0.52 for continuous patterns",
+        "runtime_representation": "Get_Time(L/B, L/B, B²) for block-wise computation"
+      },
+      "benefits": ["Better captures DiT sparsity", "Higher recall than continuous patterns", "Natural fit for hierarchical structure"]
+    },
+    {
+      "id": 3,
+      "name": "Fused LSE-Cached Online Search",
+      "description": "Two-phase search leveraging LSE invariance across denoising steps",
+      "novelty": "Exploits observation that LSE distribution remains stable across diffusion steps",
+      "technical_details": {
+        "phase1": "Fused search: compute attention + cache LSE",
+        "phase2": "LSE-cached search: use cached LSE for subsequent steps",
+        "overhead_reduction": "<5% of total generation time",
+        "runtime_representation": "Get_Time(L, L, d) for phase1, Get_Time(0.2L, 0.2L, d) for phase2"
+      },
+      "benefits": ["50% search time reduction", "Minimal overhead", "Maintains precision"]
+    },
+    {
+      "id": 4,
+      "name": "Head-adaptive Hierarchical Block Sparse Attention",
+      "description": "Adaptive sparsity adjustment per attention head based on recall performance",
+      "novelty": "Recognizes that different heads require different sparsity levels for optimal performance",
+      "technical_details": {
+        "threshold": "Recall > 0.8 for high-performance heads",
+        "adjustment": "High recall: (1+sparsity)/2, Low recall: (3×sparsity-1)/2",
+        "maintains": "Average sparsity across all heads",
+        "runtime_representation": "Get_Time(0.15L, 0.15L, d) for high-recall heads, Get_Time(0.25L, 0.25L, d) for low-recall heads"
+      },
+      "benefits": ["Improved accuracy", "Reduced redundancy", "Better resource utilization"]
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "id": 1,
+      "name": "Dynamic Block Size Selection",
+      "description": "Adaptive block size based on content characteristics and attention entropy",
+      "implementation": {
+        "method": "Analyze attention entropy to determine optimal granularity",
+        "strategy": "Small blocks (32) for high-detail, large blocks (128) for uniform areas",
+        "overhead": "O(log L) for size selection"
+      },
+      "expected_benefits": {
+        "speedup": "5-15% additional",
+        "accuracy": "Better capture of fine-grained patterns",
+        "runtime_representation": "Get_Time(0.15L, 0.15L, d) with adaptive sizing"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Content-Adaptive Search Strategy",
+      "description": "Dynamic search step selection based on video complexity and motion analysis",
+      "implementation": {
+        "method": "Use motion vectors/optical flow for complexity assessment",
+        "strategy": "Increase search frequency in high-motion regions",
+        "adaptive": "Ts = {f(complexity_score)}"
+      },
+      "expected_benefits": {
+        "efficiency": "Reduced unnecessary searches",
+        "quality": "Better handling of dynamic content",
+        "runtime_representation": "Variable Get_Time calls based on content complexity"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Compressed LSE Cache",
+      "description": "Lossy compression for cached LSE values to reduce memory overhead",
+      "implementation": {
+        "method": "Quantize LSE to 8-bit or 16-bit precision",
+        "technique": "Delta encoding between consecutive steps",
+        "compression": "4-8× memory reduction"
+      },
+      "expected_benefits": {
+        "memory": "20-30% reduction in cache size",
+        "accuracy": "Minimal loss with proper quantization",
+        "runtime_representation": "Same Get_Time calls but with compressed data transfer"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Learned Sparse Pattern Predictor",
+      "description": "Lightweight meta-network to predict optimal sparse patterns without search",
+      "implementation": {
+        "architecture": "Small transformer taking video features as input",
+        "training": "Meta-learning on diverse video datasets",
+        "inference": "Direct pattern prediction, no search needed"
+      },
+      "expected_benefits": {
+        "speedup": "2-3× reduction in search overhead",
+        "efficiency": "Zero search time after training",
+        "runtime_representation": "Get_Time(0.2L, 0.2L, d) with zero search overhead"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Distributed AdaSpa",
+      "description": "Multi-GPU scaling for handling ultra-long videos",
+      "implementation": {
+        "method": "Shard attention computation across GPUs",
+        "communication": "NCCL for efficient inter-GPU communication",
+        "overlap": "Computation and communication pipelining"
+      },
+      "expected_benefits": {
+        "scalability": "Near-linear scaling up to 8 GPUs",
+        "capacity": "Handle videos >60 seconds",
+        "runtime_representation": "Get_Time(0.2L/p, 0.2L/p, d) with p GPUs"
+      }
+    }
+  ],
+  "experimental_parameters": {
+    "default_configuration": {
+      "sparsity": 0.8,
+      "block_size": 64,
+      "search_steps": [10, 30],
+      "warmup_steps": 10,
+      "recall_threshold": 0.8
+    },
+    "model_specific": {
+      "hunyuanvideo": {
+        "resolution": "720p",
+        "frames": 129,
+        "steps": 50,
+        "speedup": "1.78x"
+      },
+      "cogvideox1.5_5b": {
+        "resolution": "720p", 
+        "frames": 161,
+        "steps": 50,
+        "speedup": "1.66x"
+      }
+    },
+    "hardware": {
+      "gpu": "A100-80GB",
+      "memory": "80GB",
+      "implementation": "Triton + CUDA"
+    }
+  },
+  "runtime_analysis": {
+    "baseline_full_attention": "Get_Time(L, L, d)",
+    "adaspa_original": {
+      "search_phase": "Get_Time(L, L, d) + Get_Time(0.2L, 0.2L, d)",
+      "attention_phase": "Get_Time(0.2L, 0.2L, d)",
+      "total_overhead": "<5% of full attention"
+    },
+    "improved_methods": {
+      "dynamic_block": "Get_Time(0.15L, 0.15L, d)",
+      "learned_patterns": "Get_Time(0.2L, 0.2L, d) with zero search",
+      "distributed": "Get_Time(0.2L/p, 0.2L/p, d) with p GPUs"
+    }
+  },
+  "performance_projections": {
+    "current_adaspa": {
+      "speedup": "1.66-1.78x",
+      "memory_overhead": "Minimal",
+      "quality_loss": "Negligible"
+    },
+    "with_improvements": {
+      "dynamic_block": "1.75-1.95x speedup",
+      "learned_patterns": "1.9-2.1x speedup", 
+      "distributed": "Near-linear scaling",
+      "combined": "2.5-3.0x speedup potential"
+    }
+  }
+}

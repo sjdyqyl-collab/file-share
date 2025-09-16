@@ -1,0 +1,110 @@
+{
+  "paper_innovations": [
+    {
+      "innovation": "Blockified Pattern for DiT Sparsity",
+      "description": "First observation that DiTs exhibit hierarchical blockified sparsity patterns rather than continuous patterns, achieving 0.93-1.0 Recall compared to 0.12-0.54 for continuous patterns",
+      "runtime_improvement": "Reduces complexity from O(L²d) to O((1-sparsity)L²d) with sparsity=0.8"
+    },
+    {
+      "innovation": "LSE Invariance Across Denoising Steps",
+      "description": "Discovery that sparse patterns and LSE distributions remain invariant across denoising steps, enabling efficient caching",
+      "runtime_improvement": "Enables LSE-cached search reducing online search time to <5% of full attention time"
+    },
+    {
+      "innovation": "Fused LSE-Cached Online Search",
+      "description": "Two-phase search mechanism: (1) Fused Online Search computes full attention and caches LSE, (2) LSE-Cached Search reuses cached data",
+      "runtime_improvement": "Reduces search overhead by 50% compared to naive online search"
+    },
+    {
+      "innovation": "Head-adaptive Hierarchical Block Sparse Attention",
+      "description": "Adjusts sparsity per-head based on individual Recall performance while maintaining average sparsity",
+      "runtime_improvement": "Improves quality by 0.5-1.0 PSNR without computational overhead"
+    },
+    {
+      "innovation": "Training-free and Data-free Implementation",
+      "description": "Plug-and-play solution requiring no fine-tuning or dataset profiling",
+      "runtime_improvement": "Zero additional training cost, immediate deployment"
+    }
+  ],
+  "identified_gaps": [
+    {
+      "gap": "Limited to 3D Full Attention",
+      "description": "Method only validated on 3D Full Attention, not tested on Spatial-Temporal attention variants",
+      "severity": "medium"
+    },
+    {
+      "gap": "Fixed Block Size",
+      "description": "Uses fixed block_size=64, may not be optimal for all video resolutions/lengths",
+      "severity": "medium"
+    },
+    {
+      "gap": "Single GPU Implementation",
+      "description": "Experiments conducted on single A100 GPU, no distributed/multi-GPU evaluation",
+      "severity": "high"
+    },
+    {
+      "gap": "Limited Model Scope",
+      "description": "Only tested on HunyuanVideo and CogVideoX1.5-5B, no validation on other DiT architectures",
+      "severity": "medium"
+    },
+    {
+      "gap": "No Theoretical Analysis",
+      "description": "Lacks theoretical bounds on approximation error or convergence guarantees",
+      "severity": "low"
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "improvement": "Dynamic Block Size Adaptation",
+      "description": "Automatically adjust block size based on video resolution and sequence length",
+      "implementation": "Use heuristic: block_size = min(64, max(16, sqrt(h*w)/4))",
+      "expected_runtime": "Get_Time(L/B_dynamic, B_dynamic, d) where B_dynamic varies per input"
+    },
+    {
+      "improvement": "Multi-GPU Distributed Search",
+      "description": "Parallelize search across multiple GPUs using tensor parallelism",
+      "implementation": "Split attention heads across GPUs, aggregate results using AllReduce",
+      "expected_runtime": "Get_Time(L/B, B, d/N_GPUs) with N_GPUs speedup factor"
+    },
+    {
+      "improvement": "Adaptive Sparsity Scheduling",
+      "description": "Dynamically adjust sparsity during generation based on content complexity",
+      "implementation": "Monitor attention entropy, increase sparsity for low-entropy regions",
+      "expected_runtime": "Variable: Get_Time(L/B, B, d) with sparsity ∈ [0.7, 0.9]"
+    },
+    {
+      "improvement": "Cross-Modal Pattern Sharing",
+      "description": "Share sparse patterns between text-video and video-text attention matrices",
+      "implementation": "Exploit symmetry: M_text-video = M_video-text^T",
+      "expected_runtime": "50% reduction: Get_Time(L/B, B, d/2)"
+    },
+    {
+      "improvement": "Learnable Pattern Refinement",
+      "description": "Lightweight neural network to refine block patterns based on input features",
+      "implementation": "Small MLP (128→64→1) per block to adjust selection probability",
+      "expected_runtime": "Get_Time(L/B, B, d) + O(L/B * 128) overhead"
+    },
+    {
+      "improvement": "Hierarchical Search Strategy",
+      "description": "Multi-resolution search: coarse global → fine local block selection",
+      "implementation": "First search at 4×4 block level, then refine within selected regions",
+      "expected_runtime": "Get_Time(L/(4B), 4B, d) + Get_Time(L/B, B, d) * sparsity"
+    }
+  ],
+  "experimental_parameters": {
+    "models": ["HunyuanVideo-13B", "CogVideoX1.5-5B"],
+    "video_specs": {
+      "hunyuan": {"resolution": "720p", "duration": "8s", "fps": 16},
+      "cogvideo": {"resolution": "720p", "duration": "10s", "fps": 16}
+    },
+    "default_config": {
+      "sparsity": 0.8,
+      "block_size": 64,
+      "search_steps": [10, 30],
+      "warmup_steps": 10,
+      "gpu": "A100-80GB"
+    },
+    "baseline_methods": ["Full Attention", "MInference", "Sparse VideoGen"],
+    "metrics": ["VBench", "PSNR", "SSIM", "LPIPS", "Latency", "Speedup"]
+  }
+}

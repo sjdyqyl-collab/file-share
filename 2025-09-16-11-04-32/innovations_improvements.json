@@ -1,0 +1,133 @@
+{
+  "paper_innovations": [
+    {
+      "id": 1,
+      "name": "Blockified Pattern for DiT Sparsity",
+      "description": "First observation that DiT attention sparsity exhibits hierarchical blockified structure rather than continuous patterns",
+      "technical_details": "Due to hierarchical modality structure (video-video, video-text, text-text), continuous patterns like col/diag fail. Blockified patterns achieve 0.93-1.0 recall vs 0.12-0.96 for continuous patterns",
+      "runtime_impact": "Get_Time(L, L, d) → Get_Time(L, L*(1-sparsity), d) for attention computation"
+    },
+    {
+      "id": 2,
+      "name": "Fused LSE-Cached Online Search",
+      "description": "Two-phase search strategy leveraging LSE invariance across denoising steps",
+      "technical_details": "Phase 1: Fused online search (2-pass) computes FlashAttention + stores LSE. Phase 2: LSE-cached search (1-pass) reuses cached LSE, reducing search time by 50%",
+      "runtime_impact": "Get_Time(L, L, d) + Get_Time(L, L, d) → Get_Time(L, L, d) + Get_Time(L, L*0.05, d) for cached phases"
+    },
+    {
+      "id": 3,
+      "name": "Head-adaptive Hierarchical Block Sparse Attention",
+      "description": "Per-head sparsity adjustment based on individual head recall performance",
+      "technical_details": "Sorts heads by recall, adjusts sparsity for top/bottom n heads while maintaining average sparsity. n = heads with recall > 0.8",
+      "runtime_impact": "Uniform: Get_Time(L, L*(1-s), d) → Adaptive: Σ_i Get_Time(L, L*(1-s_i), d) where s_i ∈ [(3s-1)/2, (1+s)/2]"
+    },
+    {
+      "id": 4,
+      "name": "Training-free and Data-free Implementation",
+      "description": "First sparse attention method requiring no fine-tuning or dataset profiling",
+      "technical_details": "Plug-and-play via adaspa_attention_handler, single line code change, no additional training overhead",
+      "runtime_impact": "No additional Get_Time calls for training/profiling phases"
+    }
+  ],
+  "experimental_parameters": {
+    "models": ["HunyuanVideo-13B", "CogVideoX1.5-5B"],
+    "video_specs": {
+      "HunyuanVideo": {"resolution": "720p", "duration": "8s", "steps": 50},
+      "CogVideoX1.5-5B": {"resolution": "720p", "duration": "10s", "steps": 50}
+    },
+    "default_config": {
+      "sparsity": 0.8,
+      "block_size": 64,
+      "search_steps": [10, 30],
+      "warmup_steps": 10
+    },
+    "hardware": "A100 GPU-80GB"
+  },
+  "performance_results": {
+    "HunyuanVideo": {
+      "speedup": 1.78,
+      "psnr": 29.07,
+      "vbench": 80.13,
+      "latency_reduction": "Get_Time(L,L,d) → Get_Time(L,L*0.56,d)"
+    },
+    "CogVideoX1.5-5B": {
+      "speedup": 1.66,
+      "psnr": 23.25,
+      "vbench": 81.90,
+      "latency_reduction": "Get_Time(L,L,d) → Get_Time(L,L*0.60,d)"
+    }
+  },
+  "proposed_improvements": [
+    {
+      "id": 1,
+      "name": "Adaptive Sparsity Framework",
+      "description": "Dynamic sparsity based on content complexity analysis",
+      "implementation": "Motion magnitude + texture complexity → sparsity = f(complexity)",
+      "runtime_impact": "Get_Time(L,L*(1-s_fixed),d) → Get_Time(L,L*(1-s_adaptive),d) where s_adaptive ∈ [0.7, 0.95]",
+      "expected_gain": "5-10% additional speedup for simple content"
+    },
+    {
+      "id": 2,
+      "name": "Multi-Scale Block Strategy",
+      "description": "Hierarchical block sizes (32, 64, 128) based on attention entropy",
+      "implementation": "Adaptive selection from {32,64,128} based on local attention patterns",
+      "runtime_impact": "Σ_i Get_Time(L,L*(1-s),d) → Σ_i,j Get_Time(L,L*(1-s_j),d) with optimized block sizes",
+      "expected_gain": "2-3% quality improvement, 5-8% speedup"
+    },
+    {
+      "id": 3,
+      "name": "RL-Based Search Scheduling",
+      "description": "Reinforcement learning for optimal search timing",
+      "implementation": "State: [step, loss_landscape, attention_patterns] → Action: search_timing",
+      "runtime_impact": "Fixed search overhead → Adaptive: Get_Time(L,L*0.05,d) → Get_Time(L,L*0.035,d)",
+      "expected_gain": "10-15% reduction in search overhead"
+    },
+    {
+      "id": 4,
+      "name": "Hardware-Aware Optimization",
+      "description": "Platform-specific kernel optimizations",
+      "implementation": "A100: current, RTX4090: reduced block size, Apple: Metal shaders",
+      "runtime_impact": "Platform-specific: RTX4090: Get_Time(L,L*(1-s),d) → Get_Time(L,L*(1-s)*0.7,d)",
+      "expected_gain": "20-30% speedup on consumer hardware"
+    },
+    {
+      "id": 5,
+      "name": "Temporal Consistency Enhancement",
+      "description": "Motion-aware sparsity using optical flow",
+      "implementation": "Optical flow → motion-guided block selection → temporal smoothing",
+      "runtime_impact": "Additional Get_Time(flow_estimation) + Get_Time(L,L*(1-s_flow),d)",
+      "expected_gain": "Reduced flickering, 3-5% perceptual improvement"
+    },
+    {
+      "id": 6,
+      "name": "Hybrid Precision Training",
+      "description": "Mixed precision with sparsity-aware allocation",
+      "implementation": "High precision: critical blocks, Low precision: sparse regions",
+      "runtime_impact": "Memory: 4*Get_Time(L,L,d) → 2*Get_Time(L,L,d) + 1*Get_Time(L,L*(1-s),d)",
+      "expected_gain": "30-40% memory reduction, slight quality improvement"
+    }
+  ],
+  "improvement_timeline": {
+    "phase1_quick_wins": {
+      "duration": "1-2 months",
+      "improvements": [1, 2, 4],
+      "expected_cumulative_gain": "15-20% speedup, 5% quality improvement"
+    },
+    "phase2_advanced": {
+      "duration": "3-4 months", 
+      "improvements": [3, 5],
+      "expected_cumulative_gain": "25-35% speedup, 8-10% quality improvement"
+    },
+    "phase3_research": {
+      "duration": "4-6 months",
+      "improvements": [6],
+      "expected_cumulative_gain": "40-50% speedup, 10-15% quality improvement"
+    }
+  },
+  "validation_metrics": {
+    "efficiency": ["FLOPs", "latency", "memory_usage"],
+    "quality": ["PSNR", "SSIM", "LPIPS", "VBench", "human_perceptual"],
+    "temporal": ["flow_warping_error", "flicker_index", "temporal_consistency"],
+    "scalability": ["speedup_vs_length", "memory_vs_resolution"]
+  }
+}

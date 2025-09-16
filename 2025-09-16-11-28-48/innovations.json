@@ -1,0 +1,123 @@
+{
+  "paper_innovations": [
+    {
+      "name": "Blockified Pattern for DiT Sparsity",
+      "description": "First observation and utilization of hierarchical blockified sparse patterns in DiT attention, replacing traditional continuous patterns",
+      "novelty": "Addresses the fragmented structure caused by hierarchical video-text interactions",
+      "performance": {
+        "recall_improvement": "0.93-1.0 vs 0.12-0.54 for continuous patterns",
+        "complexity_reduction": "O((1-sparsity)L²d) vs O(L²d)"
+      },
+      "runtime_representation": "Get_Time(L, d, (1-sparsity)*L)"
+    },
+    {
+      "name": "Fused LSE-Cached Online Search",
+      "description": "Two-phase search strategy leveraging LSE invariance across denoising steps",
+      "novelty": "First precise online search for DiTs with <5% overhead",
+      "implementation": {
+        "phase1": "Fused Online Search (2-pass with LSE storage)",
+        "phase2": "LSE-Cached Search (1-pass using cached LSE)",
+        "search_overhead": "<5% of total generation time"
+      },
+      "runtime_representation": "Get_Time(L, d, L) for phase1, Get_Time(L, d, L/2) for phase2"
+    },
+    {
+      "name": "Head-adaptive Hierarchical Sparsity",
+      "description": "Dynamic sparsity adjustment per attention head based on recall performance",
+      "novelty": "Addresses head-specific sparsity characteristics while maintaining load balance",
+      "mechanism": {
+        "evaluation": "Compute recall per head at base sparsity",
+        "adaptation": "Increase sparsity for high-recall heads, decrease for low-recall",
+        "balance": "Maintain average sparsity across all heads"
+      },
+      "performance_gain": "+0.49 VBench improvement on HunyuanVideo"
+    },
+    {
+      "name": "Training-free and Data-free Implementation",
+      "description": "Plug-and-play solution requiring no fine-tuning or dataset profiling",
+      "novelty": "First sparse attention method for DiTs without training requirements",
+      "integration": "Single-line code change via adaspa_attention_handler"
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "name": "Adaptive Layer-wise Sparsity",
+      "description": "Dynamic sparsity based on layer depth and content complexity",
+      "implementation": "Reinforcement learning to learn optimal sparsity per layer",
+      "expected_runtime": "Get_Time(L, d, α_layer*L) where α_layer ∈ [0.6,0.9]",
+      "benefits": ["15-25% additional speedup", "Better quality-efficiency tradeoff"],
+      "complexity": "Low - builds on existing framework"
+    },
+    {
+      "name": "Multi-Scale Block Patterns",
+      "description": "Hierarchical approach with variable block sizes (32, 64, 128)",
+      "implementation": "Adaptive selection based on attention entropy",
+      "expected_runtime": "Get_Time(L, d, β_scale*L) where β_scale ∈ [0.7,0.85]",
+      "benefits": ["15-20% additional speedup", "Better pattern capture"],
+      "complexity": "Medium - requires kernel modifications"
+    },
+    {
+      "name": "Dynamic Search Scheduling",
+      "description": "Adaptive search frequency based on pattern convergence",
+      "implementation": "Monitor LSE variance to trigger searches",
+      "expected_runtime": "Get_Time(L, d, γ_search*L) where γ_search ∈ [0.5,0.8]",
+      "benefits": ["30% fewer search operations", "Reduced overhead"],
+      "complexity": "Low - monitoring-based approach"
+    },
+    {
+      "name": "Cross-Modal Specialization",
+      "description": "Specialized sparse patterns for different interaction types",
+      "patterns": {
+        "video_video": "Temporal locality patterns",
+        "video_text": "Semantic alignment patterns", 
+        "text_text": "Sink-based patterns"
+      },
+      "expected_runtime": "Get_Time(L, d, δ_modal*L) where δ_modal ∈ [0.65,0.8]",
+      "benefits": ["Better semantic preservation", "10-15% speedup"],
+      "complexity": "Medium - requires pattern analysis"
+    },
+    {
+      "name": "Hardware-Aware Optimization",
+      "description": "Tensor Core and memory coalescing optimizations",
+      "implementation": "Hardware-specific kernel optimizations",
+      "expected_runtime": "Get_Time(L, d, ε_hw*L) where ε_hw ∈ [0.7,0.8]",
+      "benefits": ["1.2-1.4× additional improvement", "Better hardware utilization"],
+      "complexity": "High - requires hardware expertise"
+    }
+  ],
+  "experimental_parameters": {
+    "models": ["HunyuanVideo-13B", "CogVideoX1.5-5B"],
+    "video_specs": {
+      "resolution": "720p",
+      "hunyuanvideo": "8 seconds, 50 steps",
+      "cogvideox": "10 seconds, 50 steps"
+    },
+    "default_configuration": {
+      "sparsity": 0.8,
+      "block_size": 64,
+      "search_steps": [10, 30],
+      "warmup_steps": 10
+    },
+    "hardware": "Single A100 GPU-80GB",
+    "metrics": ["VBench Score", "PSNR", "SSIM", "LPIPS", "Latency", "Speedup"]
+  },
+  "runtime_comparisons": {
+    "baseline": {
+      "method": "Full Attention",
+      "complexity": "O(L²d)",
+      "example": "Get_Time(110000, 64, 110000) = 3213.76s"
+    },
+    "proposed": {
+      "method": "AdaSpa",
+      "complexity": "O((1-sparsity)L²d)",
+      "example": "Get_Time(110000, 64, 22000) = 1810.23s",
+      "speedup": "1.78×"
+    },
+    "improved": {
+      "method": "AdaSpa+Improvements",
+      "complexity": "O(α_improved*L²d)",
+      "example": "Get_Time(110000, 64, 16500) = 1448s",
+      "speedup": "2.2×"
+    }
+  }
+}
