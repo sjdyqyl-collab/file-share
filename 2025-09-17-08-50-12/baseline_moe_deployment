@@ -1,0 +1,104 @@
+// Baseline MoE Deployment (TP=8, PP=2)
+digraph {
+	rankdir=TB size="20,20"
+	input [label="Input
+[batch_size=1024, seq_len=10000, hidden=8192]" fillcolor=lightblue shape=ellipse style=filled]
+	subgraph cluster_stage0 {
+		label="Pipeline Stage 0
+(GPUs 0-7)" style=dashed
+		layer0_mha [label="Multi-Head Attention
+[batch=1024, seq=10000, heads=16, d_k=512]
+TP=8
+GPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_residual1 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_mlp [label="MoE Layer 0
+8 experts per GPU
+[batch=1024, seq=10000, hidden=8192->32768->8192]
+TP=8
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_residual2 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_mha [label="Multi-Head Attention
+[batch=1024, seq=10000, heads=16, d_k=512]
+TP=8
+GPU: 0-7" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_residual1 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_mlp [label="MoE Layer 1
+8 experts per GPU
+[batch=1024, seq=10000, hidden=8192->32768->8192]
+TP=8
+GPU: 0-7" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_residual2 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-7" fillcolor=lightgray shape=parallelogram style=filled]
+	}
+	pipe_comm1 [label="Pipeline Communication
+[batch=1024, seq=10000, hidden=8192]
+GPU: 7 -> 8" fillcolor=lightcoral shape=ellipse style=filled]
+	subgraph cluster_stage1 {
+		label="Pipeline Stage 1
+(GPUs 8-15)" style=dashed
+		layer2_mha [label="Multi-Head Attention
+[batch=1024, seq=10000, heads=16, d_k=512]
+TP=8
+GPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+		layer2_residual1 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 8-15" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_mlp [label="MoE Layer 2
+8 experts per GPU
+[batch=1024, seq=10000, hidden=8192->32768->8192]
+TP=8
+GPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_residual2 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 8-15" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_mha [label="Multi-Head Attention
+[batch=1024, seq=10000, heads=16, d_k=512]
+TP=8
+GPU: 8-15" fillcolor=lightgreen shape=rectangle style=filled]
+		layer3_residual1 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 8-15" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_mlp [label="MoE Layer 3
+8 experts per GPU
+[batch=1024, seq=10000, hidden=8192->32768->8192]
+TP=8
+GPU: 8-15" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_residual2 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 8-15" fillcolor=lightgray shape=parallelogram style=filled]
+	}
+	output [label="Output
+[batch_size=1024, seq_len=10000, hidden=8192]" fillcolor=lightblue shape=ellipse style=filled]
+	input -> layer0_mha
+	layer0_mha -> layer0_residual1
+	layer0_residual1 -> layer0_mlp
+	layer0_mlp -> layer0_residual2
+	layer0_residual2 -> layer1_mha
+	layer1_mha -> layer1_residual1
+	layer1_residual1 -> layer1_mlp
+	layer1_residual2 -> pipe_comm1
+	pipe_comm1 -> layer2_mha
+	layer2_mha -> layer2_residual1
+	layer2_residual1 -> layer2_mlp
+	layer2_mlp -> layer2_residual2
+	layer2_residual2 -> layer3_mha
+	layer3_mha -> layer3_residual1
+	layer3_residual1 -> layer3_mlp
+	layer3_mlp -> layer3_residual2
+	layer3_residual2 -> output
+	input -> layer0_residual1 [style=dashed]
+	layer0_residual1 -> layer0_residual2 [style=dashed]
+	layer0_residual2 -> layer1_residual1 [style=dashed]
+	layer1_residual1 -> layer1_residual2 [style=dashed]
+	pipe_comm1 -> layer2_residual1 [style=dashed]
+	layer2_residual1 -> layer2_residual2 [style=dashed]
+	layer2_residual2 -> layer3_residual1 [style=dashed]
+	layer3_residual1 -> layer3_residual2 [style=dashed]
+}

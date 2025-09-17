@@ -1,0 +1,22 @@
+{
+  "generated_dags": [
+    {
+      "name": "baseline_moe_deployment",
+      "description": "Baseline MoE deployment with TP=8, PP=2 configuration",
+      "dot_file": "/home/wzc/data/file-share/2025-09-17-08-50-12/baseline_moe_deployment.dot",
+      "svg_file": "/home/wzc/data/file-share/2025-09-17-08-50-12/baseline_moe_deployment.svg"
+    },
+    {
+      "name": "proposed_cross_node_expert_parallelism",
+      "description": "Proposed cross-node expert parallelism with one expert per GPU",
+      "dot_file": "/home/wzc/data/file-share/2025-09-17-08-50-12/proposed_cross_node_expert_parallelism.dot",
+      "svg_file": "/home/wzc/data/file-share/2025-09-17-08-50-12/proposed_cross_node_expert_parallelism.svg"
+    }
+  ],
+  "summary": {
+    "total_dags_generated": 2,
+    "deployment_strategies": ["baseline", "proposed"],
+    "gpus_used": 16,
+    "model_type": "4-layer MoE with 16 experts per layer"
+  }
+}

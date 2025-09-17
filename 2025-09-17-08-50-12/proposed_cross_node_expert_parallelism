@@ -1,0 +1,425 @@
+// Proposed Cross-Node Expert Parallelism
+digraph {
+	rankdir=TB size="20,20"
+	input [label="Input
+[batch_size=1024, seq_len=10000, hidden=8192]" fillcolor=lightblue shape=ellipse style=filled]
+	gate0 [label="Gating Network Layer 0
+[batch=1024, seq=10000, experts=16]
+GPU: 0-15" fillcolor=lightcoral shape=parallelogram style=filled]
+	gate1 [label="Gating Network Layer 1
+[batch=1024, seq=10000, experts=16]
+GPU: 0-15" fillcolor=lightcoral shape=parallelogram style=filled]
+	gate2 [label="Gating Network Layer 2
+[batch=1024, seq=10000, experts=16]
+GPU: 0-15" fillcolor=lightcoral shape=parallelogram style=filled]
+	gate3 [label="Gating Network Layer 3
+[batch=1024, seq=10000, experts=16]
+GPU: 0-15" fillcolor=lightcoral shape=parallelogram style=filled]
+	subgraph cluster_layer0 {
+		label="Layer 0 - Expert Parallelism" style=dashed
+		layer0_mha [label="Multi-Head Attention
+[batch=1024, seq=10000, heads=16, d_k=512]
+GPU: 0-15" fillcolor=lightgreen shape=rectangle style=filled]
+		layer0_residual1 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_expert0 [label="Expert 0
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 0" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert1 [label="Expert 1
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 1" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert2 [label="Expert 2
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert3 [label="Expert 3
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 3" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert4 [label="Expert 4
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 4" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert5 [label="Expert 5
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 5" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert6 [label="Expert 6
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 6" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert7 [label="Expert 7
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 7" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert8 [label="Expert 8
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 8" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert9 [label="Expert 9
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 9" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert10 [label="Expert 10
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert11 [label="Expert 11
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 11" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert12 [label="Expert 12
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 12" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert13 [label="Expert 13
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 13" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert14 [label="Expert 14
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 14" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_expert15 [label="Expert 15
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 15" fillcolor=lightyellow shape=rectangle style=filled]
+		layer0_aggregate [label="Aggregate Expert Outputs
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightcoral shape=parallelogram style=filled]
+		layer0_residual2 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightgray shape=parallelogram style=filled]
+	}
+	subgraph cluster_layer1 {
+		label="Layer 1 - Expert Parallelism" style=dashed
+		layer1_mha [label="Multi-Head Attention
+[batch=1024, seq=10000, heads=16, d_k=512]
+GPU: 0-15" fillcolor=lightgreen shape=rectangle style=filled]
+		layer1_residual1 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_expert0 [label="Expert 0
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 0" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert1 [label="Expert 1
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 1" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert2 [label="Expert 2
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert3 [label="Expert 3
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 3" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert4 [label="Expert 4
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 4" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert5 [label="Expert 5
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 5" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert6 [label="Expert 6
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 6" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert7 [label="Expert 7
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 7" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert8 [label="Expert 8
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 8" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert9 [label="Expert 9
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 9" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert10 [label="Expert 10
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert11 [label="Expert 11
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 11" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert12 [label="Expert 12
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 12" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert13 [label="Expert 13
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 13" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert14 [label="Expert 14
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 14" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_expert15 [label="Expert 15
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 15" fillcolor=lightyellow shape=rectangle style=filled]
+		layer1_aggregate [label="Aggregate Expert Outputs
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightcoral shape=parallelogram style=filled]
+		layer1_residual2 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightgray shape=parallelogram style=filled]
+	}
+	subgraph cluster_layer2 {
+		label="Layer 2 - Expert Parallelism" style=dashed
+		layer2_mha [label="Multi-Head Attention
+[batch=1024, seq=10000, heads=16, d_k=512]
+GPU: 0-15" fillcolor=lightgreen shape=rectangle style=filled]
+		layer2_residual1 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_expert0 [label="Expert 0
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 0" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert1 [label="Expert 1
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 1" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert2 [label="Expert 2
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert3 [label="Expert 3
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 3" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert4 [label="Expert 4
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 4" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert5 [label="Expert 5
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 5" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert6 [label="Expert 6
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 6" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert7 [label="Expert 7
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 7" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert8 [label="Expert 8
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 8" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert9 [label="Expert 9
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 9" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert10 [label="Expert 10
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert11 [label="Expert 11
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 11" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert12 [label="Expert 12
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 12" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert13 [label="Expert 13
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 13" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert14 [label="Expert 14
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 14" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_expert15 [label="Expert 15
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 15" fillcolor=lightyellow shape=rectangle style=filled]
+		layer2_aggregate [label="Aggregate Expert Outputs
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightcoral shape=parallelogram style=filled]
+		layer2_residual2 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightgray shape=parallelogram style=filled]
+	}
+	subgraph cluster_layer3 {
+		label="Layer 3 - Expert Parallelism" style=dashed
+		layer3_mha [label="Multi-Head Attention
+[batch=1024, seq=10000, heads=16, d_k=512]
+GPU: 0-15" fillcolor=lightgreen shape=rectangle style=filled]
+		layer3_residual1 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_expert0 [label="Expert 0
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 0" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert1 [label="Expert 1
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 1" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert2 [label="Expert 2
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 2" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert3 [label="Expert 3
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 3" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert4 [label="Expert 4
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 4" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert5 [label="Expert 5
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 5" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert6 [label="Expert 6
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 6" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert7 [label="Expert 7
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 7" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert8 [label="Expert 8
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 8" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert9 [label="Expert 9
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 9" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert10 [label="Expert 10
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 10" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert11 [label="Expert 11
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 11" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert12 [label="Expert 12
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 12" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert13 [label="Expert 13
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 13" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert14 [label="Expert 14
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 14" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_expert15 [label="Expert 15
+[batch=variable, seq=variable, hidden=8192->32768->8192]
+GPU: 15" fillcolor=lightyellow shape=rectangle style=filled]
+		layer3_aggregate [label="Aggregate Expert Outputs
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightcoral shape=parallelogram style=filled]
+		layer3_residual2 [label="Residual Add
+[batch=1024, seq=10000, hidden=8192]
+GPU: 0-15" fillcolor=lightgray shape=parallelogram style=filled]
+	}
+	output [label="Output
+[batch_size=1024, seq_len=10000, hidden=8192]" fillcolor=lightblue shape=ellipse style=filled]
+	input -> layer0_mha
+	layer0_mha -> layer0_residual1
+	layer0_residual1 -> gate0
+	gate0 -> layer0_expert0 [label="route to GPU 0" style=dashed]
+	layer0_expert0 -> layer0_aggregate
+	gate0 -> layer0_expert1 [label="route to GPU 1" style=dashed]
+	layer0_expert1 -> layer0_aggregate
+	gate0 -> layer0_expert2 [label="route to GPU 2" style=dashed]
+	layer0_expert2 -> layer0_aggregate
+	gate0 -> layer0_expert3 [label="route to GPU 3" style=dashed]
+	layer0_expert3 -> layer0_aggregate
+	gate0 -> layer0_expert4 [label="route to GPU 4" style=dashed]
+	layer0_expert4 -> layer0_aggregate
+	gate0 -> layer0_expert5 [label="route to GPU 5" style=dashed]
+	layer0_expert5 -> layer0_aggregate
+	gate0 -> layer0_expert6 [label="route to GPU 6" style=dashed]
+	layer0_expert6 -> layer0_aggregate
+	gate0 -> layer0_expert7 [label="route to GPU 7" style=dashed]
+	layer0_expert7 -> layer0_aggregate
+	gate0 -> layer0_expert8 [label="route to GPU 8" style=dashed]
+	layer0_expert8 -> layer0_aggregate
+	gate0 -> layer0_expert9 [label="route to GPU 9" style=dashed]
+	layer0_expert9 -> layer0_aggregate
+	gate0 -> layer0_expert10 [label="route to GPU 10" style=dashed]
+	layer0_expert10 -> layer0_aggregate
+	gate0 -> layer0_expert11 [label="route to GPU 11" style=dashed]
+	layer0_expert11 -> layer0_aggregate
+	gate0 -> layer0_expert12 [label="route to GPU 12" style=dashed]
+	layer0_expert12 -> layer0_aggregate
+	gate0 -> layer0_expert13 [label="route to GPU 13" style=dashed]
+	layer0_expert13 -> layer0_aggregate
+	gate0 -> layer0_expert14 [label="route to GPU 14" style=dashed]
+	layer0_expert14 -> layer0_aggregate
+	gate0 -> layer0_expert15 [label="route to GPU 15" style=dashed]
+	layer0_expert15 -> layer0_aggregate
+	layer0_aggregate -> layer0_residual2
+	layer0_residual2 -> layer1_mha
+	layer1_mha -> layer1_residual1
+	layer1_residual1 -> gate1
+	gate1 -> layer1_expert0 [label="route to GPU 0" style=dashed]
+	layer1_expert0 -> layer1_aggregate
+	gate1 -> layer1_expert1 [label="route to GPU 1" style=dashed]
+	layer1_expert1 -> layer1_aggregate
+	gate1 -> layer1_expert2 [label="route to GPU 2" style=dashed]
+	layer1_expert2 -> layer1_aggregate
+	gate1 -> layer1_expert3 [label="route to GPU 3" style=dashed]
+	layer1_expert3 -> layer1_aggregate
+	gate1 -> layer1_expert4 [label="route to GPU 4" style=dashed]
+	layer1_expert4 -> layer1_aggregate
+	gate1 -> layer1_expert5 [label="route to GPU 5" style=dashed]
+	layer1_expert5 -> layer1_aggregate
+	gate1 -> layer1_expert6 [label="route to GPU 6" style=dashed]
+	layer1_expert6 -> layer1_aggregate
+	gate1 -> layer1_expert7 [label="route to GPU 7" style=dashed]
+	layer1_expert7 -> layer1_aggregate
+	gate1 -> layer1_expert8 [label="route to GPU 8" style=dashed]
+	layer1_expert8 -> layer1_aggregate
+	gate1 -> layer1_expert9 [label="route to GPU 9" style=dashed]
+	layer1_expert9 -> layer1_aggregate
+	gate1 -> layer1_expert10 [label="route to GPU 10" style=dashed]
+	layer1_expert10 -> layer1_aggregate
+	gate1 -> layer1_expert11 [label="route to GPU 11" style=dashed]
+	layer1_expert11 -> layer1_aggregate
+	gate1 -> layer1_expert12 [label="route to GPU 12" style=dashed]
+	layer1_expert12 -> layer1_aggregate
+	gate1 -> layer1_expert13 [label="route to GPU 13" style=dashed]
+	layer1_expert13 -> layer1_aggregate
+	gate1 -> layer1_expert14 [label="route to GPU 14" style=dashed]
+	layer1_expert14 -> layer1_aggregate
+	gate1 -> layer1_expert15 [label="route to GPU 15" style=dashed]
+	layer1_expert15 -> layer1_aggregate
+	layer1_aggregate -> layer1_residual2
+	layer1_residual2 -> layer2_mha
+	layer2_mha -> layer2_residual1
+	layer2_residual1 -> gate2
+	gate2 -> layer2_expert0 [label="route to GPU 0" style=dashed]
+	layer2_expert0 -> layer2_aggregate
+	gate2 -> layer2_expert1 [label="route to GPU 1" style=dashed]
+	layer2_expert1 -> layer2_aggregate
+	gate2 -> layer2_expert2 [label="route to GPU 2" style=dashed]
+	layer2_expert2 -> layer2_aggregate
+	gate2 -> layer2_expert3 [label="route to GPU 3" style=dashed]
+	layer2_expert3 -> layer2_aggregate
+	gate2 -> layer2_expert4 [label="route to GPU 4" style=dashed]
+	layer2_expert4 -> layer2_aggregate
+	gate2 -> layer2_expert5 [label="route to GPU 5" style=dashed]
+	layer2_expert5 -> layer2_aggregate
+	gate2 -> layer2_expert6 [label="route to GPU 6" style=dashed]
+	layer2_expert6 -> layer2_aggregate
+	gate2 -> layer2_expert7 [label="route to GPU 7" style=dashed]
+	layer2_expert7 -> layer2_aggregate
+	gate2 -> layer2_expert8 [label="route to GPU 8" style=dashed]
+	layer2_expert8 -> layer2_aggregate
+	gate2 -> layer2_expert9 [label="route to GPU 9" style=dashed]
+	layer2_expert9 -> layer2_aggregate
+	gate2 -> layer2_expert10 [label="route to GPU 10" style=dashed]
+	layer2_expert10 -> layer2_aggregate
+	gate2 -> layer2_expert11 [label="route to GPU 11" style=dashed]
+	layer2_expert11 -> layer2_aggregate
+	gate2 -> layer2_expert12 [label="route to GPU 12" style=dashed]
+	layer2_expert12 -> layer2_aggregate
+	gate2 -> layer2_expert13 [label="route to GPU 13" style=dashed]
+	layer2_expert13 -> layer2_aggregate
+	gate2 -> layer2_expert14 [label="route to GPU 14" style=dashed]
+	layer2_expert14 -> layer2_aggregate
+	gate2 -> layer2_expert15 [label="route to GPU 15" style=dashed]
+	layer2_expert15 -> layer2_aggregate
+	layer2_aggregate -> layer2_residual2
+	layer2_residual2 -> layer3_mha
+	layer3_mha -> layer3_residual1
+	layer3_residual1 -> gate3
+	gate3 -> layer3_expert0 [label="route to GPU 0" style=dashed]
+	layer3_expert0 -> layer3_aggregate
+	gate3 -> layer3_expert1 [label="route to GPU 1" style=dashed]
+	layer3_expert1 -> layer3_aggregate
+	gate3 -> layer3_expert2 [label="route to GPU 2" style=dashed]
+	layer3_expert2 -> layer3_aggregate
+	gate3 -> layer3_expert3 [label="route to GPU 3" style=dashed]
+	layer3_expert3 -> layer3_aggregate
+	gate3 -> layer3_expert4 [label="route to GPU 4" style=dashed]
+	layer3_expert4 -> layer3_aggregate
+	gate3 -> layer3_expert5 [label="route to GPU 5" style=dashed]
+	layer3_expert5 -> layer3_aggregate
+	gate3 -> layer3_expert6 [label="route to GPU 6" style=dashed]
+	layer3_expert6 -> layer3_aggregate
+	gate3 -> layer3_expert7 [label="route to GPU 7" style=dashed]
+	layer3_expert7 -> layer3_aggregate
+	gate3 -> layer3_expert8 [label="route to GPU 8" style=dashed]
+	layer3_expert8 -> layer3_aggregate
+	gate3 -> layer3_expert9 [label="route to GPU 9" style=dashed]
+	layer3_expert9 -> layer3_aggregate
+	gate3 -> layer3_expert10 [label="route to GPU 10" style=dashed]
+	layer3_expert10 -> layer3_aggregate
+	gate3 -> layer3_expert11 [label="route to GPU 11" style=dashed]
+	layer3_expert11 -> layer3_aggregate
+	gate3 -> layer3_expert12 [label="route to GPU 12" style=dashed]
+	layer3_expert12 -> layer3_aggregate
+	gate3 -> layer3_expert13 [label="route to GPU 13" style=dashed]
+	layer3_expert13 -> layer3_aggregate
+	gate3 -> layer3_expert14 [label="route to GPU 14" style=dashed]
+	layer3_expert14 -> layer3_aggregate
+	gate3 -> layer3_expert15 [label="route to GPU 15" style=dashed]
+	layer3_expert15 -> layer3_aggregate
+	layer3_aggregate -> layer3_residual2
+	layer3_residual2 -> output
+	input -> layer0_residual1 [style=dashed]
+	layer0_residual1 -> layer0_residual2 [style=dashed]
+	layer0_residual2 -> layer1_residual1 [style=dashed]
+	layer1_residual1 -> layer1_residual2 [style=dashed]
+	layer1_residual2 -> layer2_residual1 [style=dashed]
+	layer2_residual1 -> layer2_residual2 [style=dashed]
+	layer2_residual2 -> layer3_residual1 [style=dashed]
+	layer3_residual1 -> layer3_residual2 [style=dashed]
+}
