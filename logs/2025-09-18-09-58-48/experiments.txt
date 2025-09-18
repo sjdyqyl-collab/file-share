@@ -1,0 +1,113 @@
+Compact Attention: Experimental Results and Analysis
+
+1. Experimental Setup
+   1.1 Hardware Configuration:
+   - Single H800 GPU
+   - ThunderKittens framework implementation
+   
+   1.2 Test Models:
+   - Wan2.1 (14B parameters): 81 frames at 768×1280 resolution
+   - Hunyuan: 129 frames at 768×1280 resolution
+   
+   1.3 Evaluation Metrics:
+   - Quality: SSIM, PSNR, MSE
+   - VBench metrics: Subject Consistency, Background Consistency, Aesthetic Quality
+   - Text-Video Alignment: CLIPSIM, CLIP-Temp (CLIP-T)
+   - Performance: Attention sparsity rate, attention latency
+
+2. Baseline Comparisons
+   2.1 Compared Methods:
+   - Full Attention (baseline)
+   - STA (Sliding Tile Attention) - spatio-temporal locality
+   - Sparse VideoGen - static pattern
+   - Sparge Attention - dynamic pattern
+
+3. Quantitative Results
+   3.1 Wan2.1 Model (80K tokens):
+   ┌─────────────────────┬──────────┬────────┬────────┬────────┬────────────┬─────────┐
+   │ Method              │ Sparsity │ SSIM   │ PSNR   │ MSE    │ Latency(s) │ Speedup │
+   ├─────────────────────┼──────────┼────────┼────────┼────────┼────────────┼─────────┤
+   │ Full Attention      │ 0%       │ -      │ -      │ -      │ 1092.168   │ 1.00x   │
+   │ Sparse VideoGen     │ 32.08%   │ 0.529  │ 15.956 │ 1894.37│ 1200.148   │ 0.91x   │
+   │ SpargeAttn          │ 32.27%   │ 0.610  │ 20.516 │ 676.07 │ 1065.796   │ 1.02x   │
+   │ Compact Attention   │ 33.99%   │ 0.775  │ 23.730 │ 351.60 │ 663.824    │ 1.65x   │
+   │ Compact Attention   │ 24.66%   │ 0.815  │ 25.266 │ 254.18 │ 758.176    │ 1.44x   │
+   └─────────────────────┴──────────┴────────┴────────┴────────┴────────────┴─────────┘
+
+   3.2 Hunyuan Model (127K tokens):
+   ┌─────────────────────┬──────────┬────────┬────────┬────────┬────────────┬─────────┐
+   │ Method              │ Sparsity │ SSIM   │ PSNR   │ MSE    │ Latency(s) │ Speedup │
+   ├─────────────────────┼──────────┼────────┼────────┼────────┼────────────┼─────────┤
+   │ Full Attention      │ 0%       │ -      │ -      │ -      │ 1370.658   │ 1.00x   │
+   │ Sparse VideoGen     │ 50.35%   │ 0.725  │ 20.430 │ 822.86 │ 1117.767   │ 1.23x   │
+   │ SpargeAttn          │ 47.77%   │ 0.779  │ 23.589 │ 369.31 │ 1148.628   │ 1.19x   │
+   │ Compact Attention   │ 62.36%   │ 0.904  │ 30.082 │ 105.20 │ 546.504    │ 2.51x   │
+   │ Compact Attention   │ 52.90%   │ 0.945  │ 34.551 │ 35.13  │ 750.201    │ 1.83x   │
+   └─────────────────────┴──────────┴────────┴────────┴────────┴────────────┴─────────┘
+
+4. VBench Quality Evaluation
+   4.1 Wan2.1 Results:
+   ┌─────────────────────┬─────────────┬──────────────────┬──────────────────┬────────┬─────────┐
+   │ Method              │ Sparsity    │ Subject Consist. │ Background Cons. │ Aesth. │ CLIPSIM │
+   ├─────────────────────┼─────────────┼──────────────────┼──────────────────┼────────┼─────────┤
+   │ Full Attention      │ 0%          │ 0.9681           │ 0.9616           │ 0.6486 │ 0.2118  │
+   │ Sparse VideoGen     │ 32.08%      │ 0.9547           │ 0.9565           │ 0.6380 │ 0.2116  │
+   │ SpargeAttn          │ 32.27%      │ 0.9357           │ 0.9500           │ 0.5320 │ 0.2064  │
+   │ Compact Attention   │ 33.99%      │ 0.9659           │ 0.9650           │ 0.6480 │ 0.2121  │
+   │ Compact Attention   │ 24.66%      │ 0.9674           │ 0.9638           │ 0.6459 │ 0.2122  │
+   └─────────────────────┴─────────────┴──────────────────┴──────────────────┴────────┴─────────┘
+
+   4.2 Hunyuan Results:
+   ┌─────────────────────┬─────────────┬──────────────────┬──────────────────┬────────┬─────────┐
+   │ Method              │ Sparsity    │ Subject Consist. │ Background Cons. │ Aesth. │ CLIPSIM │
+   ├─────────────────────┼─────────────┼──────────────────┼──────────────────┼────────┼─────────┤
+   │ Full Attention      │ 0%          │ 0.9736           │ 0.9735           │ 0.6542 │ 0.2181  │
+   │ Sparse VideoGen     │ 50.35%      │ 0.9701           │ 0.9722           │ 0.6638 │ 0.2014  │
+   │ SpargeAttn          │ 47.77%      │ 0.9664           │ 0.9731           │ 0.5794 │ 0.2112  │
+   │ Compact Attention   │ 62.36%      │ 0.9716           │ 0.9693           │ 0.6531 │ 0.2184  │
+   │ Compact Attention   │ 52.90%      │ 0.9723           │ 0.9735           │ 0.6536 │ 0.2184  │
+   └─────────────────────┴─────────────┴──────────────────┴──────────────────┴────────┴─────────┘
+
+5. Ablation Studies
+   5.1 Sparse Pattern Effectiveness:
+   - Dual Attention Windows increase cross pattern sparsity by ~10%
+   - Frame-group-wise patterns contribute additional ~3% improvement
+   - Overall sparsity improvement: 9.8% with τ=0.9, λ=0.011
+
+   5.2 Pattern Analysis Results:
+   ┌─────────────────────┬──────────┬──────────────┬──────────────┬──────────────┐
+   │ Pattern Type        │ Cubic    │ Frame-group  │ Dual Windows │ Improvement  │
+   ├─────────────────────┼──────────┼──────────────┼──────────────┼──────────────┤
+   │ Locality Patterns   │ 0.726    │ 0.758        │ 0.766        │ +5.5%        │
+   │ Cross Patterns      │ 0.385    │ 0.406        │ 0.516        │ +34.0%       │
+   │ Global Patterns     │ 0.078    │ 0.085        │ 0.099        │ +27.0%       │
+   │ Time-Variant        │ 0.441    │ 0.472        │ 0.567        │ +28.6%       │
+   │ Time-Invariant      │ 0.306    │ 0.317        │ 0.385        │ +25.8%       │
+   │ Overall             │ 0.361    │ 0.370        │ 0.459        │ +27.1%       │
+   └─────────────────────┴──────────┴──────────────┴──────────────┴──────────────┘
+
+6. Sensitivity Analysis
+   6.1 Recall Threshold Impact:
+   - Higher recall thresholds → lower sparsity but better quality
+   - Lower recall thresholds → higher sparsity but potential quality loss
+   - Sparsity converges to upper bound determined by cost constraints
+
+   6.2 Early Denoising Sensitivity:
+   - 1.02dB PSNR drop when full attention applied only in final 15 steps vs first 15
+   - Critical to maintain full attention in early timesteps (first 15 denoising steps)
+   - Sparse attention safe for later stages without significant quality loss
+
+7. Robustness Analysis
+   7.1 Input Stability:
+   - Pattern similarity >94.4% across different seeds
+   - Computational demands nearly identical across different prompts
+   - Consistent performance with narrow interquartile range
+
+   7.2 Parameter Sensitivity:
+   - (τ=0.9, λ=0.011) configuration shows highest median PSNR
+   - Limited variance across stochastic/semantic input perturbations
+
+8. Visual Quality Assessment
+   - Compact Attention maintains superior visual quality at higher sparsity levels
+   - Outperforms STA, Sparse VideoGen, and Sparge Attention in PSNR/MSE metrics
+   - Minimal perceptual degradation despite significant computational savings

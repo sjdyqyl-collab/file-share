@@ -1,0 +1,76 @@
+Compact Attention: Detailed Methodology
+
+1. Problem Analysis Framework
+   - Focus: Transformer-based video generation with ultra-long sequences
+   - Challenge: Quadratic complexity of self-attention mechanisms
+   - Target: 100K+ tokens for 128-frame 720p HD video generation
+   - Observation: 68-72% of generation time spent on attention computation
+
+2. Sparsity Pattern Discovery
+   2.1 Spatial Patterns (3D Analysis):
+   - Local Patterns: Compact spherical neighborhoods around target positions
+     * Mathematical definition: Rlocal = {(x,y) | max(|x-xt|/ω, |y-yt|/η) ≤ 1}
+   - Cross-Shaped Patterns: Horizontal and vertical attention corridors
+     * Mathematical definition: Rcross = ∪_{k=1}^2 (|x-xt|/ωk ≤ 1 ∧ |y-yt|/ηk ≤ 1)
+   - Global Patterns: Full spatial connectivity regardless of distance
+
+   2.2 Temporal Patterns:
+   - Time-Variant: Strong correlation with temporal relative distance
+     * Progressive weight decay across frames
+     * Focus on specific frame distances
+   - Time-Invariant: Frame-agnostic distributions maintaining consistent focus
+
+3. Compact Attention Framework Architecture
+   3.1 Core Components:
+   - Tile-based computation for heterogeneous sparsity structures
+   - Offline configuration search with cross-prompt merging
+   - Hardware-aware acceleration design
+
+   3.2 Tile-Based Deformable Sparse Pattern:
+   - Hierarchical grouping mechanism respecting video structure
+   - Spacetime tiles: clusters adjacent in spatial and temporal domains
+   - Frame-group-wise patterns for temporal dynamics
+   - Dual attention windows for spatial pattern approximation
+
+4. Automated Mask Search Algorithm
+   4.1 Offline Configuration Pipeline:
+   - Decouples pattern discovery from runtime execution
+   - Boundary contraction process along hierarchical dimensions
+   - Dual threshold system:
+     * Recall threshold (τ): preserves critical interactions
+     * Cost threshold (λ): balances computational reduction vs accuracy
+
+   4.2 Search Process:
+   - Starts with full attention coverage
+   - Iteratively tightens window boundaries prioritizing low recall regions
+   - Terminates when recall < τ or ∆Recall/∆Cost > λ
+   - Union operations across prompts for conservative merging
+   - Configuration caching across n consecutive denoising steps
+
+5. Hardware-Aware Implementation
+   5.1 Computational Optimization:
+   - Block-wise attention processing to reduce overhead
+   - Tile-level sparsity instead of token-level for efficiency
+   - Compatible with FlashAttention-style implementations
+
+   5.2 Memory Efficiency:
+   - Reduced memory consumption through tile abstraction
+   - Preserved computational regularity for hardware acceleration
+
+6. Training-Free Framework
+   - No retraining required for sparse attention application
+   - Offline mask precomputation based on pattern stability
+   - Input/seed invariance enables consistent configurations
+   - Temporal robustness within denoising step ranges
+
+7. Implementation Details
+   - Based on ThunderKittens framework
+   - Reference to STA (Sliding Tile Attention) implementation
+   - Single-GPU optimization (H800 GPU tested)
+   - Compatible with Wan2.1 (14B) and Hunyuan architectures
+
+8. Parameter Configuration
+   - Recall threshold (τ): 0.9 for high quality retention
+   - Cost threshold (λ): 0.011 for Wan, 0.04 for Hunyuan
+   - Frame grouping based on temporal distance
+   - Tile sizes optimized for 768×1280 resolution videos

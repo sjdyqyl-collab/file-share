@@ -1,0 +1,90 @@
+# Phase 3: Experiments Extraction - DraftAttention
+
+## 4.1 Experiment Setup
+
+### Models Tested
+- **HunyuanVideo-T2V**: 768p resolution, 128 frames
+- **Wan2.1-T2V**: 512p and 768p resolutions, 80 frames each
+
+### Resolution Specifications
+- **512p**: Latent size 32×48 (divisible by 8×16 kernel)
+- **768p**: Latent size 48×80 (divisible by 8×16 kernel)
+- **Padding**: Method supports any resolution with appropriate padding
+
+### Implementation Details
+- **Attention framework**: Block Sparse Attention
+- **Baseline comparison**: Sparse VideoGen (SVG)
+- **Full attention retention**: First 25% of denoising steps
+- **Pooling kernel**: 8×16 with stride=kernel size
+- **Codebase**: Ensured fair comparison by using full attention for both methods
+
+### Evaluation Metrics
+- **VBench**: Comprehensive video generation quality
+- **PSNR**: Peak Signal-to-Noise Ratio (similarity to dense model)
+- **SSIM**: Structural Similarity Index Measure
+- **LPIPS**: Learned Perceptual Image Patch Similarity
+- **PFLOPs**: Computation cost measurement
+- **Latency**: Measured on H100 GPU
+
+### Test Prompts
+- **Source**: Penguin Video Benchmark from HunyuanVideo
+- **Categories**: Image quality, subject consistency, background consistency, dynamic degree, aesthetic quality
+
+## 4.2 Main Results
+
+### Quantitative Results - Wan2.1 Model
+
+#### 512p Resolution
+| Method | Sparsity | PSNR↑ | SSIM↑ | LPIPS↓ | Img. Qual. | Sub. Cons. | Bakg. Cons. | Dyn. Deg. | Aes. Qual. | PFLOPs↓ |
+|--------|----------|--------|--------|---------|------------|------------|-------------|-----------|------------|---------|
+| SVG | 0% | - | - | - | 65.1% | 95.0% | 95.9% | 44.7% | 58.9% | 145.65 |
+| SVG | 55% | 25.61 | 83.63 | 10.42 | 65.2% | 94.8% | 95.9% | 45.2% | 58.9% | 99.26 |
+| SVG | 75% | 23.66 | 78.80 | 15.05 | 64.7% | 94.5% | 95.7% | 45.7% | 58.6% | 91.12 |
+| Ours | 0% | - | - | - | 69.3% | 95.5% | 96.7% | 47.6% | 61.5% | 145.65 |
+| Ours | 55% | 25.13 | 84.77 | 8.43 | 69.2% | 95.5% | 96.6% | 47.6% | 61.5% | 99.26 |
+| Ours | 75% | 23.10 | 79.07 | 12.37 | 69.0% | 95.4% | 96.5% | 46.9% | 61.5% | 91.12 |
+
+#### 768p Resolution
+| Method | Sparsity | PSNR↑ | SSIM↑ | LPIPS↓ | Img. Qual. | Sub. Cons. | Bakg. Cons. | Dyn. Deg. | Aes. Qual. | PFLOPs↓ |
+|--------|----------|--------|--------|---------|------------|------------|-------------|-----------|------------|---------|
+| SVG | 0% | - | - | - | 67.7% | 95.3% | 96.4% | 43.4% | 60.4% | 609.52 |
+| SVG | 55% | 26.01 | 84.81 | 10.89 | 67.9% | 95.1% | 96.3% | 42.1% | 60.0% | 354.68 |
+| SVG | 75% | 23.62 | 79.05 | 17.57 | 67.5% | 94.8% | 96.1% | 42.1% | 58.8% | 309.95 |
+| Ours | 0% | - | - | - | 67.5% | 95.7% | 97.1% | 37.7% | 60.8% | 609.52 |
+| Ours | 55% | 29.22 | 92.16 | 5.82 | 67.4% | 95.6% | 97.0% | 37.2% | 60.8% | 354.69 |
+| Ours | 75% | 27.17 | 88.97 | 8.71 | 67.2% | 95.6% | 97.0% | 38.6% | 60.7% | 309.95 |
+
+### Quantitative Results - Hunyuan Model (768p)
+| Method | Sparsity | PSNR↑ | SSIM↑ | LPIPS↓ | Img. Qual. | Sub. Cons. | Bakg. Cons. | Dyn. Deg. | Aes. Qual. | PFLOPs↓ |
+|--------|----------|--------|--------|---------|------------|------------|-------------|-----------|------------|---------|
+| Dense | 0% | - | - | - | 66.4% | 96.0% | 97.0% | 36.4% | 58.6% | 682.67 |
+| SVG | 60% | 25.80 | 84.46 | 14.20 | 66.4% | 95.9% | 97.0% | 36.6% | 58.2% | 343.72 |
+| SVG | 80% | 24.70 | 81.90 | 17.55 | 66.0% | 95.7% | 96.9% | 33.9% | 58.1% | 295.30 |
+| SVG | 90% | 23.48 | 78.57 | 22.60 | 65.1% | 95.4% | 96.7% | 32.8% | 57.5% | 283.20 |
+| Ours | 60% | 32.08 | 93.21 | 5.58 | 66.4% | 95.9% | 97.0% | 35.9% | 58.5% | 343.73 |
+| Ours | 80% | 29.19 | 89.32 | 9.19 | 66.2% | 95.8% | 97.0% | 35.7% | 58.2% | 295.31 |
+| Ours | 90% | 24.22 | 79.90 | 18.12 | 65.9% | 95.7% | 96.9% | 36.6% | 57.8% | 283.20 |
+
+### Latency Results (H100 GPU)
+- **Hunyuan 768p**: 1.75× speedup at 90% sparsity
+- **Wan2.1 768p**: 1.42× speedup at 75% sparsity, 1.22× at 55% sparsity
+- **Scaling**: Speedup increases with sparsity ratio
+
+## 4.3 Ablation Study
+
+### Pooling Method Comparison
+- **Average pooling** (proposed): Better background preservation
+- **Max pooling**: Degraded generation quality, especially backgrounds
+- **Visualization**: Clear quality difference at 90% sparsity
+
+### Key Observations
+1. **Quality preservation**: DraftAttention maintains better quality at same sparsity
+2. **Similarity metrics**: Consistently higher PSNR/SSIM, lower LPIPS vs SVG
+3. **Computational efficiency**: Same PFLOPs as SVG but better quality
+4. **Sparsity tolerance**: Effective even at 90% sparsity
+
+### Visual Results
+- **SVG at 90%**: Noticeable blurry pixels, quality degradation
+- **DraftAttention at 90%**: Maintains quality similar to dense baseline
+- **Background consistency**: DraftAttention preserves details better
+- **Subject consistency**: Better maintained across frames

@@ -1,0 +1,44 @@
+Key Points of Compact Attention Paper:
+
+1. Problem Statement:
+   - Transformer-based video generation faces critical computational challenges with ultra-long sequences
+   - Hunyuan-video: 128-frame 720p HD video requires processing 100K+ tokens
+   - Attention computation consumes 68-72% of total generation time
+   - Existing sparse attention methods fail to exploit 3D spatio-temporal redundancies effectively
+
+2. Key Insight:
+   - Attention matrices exhibit structured yet heterogeneous sparsity patterns
+   - Specialized attention heads focus on distinct spatiotemporal regions:
+     * Local patterns (compact neighborhoods)
+     * Cross-shaped patterns (horizontal/vertical corridors)
+     * Global patterns (full spatial connectivity)
+   - Temporal patterns: time-variant vs time-invariant behaviors
+
+3. Methodology:
+   - Compact Attention: hardware-aware acceleration framework
+   - Three key innovations:
+     1) Adaptive tiling strategies with dynamic tile grouping
+     2) Temporally varying windows based on frame proximity
+     3) Automated configuration search algorithm for sparse pattern optimization
+
+4. Technical Approach:
+   - Tile-based deformable sparse patterns
+   - Offline auto-search of sparse masks
+   - Frame-group-wise patterns for temporal dynamics
+   - Dual attention windows for spatial patterns
+   - Pattern stability enables offline precomputation
+
+5. Results:
+   - 1.6-2.5× acceleration in attention computation
+   - Maintains comparable visual quality to full-attention baselines
+   - Tested on Wan2.1 (14B) and Hunyuan models
+   - Up to 62.36% sparsity with minimal quality degradation
+
+6. Stability Findings:
+   - Attention patterns stable across different inputs/seeds
+   - Patterns consistent within denoising step ranges
+   - Enables reliable offline mask precomputation
+
+7. Limitations:
+   - Auto-search may compromise visual fidelity with low thresholds
+   - Critical visual details might be omitted in demanding scenarios

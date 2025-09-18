@@ -1,0 +1,160 @@
+{
+  "paper_analysis": {
+    "gaps_limitations": [
+      {
+        "gap": "Fixed recall and cost thresholds may not adapt to varying content complexity",
+        "impact": "Critical visual details might be omitted in complex scenes with demanding requirements",
+        "current_approach": "Static τ=0.9 and λ=0.011/0.04 parameters across all content types",
+        "severity": "Medium"
+      },
+      {
+        "gap": "No consideration for dynamic content adaptation during inference",
+        "impact": "Uniform sparsity patterns may not suit varying motion complexity or scene changes",
+        "current_approach": "Offline precomputed masks with no runtime adaptation",
+        "severity": "High"
+      },
+      {
+        "gap": "Limited exploration of multi-GPU or distributed settings",
+        "impact": "Single-GPU constraint limits scalability for ultra-long sequences",
+        "current_approach": "Single-GPU implementation only",
+        "severity": "Medium"
+      },
+      {
+        "gap": "No explicit handling of temporal consistency in sparse patterns",
+        "impact": "Potential temporal flickering or discontinuities in generated videos",
+        "current_approach": "Independent frame grouping without explicit temporal smoothing",
+        "severity": "Low"
+      },
+      {
+        "gap": "Limited analysis of different video genres or content types",
+        "impact": "Patterns may not generalize well to diverse video domains (animation, sports, etc.)",
+        "current_approach": "General T2V evaluation without domain-specific analysis",
+        "severity": "Medium"
+      }
+    ],
+    "proposed_improvements": [
+      {
+        "improvement": "Adaptive Threshold Mechanism",
+        "description": "Dynamic adjustment of recall (τ) and cost (λ) thresholds based on content complexity metrics",
+        "implementation": "Use gradient magnitude, motion vectors, or semantic complexity scores to modulate thresholds",
+        "runtime_change": "[100K, 70K, 1] → [100K, 75K, 1] with adaptive thresholds (better quality retention)",
+        "expected_benefit": "5-10% better quality retention with same computational budget"
+      },
+      {
+        "improvement": "Content-Aware Pattern Selection",
+        "description": "Runtime analysis of frame content to select optimal sparse patterns",
+        "implementation": "Lightweight CNN to classify content type and adjust pattern weights accordingly",
+        "runtime_change": "[100K, 62.36K, 1] → [100K, 65K, 1] with content-adaptive patterns",
+        "expected_benefit": "Improved visual quality for complex scenes"
+      },
+      {
+        "improvement": "Multi-GPU Distributed Sparse Attention",
+        "description": "Extend framework to leverage multiple GPUs with optimized communication patterns",
+        "implementation": "Ring-reduce communication for attention blocks with overlap of computation and communication",
+        "runtime_change": "[100K, 100K, 1] → [25K, 25K, 1] per GPU + [4, 25K, 25K] communication (4-GPU setup)",
+        "expected_benefit": "3-4× additional speedup for ultra-long sequences"
+      },
+      {
+        "improvement": "Temporal Consistency Regularization",
+        "description": "Enforce smooth temporal transitions in attention patterns across frames",
+        "implementation": "Add temporal smoothness loss during mask optimization with bilateral filtering",
+        "runtime_change": "[100K, 62.36K, 1] → [100K, 63K, 1] with temporal regularization",
+        "expected_benefit": "Reduced temporal flickering artifacts"
+      },
+      {
+        "improvement": "Hierarchical Multi-Scale Patterns",
+        "description": "Use pyramid of patterns at different scales for better approximation",
+        "implementation": "Multi-resolution tile grouping with scale-dependent thresholds",
+        "runtime_change": "[100K, 62.36K, 1] → [100K, 68K, 1] with hierarchical patterns",
+        "expected_benefit": "Better approximation of complex attention distributions"
+      },
+      {
+        "improvement": "Learned Pattern Refinement",
+        "description": "Lightweight neural network to refine offline patterns during inference",
+        "implementation": "Small MLP that takes local features and outputs pattern adjustments",
+        "runtime_change": "[100K, 62.36K, 1] → [100K, 64K, 1] with learned refinements",
+        "expected_benefit": "Runtime adaptation while maintaining efficiency"
+      },
+      {
+        "improvement": "Attention Saliency Prediction",
+        "description": "Predict attention importance using low-cost saliency estimation",
+        "implementation": "Use low-resolution features to predict attention importance before full computation",
+        "runtime_change": "[100K, 100K, 1] → [100K, 60K, 1] with saliency-guided sparsity",
+        "expected_benefit": "More accurate sparse pattern selection"
+      }
+    ]
+  },
+  "innovative_points": [
+    {
+      "innovation": "Structured Spatio-Temporal Pattern Discovery",
+      "description": "First systematic identification of heterogeneous attention patterns in video transformers",
+      "novelty": "Categorization into local, cross-shaped, global spatial patterns and time-variant/invariant temporal patterns",
+      "impact": "Enables principled sparse approximation based on actual attention behaviors",
+      "evidence": "94.4% pattern stability across different inputs and seeds"
+    },
+    {
+      "innovation": "Tile-Based Deformable Sparse Patterns",
+      "description": "Adaptive tile grouping that respects 3D video structure while maintaining hardware efficiency",
+      "novelty": "Dynamic combination of tiles to approximate complex attention distributions",
+      "impact": "Achieves 27.1% better sparsity than cubic window baselines",
+      "implementation": "Hierarchical grouping with frame-group-wise and dual window strategies"
+    },
+    {
+      "innovation": "Offline Auto-Search Algorithm",
+      "description": "Automated configuration search with recall-cost tradeoff optimization",
+      "novelty": "Boundary contraction process with dual threshold system and cross-prompt merging",
+      "impact": "Training-free acceleration with precomputed optimal patterns",
+      "parameters": "τ=0.9 (recall threshold), λ=0.011/0.04 (cost thresholds)"
+    },
+    {
+      "innovation": "Hardware-Aware Implementation",
+      "description": "ThunderKittens-based implementation optimized for single-GPU inference",
+      "novelty": "Tile-level sparsity compatible with FlashAttention-style processing",
+      "impact": "2.51× speedup on Hunyuan with 62.36% sparsity while maintaining quality",
+      "optimization": "Memory-efficient block-wise processing with computational regularity"
+    },
+    {
+      "innovation": "Temporal Robustness Exploitation",
+      "description": "Leveraging pattern stability across denoising steps for configuration reuse",
+      "novelty": "Configuration caching across n consecutive denoising steps",
+      "impact": "Reduces search frequency by n× while maintaining quality",
+      "evidence": "Pattern stability within denoising step ranges enables reliable reuse"
+    }
+  ],
+  "runtime_analysis": {
+    "baseline": {
+      "method": "Full Attention",
+      "computation": "[100K, 100K, 1] matrix multiplication",
+      "memory": "O(n²) where n = sequence length",
+      "hunyuan_latency": "1370.658s"
+    },
+    "proposed": {
+      "method": "Compact Attention",
+      "computation": "[100K, 62.36K, 1] matrix multiplication (62.36% sparsity)",
+      "memory": "O(n² × sparsity_rate)",
+      "hunyuan_latency": "546.504s (2.51× speedup)"
+    },
+    "improved": {
+      "method": "Enhanced Compact Attention",
+      "computation": "[100K, 70K, 1] matrix multiplication (70% sparsity with adaptive thresholds)",
+      "enhancements": [
+        "Adaptive thresholding based on content complexity",
+        "Early-step full attention (first 15 steps)",
+        "Content-aware pattern selection"
+      ],
+      "projected_hunyuan_latency": "400-450s (3.0-3.4× speedup)"
+    }
+  },
+  "experimental_parameters": {
+    "models": {
+      "wan2.1": {"parameters": "14B", "frames": 81, "resolution": "768×1280"},
+      "hunyuan": {"frames": 129, "resolution": "768×1280"}
+    },
+    "thresholds": {
+      "recall_tau": 0.9,
+      "cost_lambda_wan": 0.011,
+      "cost_lambda_hunyuan": 0.04
+    },
+    "hardware": "Single H800 GPU with ThunderKittens framework"
+  }
+}

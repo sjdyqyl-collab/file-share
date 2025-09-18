@@ -1,0 +1,175 @@
+{
+  "title": "XAttention: Block Sparse Attention with Antidiagonal Scoring",
+  "abstract": "Long-Context Transformer Models (LCTMs) are vital for real-world applications but suffer high computational costs due to attention's quadratic complexity. Block-sparse attention mitigates this by focusing computation on critical regions, yet existing methods struggle with balancing accuracy and efficiency due to costly block importance measurements. In this paper, we introduce XAttention, a plug-and-play framework that dramatically accelerates long-context inference in Transformers models using sparse attention. XAttention's key innovation is the insight that the sum of antidiagonal values (i.e., from the lower-left to upper-right) in the attention matrix provides a powerful proxy for block importance. This allows for precise identification and pruning of non-essential blocks, resulting in high sparsity and dramatically accelerated inference. Across comprehensive evaluations on demanding long-context benchmarks—including RULER and LongBench for language, VideoMME for video understanding, and VBench for video generation—XAttention achieves accuracy comparable to full attention while delivering substantial computational gains. We demonstrate up to 13.5× acceleration in attention computation. These results underscore XAttention's ability to unlock the practical potential of block sparse attention, paving the way for scalable and efficient deployment of LCTMs in real-world applications.",
+  "innovations": [
+    {
+      "name": "Antidiagonal Scoring Mechanism",
+      "description": "The core innovation that uses sum of antidiagonal values in attention matrices as a proxy for block importance",
+      "runtime_change": {
+        "baseline": "[L, L] full attention computation",
+        "original": "[L/S, L/S] antidiagonal scoring + ρ[L, L] sparse attention",
+        "improvement": "Same as original - this is the foundational innovation"
+      },
+      "parameters": {
+        "stride_S": [4, 8, 16, 64],
+        "block_size_B": 64,
+        "threshold_τ": 0.9
+      }
+    },
+    {
+      "name": "Training-Free Block Selection",
+      "description": "Lightweight algorithm for selecting important attention blocks without requiring model retraining",
+      "runtime_change": {
+        "baseline": "O(L²d) full attention",
+        "original": "O((L/S)²d + ρL²d) where ρ = 6-45%",
+        "improvement": "Same as original"
+      },
+      "parameters": {
+        "selection_method": "threshold_based",
+        "find_blocks_function": "argmin_B{|B| | Σ_{b∈B} Σ_{(i,j)∈b} A_{i,j} ≥ τ}"
+      }
+    },
+    {
+      "name": "Dynamic Threshold Prediction",
+      "description": "Uses dynamic programming to optimize threshold per attention head for better accuracy-efficiency trade-off",
+      "runtime_change": {
+        "baseline": "Fixed threshold τ = 0.9",
+        "original": "Dynamic programming with M=1000 adjustments",
+        "improvement": "Average threshold 0.8 with better accuracy"
+      },
+      "parameters": {
+        "max_adjustments_M": 1000,
+        "threshold_reduction": "10% per step",
+        "dp_table": "D[h][m] = max(D[h-1][m], P(h,m))"
+      }
+    },
+    {
+      "name": "Warmup Strategy for Video Generation",
+      "description": "Uses 5 steps of full attention before switching to sparse attention to maintain layout consistency",
+      "runtime_change": {
+        "baseline": "Sparse attention from step 1",
+        "original": "5 steps full + remaining sparse",
+        "improvement": "Better visual fidelity with minimal overhead"
+      },
+      "parameters": {
+        "warmup_steps": 5,
+        "thresholds": [0.9, 0.95]
+      }
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "name": "Learnable Stride Selection (LSS)",
+      "description": "Dynamically learn optimal stride per attention head and layer using lightweight MLP",
+      "runtime_change": {
+        "original": "Fixed stride S across all heads",
+        "improved": "Learned stride S_h per head + O(Ld) overhead",
+        "expected_benefit": "Better sparsity patterns, 10-20% additional speedup"
+      },
+      "implementation": "MLP predicts stride based on query/key statistics",
+      "parameters": {
+        "mlp_layers": 2,
+        "hidden_dim": 128,
+        "objective": "L1 loss between predicted and optimal stride"
+      }
+    },
+    {
+      "name": "Multi-Pattern Detection",
+      "description": "Extend beyond antidiagonal to detect diagonal, block diagonal, and cross patterns",
+      "runtime_change": {
+        "original": "Single antidiagonal pattern",
+        "improved": "k patterns × [L/S, L/S] scoring matrices",
+        "expected_benefit": "Better pattern coverage, 5-10% accuracy improvement"
+      },
+      "patterns": ["antidiagonal", "diagonal", "cross", "block_diagonal"],
+      "k": 4,
+      "combination_method": "learned weighted sum"
+    },
+    {
+      "name": "Element-wise Thresholding",
+      "description": "Apply thresholding at element level within selected blocks for finer sparsity",
+      "runtime_change": {
+        "original": "Block-level thresholding",
+        "improved": "Element-level thresholding within blocks",
+        "expected_benefit": "30-50% additional sparsity with <1% accuracy loss"
+      },
+      "method": "learned threshold per head and position",
+      "expected_density": "0.5-0.7 × original density"
+    },
+    {
+      "name": "Distributed XAttention (DXA)",
+      "description": "Extend to multi-device distributed setting using ring attention",
+      "runtime_change": {
+        "original": "Single device [L, L] attention",
+        "improved": "p devices [L/p, L] + communication overhead",
+        "expected_benefit": "Linear speedup with number of devices"
+      },
+      "communication": "O(L²/p) per device",
+      "devices": 4,
+      "expected_speedup": "4× additional speedup"
+    }
+  ],
+  "runtime_analysis": {
+    "baseline_full_attention": {
+      "computation": "[L, d] × [d, L] → [L, L]",
+      "complexity": "O(L²d)",
+      "example_256k": "[256k, 4096] × [4096, 256k] → [256k, 256k]"
+    },
+    "xattention_original": {
+      "pattern_selection": "[L/S, d] × [d, L/S] → [L/S, L/S]",
+      "sparse_attention": "ρ × [L, d] × [d, L] → [L, L]",
+      "total_complexity": "O((L/S)²d + ρL²d)",
+      "density_256k": "7.32% (S=16)",
+      "speedup_256k": "13.5×"
+    },
+    "xattention_improved": {
+      "projected_density": "4.5%",
+      "projected_speedup": "22.2×",
+      "distributed_4devices": "52.0×",
+      "overhead": "<5% additional computation"
+    }
+  },
+  "experimental_parameters": {
+    "models": {
+      "language": "Llama-3.1-8B-Instruct",
+      "video_understanding": "Qwen2-VL-7B-Instruct",
+      "video_generation": "HunyuanVideo (DiT)"
+    },
+    "benchmarks": {
+      "ruler": "4k-128k synthetic tasks",
+      "longbench": "real-world long-context tasks",
+      "videomme": "900 videos (11s-1h duration)",
+      "vbench": "946 video generation prompts"
+    },
+    "configurations": {
+      "stride": [8, 16],
+      "threshold": [0.9, "dynamic"],
+      "block_size": 64,
+      "warmup_steps": 5
+    },
+    "baselines": ["FlashAttention", "MInference", "FlexPrefill", "SeerAttention"]
+  },
+  "performance_summary": {
+    "maximum_speedup": "13.5× at 256k tokens",
+    "pattern_selection_speedup": {
+      "vs_mInference": "24.9× faster",
+      "vs_flexPrefill": "5.9× faster"
+    },
+    "accuracy": {
+      "ruler": "88.47 average (outperforms full attention)",
+      "longbench": "40.60 average (highest among sparse methods)",
+      "videomme": "69.1% overall (outperforms full on long videos)",
+      "vbench": "PSNR 23.5, SSIM 0.822, LPIPS 0.155"
+    },
+    "sparsity": {
+      "128k_tokens": "6.89% density (S=8)",
+      "256k_tokens": "7.32% density (S=16)"
+    }
+  },
+  "research_extensions": [
+    "Attention head clustering for further computation reduction",
+    "Hierarchical sparsity at sequence, block, and element levels",
+    "Online learning for adaptive threshold adjustment",
+    "Hardware co-design for antidiagonal operations"
+  ]
+}

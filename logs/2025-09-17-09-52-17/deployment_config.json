@@ -1,0 +1,202 @@
+{
+  "models": {
+    "baseline_model": {
+      "name": "Dense Transformer Baseline",
+      "architecture": {
+        "layers": 4,
+        "hidden_size": 8192,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768,
+        "sequence_length": 10000,
+        "batch_size": 1024,
+        "precision": "fp16"
+      },
+      "parallel_strategy": {
+        "type": "Tensor_Parallelism_Pipeline_Parallelism",
+        "tensor_parallelism": {
+          "degree": 8,
+          "partition_method": "column_row_split"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2,
+          "layers_per_stage": 2
+        }
+      },
+      "device_mapping": {
+        "total_devices": 16,
+        "tensor_parallel_groups": {
+          "group_0": {
+            "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+            "layers": [0, 1]
+          },
+          "group_1": {
+            "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+            "layers": [2, 3]
+          }
+        }
+      },
+      "module_division": {
+        "attention_modules": {
+          "qkv_projection": {
+            "type": "column_parallel",
+            "input_dim": 8192,
+            "output_dim": 24576,
+            "devices_per_module": 8,
+            "partition_size": 3072
+          },
+          "attention_output": {
+            "type": "row_parallel",
+            "input_dim": 8192,
+            "output_dim": 8192,
+            "devices_per_module": 8,
+            "partition_size": 1024
+          }
+        },
+        "mlp_modules": {
+          "first_linear": {
+            "type": "column_parallel",
+            "input_dim": 8192,
+            "output_dim": 32768,
+            "devices_per_module": 8,
+            "partition_size": 4096
+          },
+          "second_linear": {
+            "type": "row_parallel",
+            "input_dim": 32768,
+            "output_dim": 8192,
+            "devices_per_module": 8,
+            "partition_size": 1024
+          }
+        }
+      }
+    },
+    "ra_sp_model": {
+      "name": "Dense Transformer RA+SP",
+      "architecture": {
+        "layers": 4,
+        "hidden_size": 8192,
+        "attention_heads": 16,
+        "head_dimension": 512,
+        "mlp_hidden_size": 32768,
+        "sequence_length": 10000,
+        "batch_size": 1024,
+        "precision": "fp16"
+      },
+      "parallel_strategy": {
+        "type": "Ring_Attention_Sequence_Parallelism",
+        "ring_attention": {
+          "ring_size": 16,
+          "stages": 16,
+          "communication_pattern": "peer_to_peer_ring"
+        },
+        "sequence_parallelism": {
+          "degree": 16,
+          "sequence_chunk_size": 625,
+          "memory_reduction": 16
+        }
+      },
+      "device_mapping": {
+        "total_devices": 16,
+        "ring_topology": {
+          "device_0": {"next": 1, "previous": 15, "sequence_chunk": 0},
+          "device_1": {"next": 2, "previous": 0, "sequence_chunk": 1},
+          "device_2": {"next": 3, "previous": 1, "sequence_chunk": 2},
+          "device_3": {"next": 4, "previous": 2, "sequence_chunk": 3},
+          "device_4": {"next": 5, "previous": 3, "sequence_chunk": 4},
+          "device_5": {"next": 6, "previous": 4, "sequence_chunk": 5},
+          "device_6": {"next": 7, "previous": 5, "sequence_chunk": 6},
+          "device_7": {"next": 8, "previous": 6, "sequence_chunk": 7},
+          "device_8": {"next": 9, "previous": 7, "sequence_chunk": 8},
+          "device_9": {"next": 10, "previous": 8, "sequence_chunk": 9},
+          "device_10": {"next": 11, "previous": 9, "sequence_chunk": 10},
+          "device_11": {"next": 12, "previous": 10, "sequence_chunk": 11},
+          "device_12": {"next": 13, "previous": 11, "sequence_chunk": 12},
+          "device_13": {"next": 14, "previous": 12, "sequence_chunk": 13},
+          "device_14": {"next": 15, "previous": 13, "sequence_chunk": 14},
+          "device_15": {"next": 0, "previous": 14, "sequence_chunk": 15}
+        }
+      },
+      "module_division": {
+        "sequence_processing": {
+          "input_sequence": {
+            "total_tokens": 10000,
+            "tokens_per_device": 625,
+            "sequence_partitions": 16
+          }
+        },
+        "attention_computation": {
+          "local_qkv_projection": {
+            "input_tokens": 625,
+            "input_dim": 8192,
+            "output_dim": 24576,
+            "qkv_computation": "local_per_device"
+          },
+          "ring_attention_stages": {
+            "total_stages": 16,
+            "kv_block_size": "625_tokens_x_8192_dim",
+            "communication_per_stage": "1_block_transfer"
+          }
+        },
+        "mlp_modules": {
+          "local_mlp_processing": {
+            "input_tokens": 625,
+            "first_linear": "625_tokens_x_8192_to_32768",
+            "activation": "GELU_local",
+            "second_linear": "625_tokens_x_32768_to_8192"
+          }
+        }
+      },
+      "communication_schedule": {
+        "stage_0": {
+          "device_operations": {
+            "device_0": {"compute_with": "chunk_0", "send_to": 1, "recv_from": 15},
+            "device_1": {"compute_with": "chunk_1", "send_to": 2, "recv_from": 0},
+            "device_2": {"compute_with": "chunk_2", "send_to": 3, "recv_from": 1},
+            "device_3": {"compute_with": "chunk_3", "send_to": 4, "recv_from": 2},
+            "device_4": {"compute_with": "chunk_4", "send_to": 5, "recv_from": 3},
+            "device_5": {"compute_with": "chunk_5", "send_to": 6, "recv_from": 4},
+            "device_6": {"compute_with": "chunk_6", "send_to": 7, "recv_from": 5},
+            "device_7": {"compute_with": "chunk_7", "send_to": 8, "recv_from": 6},
+            "device_8": {"compute_with": "chunk_8", "send_to": 9, "recv_from": 7},
+            "device_9": {"compute_with": "chunk_9", "send_to": 10, "recv_from": 8},
+            "device_10": {"compute_with": "chunk_10", "send_to": 11, "recv_from": 9},
+            "device_11": {"compute_with": "chunk_11", "send_to": 12, "recv_from": 10},
+            "device_12": {"compute_with": "chunk_12", "send_to": 13, "recv_from": 11},
+            "device_13": {"compute_with": "chunk_13", "send_to": 14, "recv_from": 12},
+            "device_14": {"compute_with": "chunk_14", "send_to": 15, "recv_from": 13},
+            "device_15": {"compute_with": "chunk_15", "send_to": 0, "recv_from": 14}
+          }
+        }
+      }
+    }
+  },
+  "deployment_parameters": {
+    "communication_backend": "NCCL",
+    "precision": "fp16",
+    "kernel_optimizations": {
+      "fused_qkv_projection": true,
+      "fused_softmax": true,
+      "async_communication": true,
+      "mixed_precision": true
+    },
+    "memory_management": {
+      "activation_checkpointing": true,
+      "stream_allocation": true,
+      "memory_efficient_attention": true
+    }
+  },
+  "performance_targets": {
+    "baseline": {
+      "tps_tokens_per_second": "1.20M",
+      "tpot_ms_per_token": 0.85
+    },
+    "ra_sp_target": {
+      "tps_tokens_per_second": "1.45M",
+      "tpot_ms_per_token": 0.70,
+      "improvement_tps": "+20.8%",
+      "improvement_tpot": "-17.6%"
+    }
+  }
+}

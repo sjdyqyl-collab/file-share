@@ -1,0 +1,163 @@
+{
+  "paper_title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "innovative_points": [
+    {
+      "id": 1,
+      "title": "Training-Free Dynamic Sparse Attention",
+      "description": "First method to provide truly dynamic sparse attention patterns at per-module level without requiring any training or fine-tuning",
+      "technical_details": "Uses low-resolution draft attention computed via average pooling to guide sparse patterns for each attention module independently",
+      "runtime_improvement": {
+        "baseline": "[n, k, n] full attention",
+        "proposed": "[n/128, k/128, n/128] + [n, k*r, n] sparse",
+        "speedup": "1.75x end-to-end on H100 GPU"
+      },
+      "quality_impact": "Maintains generation quality comparable to dense baseline"
+    },
+    {
+      "id": 2,
+      "title": "Low-Resolution Attention Guidance",
+      "description": "Novel approach using downsampled query/key to compute draft attention maps that reliably approximate full attention",
+      "technical_details": "8×16 average pooling reduces tokens by 128× factor while preserving essential visual patterns",
+      "runtime_improvement": {
+        "draft_computation": "[n/128, k/128, n/128] = 1/16384 of full attention cost",
+        "guidance_overhead": "Negligible compared to sparse attention savings"
+      },
+      "quality_impact": "PSNR improvements of 3-6dB over SVG at same sparsity"
+    },
+    {
+      "id": 3,
+      "title": "Hardware-Friendly Token Reordering",
+      "description": "Deterministic reordering algorithm that aligns region-level sparsity with GPU-optimized block processing",
+      "technical_details": "Groups 8×16 spatial patches contiguously in memory for efficient block-wise computation",
+      "runtime_improvement": {
+        "memory_access": "Coalesced reads/writes vs scattered access",
+        "kernel_efficiency": "Compatible with FlashAttention and Block Sparse Attention"
+      },
+      "quality_impact": "No quality degradation, pure performance gain"
+    },
+    {
+      "id": 4,
+      "title": "Theoretical Error Bounds",
+      "description": "First formal analysis quantifying approximation error from both pooling and sparsification in video diffusion",
+      "technical_details": "Frobenius norm bounds: ‖S-S_draft‖_F ≤ δn and ‖S-S⊙˜M‖_F ≤ n(δ+t)√(1-r)",
+      "runtime_improvement": {
+        "theoretical_guarantee": "Controlled error with bounded deviation",
+        "practical_validation": "Empirical results match theoretical predictions"
+      },
+      "quality_impact": "Provides confidence in quality preservation at high sparsity"
+    }
+  ],
+  "improvement_proposals": [
+    {
+      "id": 1,
+      "title": "Adaptive Pooling Kernels",
+      "description": "Learn optimal kernel sizes per layer based on content characteristics instead of fixed 8×16",
+      "technical_implementation": "Content-aware kernel selection with learned scaling factors α, β",
+      "runtime_improvement": {
+        "baseline": "[n, k, n] → [n/128, k/128, n/128]",
+        "improved": "[n, k, n] → [n/α, k/β, n/α] where α,β ∈ [64,256]",
+        "expected_speedup": "Additional 1.2-1.4x over current method"
+      },
+      "quality_benefit": "Better preservation of fine details, especially in high-motion regions"
+    },
+    {
+      "id": 2,
+      "title": "Layer-wise Dynamic Sparsity",
+      "description": "Adaptive sparsity ratios based on layer importance and content complexity",
+      "technical_implementation": "Learn layer-specific sparsity ratios r_i ∈ [0.5, 0.95]",
+      "runtime_improvement": {
+        "baseline": "Uniform r=0.9 across all layers",
+        "improved": "r_i varies per layer: early layers r=0.7, late layers r=0.95",
+        "expected_speedup": "1.3-1.5x better computation allocation"
+      },
+      "quality_benefit": "Allocate compute budget more efficiently, maintain quality"
+    },
+    {
+      "id": 3,
+      "title": "Motion-Aware Temporal Pooling",
+      "description": "Adaptive pooling weights based on optical flow magnitude instead of uniform average",
+      "technical_implementation": "Compute motion vectors between frames, weight pooling by motion magnitude",
+      "runtime_improvement": {
+        "baseline": "[n_t×n_s, k, n_t×n_s] → [n_t/8×n_s/16, k, n_t/8×n_s/16]",
+        "improved": "Motion-guided sampling with variable temporal reduction",
+        "expected_speedup": "Minimal overhead, better temporal coherence"
+      },
+      "quality_benefit": "Preserve temporal dynamics in high-motion sequences"
+    },
+    {
+      "id": 4,
+      "title": "Multi-Scale Draft Attention",
+      "description": "Hierarchical draft attention at multiple resolutions for better pattern capture",
+      "technical_implementation": "Compute drafts at 3 scales: 1/64, 1/128, 1/256 resolution",
+      "runtime_improvement": {
+        "baseline": "Single [n/128, k/128, n/128] draft",
+        "improved": "Multi-scale: [n/64, k/64, n/64] + [n/128, k/128, n/128] + [n/256, k/256, n/256]",
+        "expected_speedup": "1.1x computation for 1.3x quality improvement"
+      },
+      "quality_benefit": "Capture both local and global attention patterns"
+    },
+    {
+      "id": 5,
+      "title": "Hybrid Attention Mechanism",
+      "description": "Combine sparse and dense attention based on content importance scores",
+      "technical_implementation": "Learn mixture weights α ∈ [0,1] for sparse vs dense attention",
+      "runtime_improvement": {
+        "baseline": "Pure sparse attention with fixed sparsity",
+        "improved": "α·[n, k*r, n] + (1-α)·[n, k, n] with learned α",
+        "expected_speedup": "Adaptive: 1.0-1.5x based on content complexity"
+      },
+      "quality_benefit": "Maintain quality for complex scenes while accelerating simple ones"
+    }
+  ],
+  "experimental_parameters": {
+    "models": [
+      {
+        "name": "HunyuanVideo-T2V",
+        "resolution": "768p",
+        "frames": 128,
+        "latent_size": "48×80"
+      },
+      {
+        "name": "Wan2.1-T2V",
+        "resolution": "512p",
+        "frames": 80,
+        "latent_size": "32×48"
+      },
+      {
+        "name": "Wan2.1-T2V",
+        "resolution": "768p",
+        "frames": 80,
+        "latent_size": "48×80"
+      }
+    ],
+    "sparsity_ratios": [0.55, 0.6, 0.75, 0.8, 0.9],
+    "pooling_kernel": "8×16 with stride=kernel_size",
+    "hardware": "H100 GPU",
+    "baseline_methods": ["Sparse VideoGen (SVG)", "Full Attention (Dense)"],
+    "metrics": ["VBench", "PSNR", "SSIM", "LPIPS", "PFLOPs", "Latency"]
+  },
+  "runtime_analysis": {
+    "complexity_comparison": {
+      "full_attention": {
+        "computation": "[n, k, n] = O(n²d)",
+        "example": "For 768p×128 frames: [491520, k, 491520] ≈ 2.4×10¹¹×d operations"
+      },
+      "draft_attention": {
+        "stage1_draft": "[n/128, k/128, n/128] = [3840, k/128, 3840]",
+        "stage2_sparse": "[n, k×r, n] where r is sparsity ratio",
+        "total_complexity": "O(n²d/128² + r×n²d)"
+      },
+      "improved_method": {
+        "multi_scale": "Σ_i [n/2^i, k/2^i, n/2^i] for i=1,2,3",
+        "adaptive_sparsity": "[n, k×r_i, n] with r_i ∈ [0.05, 0.3]",
+        "expected_speedup": "2.0-2.5x over baseline with better quality"
+      }
+    },
+    "communication_costs": {
+      "reordering": "O(n) linear permutation",
+      "memory_overhead": "Minimal - 2×n indices for permutation",
+      "gpu_efficiency": "Coalesced memory access patterns"
+    }
+  },
+  "code_availability": "https://github.com/shawnricecake/draft-attention"
+}

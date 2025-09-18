@@ -1,0 +1,72 @@
+{
+  "generated_dags": [
+    {
+      "model": "baseline_transformer",
+      "parallel_strategy": "tensor_parallelism_pipeline_parallelism",
+      "description": "Dense Transformer using Tensor Parallelism (TP=8) + Pipeline Parallelism (PP=2)",
+      "total_devices": 16,
+      "device_mapping": {
+        "pipeline_stage_0": {
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7],
+          "layers": [0, 1],
+          "parallelism": "tensor_parallelism"
+        },
+        "pipeline_stage_1": {
+          "devices": [8, 9, 10, 11, 12, 13, 14, 15],
+          "layers": [2, 3],
+          "parallelism": "tensor_parallelism"
+        }
+      },
+      "files": {
+        "dot_file": "/home/wzc/data/file-share/2025-09-17-09-52-17/baseline_dag.dot",
+        "svg_file": "/home/wzc/data/file-share/2025-09-17-09-52-17/baseline_dag.svg"
+      },
+      "key_features": [
+        "16 total GPUs split into 2 pipeline stages",
+        "Each stage uses 8-way tensor parallelism",
+        "Column-row split for linear layers",
+        "All-reduce communication for tensor parallelism",
+        "Pipeline communication between stages"
+      ]
+    },
+    {
+      "model": "ra_sp_transformer",
+      "parallel_strategy": "ring_attention_sequence_parallelism",
+      "description": "Dense Transformer using Ring Attention + Sequence Parallelism across all 16 devices",
+      "total_devices": 16,
+      "device_mapping": {
+        "ring_topology": {
+          "devices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          "sequence_chunks": 16,
+          "tokens_per_device": 625,
+          "total_tokens": 10000
+        }
+      },
+      "files": {
+        "dot_file": "/home/wzc/data/file-share/2025-09-17-09-52-17/ra_sp_dag.dot",
+        "svg_file": "/home/wzc/data/file-share/2025-09-17-09-52-17/ra_sp_dag.svg"
+      },
+      "key_features": [
+        "16-way sequence parallelism",
+        "Ring attention with 16 stages",
+        "Each device processes 625 tokens",
+        "Peer-to-peer communication in ring topology",
+        "16x memory reduction for activations",
+        "Linear scaling with sequence length"
+      ]
+    }
+  ],
+  "generation_metadata": {
+    "total_models": 2,
+    "total_dags": 2,
+    "formats": ["dot", "svg"],
+    "generation_time": "2025-09-17T10:07:00Z",
+    "compliance": {
+      "card_boundary_division": true,
+      "multi_card_communication": true,
+      "dimensional_information": true,
+      "no_simplification": true,
+      "gpu_load_balancing": true
+    }
+  }
+}
