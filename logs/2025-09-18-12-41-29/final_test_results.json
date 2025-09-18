@@ -1,0 +1,135 @@
+{
+  "paper_title": "XAttention: Block Sparse Attention with Antidiagonal Scoring",
+  "device": "cuda",
+  "total_tests": 5,
+  "tested_configs": [
+    "Small",
+    "Medium",
+    "Large",
+    "XL",
+    "XXL"
+  ],
+  "geometric_means": {
+    "xattention_speedup": 0.1194282197643441,
+    "xattention_opt_speedup": 0.04611028860971409,
+    "xattention_accuracy": 0.9844253581449995,
+    "xattention_opt_accuracy": 0.9710988778807648
+  },
+  "detailed_results": [
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 512,
+        "dim": 512,
+        "num_heads": 8,
+        "name": "Small"
+      },
+      "runtimes": {
+        "baseline_ms": 1.3011306921641033,
+        "xattention_ms": 33.979593912760414,
+        "xattention_opt_ms": 66.49041239420573
+      },
+      "speedups": {
+        "xattention_vs_baseline": 0.03829153154403907,
+        "xattention_opt_vs_baseline": 0.01956869637760721
+      },
+      "accuracy": {
+        "xattention_vs_baseline": 0.9780731750576235,
+        "xattention_opt_vs_baseline": 0.9817275423875174
+      },
+      "sparsity": 0.0
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 1024,
+        "dim": 768,
+        "num_heads": 12,
+        "name": "Medium"
+      },
+      "runtimes": {
+        "baseline_ms": 5.385248184204102,
+        "xattention_ms": 79.82354227701823,
+        "xattention_opt_ms": 188.7047322591146
+      },
+      "speedups": {
+        "xattention_vs_baseline": 0.06746441000469798,
+        "xattention_opt_vs_baseline": 0.02853796044080919
+      },
+      "accuracy": {
+        "xattention_vs_baseline": 0.9694840314239469,
+        "xattention_opt_vs_baseline": 0.9668017407975379
+      },
+      "sparsity": 0.0
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 2048,
+        "dim": 1024,
+        "num_heads": 16,
+        "name": "Large"
+      },
+      "runtimes": {
+        "baseline_ms": 24.444875081380207,
+        "xattention_ms": 183.70096842447916,
+        "xattention_opt_ms": 509.6798095703125
+      },
+      "speedups": {
+        "xattention_vs_baseline": 0.13306884166715582,
+        "xattention_opt_vs_baseline": 0.0479612388452047
+      },
+      "accuracy": {
+        "xattention_vs_baseline": 0.9833291771893782,
+        "xattention_opt_vs_baseline": 0.9637583942850404
+      },
+      "sparsity": 0.0
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 4096,
+        "dim": 1024,
+        "num_heads": 16,
+        "name": "XL"
+      },
+      "runtimes": {
+        "baseline_ms": 64.32746887207031,
+        "xattention_ms": 346.6354166666667,
+        "xattention_opt_ms": 1025.068603515625
+      },
+      "speedups": {
+        "xattention_vs_baseline": 0.18557673503376956,
+        "xattention_opt_vs_baseline": 0.06275430605468718
+      },
+      "accuracy": {
+        "xattention_vs_baseline": 0.993925103167178,
+        "xattention_opt_vs_baseline": 0.9701399163300286
+      },
+      "sparsity": 0.0
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 8192,
+        "dim": 1024,
+        "num_heads": 16,
+        "name": "XXL"
+      },
+      "runtimes": {
+        "baseline_ms": 262.82956949869794,
+        "xattention_ms": 690.1075846354166,
+        "xattention_opt_ms": 2119.3553059895835
+      },
+      "speedups": {
+        "xattention_vs_baseline": 0.3808530370486373,
+        "xattention_opt_vs_baseline": 0.12401392477981685
+      },
+      "accuracy": {
+        "xattention_vs_baseline": 0.9975837548529908,
+        "xattention_opt_vs_baseline": 0.973164627163705
+      },
+      "sparsity": 0.0
+    }
+  ]
+}

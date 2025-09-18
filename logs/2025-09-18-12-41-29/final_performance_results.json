@@ -1,0 +1,8 @@
+{
+  "paper_title": "XAttention: Block Sparse Attention with Antidiagonal Scoring",
+  "device": "cuda",
+  "total_tests": 0,
+  "error": "No successful tests",
+  "geometric_means": {},
+  "detailed_results": []
+}

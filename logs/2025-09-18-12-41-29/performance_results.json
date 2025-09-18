@@ -1,0 +1,12 @@
+{
+  "paper_title": "XAttention: Block Sparse Attention with Antidiagonal Scoring",
+  "device": "cuda",
+  "total_tests": 0,
+  "geometric_means": {
+    "xattention_speedup": NaN,
+    "xattention_opt_speedup": NaN,
+    "xattention_accuracy": NaN,
+    "xattention_opt_accuracy": NaN
+  },
+  "detailed_results": []
+}
