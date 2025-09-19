@@ -1,0 +1,155 @@
+{
+  "title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "runtime_analysis": {
+    "baseline_method": {
+      "description": "Full dense attention in video diffusion transformers",
+      "computation": "[n, n, d] + [n, d, n] = O(n²d)",
+      "example": "For 768p video with 128 frames: n ≈ 500K tokens, d = 1024 → [500K, 500K, 1K] operations"
+    },
+    "proposed_method": {
+      "description": "DraftAttention with 90% sparsity",
+      "computation": "[n/128, n/128, d] + [n, n, d] * 0.1 = O(n²d/128² + 0.1n²d)",
+      "breakdown": {
+        "draft_attention": "[n/128, n/128, d] ≈ [3.9K, 3.9K, 1K]",
+        "sparse_attention": "[n, n, d] * 0.1 ≈ [500K, 500K, 1K] * 0.1",
+        "total_speedup": "1.75x measured on H100 GPU"
+      }
+    },
+    "improved_method": {
+      "description": "Adaptive DraftAttention with learned sparsity and quantization",
+      "computation": "[n/k, n/k, d/4] + [n, n, d/4] * s + communication_overhead",
+      "breakdown": {
+        "adaptive_draft": "[n/k, n/k, d/4] where k ∈ [64, 256] learned",
+        "quantized_sparse": "[n, n, d/4] * s where s ∈ [0.05, 0.2] learned",
+        "communication": "[n, d/4, 1] for adaptive parameters",
+        "projected_speedup": "2.5-3.0x over baseline"
+      }
+    }
+  },
+  "gaps_limitations": [
+    {
+      "gap": "Fixed pooling kernel size (8×16) regardless of content or resolution",
+      "impact": "Suboptimal for varying video content and resolutions",
+      "improvement": "Adaptive pooling with learned kernel sizes per layer"
+    },
+    {
+      "gap": "Static sparsity ratio (fixed percentage) throughout generation",
+      "impact": "May discard important information in critical denoising steps",
+      "improvement": "Dynamic sparsity scheduling based on timestep and content"
+    },
+    {
+      "gap": "No quantization integration despite orthogonal benefits",
+      "impact": "Missing additional 2-4x acceleration potential",
+      "improvement": "INT4/INT8 quantization for attention weights and activations"
+    },
+    {
+      "gap": "First 25% steps require full attention for quality",
+      "impact": "Limits maximum achievable speedup to ~2x",
+      "improvement": "Progressive sparsity with learned importance scores"
+    },
+    {
+      "gap": "Single-GPU implementation limits scalability",
+      "impact": "Cannot handle very long videos (>1000 frames)",
+      "improvement": "Distributed DraftAttention across multiple GPUs/nodes"
+    },
+    {
+      "gap": "No temporal consistency enforcement in sparsity patterns",
+      "impact": "Potential flickering artifacts in generated videos",
+      "improvement": "Temporal smoothing of sparsity masks across frames"
+    }
+  ],
+  "innovative_improvements": [
+    {
+      "name": "Adaptive Kernel DraftAttention",
+      "description": "Learn optimal pooling kernel sizes per layer based on content characteristics",
+      "technical_details": "Use lightweight MLP to predict kernel size k ∈ {4,8,16,32} for each spatial region",
+      "runtime_change": "[n/k, n/k, d] where k is adaptive instead of fixed 128",
+      "benefits": ["Better preservation of fine details", "Content-aware compression", "Improved quality at same sparsity"]
+    },
+    {
+      "name": "Dynamic Sparsity Scheduler",
+      "description": "Adjust sparsity ratio based on denoising timestep and content complexity",
+      "technical_details": "Learn timestep-dependent sparsity function s(t) = σ(α·t + β·content_complexity)",
+      "runtime_change": "[n, n, d] * s(t) instead of fixed ratio r",
+      "benefits": ["Higher quality in early denoising", "Maximum compression in late steps", "Content-adaptive acceleration"]
+    },
+    {
+      "name": "Quantized DraftAttention",
+      "description": "Integrate INT4 quantization for draft attention computation",
+      "technical_details": "Apply Q-diffusion techniques to draft attention weights and activations",
+      "runtime_change": "[n/k, n/k, d/4] with INT4 precision + dequantization overhead",
+      "benefits": ["Additional 2-4x memory reduction", "Faster computation on Tensor Cores", "Maintained quality with proper scaling"]
+    },
+    {
+      "name": "Progressive Sparsity Learning",
+      "description": "Learn importance scores to enable sparsity from step 1",
+      "technical_details": "Train lightweight adapter to predict token importance without full attention",
+      "runtime_change": "[n, n, d] * learned_importance from t=0",
+      "benefits": ["Eliminate 25% full attention requirement", "Potential 3-4x total speedup", "Better quality-efficiency tradeoff"]
+    },
+    {
+      "name": "Distributed DraftAttention",
+      "description": "Split video across GPUs with overlapping regions for consistency",
+      "technical_details": "Use ring-reduce communication for draft attention across distributed nodes",
+      "runtime_change": "[n/p, n, d] + [n, n/p, d] + [n, d, 1] communication per step",
+      "benefits": ["Scales to very long videos", "Linear speedup with GPUs", "Maintained temporal consistency"]
+    },
+    {
+      "name": "Temporal Consistency Sparsity",
+      "description": "Enforce smooth sparsity patterns across temporal dimension",
+      "technical_details": "Apply 3D convolutional smoothing on sparsity masks before application",
+      "runtime_change": "[n, n, d] + [t, h, w, 1] smoothing kernel overhead",
+      "benefits": ["Reduced temporal flickering", "Better motion coherence", "Improved perceptual quality"]
+    }
+  ],
+  "experimental_parameters": {
+    "models": {
+      "HunyuanVideo-T2V": {
+        "resolution": "768p",
+        "frames": 128,
+        "latent_size": "48×80",
+        "attention_heads": 24,
+        "hidden_dim": 3072
+      },
+      "Wan2.1-T2V": {
+        "resolution": ["512p", "768p"],
+        "frames": 80,
+        "latent_size": ["32×48", "48×80"],
+        "attention_heads": 16,
+        "hidden_dim": 2048
+      }
+    },
+    "sparsity_ratios": {
+      "Hunyuan": [60, 80, 90],
+      "Wan2.1": [55, 75]
+    },
+    "pooling_config": {
+      "kernel_size": "8×16",
+      "stride": "8×16",
+      "reduction_factor": 128,
+      "method": "average_pooling"
+    },
+    "hardware": {
+      "gpu": "H100",
+      "memory": "80GB",
+      "framework": "Block Sparse Attention"
+    }
+  },
+  "implementation_roadmap": {
+    "phase1": {
+      "duration": "2 weeks",
+      "tasks": ["Implement adaptive kernel selection", "Add dynamic sparsity scheduler"],
+      "expected_speedup": "2.0x over baseline"
+    },
+    "phase2": {
+      "duration": "3 weeks",
+      "tasks": ["Integrate INT4 quantization", "Implement progressive sparsity learning"],
+      "expected_speedup": "2.8x over baseline"
+    },
+    "phase3": {
+      "duration": "4 weeks",
+      "tasks": ["Develop distributed implementation", "Add temporal consistency"],
+      "expected_speedup": "3.5x over baseline"
+    }
+  }
+}

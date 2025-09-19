@@ -1,0 +1,145 @@
+{
+  "title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "abstract": "Diffusion transformer-based video generation models (DiTs) have recently attracted widespread attention for their excellent generation quality. However, their computational cost remains a major bottleneck—attention alone accounts for over 80% of total latency, and generating just 8 seconds of 720p video takes tens of minutes—posing serious challenges to practical application and scalability. To address this, we propose the DraftAttention, a training-free framework for the acceleration of video diffusion transformers with dynamic sparse attention on GPUs. We apply down-sampling to each feature map across frames in the compressed latent space, enabling a higher-level receptive field over the latent composed of hundreds of thousands of tokens. The low-resolution draft attention map, derived from draft query and key, exposes redundancy both spatially within each feature map and temporally across frames. We reorder the query, key, and value based on the draft attention map to guide the sparse attention computation in full resolution, and subsequently restore their original order after the attention computation. This reordering enables structured sparsity that aligns with hardware-optimized execution. Our theoretical analysis demonstrates that the low-resolution draft attention closely approximates the full attention, providing reliable guidance for constructing accurate sparse attention. Experimental results show that our method outperforms existing sparse attention approaches in video generation quality and achieves up to 1.75× end-to-end speedup on GPUs.",
+  "innovative_points": [
+    {
+      "point": "Low-Resolution Draft Attention",
+      "explanation": "Uses 8×16 average pooling to create a low-resolution attention map that captures high-level spatial-temporal patterns with 128× token reduction, enabling efficient region-level sparsity identification",
+      "runtime_change": "[n, n, d] → [n/128, n/128, d] + [n, n·r, d] where r is sparsity ratio"
+    },
+    {
+      "point": "Dynamic Per-Module Sparsity",
+      "explanation": "Generates sparse attention patterns dynamically for each attention module based on draft attention, unlike static patterns in prior work",
+      "runtime_change": "Static [n, n·0.9, d] → Dynamic [n, n·r_t, d] with r_t ∈ [0.5, 0.9]"
+    },
+    {
+      "point": "Hardware-Friendly Reordering",
+      "explanation": "Deterministic token reordering ensures contiguous memory layout for 128-token blocks, enabling efficient GPU kernel execution",
+      "runtime_change": "Scattered memory access → Contiguous [128, 128, d] blocks"
+    },
+    {
+      "point": "Theoretical Error Bounds",
+      "explanation": "Provides formal bounds showing ∥S - S_draft∥_F ≤ δn and ∥S - S⊙M̃∥_F ≤ n(δ + t)√(1-r), justifying approximation quality",
+      "runtime_change": "No runtime change, theoretical guarantee"
+    },
+    {
+      "point": "Training-Free Integration",
+      "explanation": "Plug-and-play module requiring no additional training, seamlessly integrates with existing video diffusion transformers",
+      "runtime_change": "[n, n, d] → [n/128, n/128, d] + [n, n·r, d] + O(n) reordering"
+    }
+  ],
+  "methodology": {
+    "full_attention": "Attn(X) = Softmax(QK^⊤/√d) V ∈ ℝ^(n×d)",
+    "draft_attention": {
+      "pooling": "8×16 average pooling with stride=kernel size",
+      "reduction": "128× token reduction",
+      "computation": "ẼQ_i = (1/|R_i|) Σ Q_j, ẼK_i = (1/|R_i|) Σ K_j"
+    },
+    "sparsity_pattern": {
+      "region_level": "g×g binary mask M from top-r draft attention",
+      "token_level": "n×n mask M̃ lifted from region mask",
+      "sparsity_ratios": [0.55, 0.6, 0.75, 0.8, 0.9]
+    },
+    "reordering": {
+      "algorithm": "Deterministic patch-based reordering",
+      "patch_size": "8×16 tokens per patch",
+      "memory_layout": "Contiguous 128-token blocks"
+    }
+  },
+  "experiments": {
+    "models": [
+      {
+        "name": "HunyuanVideo-T2V",
+        "resolution": "768p",
+        "frames": 128,
+        "latent_size": "48×80"
+      },
+      {
+        "name": "Wan2.1-T2V",
+        "resolution": "512p/768p",
+        "frames": 80,
+        "latent_size": "32×48/48×80"
+      }
+    ],
+    "metrics": ["PSNR", "SSIM", "LPIPS", "VBench suite"],
+    "hardware": "H100 GPU",
+    "results": {
+      "speedup": {
+        "90%_sparsity": "1.75×",
+        "80%_sparsity": "1.58×",
+        "60%_sparsity": "1.31×"
+      },
+      "quality": {
+        "wan2.1_768p_55%": {
+          "psnr": "29.22 vs 26.01 (SVG)",
+          "ssim": "92.16 vs 84.81 (SVG)",
+          "lpips": "5.82 vs 10.89 (SVG)"
+        }
+      }
+    }
+  },
+  "runtime_analysis": {
+    "baseline": {
+      "full_attention": "[n, n, d]",
+      "complexity": "O(n²d)",
+      "memory": "O(n²)"
+    },
+    "proposed": {
+      "draft_attention": "[n/128, n/128, d]",
+      "sparse_attention": "[n, n·r, d]",
+      "reordering": "O(n)",
+      "total": "O(n²rd + n²d/128²)"
+    },
+    "communication": "Minimal GPU memory overhead for reordering indices"
+  },
+  "gaps_limitations": [
+    "Fixed 8×16 pooling kernel regardless of resolution",
+    "Static sparsity ratios throughout generation",
+    "Limited to spatial-temporal attention only",
+    "No quantization integration",
+    "GPU-focused, no mobile optimization",
+    "Strictly training-free limits optimization"
+  ],
+  "improvements": [
+    {
+      "name": "Adaptive Hierarchical Draft Attention (AHDA)",
+      "description": "Multi-level pooling with learned fusion weights",
+      "runtime": "[n/128, n/128, d] + [n/32, n/32, d] + [n/8, n/8, d]",
+      "benefit": "2-5% quality gain"
+    },
+    {
+      "name": "Dynamic Sparsity Controller (DSC)",
+      "description": "RL agent for per-step sparsity adjustment",
+      "runtime": "[n, n·r_t, d] with r_t ∈ [0.5, 0.9]",
+      "benefit": "15-20% additional speedup"
+    },
+    {
+      "name": "Quantized Draft Attention (QDA)",
+      "description": "INT8 draft + FP16 sparse attention",
+      "runtime": "[n/128, n/128, d/4] (INT8) + [n, n·r, d] (FP16)",
+      "benefit": "1.2× additional speedup, 3-4× memory reduction"
+    },
+    {
+      "name": "Cross-Modal Draft Attention (CMDA)",
+      "description": "Extend to text-video cross-attention",
+      "runtime": "[t, v/128, d] for cross-attention",
+      "benefit": "25-30% cross-attention speedup"
+    }
+  ],
+  "compound_improvements": {
+    "expected_speedup": "2.3-2.8× with maintained quality",
+    "memory_reduction": "3-4× with quantization",
+    "implementation_priority": [
+      "Quantized Draft Attention (immediate 1.2× gain)",
+      "Dynamic Sparsity Controller (15-20% gain)",
+      "Cross-modal extension for multi-modal models"
+    ]
+  },
+  "file_paths": {
+    "phase1_keypoints": "/home/wzc/data/file-share/logs/2025-09-19-09-32-58/phase1_keypoints.md",
+    "phase2_methodology": "/home/wzc/data/file-share/logs/2025-09-19-09-32-58/phase2_methodology.md",
+    "phase3_experiments": "/home/wzc/data/file-share/logs/2025-09-19-09-32-58/phase3_experiments.md",
+    "gaps_improvements": "/home/wzc/data/file-share/logs/2025-09-19-09-32-58/gaps_improvements.md",
+    "complete_analysis": "/home/wzc/data/file-share/logs/2025-09-19-09-32-58/draft_attention_analysis.json"
+  }
+}

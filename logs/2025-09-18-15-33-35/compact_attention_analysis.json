@@ -1,0 +1,170 @@
+{
+  "title": "Compact Attention: Exploiting Structured Spatio-Temporal Sparsity for Fast Video Generation",
+  "abstract": "The computational demands of self-attention mechanisms pose a critical challenge for transformer-based video generation, particularly in synthesizing ultra-long sequences. Current approaches, such as factorized attention and fixed sparse patterns, fail to fully exploit the inherent spatio-temporal redundancies in video data. Through systematic analysis of video diffusion transformers (DiT), we uncover a key insight: Attention matrices exhibit structured, yet heterogeneous sparsity patterns, where specialized heads dynamically attend to distinct spatiotemporal regions (e.g., local pattern, cross-shaped pattern, or global pattern). Existing sparse attention methods either impose rigid constraints or introduce significant overhead, limiting their effectiveness. To address this, we propose Compact Attention, a hardware-aware acceleration framework featuring three innovations: 1) Adaptive tiling strategies that approximate diverse spatial interaction patterns via dynamic tile grouping, 2) Temporally varying windows that adjust sparsity levels based on frame proximity, and 3) An automated configuration search algorithm that optimizes sparse patterns while preserving critical attention pathways. Our method achieves 1.6∼2.5× acceleration in attention computation on single-GPU setups while maintaining comparable visual quality with full-attention baselines. This work provides a principled approach to unlocking efficient long-form video generation through structured sparsity exploitation.",
+  "innovative_points": [
+    {
+      "id": 1,
+      "name": "Structured Sparsity Discovery",
+      "description": "First systematic identification of heterogeneous sparsity patterns in video diffusion transformers",
+      "details": {
+        "spatial_patterns": ["local", "cross-shaped", "global"],
+        "temporal_patterns": ["time-variant", "time-invariant"],
+        "stability": "patterns stable across inputs and denoising steps",
+        "enables": "offline mask precomputation"
+      },
+      "runtime_impact": "enables offline computation, no runtime overhead"
+    },
+    {
+      "id": 2,
+      "name": "Tile-Based Deformable Sparse Patterns",
+      "description": "Adaptive tile grouping that respects 3D spatio-temporal locality",
+      "details": {
+        "tile_formation": "3D spatially adjacent token grouping",
+        "frame_grouping": "distance-based temporal partitioning",
+        "dual_windows": "complementary window shapes for pattern approximation",
+        "sparsity_gain": "27.1% overall improvement over baseline"
+      },
+      "runtime_change": "[n,k,d] → [n/tile_size,k,d] with tile_size=8-16"
+    },
+    {
+      "id": 3,
+      "name": "Automated Configuration Search",
+      "description": "Offline optimization algorithm for sparse mask discovery",
+      "details": {
+        "search_strategy": "boundary contraction with dual thresholds",
+        "thresholds": {"recall_threshold": "τ=0.9", "cost_threshold": "λ=0.011-0.04"},
+        "optimization": "iterative shrinking with quality preservation",
+        "cross_prompt": "union-based conservative merging"
+      },
+      "runtime_impact": "zero runtime overhead, masks precomputed offline"
+    },
+    {
+      "id": 4,
+      "name": "Temporal Stability Exploitation",
+      "description": "Reuse of attention patterns across consecutive denoising steps",
+      "details": {
+        "reuse_factor": "n consecutive steps",
+        "stability_range": "patterns stable within denoising step ranges",
+        "search_reduction": "n× reduction in search frequency"
+      },
+      "runtime_change": "configuration lookup instead of recomputation"
+    },
+    {
+      "id": 5,
+      "name": "Hardware-Aware Implementation",
+      "description": "Optimized implementation using ThunderKittens and FlashAttention-2",
+      "details": {
+        "framework": "ThunderKittens with FlashAttention-2",
+        "memory_efficiency": "tile-based processing reduces memory footprint",
+        "single_gpu": "optimized for single H800 GPU"
+      },
+      "runtime_change": "[n,k,d] → optimized kernel execution"
+    }
+  ],
+  "experimental_results": {
+    "wan2.1": {
+      "tokens": 80000,
+      "best_sparsity": "33.99%",
+      "speedup": "1.65×",
+      "psnr": "23.7297",
+      "latency": "663.824s"
+    },
+    "hunyuan": {
+      "tokens": 127000,
+      "best_sparsity": "62.36%",
+      "speedup": "2.51×",
+      "psnr": "30.0822",
+      "latency": "546.504s"
+    }
+  },
+  "runtime_comparison": {
+    "full_attention": {
+      "computation": "[127000, 64, 64]",
+      "communication": "0",
+      "total_time": "1544.00s"
+    },
+    "compact_attention": {
+      "computation": "[127000, 64, 64] × 0.38",
+      "communication": "0",
+      "total_time": "546.504s"
+    }
+  },
+  "proposed_improvements": [
+    {
+      "id": 1,
+      "name": "Adaptive Threshold Mechanism",
+      "description": "Context-aware dynamic thresholding based on content complexity",
+      "implementation": "CNN-based complexity analysis + dynamic τ/λ adjustment",
+      "expected_gain": "additional 1.1-1.3× speedup",
+      "runtime_change": "[127000,64,64] × 0.35 → [127000,64,64] × (0.35×α) where α∈[0.7,1.3]"
+    },
+    {
+      "id": 2,
+      "name": "Online Pattern Refinement",
+      "description": "Lightweight neural network for real-time mask adaptation",
+      "implementation": "0.1% parameter overhead for 15% quality improvement",
+      "expected_gain": "5-10% quality improvement with minimal overhead",
+      "runtime_change": "additional [128,64,64] computation per layer"
+    },
+    {
+      "id": 3,
+      "name": "Multi-GPU Optimized Patterns",
+      "description": "Distributed attention patterns for multi-GPU scaling",
+      "implementation": "spatial partitioning + inter-GPU boundary attention",
+      "expected_gain": "near-linear scaling with GPU count",
+      "runtime_change": "[32000,64,64] × 0.35 + [4,32000,64] × 3 communication"
+    },
+    {
+      "id": 4,
+      "name": "Dynamic Early-Step Allocation",
+      "description": "Content-adaptive full attention duration for early denoising",
+      "implementation": "5-step analysis + dynamic step allocation (8-20 steps)",
+      "expected_gain": "10-20% additional speedup on simple content",
+      "runtime_change": "variable full attention steps: [127000,64,64] × (8-20)/50"
+    },
+    {
+      "id": 5,
+      "name": "Hierarchical Memory Optimization",
+      "description": "Multi-level memory-aware tiling for different memory hierarchies",
+      "implementation": "L1/L2/HBM-aware tile sizing + adaptive memory allocation",
+      "expected_gain": "15-25% memory reduction",
+      "runtime_change": "[tile_size,64,batch] optimization per memory level"
+    },
+    {
+      "id": 6,
+      "name": "Cross-Modal Attention Patterns",
+      "description": "Audio-visual synchronized sparsity patterns",
+      "implementation": "joint audio-visual attention patterns for multimodal generation",
+      "expected_gain": "20-30% efficiency gain in audio-visual generation",
+      "runtime_change": "[audio_seq, visual_seq, 64] cross-modal attention optimization"
+    }
+  ],
+  "combined_improvements": {
+    "expected_performance": {
+      "additional_speedup": "1.3-1.8× over Compact Attention",
+      "quality_improvement": "5-10% PSNR improvement",
+      "memory_reduction": "20-30% lower usage",
+      "scalability": "near-linear up to 8 GPUs"
+    },
+    "final_runtime": {
+      "multi_gpu_4x": {
+        "computation": "[32000,64,64] × 0.30",
+        "communication": "[4,32000,64] × 3",
+        "total_time": "120s (vs 1544s full attention)"
+      }
+    }
+  },
+  "implementation_timeline": {
+    "phase1": {"name": "Adaptive Thresholding", "duration": "2 weeks", "priority": "high"},
+    "phase2": {"name": "Online Refinement", "duration": "3 weeks", "priority": "medium"},
+    "phase3": {"name": "Multi-GPU Support", "duration": "4 weeks", "priority": "high"},
+    "phase4": {"name": "Memory Optimization", "duration": "2 weeks", "priority": "medium"}
+  },
+  "file_locations": {
+    "phase1_keypoints": "/home/wzc/data/file-share/logs/2025-09-18-15-33-35/phase1_keypoints.md",
+    "phase2_methodology": "/home/wzc/data/file-share/logs/2025-09-18-15-33-35/phase2_methodology.md",
+    "phase3_experiments": "/home/wzc/data/file-share/logs/2025-09-18-15-33-35/phase3_experiments.md",
+    "gaps_improvements": "/home/wzc/data/file-share/logs/2025-09-18-15-33-35/gaps_improvements.md",
+    "full_analysis": "/home/wzc/data/file-share/logs/2025-09-18-15-33-35/compact_attention_analysis.json"
+  }
+}

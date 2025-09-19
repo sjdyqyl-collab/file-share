@@ -1,0 +1,130 @@
+{
+  "paper_title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "original_abstract": "Diffusion transformer–based video generation models (DiTs) have recently attracted widespread attention for their excellent generation quality. However, their computational cost remains a major bottleneck—attention alone accounts for over 80% of total latency, and generating just 8 seconds of 720p video takes tens of minutes—posing serious challenges to practical application and scalability. To address this, we propose the DraftAttention, a training-free framework for the acceleration of video diffusion transformers with dynamic sparse attention on GPUs. We apply down-sampling to each feature map across frames in the compressed latent space, enabling a higher-level receptive field over the latent composed of hundreds of thousands of tokens. The low-resolution draft attention map, derived from draft query and key, exposes redundancy both spatially within each feature map and temporally across frames. We reorder the query, key, and value based on the draft attention map to guide the sparse attention computation in full resolution, and subsequently restore their original order after the attention computation. This reordering enables structured sparsity that aligns with hardware-optimized execution. Our theoretical analysis demonstrates that the low-resolution draft attention closely approximates the full attention, providing reliable guidance for constructing accurate sparse attention. Experimental results show that our method outperforms existing sparse attention approaches in video generation quality and achieves up to 1.75× end-to-end speedup on GPUs.",
+  "innovative_points": [
+    {
+      "point": "Low-Resolution Draft Attention",
+      "description": "Uses 8×16 average pooling to create low-resolution draft attention maps that approximate full attention with bounded error",
+      "runtime_change": "[n, d, n] → [n/128, d, n/128] + [n, d, r×n]",
+      "theoretical_justification": "Frobenius norm bound ∥S-S_draft∥_F ≤ δn proves approximation quality"
+    },
+    {
+      "point": "Hardware-Friendly Reordering",
+      "description": "Deterministic token reordering algorithm that groups spatial patches into contiguous memory blocks for efficient GPU execution",
+      "runtime_change": "Adds O(n) memory operations, enables coalesced memory access",
+      "implementation": "Algorithm 1 and 2 for reorder/restore indices"
+    },
+    {
+      "point": "Training-Free Dynamic Sparsity",
+      "description": "No retraining required, plug-and-play integration with existing video diffusion transformers",
+      "runtime_change": "Zero training overhead, immediate deployment",
+      "compatibility": "Works with HunyuanVideo, Wan2.1, and other DiT models"
+    },
+    {
+      "point": "Structured Sparsity Patterns",
+      "description": "Region-level sparsity that aligns with GPU block processing, enabling efficient sparse attention kernels",
+      "runtime_change": "[n, d, n] → [n, d, r×n] where r ∈ {0.55, 0.75, 0.9}",
+      "hardware_optimization": "Compatible with FlashAttention and Block Sparse Attention"
+    },
+    {
+      "point": "Theoretical Error Bounds",
+      "description": "Provides provable bounds on approximation error introduced by both draft attention and sparsity masking",
+      "runtime_change": "No runtime overhead, theoretical guarantee",
+      "bounds": "∥S-S⊙M̃∥_F ≤ n(δ+t)√(1-r)"
+    }
+  ],
+  "experimental_setup": {
+    "models": [
+      {
+        "name": "HunyuanVideo-T2V",
+        "resolution": "768p",
+        "frames": 128,
+        "latent_size": "48×80"
+      },
+      {
+        "name": "Wan2.1-T2V",
+        "resolution": "512p/768p",
+        "frames": 80,
+        "latent_size": "32×48/48×80"
+      }
+    ],
+    "parameters": {
+      "pooling_kernel": "8×16",
+      "stride": "8×16",
+      "token_reduction": 128,
+      "sparsity_ratios": [0.55, 0.75, 0.9],
+      "hardware": "H100 GPU",
+      "full_attention_steps": "25% of denoising steps"
+    }
+  },
+  "runtime_analysis": {
+    "baseline": {
+      "method": "Full Attention",
+      "matrix_multiplication": "[n, d, n]",
+      "example": "[81920, 1152, 81920] = 7.6e9 operations",
+      "complexity": "O(n²d)"
+    },
+    "proposed": {
+      "method": "DraftAttention",
+      "draft_computation": "[n/128, d, n/128] = [640, 1152, 640] = 4.7e8",
+      "sparse_attention": "[n, d, r×n] = [81920, 1152, 8192] = 7.6e8 (90% sparsity)",
+      "total_operations": "~1.2e9",
+      "speedup": "1.75×",
+      "communication": "O(n) memory reordering"
+    },
+    "improved": {
+      "method": "DraftAttention++",
+      "multi_scale_draft": "[640,1152,640] + [1280,1152,1280] + [2560,1152,2560]",
+      "dynamic_sparsity": "[n, d, variable] (60-90% adaptive)",
+      "content_overhead": "[80, 48, 2] flow computation",
+      "total_operations": "~1.3e9",
+      "speedup": "1.65× with better quality",
+      "communication": "O(n) + temporal smoothing"
+    }
+  },
+  "improvements": [
+    {
+      "name": "Adaptive Kernel Selection",
+      "description": "Automatically select pooling kernel based on resolution and content complexity",
+      "runtime_change": "Add [k, d, k] where k << n for kernel selection",
+      "expected_gain": "10-20% speedup with better quality preservation"
+    },
+    {
+      "name": "Dynamic Sparsity Adjustment",
+      "description": "Adjust sparsity ratio based on attention entropy and content complexity",
+      "runtime_change": "Add [g, g] entropy computation + threshold adjustment",
+      "formula": "r_t = base_r + α·entropy(A_draft_t)"
+    },
+    {
+      "name": "3D Spatial-Temporal Pooling",
+      "description": "Extend pooling to temporal dimension for better redundancy detection",
+      "runtime_change": "[g_t, d, g_t] where g_t = n/(s×t×h×w)",
+      "implementation": "2×2×2 temporal-spatial pooling"
+    },
+    {
+      "name": "Content-Aware Sparsity",
+      "description": "Use optical flow to detect motion and adjust sparsity accordingly",
+      "runtime_change": "Add [H, W, 2] flow computation per frame",
+      "strategy": "High motion: 60-70% sparsity, Low motion: 80-90% sparsity"
+    },
+    {
+      "name": "Multi-Scale Draft Attention",
+      "description": "Compute draft attention at multiple scales and fuse for better guidance",
+      "runtime_change": "[g1,d,g1] + [g2,d,g2] + [g3,d,g3] where g1>g2>g3",
+      "scales": "16×16, 8×8, 4×4 pooling with learned fusion"
+    },
+    {
+      "name": "Automatic Sparsity Selection",
+      "description": "Use lightweight quality predictor to automatically select optimal sparsity",
+      "runtime_change": "Add [batch, features] quality prediction overhead",
+      "benefit": "No manual tuning required"
+    }
+  ],
+  "file_paths": {
+    "phase1_keypoints": "/home/wzc/data/file-share/logs/2025-09-18-16-51-49/phase1_keypoints.md",
+    "phase2_methodology": "/home/wzc/data/file-share/logs/2025-09-18-16-51-49/phase2_methodology.md",
+    "phase3_experiments": "/home/wzc/data/file-share/logs/2025-09-18-16-51-49/phase3_experiments.md",
+    "gaps_improvements": "/home/wzc/data/file-share/logs/2025-09-18-16-51-49/gaps_improvements.md",
+    "final_analysis": "/home/wzc/data/file-share/logs/2025-09-18-16-51-49/final_analysis.json"
+  }
+}

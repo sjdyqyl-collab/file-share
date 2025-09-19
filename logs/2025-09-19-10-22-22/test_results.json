@@ -1,0 +1,303 @@
+{
+  "paper_title": "XAttention: Sparse Attention with Antidiagonal Pattern Selection",
+  "device": "cuda",
+  "test_samples": 8,
+  "results": {
+    "language_L512": {
+      "baseline": {
+        "avg_time": 0.0011254151662190754,
+        "peak_memory_mb": 170.0,
+        "throughput_tps": 454943.22039404,
+        "skipped": false
+      },
+      "original": {
+        "avg_time": 0.2717890739440918,
+        "peak_memory_mb": 161.390625,
+        "throughput_tps": 1883.813769884365,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (512) must match the size of tensor b (2) at non-singleton dimension 0"
+      },
+      "improved": {
+        "avg_time": 0.006104787190755208,
+        "peak_memory_mb": 161.2021484375,
+        "throughput_tps": 83868.60737346386,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (512) must match the size of tensor b (2) at non-singleton dimension 0"
+      },
+      "ratios": {
+        "original_speedup": 0.004140766771406633,
+        "original_mse_ratio": Infinity,
+        "original_cosine_similarity": 0.0,
+        "original_sparsity": 0.0,
+        "improved_speedup": 0.18434961466361174,
+        "improved_mse_ratio": Infinity,
+        "improved_cosine_similarity": 0.0,
+        "improved_sparsity": 0.0
+      }
+    },
+    "language_L1024": {
+      "baseline": {
+        "avg_time": 0.002741734186808268,
+        "peak_memory_mb": 212.0,
+        "throughput_tps": 373486.2427316734,
+        "skipped": false
+      },
+      "original": {
+        "avg_time": 0.2678846518198649,
+        "peak_memory_mb": 200.28125,
+        "throughput_tps": 3822.5407579101384,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (524288) must match the size of tensor b (512) at non-singleton dimension 0"
+      },
+      "improved": {
+        "avg_time": 0.006547451019287109,
+        "peak_memory_mb": 199.3896484375,
+        "throughput_tps": 156396.74080547667,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (524288) must match the size of tensor b (512) at non-singleton dimension 0"
+      },
+      "ratios": {
+        "original_speedup": 0.01023475651995138,
+        "original_mse_ratio": Infinity,
+        "original_cosine_similarity": 0.0,
+        "original_sparsity": 0.0,
+        "improved_speedup": 0.4187483310271162,
+        "improved_mse_ratio": Infinity,
+        "improved_cosine_similarity": 0.0,
+        "improved_sparsity": 0.0
+      }
+    },
+    "language_L2048": {
+      "baseline": {
+        "avg_time": 0.013422171274820963,
+        "peak_memory_mb": 562.0,
+        "throughput_tps": 152583.36062525905,
+        "skipped": false
+      },
+      "original": {
+        "avg_time": 0.788555383682251,
+        "peak_memory_mb": 446.0625,
+        "throughput_tps": 2597.1542930017495,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (1572864) must match the size of tensor b (768) at non-singleton dimension 0"
+      },
+      "improved": {
+        "avg_time": 0.019515275955200195,
+        "peak_memory_mb": 436.2021484375,
+        "throughput_tps": 104943.43019803795,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (1572864) must match the size of tensor b (768) at non-singleton dimension 0"
+      },
+      "ratios": {
+        "original_speedup": 0.017021215697170914,
+        "original_mse_ratio": Infinity,
+        "original_cosine_similarity": 0.0,
+        "original_sparsity": 0.0,
+        "improved_speedup": 0.6877776827564862,
+        "improved_mse_ratio": Infinity,
+        "improved_cosine_similarity": 0.0,
+        "improved_sparsity": 0.0
+      }
+    },
+    "video_L1024": {
+      "baseline": {
+        "avg_time": 0.004199663798014323,
+        "peak_memory_mb": 293.0,
+        "throughput_tps": 243829.04185905683,
+        "skipped": false
+      },
+      "original": {
+        "avg_time": 0.5356483459472656,
+        "peak_memory_mb": 252.53125,
+        "throughput_tps": 1911.7019734077783,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (1024) must match the size of tensor b (2) at non-singleton dimension 0"
+      },
+      "improved": {
+        "avg_time": 0.00980981190999349,
+        "peak_memory_mb": 251.6396484375,
+        "throughput_tps": 104385.28377458763,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (1024) must match the size of tensor b (2) at non-singleton dimension 0"
+      },
+      "ratios": {
+        "original_speedup": 0.00784033747100897,
+        "original_mse_ratio": Infinity,
+        "original_cosine_similarity": 0.0,
+        "original_sparsity": 0.0,
+        "improved_speedup": 0.4281084934703004,
+        "improved_mse_ratio": Infinity,
+        "improved_cosine_similarity": 0.0,
+        "improved_sparsity": 0.0
+      }
+    },
+    "video_L2048": {
+      "baseline": {
+        "avg_time": 0.013297796249389648,
+        "peak_memory_mb": 564.0,
+        "throughput_tps": 154010.48125504257,
+        "skipped": false
+      },
+      "original": {
+        "avg_time": 0.7920668125152588,
+        "peak_memory_mb": 445.0625,
+        "throughput_tps": 2585.6404632034073,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (1572864) must match the size of tensor b (768) at non-singleton dimension 0"
+      },
+      "improved": {
+        "avg_time": 0.01888283093770345,
+        "peak_memory_mb": 434.4521484375,
+        "throughput_tps": 108458.31362662616,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (1572864) must match the size of tensor b (768) at non-singleton dimension 0"
+      },
+      "ratios": {
+        "original_speedup": 0.01678873049504706,
+        "original_mse_ratio": Infinity,
+        "original_cosine_similarity": 0.0,
+        "original_sparsity": 0.0,
+        "improved_speedup": 0.7042268340621463,
+        "improved_mse_ratio": Infinity,
+        "improved_cosine_similarity": 0.0,
+        "improved_sparsity": 0.0
+      }
+    },
+    "generation_L4096": {
+      "baseline": {
+        "avg_time": 0.05686497688293457,
+        "peak_memory_mb": 2297.0,
+        "throughput_tps": 72030.27635854413,
+        "skipped": false
+      },
+      "original": {
+        "avg_time": 2.0994768142700195,
+        "peak_memory_mb": 1555.125,
+        "throughput_tps": 1950.9622455269478,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (4194304) must match the size of tensor b (1024) at non-singleton dimension 0"
+      },
+      "improved": {
+        "avg_time": 0.0711349646250407,
+        "peak_memory_mb": 1491.2646484375,
+        "throughput_tps": 57580.68513269689,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (4194304) must match the size of tensor b (1024) at non-singleton dimension 0"
+      },
+      "ratios": {
+        "original_speedup": 0.027085308347501953,
+        "original_mse_ratio": Infinity,
+        "original_cosine_similarity": 0.0,
+        "original_sparsity": 0.0,
+        "improved_speedup": 0.7993955881285018,
+        "improved_mse_ratio": Infinity,
+        "improved_cosine_similarity": 0.0,
+        "improved_sparsity": 0.0
+      }
+    },
+    "generation_L8192": {
+      "baseline": {
+        "avg_time": 0.18969194094340006,
+        "peak_memory_mb": 8547.0,
+        "throughput_tps": 43185.80936680022,
+        "skipped": false
+      },
+      "original": {
+        "avg_time": 4.208046833674113,
+        "peak_memory_mb": 5539.25,
+        "throughput_tps": 1946.7463941810347,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (8388608) must match the size of tensor b (1024) at non-singleton dimension 0"
+      },
+      "improved": {
+        "avg_time": 0.2190422217051188,
+        "peak_memory_mb": 5235.2646484375,
+        "throughput_tps": 37399.18238698435,
+        "skipped": false,
+        "mse": Infinity,
+        "cosine_similarity": 0.0,
+        "sparsity": 0.0,
+        "success": false,
+        "error": "The size of tensor a (8388608) must match the size of tensor b (1024) at non-singleton dimension 0"
+      },
+      "ratios": {
+        "original_speedup": 0.04507838159628489,
+        "original_mse_ratio": Infinity,
+        "original_cosine_similarity": 0.0,
+        "original_sparsity": 0.0,
+        "improved_speedup": 0.866006286216221,
+        "improved_mse_ratio": Infinity,
+        "improved_cosine_similarity": 0.0,
+        "improved_sparsity": 0.0
+      }
+    }
+  },
+  "summary": {
+    "original": {
+      "geometric_mean_speedup": 0.014191525502864243,
+      "geometric_mean_mse_ratio": Infinity,
+      "mean_cosine_similarity": 0.0,
+      "mean_sparsity": 0.0,
+      "sample_count": 7
+    },
+    "improved": {
+      "geometric_mean_speedup": 0.5256008838565808,
+      "geometric_mean_mse_ratio": Infinity,
+      "mean_cosine_similarity": 0.0,
+      "mean_sparsity": 0.0,
+      "sample_count": 7
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "original_abstract": "Diffusion transformer–based video generation models (DiTs) have recently attracted widespread attention for their excellent generation quality. However, their computational cost remains a major bottleneck—attention alone accounts for over 80% of total latency, and generating just 8 seconds of 720p video takes tens of minutes—posing serious challenges to practical application and scalability. To address this, we propose the DraftAttention, a training-free framework for the acceleration of video diffusion transformers with dynamic sparse attention on GPUs. We apply down-sampling to each feature map across frames in the compressed latent space, enabling a higher-level receptive field over the latent composed of hundreds of thousands of tokens. The low-resolution draft attention map, derived from draft query and key, exposes redundancy both spatially within each feature map and temporally across frames. We reorder the query, key, and value based on the draft attention map to guide the sparse attention computation in full resolution, and subsequently restore their original order after the attention computation. This reordering enables structured sparsity that aligns with hardware-optimized execution. Our theoretical analysis demonstrates that the low-resolution draft attention closely approximates the full attention, providing reliable guidance for constructing accurate sparse attention. Experimental results show that our method outperforms existing sparse attention approaches in video generation quality and achieves up to 1.75× end-to-end speedup on GPUs.",
+  "innovations": [
+    {
+      "name": "Low-Resolution Draft Attention",
+      "description": "Uses 8×16 average pooling to create low-resolution draft attention map that identifies important regions across spatial and temporal dimensions",
+      "runtime_improvement": "[n, n, d] → [n/128, n/128, d] + [r·n, n, d]",
+      "benefits": ["128× token reduction in draft computation", "Maintains high-level visual patterns", "Minimal computational overhead"]
+    },
+    {
+      "name": "Hardware-Friendly Reordering",
+      "description": "Deterministic token reordering to align sparse patterns with GPU memory layout for efficient block processing",
+      "runtime_improvement": "O(n) reordering overhead, enables coalesced memory access",
+      "benefits": ["Contiguous memory access", "Compatible with FlashAttention", "128 tokens per kernel processing"]
+    },
+    {
+      "name": "Theoretical Error Bounds",
+      "description": "Provides formal bounds on approximation error between full and draft attention using Frobenius norm analysis",
+      "runtime_improvement": "No runtime overhead, theoretical guarantee",
+      "benefits": ["Controlled approximation error", "Bounded sparsity error", "Justifies method effectiveness"]
+    },
+    {
+      "name": "Training-Free Integration",
+      "description": "Plug-and-play module requiring no additional training or fine-tuning",
+      "runtime_improvement": "Zero training cost, immediate deployment",
+      "benefits": ["No retraining required", "Immediate deployment", "Backward compatibility"]
+    }
+  ],
+  "improvements": [
+    {
+      "name": "Adaptive Kernel Selection",
+      "description": "Content-aware pooling kernel selection based on local complexity analysis",
+      "runtime_improvement": "[n, d, k] → [n/g'(x), d, k'(x)] where g' varies by content",
+      "expected_benefits": ["5-10% quality improvement", "Better detail preservation", "Dynamic adaptation"]
+    },
+    {
+      "name": "Dynamic Sparsity Scheduling",
+      "description": "Step-wise sparsity adjustment based on attention entropy across denoising steps",
+      "runtime_improvement": "[g, g, d] + [r(t)·n, n, d] with r(t) ∈ [0.5, 0.95]",
+      "expected_benefits": ["1.2× additional speedup", "Better quality-sparsity trade-off", "Adaptive complexity"]
+    },
+    {
+      "name": "Hierarchical Draft Attention",
+      "description": "Multi-scale draft attention with learned combination weights",
+      "runtime_improvement": "Σ_i [g_i, g_i, d] + [r·n, n, d] for multiple scales",
+      "expected_benefits": ["Improved accuracy", "Robust to varying content", "Multi-scale feature capture"]
+    },
+    {
+      "name": "Temporal-Separate Pooling",
+      "description": "Different pooling strategies for spatial vs temporal dimensions",
+      "runtime_improvement": "[t, h, w] → [t', h', w'] with t' ≠ h' ≠ w'",
+      "expected_benefits": ["Better temporal modeling", "Improved video coherence", "Reduced temporal artifacts"]
+    },
+    {
+      "name": "Quantization Integration",
+      "description": "Combine with INT8/INT4 weight quantization for additional memory reduction",
+      "runtime_improvement": "[g, g, d/4] + [r·n, n, d/4] for INT4 quantization",
+      "expected_benefits": ["50-75% memory reduction", "Additional speedup", "Mobile deployment"]
+    },
+    {
+      "name": "Distributed Inference Support",
+      "description": "Split draft attention across GPUs with efficient communication",
+      "runtime_improvement": "[g, g, d/p] + [r·n/p, n, d] + all-reduce[g², 1]",
+      "expected_benefits": ["Linear scaling with GPUs", "Larger model support", "Reduced per-GPU memory"]
+    }
+  ],
+  "experimental_parameters": {
+    "models": ["HunyuanVideo-T2V", "Wan2.1-T2V"],
+    "resolutions": ["512p", "768p"],
+    "frames": [80, 128],
+    "sparsity_ratios": [0.55, 0.60, 0.75, 0.80, 0.90],
+    "pooling_kernel": "8×16 with stride=kernel_size",
+    "token_reduction": 128,
+    "hardware": "H100 GPU",
+    "implementation": "Block Sparse Attention",
+    "fallback_steps": "First 25% of denoising steps use full attention"
+  },
+  "runtime_comparison": {
+    "baseline_dense": "[n, n, d] - Full quadratic complexity O(n²d)",
+    "draft_attention": "[n/128, n/128, d] + [r·n, n, d] - Reduced to O(n²d/128² + r·n²d)",
+    "improved_adaptive": "[n/g'(x), n/g'(x), d] + [r(t)·n, n, d] - Dynamic complexity based on content",
+    "quantized": "[n/128, n/128, d/4] + [r·n, n, d/4] - Additional 4× reduction with INT4"
+  },
+  "communication_cost": {
+    "single_gpu": 0,
+    "distributed": "all-reduce[g², 1] for draft attention synchronization",
+    "expected_overhead": "<5% of total computation for 2-4 GPUs"
+  },
+  "quality_metrics": {
+    "similarity": ["PSNR", "SSIM", "LPIPS"],
+    "perceptual": ["VBench Image Quality", "Subject Consistency", "Background Consistency", "Dynamic Degree", "Aesthetic Quality"],
+    "temporal": "Additional temporal consistency metrics needed"
+  }
+}

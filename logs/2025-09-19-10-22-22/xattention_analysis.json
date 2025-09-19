@@ -1,0 +1,139 @@
+{
+  "paper_title": "XAttention: Block Sparse Attention with Antidiagonal Scoring",
+  "original_abstract": "Long-Context Transformer Models (LCTMs) are vital for real-world applications but suffer high computational costs due to attention's quadratic complexity. Block-sparse attention mitigates this by focusing computation on critical regions, yet existing methods struggle with balancing accuracy and efficiency due to costly block importance measurements. In this paper, we introduce XAttention, a plug-and-play framework that dramatically accelerates long-context inference in Transformers models using sparse attention. XAttention's key innovation is the insight that the sum of antidiagonal values (i.e., from the lower-left to upper-right) in the attention matrix provides a powerful proxy for block importance. This allows for precise identification and pruning of non-essential blocks, resulting in high sparsity and dramatically accelerated inference. Across comprehensive evaluations on demanding long-context benchmarks—including RULER and LongBench for language, VideoMME for video understanding, and VBench for video generation—XAttention achieves accuracy comparable to full attention while delivering substantial computational gains. We demonstrate up to 13.5× acceleration in attention computation. These results underscore XAttention's ability to unlock the practical potential of block sparse attention, paving the way for scalable and efficient deployment of LCTMs in real-world applications.",
+  "innovative_points": [
+    {
+      "point": "Antidiagonal Scoring for Block Importance",
+      "explanation": "The key insight that summing values along antidiagonals (lower-left to upper-right) in attention blocks provides a powerful proxy for block importance. This is computationally efficient as it requires only O(L²/S) operations where S is the stride, compared to O(L²) for full attention computation.",
+      "runtime_change": "Pattern selection: [L/S, d, L/S] instead of [L, d, L] for full block evaluation"
+    },
+    {
+      "point": "Strided Antidiagonal Sampling",
+      "explanation": "Uses stride S to sample antidiagonal elements, balancing computational efficiency with pattern detection. This ensures every token contributes to the score while detecting both vertical and slash patterns within blocks.",
+      "runtime_change": "Sampling cost: [B/S, d, B/S] per block vs [B, d, B] for dense evaluation"
+    },
+    {
+      "point": "Threshold-Based Block Selection",
+      "explanation": "Introduces a probability-based threshold selection that finds the minimal set of blocks whose cumulative attention exceeds threshold τ. This provides dynamic sparsity adaptation to input sequences.",
+      "runtime_change": "Selection overhead: O(L²/B²) for block processing vs O(L²) for full computation"
+    },
+    {
+      "point": "Dynamic Threshold Prediction via DP",
+      "explanation": "Uses dynamic programming to optimize thresholds per attention head, accounting for varying sparsity patterns across heads. Reduces average threshold from 0.9 to 0.8 while improving accuracy.",
+      "runtime_change": "DP cost: O(H×M) where H=heads, M=iterations (1000→100 with gradients)"
+    },
+    {
+      "point": "Plug-and-Play Framework",
+      "explanation": "Works without retraining across different domains (language, video understanding, video generation) by using training-free pattern selection based on input characteristics.",
+      "runtime_change": "No additional training cost; inference-only overhead remains [L/S, d, L/S]"
+    },
+    {
+      "point": "Warmup Strategy for Video Generation",
+      "explanation": "Introduces 5-step full attention warmup for video generation to maintain layout stability, addressing the challenge of non-causal attention in diffusion transformers.",
+      "runtime_change": "Warmup cost: 5×[L, d, L] + (50-5)×[density×L, d, density×L] vs 50×[L, d, L]"
+    }
+  ],
+  "baseline_runtime": {
+    "full_attention": "[L, d, L] where L=sequence_length, d=head_dimension",
+    "flash_attention": "[L, d, L] with memory-efficient implementation"
+  },
+  "proposed_runtime": {
+    "xattention": {
+      "pattern_selection": "[L/S, d, L/S] for antidiagonal scoring + O(L²/S) for selection",
+      "sparse_attention": "[density×L, d, density×L] where density ∈ [0.05, 0.5]",
+      "total": "O(L²d×density + L²/S)"
+    }
+  },
+  "improved_runtime": {
+    "adaptive_warmup": "α×[L, d, L] + (50-α)×[f(content)×L, d, f(content)×L] where α∈[0,5]",
+    "multi_scale": "Σᵢ [L/Sᵢ, d, L/Sᵢ] with shared computation reducing to 1.2×[L/S, d, L/S]",
+    "gradient_threshold": "O(H×M/10×evaluation_cost) vs O(H×M×evaluation_cost) for DP",
+    "hardware_optimized": "[density×L, d, density×L] with 1.5-2× memory throughput improvement"
+  },
+  "experimental_parameters": {
+    "models": {
+      "llama_3_1_8b": {
+        "tasks": ["RULER", "LongBench"],
+        "config": {"stride": [8, 16], "threshold": "dynamic", "max_adjustments": 1000}
+      },
+      "qwen2_vl_7b": {
+        "tasks": ["VideoMME"],
+        "config": {"stride": 16, "threshold": 0.9}
+      },
+      "hunyuan_video": {
+        "tasks": ["VBench"],
+        "config": {"stride": 8, "threshold": [0.9, 0.95], "warmup_steps": 5}
+      }
+    },
+    "baselines": ["FlashAttention", "MInference", "FlexPrefill", "SeerAttention"],
+    "datasets": {
+      "RULER": {"lengths": ["4k", "8k", "16k", "32k", "64k", "128k"], "type": "synthetic"},
+      "LongBench": {"tasks": 16, "type": "real-world"},
+      "VideoMME": {"videos": 900, "hours": 254, "duration": "11s-1h"},
+      "VBench": {"prompts": 946, "resolution": "720x1280", "frames": 129}
+    }
+  },
+  "improvements": [
+    {
+      "name": "Adaptive Warmup Strategy",
+      "description": "Learn optimal warmup steps based on content complexity using CLIP embeddings",
+      "implementation": "steps = f(content_embedding) where f is lightweight MLP",
+      "expected_gain": "2-3× reduction in warmup overhead",
+      "runtime": "α×[L, d, L] with α∈[0,5] vs fixed 5×[L, d, L]"
+    },
+    {
+      "name": "Multi-Scale Antidiagonal Patterns",
+      "description": "Combine multiple stride sizes (S=4,8,16) in hierarchical manner with learned weights",
+      "implementation": "score = w₁×S₄ + w₂×S₈ + w₃×S₁₆ via differentiable architecture",
+      "expected_gain": "15-20% better accuracy at same density",
+      "runtime": "Σᵢ [L/Sᵢ, d, L/Sᵢ] with shared computation"
+    },
+    {
+      "name": "Dynamic Block Sizing",
+      "description": "Adjust block size B∈{4,8,16,32} per attention head based on pattern complexity",
+      "implementation": "Offline head analysis → head-specific B assignment",
+      "expected_gain": "10-15% density reduction at same accuracy",
+      "runtime": "Heterogeneous [Bᵢ, d, Bᵢ] blocks vs uniform [B, d, B]"
+    },
+    {
+      "name": "Gradient-Based Threshold Optimization",
+      "description": "Use gradient information to reduce threshold optimization iterations from 1000 to 100",
+      "implementation": "Adam optimizer with momentum on threshold parameters",
+      "expected_gain": "5-10× faster threshold optimization",
+      "runtime": "O(H×M/10×evaluation_cost) vs O(H×M×evaluation_cost)"
+    },
+    {
+      "name": "Content-Adaptive Sparsity",
+      "description": "Adjust sparsity based on input content and task type via learned function",
+      "implementation": "density = f(content_embedding, task_type) with range [0.05, 0.5]",
+      "expected_gain": "20-30% additional speedup on easy inputs",
+      "runtime": "[f(content)×L, d, f(content)×L] vs fixed density"
+    },
+    {
+      "name": "Hardware-Aware Pattern Design",
+      "description": "Optimize patterns for GPU memory coalescing and throughput",
+      "implementation": "Analyze GPU memory access patterns → design coalescing-friendly patterns",
+      "expected_gain": "1.5-2× additional speedup on modern GPUs",
+      "runtime": "Same [density×L, d, density×L] but with better memory utilization"
+    }
+  ],
+  "performance_summary": {
+    "current_achievements": {
+      "max_speedup": "13.5× at 256k tokens",
+      "min_density": "6.2% at 128k tokens",
+      "accuracy": "Comparable to full attention across all benchmarks"
+    },
+    "projected_improvements": {
+      "conservative": {
+        "accuracy_gain": "+3-5%",
+        "speedup_gain": "1.5-2× additional",
+        "density_reduction": "20-30%"
+      },
+      "aggressive": {
+        "accuracy_gain": "+8-12%",
+        "speedup_gain": "2-3× additional",
+        "density_reduction": "40-50%"
+      }
+    }
+  }
+}
