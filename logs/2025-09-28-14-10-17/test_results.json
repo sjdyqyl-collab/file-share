@@ -1,0 +1,158 @@
+{
+  "paper_title": "Compact Attention: Hardware-aware Acceleration for Video Diffusion Transformers",
+  "test_timestamp": "2025-09-28 14:41:57",
+  "device": "cuda",
+  "num_runs_per_test": 10,
+  "test_configs": [
+    {
+      "batch_size": 1,
+      "seq_len": 64,
+      "dim": 128,
+      "num_heads": 4
+    },
+    {
+      "batch_size": 2,
+      "seq_len": 128,
+      "dim": 256,
+      "num_heads": 8
+    },
+    {
+      "batch_size": 4,
+      "seq_len": 256,
+      "dim": 512,
+      "num_heads": 8
+    },
+    {
+      "batch_size": 1,
+      "seq_len": 512,
+      "dim": 512,
+      "num_heads": 8
+    }
+  ],
+  "individual_results": [
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 64,
+        "dim": 128,
+        "num_heads": 4
+      },
+      "full_attention": {
+        "runtime": 0.00023314952850341796,
+        "sparsity": 0.0,
+        "accuracy": 1.0
+      },
+      "compact_attention": {
+        "runtime": 0.05462303161621094,
+        "sparsity": 0.8935546875,
+        "accuracy": 0.19501662254333496,
+        "speedup_ratio": 0.004268337395506701,
+        "accuracy_ratio": 0.19501662254333496
+      },
+      "adaptive_compact_attention": {
+        "runtime": 0.0011713981628417968,
+        "sparsity": 0.7,
+        "accuracy": 0.2289062887430191,
+        "speedup_ratio": 0.19903525197427338,
+        "accuracy_ratio": 0.2289062887430191
+      }
+    },
+    {
+      "config": {
+        "batch_size": 2,
+        "seq_len": 128,
+        "dim": 256,
+        "num_heads": 8
+      },
+      "full_attention": {
+        "runtime": 0.00027649402618408204,
+        "sparsity": 0.0,
+        "accuracy": 1.0
+      },
+      "compact_attention": {
+        "runtime": 0.2178905725479126,
+        "sparsity": 0.946044921875,
+        "accuracy": 0.105796679854393,
+        "speedup_ratio": 0.0012689581882817942,
+        "accuracy_ratio": 0.105796679854393
+      },
+      "adaptive_compact_attention": {
+        "runtime": 0.0017786502838134765,
+        "sparsity": 0.7,
+        "accuracy": 0.3364148437976837,
+        "speedup_ratio": 0.15545159647194445,
+        "accuracy_ratio": 0.3364148437976837
+      }
+    },
+    {
+      "config": {
+        "batch_size": 4,
+        "seq_len": 256,
+        "dim": 512,
+        "num_heads": 8
+      },
+      "full_attention": {
+        "runtime": 0.0015033960342407226,
+        "sparsity": 0.0,
+        "accuracy": 1.0
+      },
+      "compact_attention": {
+        "runtime": 0.8640498399734498,
+        "sparsity": 0.97283935546875,
+        "accuracy": 0.0905044823884964,
+        "speedup_ratio": 0.0017399413375123343,
+        "accuracy_ratio": 0.0905044823884964
+      },
+      "adaptive_compact_attention": {
+        "runtime": 0.0059762239456176754,
+        "sparsity": 0.7,
+        "accuracy": 0.3205595314502716,
+        "speedup_ratio": 0.25156286777759607,
+        "accuracy_ratio": 0.3205595314502716
+      }
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 512,
+        "dim": 512,
+        "num_heads": 8
+      },
+      "full_attention": {
+        "runtime": 0.0009453535079956054,
+        "sparsity": 0.0,
+        "accuracy": 1.0
+      },
+      "compact_attention": {
+        "runtime": 3.457480049133301,
+        "sparsity": 0.9863739013671875,
+        "accuracy": 0.05392913147807121,
+        "speedup_ratio": 0.00027342269356914455,
+        "accuracy_ratio": 0.05392913147807121
+      },
+      "adaptive_compact_attention": {
+        "runtime": 0.004938840866088867,
+        "sparsity": 0.7,
+        "accuracy": 0.25976085662841797,
+        "speedup_ratio": 0.1914120202751629,
+        "accuracy_ratio": 0.25976085662841797
+      }
+    }
+  ],
+  "summary": {
+    "geometric_means": {
+      "compact_attention": {
+        "speedup_ratio": 0.0012669772139750188,
+        "accuracy_ratio": 0.10017498731496287
+      },
+      "adaptive_compact_attention": {
+        "speedup_ratio": 0.19646501846735268,
+        "accuracy_ratio": 0.28297874697130615
+      }
+    },
+    "compact_vs_adaptive": {
+      "speedup_improvement": 155.06594459655878,
+      "accuracy_improvement": 2.8248443504323597
+    }
+  }
+}

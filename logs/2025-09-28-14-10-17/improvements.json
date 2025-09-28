@@ -1,0 +1,253 @@
+{
+  "paper_title": "Compact Attention: Exploiting Structured Spatio-Temporal Sparsity for Fast Video Generation",
+  "runtime_analysis": {
+    "baseline_full_attention": {
+      "computation": "[n, d, n]",
+      "description": "Full attention computation where n = sequence_length, d = hidden_dimension",
+      "complexity": "O(n²d)"
+    },
+    "proposed_compact_attention": {
+      "computation": "[n, d, n] * sparsity_ratio + [n, d, k]",
+      "description": "Sparse attention with sparsity_ratio + mask lookup overhead k",
+      "complexity": "O(n²d * sparsity_ratio)",
+      "sparsity_achieved": "62.36% (Hunyuan), 33.99% (Wan2.1)"
+    },
+    "improved_method": {
+      "computation": "[n, d, n] * adaptive_sparsity + [n, d, k] + [b, d, b]",
+      "description": "Adaptive sparsity with block-wise processing and dynamic thresholding",
+      "complexity": "O(n²d * adaptive_sparsity)",
+      "expected_sparsity": "75-85%"
+    }
+  },
+  "gaps_and_limitations": [
+    {
+      "gap": "Fixed recall and cost thresholds may compromise visual fidelity",
+      "description": "The auto-search strategy uses static thresholds (τ=0.9, λ=0.011/0.04) which may not adapt to content complexity",
+      "severity": "Medium",
+      "location": "Section 4.2, Appendix A"
+    },
+    {
+      "gap": "Limited to offline mask computation",
+      "description": "Cannot adapt to dynamic content changes during generation, requires pre-computed masks",
+      "severity": "High",
+      "location": "Section 4.2"
+    },
+    {
+      "gap": "Single GPU limitation",
+      "description": "Method designed for single-GPU setups, no multi-GPU scaling considered",
+      "severity": "Medium",
+      "location": "Throughout paper"
+    },
+    {
+      "gap": "No consideration of attention head interactions",
+      "description": "Treats attention heads independently, missing potential cross-head optimization opportunities",
+      "severity": "Low",
+      "location": "Section 3.2"
+    },
+    {
+      "gap": "Limited temporal granularity",
+      "description": "Frame-group-wise patterns use coarse temporal grouping, may miss fine-grained temporal dependencies",
+      "severity": "Medium",
+      "location": "Section 4.1"
+    }
+  ],
+  "improvements": [
+    {
+      "title": "Adaptive Thresholding System",
+      "description": "Dynamic recall and cost thresholds based on content complexity and noise levels",
+      "implementation": {
+        "approach": "Content-aware threshold adjustment using statistical measures of attention entropy",
+        "algorithm": "Gradient-based threshold optimization during denoising process",
+        "parameters": {
+          "entropy_threshold": "0.1-0.5 (adaptive)",
+          "noise_level_scaling": "proportional to current noise schedule",
+          "content_complexity": "measured via attention map variance"
+        }
+      },
+      "expected_improvement": {
+        "sparsity_increase": "10-15%",
+        "quality_maintenance": "PSNR degradation < 0.1dB",
+        "runtime_change": "[n, d, n] * (sparsity + 0.15) + [n, d, 2k]"
+      },
+      "innovation_points": [
+        "First adaptive thresholding for sparse attention in video generation",
+        "Noise-level aware sparsity control",
+        "Content complexity measurement via attention statistics"
+      ]
+    },
+    {
+      "title": "Online Mask Refinement",
+      "description": "Lightweight online mask adjustment to complement offline pre-computation",
+      "implementation": {
+        "approach": "Incremental mask updates using low-rank approximations",
+        "algorithm": "SVD-based mask refinement with O(n log n) complexity",
+        "components": [
+          "Low-rank attention approximation",
+          "Incremental SVD updates",
+          "Residual-based mask adjustment"
+        ]
+      },
+      "expected_improvement": {
+        "adaptability": "Real-time response to content changes",
+        "sparsity_increase": "5-8% over offline masks",
+        "runtime_change": "[n, d, n] * sparsity + [n, d, k] + [n, r, n] where r << d"
+      },
+      "innovation_points": [
+        "First online refinement for pre-computed sparse attention masks",
+        "Low-rank approximation for efficient mask updates",
+        "Residual-based adjustment preserving critical attention paths"
+      ]
+    },
+    {
+      "title": "Multi-GPU Distributed Sparsity",
+      "description": "Scalable sparsity patterns across multiple GPUs with communication optimization",
+      "implementation": {
+        "approach": "Distributed tile processing with hierarchical sparsity",
+        "architecture": {
+          "intra_gpu": "Tile-based processing within GPU",
+          "inter_gpu": "Cross-GPU attention with selective communication",
+          "communication": "Sparse gradient exchange using top-k selection"
+        },
+        "scaling": "Linear scaling up to 8 GPUs"
+      },
+      "expected_improvement": {
+        "speedup": "7-8× with 8 GPUs",
+        "communication_overhead": "< 5% of total computation",
+        "runtime_change": "[n/p, d, n] * sparsity + [n/p, d, k] + [n, d, c] where p=GPUs, c=communication"
+      },
+      "innovation_points": [
+        "First distributed sparse attention for video generation",
+        "Hierarchical sparsity across GPU boundaries",
+        "Communication-efficient sparse gradient exchange"
+      ]
+    },
+    {
+      "title": "Cross-Head Attention Optimization",
+      "description": "Joint optimization across attention heads exploiting head correlations",
+      "implementation": {
+        "approach": "Shared sparsity patterns with head-specific refinements",
+        "algorithm": "Multi-head attention clustering with shared basis",
+        "methodology": [
+          "Head correlation analysis via attention similarity",
+          "Shared sparse pattern discovery",
+          "Head-specific fine-tuning"
+        ]
+      },
+      "expected_improvement": {
+        "sparsity_increase": "8-12% through shared patterns",
+        "memory_reduction": "20-30% through pattern sharing",
+        "runtime_change": "[h, n, d, n] * (sparsity + 0.1) + [h, n, d, s] where h=heads, s=shared_patterns"
+      },
+      "innovation_points": [
+        "First cross-head sparsity optimization in video transformers",
+        "Attention head clustering for pattern sharing",
+        "Memory-efficient shared sparse representations"
+      ]
+    },
+    {
+      "title": "Fine-Grained Temporal Modeling",
+      "description": "Sub-frame temporal patterns with micro-temporal adaptation",
+      "implementation": {
+        "approach": "Hierarchical temporal modeling with multiple granularities",
+        "granularities": [
+          "Frame-level (current)",
+          "Sub-frame patches (1/4 frame)",
+          "Micro-temporal windows (1/16 frame)"
+        ],
+        "algorithm": "Multi-resolution temporal attention with adaptive pooling"
+      },
+      "expected_improvement": {
+        "temporal_fidelity": "Better motion coherence",
+        "sparsity_increase": "3-5% through fine-grained patterns",
+        "runtime_change": "[n, d, n] * (sparsity + 0.05) + [4n, d/4, n/4]"
+      },
+      "innovation_points": [
+        "First sub-frame temporal attention sparsity",
+        "Multi-resolution temporal modeling",
+        "Adaptive temporal granularity selection"
+      ]
+    }
+  ],
+  "innovative_points": {
+    "paper_innovations": [
+      {
+        "title": "Structured Sparsity Discovery",
+        "description": "First systematic identification of hierarchical spatio-temporal patterns in video diffusion transformers",
+        "novelty": "Discovered local, cross-shaped, and global spatial patterns plus time-variant/invariant temporal patterns",
+        "impact": "Enables principled sparse attention design for video generation"
+      },
+      {
+        "title": "Tile-Based Deformable Patterns",
+        "description": "Adaptive tile grouping that respects 3D video structure while maintaining hardware efficiency",
+        "novelty": "Dynamic tile combinations approximating diverse attention modes",
+        "impact": "Achieves 62.36% sparsity while maintaining quality"
+      },
+      {
+        "title": "Offline Auto-Search Algorithm",
+        "description": "Training-free mask optimization with dual threshold system",
+        "novelty": "Decouples pattern discovery from runtime execution",
+        "impact": "Eliminates runtime overhead while preserving fidelity"
+      }
+    ],
+    "proposed_improvements": [
+      {
+        "title": "Adaptive Thresholding",
+        "description": "Dynamic thresholds based on content complexity and noise levels",
+        "novelty": "First content-aware sparsity control in video generation",
+        "runtime_change": "[n, d, n] * (sparsity + 0.15) + [n, d, 2k]"
+      },
+      {
+        "title": "Online Refinement",
+        "description": "Real-time mask adjustment using low-rank approximations",
+        "novelty": "First online sparse mask refinement for pre-computed patterns",
+        "runtime_change": "[n, d, n] * sparsity + [n, d, k] + [n, r, n]"
+      },
+      {
+        "title": "Multi-GPU Scaling",
+        "description": "Distributed sparse attention with communication optimization",
+        "novelty": "First distributed implementation of sparse video attention",
+        "runtime_change": "[n/p, d, n] * sparsity + [n/p, d, k] + [n, d, c]"
+      }
+    ]
+  },
+  "experimental_parameters": {
+    "models": {
+      "wan2.1": {
+        "parameters": "14B",
+        "frames": 81,
+        "resolution": "768×1280",
+        "tokens": "80K"
+      },
+      "hunyuan": {
+        "parameters": "Not specified",
+        "frames": 129,
+        "resolution": "768×1280",
+        "tokens": "127K"
+      }
+    },
+    "thresholds": {
+      "recall_threshold_tau": 0.9,
+      "cost_threshold_lambda": {
+        "wan2.1": 0.011,
+        "hunyuan": 0.04
+      }
+    },
+    "sparsity_levels": {
+      "wan2.1": [33.99, 24.66],
+      "hunyuan": [62.36, 52.90]
+    },
+    "speedup_achieved": {
+      "wan2.1": [1.65, 1.44],
+      "hunyuan": [2.51, 1.83]
+    }
+  },
+  "communication_analysis": {
+    "current_method": "Single GPU - no communication",
+    "proposed_multi_gpu": {
+      "communication_pattern": "Sparse gradient exchange",
+      "communication_volume": "O(n * sparsity / p) where p = number of GPUs",
+      "latency_overhead": "< 5% of total computation",
+      "bandwidth_requirement": "High-speed interconnect (NVLink/InfiniBand)"
+    }
+  }
+}
