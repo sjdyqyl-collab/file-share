@@ -1,0 +1,161 @@
+{
+  "title": "Compact Attention: Exploiting Structured Spatio-Temporal Sparsity for Fast Video Generation",
+  "runtime_analysis": {
+    "baseline_full_attention": {
+      "description": "Full attention computation in video diffusion transformers",
+      "time_complexity": "[N, N, d] where N = f×h×w (total tokens), d = hidden dimension",
+      "example_hunyuan": "[127000, 127000, 512] ≈ 8.1×10^9 operations",
+      "example_wan2.1": "[80000, 80000, 512] ≈ 3.2×10^9 operations"
+    },
+    "proposed_compact_attention": {
+      "description": "Compact Attention with sparsity exploitation",
+      "time_complexity": "[N, N×s, d] where s = sparsity ratio",
+      "example_hunyuan": "[127000, 127000×0.3764, 512] ≈ 3.1×10^9 operations (62.36% sparsity)",
+      "example_wan2.1": "[80000, 80000×0.6601, 512] ≈ 2.1×10^9 operations (33.99% sparsity)"
+    },
+    "improved_method": {
+      "description": "Enhanced Compact Attention with adaptive thresholding and dynamic patterns",
+      "time_complexity": "[N, N×s(t), d] where s(t) = dynamic sparsity ratio based on timestep",
+      "projected_improvement": "Additional 15-25% reduction in operations",
+      "example_hunyuan": "[127000, 127000×0.28, 512] ≈ 2.3×10^9 operations (72% effective sparsity)",
+      "example_wan2.1": "[80000, 80000×0.45, 512] ≈ 1.4×10^9 operations (55% effective sparsity)"
+    }
+  },
+  "gaps_limitations": [
+    {
+      "id": 1,
+      "description": "Static threshold parameters (τ, λ) across all denoising steps",
+      "impact": "May compromise quality in early denoising steps or miss optimization opportunities in later steps",
+      "current_approach": "Fixed τ=0.9, λ=0.011/0.04 for all timesteps",
+      "severity": "Medium"
+    },
+    {
+      "id": 2,
+      "description": "Limited pattern types (only 5 identified patterns)",
+      "impact": "May miss complex spatio-temporal interactions in diverse video content",
+      "current_approach": "Local, cross-shaped, global, time-variant, time-invariant",
+      "severity": "Low"
+    },
+    {
+      "id": 3,
+      "description": "Single-GPU implementation limits scalability",
+      "impact": "Cannot leverage multi-GPU systems for further acceleration",
+      "current_approach": "Single H800 GPU evaluation",
+      "severity": "Medium"
+    },
+    {
+      "id": 4,
+      "description": "No consideration of content-aware sparsity",
+      "impact": "Same sparsity pattern applied regardless of video content complexity",
+      "current_approach": "Pattern stability assumption across inputs",
+      "severity": "High"
+    },
+    {
+      "id": 5,
+      "description": "Limited temporal grouping strategies",
+      "impact": "Fixed frame grouping may not capture optimal temporal dependencies",
+      "current_approach": "Distance-based frame grouping",
+      "severity": "Medium"
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "id": 1,
+      "name": "Adaptive Threshold Scheduling",
+      "description": "Dynamic adjustment of τ and λ based on denoising timestep and noise level",
+      "implementation": {
+        "early_steps": "τ=0.95, λ=0.005 (preserve quality)",
+        "mid_steps": "τ=0.9, λ=0.011 (balanced approach)",
+        "late_steps": "τ=0.85, λ=0.02 (aggressive acceleration)"
+      },
+      "expected_improvement": "Additional 10-15% speedup with maintained quality",
+      "runtime_change": "From [N, N×s, d] to [N, N×s(t), d] where s(t) varies by timestep"
+    },
+    {
+      "id": 2,
+      "name": "Content-Adaptive Pattern Detection",
+      "description": "Use lightweight CNN to analyze video content and adjust sparsity patterns",
+      "implementation": {
+        "complexity_classifier": "3-layer CNN predicting content complexity score",
+        "pattern_selector": "Dynamic pattern selection based on complexity",
+        "overhead": "<1% additional computation"
+      },
+      "expected_improvement": "15-20% better quality-content trade-off",
+      "runtime_change": "Minimal overhead: [N, N×s(c), d] + [batch, 224, 224, 3] CNN cost"
+    },
+    {
+      "id": 3,
+      "name": "Multi-GPU Distributed Sparsity",
+      "description": "Distribute attention computation across GPUs with optimized sparsity partitioning",
+      "implementation": {
+        "spatial_partitioning": "Split video frames across GPUs",
+        "temporal_partitioning": "Split frame sequences across GPUs",
+        "communication": "Efficient attention weight sharing between GPUs"
+      },
+      "expected_improvement": "2-4× additional speedup with 2-4 GPUs",
+      "runtime_change": "[N/k, N/k, d] + communication overhead where k = number of GPUs"
+    },
+    {
+      "id": 4,
+      "name": "Learned Pattern Primitives",
+      "description": "Neural network to learn optimal pattern primitives beyond hand-crafted ones",
+      "implementation": {
+        "pattern_generator": "Small transformer to generate custom attention masks",
+        "training": "Lightweight fine-tuning on 100-200 videos",
+        "adaptation": "Online adaptation during inference"
+      },
+      "expected_improvement": "20-30% better sparsity-quality trade-off",
+      "runtime_change": "[N, N×s_learned, d] + [N, N, d_model] pattern generation cost"
+    },
+    {
+      "id": 5,
+      "name": "Hierarchical Temporal Grouping",
+      "description": "Multi-level temporal grouping based on motion analysis and scene transitions",
+      "implementation": {
+        "motion_analysis": "Optical flow based frame grouping",
+        "scene_detection": "Scene transition aware temporal windows",
+        "adaptive_grouping": "Dynamic group size based on content"
+      },
+      "expected_improvement": "10-15% better temporal coherence with same sparsity",
+      "runtime_change": "[N, N×s_hierarchical, d] + optical flow computation [f-1, h, w, 2]"
+    }
+  ],
+  "innovative_extensions": [
+    {
+      "name": "Real-time Streaming Compact Attention",
+      "description": "Extension for real-time video generation with streaming input",
+      "implementation": {
+        "sliding_window": "Dynamic window adjustment for streaming data",
+        "incremental_update": "Efficient mask updates as new frames arrive",
+        "latency_optimization": "Sub-frame latency attention computation"
+      },
+      "runtime_change": "[window_size, window_size, d] per frame instead of full sequence"
+    },
+    {
+      "name": "Cross-Modal Compact Attention",
+      "description": "Extension for text-video-audio multimodal generation",
+      "implementation": {
+        "modal_fusion": "Joint sparsity patterns across text, video, audio",
+        "cross_attention": "Efficient cross-modal attention with sparsity",
+        "shared_patterns": "Unified pattern discovery across modalities"
+      },
+      "runtime_change": "[N_total, N_total×s_cross, d] where N_total = N_text + N_video + N_audio"
+    },
+    {
+      "name": "Adaptive Resolution Compact Attention",
+      "description": "Dynamic resolution adjustment based on attention patterns",
+      "implementation": {
+        "resolution_pyramid": "Multi-resolution attention computation",
+        "detail_adaptation": "High resolution for detailed regions, low for others",
+        "progressive_refinement": "Iterative resolution increase"
+      },
+      "runtime_change": "[N_adaptive, N_adaptive×s_adaptive, d] where N_adaptive varies by resolution"
+    }
+  ],
+  "experimental_validation_plan": {
+    "datasets": ["MSR-VTT", "ActivityNet", "Kinetics-400"],
+    "metrics": ["FID", "IS", "FVD", "CLIPSIM", "inference_latency"],
+    "hardware": ["A100", "H100", "RTX 4090"],
+    "baselines": ["Original Compact Attention", "Full Attention", "Sparse VideoGen", "SpargeAttn"]
+  }
+}

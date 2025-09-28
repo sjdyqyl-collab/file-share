@@ -1,0 +1,146 @@
+{
+  "paper_title": "Compact Attention: Exploiting Structured Spatio-Temporal Sparsity for Fast Video Generation",
+  "original_abstract": "The computational demands of self-attention mechanisms pose a critical challenge for transformer-based video generation, particularly in synthesizing ultra-long sequences. Current approaches, such as factorized attention and fixed sparse patterns, fail to fully exploit the inherent spatio-temporal redundancies in video data. Through systematic analysis of video diffusion transformers (DiT), we uncover a key insight: Attention matrices exhibit structured, yet heterogeneous sparsity patterns, where specialized heads dynamically attend to distinct spatiotemporal regions (e.g., local pattern, cross-shaped pattern, or global pattern). Existing sparse attention methods either impose rigid constraints or introduce significant overhead, limiting their effectiveness. To address this, we propose Compact Attention, a hardware-aware acceleration framework featuring three innovations: 1) Adaptive tiling strategies that approximate diverse spatial interaction patterns via dynamic tile grouping, 2) Temporally varying windows that adjust sparsity levels based on frame proximity, and 3) An automated configuration search algorithm that optimizes sparse patterns while preserving critical attention pathways. Our method achieves 1.6∼2.5×acceleration in attention computation on single-GPU setups while maintaining comparable visual quality with full-attention baselines. This work provides a principled approach to unlocking efficient long-form video generation through structured sparsity exploitation.",
+  "innovative_points": [
+    {
+      "name": "Structured Sparsity Discovery",
+      "description": "Systematic identification of heterogeneous spatio-temporal attention patterns in video diffusion transformers",
+      "technical_details": "Discovered three spatial patterns (local, cross-shaped, global) and two temporal patterns (time-variant, time-invariant) through per-query-token attention analysis",
+      "runtime_impact": "Enables offline mask pre-computation, reducing runtime overhead from pattern discovery"
+    },
+    {
+      "name": "Tile-Based Deformable Sparse Pattern",
+      "description": "Hierarchical grouping mechanism that respects video's dual nature (temporal variation and spatial locality)",
+      "technical_details": "Reorganizes tokens into spacetime tiles with frame-group-wise patterns and dual attention windows",
+      "runtime_representation": "[N, k, d] where k = (1-sparsity)×N, with tile-level processing maintaining hardware efficiency"
+    },
+    {
+      "name": "Optimized Auto-Search Algorithm",
+      "description": "Offline configuration pipeline with dual-threshold boundary contraction for mask optimization",
+      "technical_details": "Uses recall threshold τ and cost threshold λ with conservative union merging across prompts",
+      "runtime_representation": "One-time offline cost: [H, L, T] where H=heads, L=layers, T=timesteps; Runtime: O(1) mask loading"
+    },
+    {
+      "name": "Pattern Stability Analysis",
+      "description": "Demonstration that attention patterns are input-invariant and temporally robust",
+      "technical_details": "Similarity > 0.8 across prompts/seeds, stable within denoising step ranges",
+      "runtime_impact": "Enables reliable offline pre-computation and mask reuse across n consecutive steps"
+    }
+  ],
+  "baseline_runtime": {
+    "full_attention": {
+      "computation": "[N, N, d]",
+      "memory": "O(N²)",
+      "time": "O(N²d)",
+      "example": {
+        "hunyuan": "[127000, 127000, d]",
+        "wan2.1": "[80000, 80000, d]"
+      }
+    }
+  },
+  "proposed_runtime": {
+    "compact_attention": {
+      "computation": "[N, k, d]",
+      "memory": "O(Nk)",
+      "time": "O(Nkd)",
+      "sparsity_rates": {
+        "hunyuan": "62.36%",
+        "wan2.1": "33.99%"
+      },
+      "effective_computation": {
+        "hunyuan": "[127000, 48000, d]",
+        "wan2.1": "[80000, 53000, d]"
+      },
+      "speedup": "1.6-2.5×"
+    }
+  },
+  "improvements": [
+    {
+      "name": "Adaptive Dynamic Patterns (ADP)",
+      "description": "Real-time pattern adaptation based on content entropy analysis",
+      "technical_implementation": "Compute per-tile entropy during inference, dynamically adjust mask boundaries ±10%",
+      "runtime_representation": "[N, k_adaptive, d] where k_adaptive = k × (1 + α×entropy)",
+      "expected_gains": {
+        "additional_sparsity": "5-8%",
+        "quality_impact": "<1% PSNR degradation",
+        "hunyuan": "[127000, 44000, d]",
+        "wan2.1": "[80000, 49000, d]"
+      }
+    },
+    {
+      "name": "Hierarchical Threshold Learning (HTL)",
+      "description": "Learn head-specific thresholds using reinforcement learning",
+      "technical_implementation": "Lightweight MLP predicts optimal τ, λ per head with quality×log(speedup) reward",
+      "runtime_representation": "Additional [H, 2] computation where H = number of heads",
+      "expected_gains": {
+        "threshold_optimization": "Per-head customization",
+        "training_cost": "1000 episodes on 4 GPUs for 2 hours"
+      }
+    },
+    {
+      "name": "Progressive Early Denoising (PED)",
+      "description": "Gradual sparsity increase based on denoising progress",
+      "technical_implementation": "Start 10% sparsity at step 0, linear increase to final sparsity by step 15",
+      "runtime_representation": "Progressive reduction from [N, 0.9N, d] to [N, k, d]",
+      "expected_gains": {
+        "early_acceleration": "15% faster initial steps",
+        "quality_preservation": "Maintained by gradual transition"
+      }
+    },
+    {
+      "name": "Multi-Scale Tile Hierarchy (MTH)",
+      "description": "Hierarchical tiles with adaptive resolution for multi-scale patterns",
+      "technical_implementation": "Three scales: 8×8, 16×16, 32×32 tiles with scale selection based on pattern type",
+      "runtime_representation": "Memory: O(N log N) vs O(N) baseline",
+      "expected_gains": {
+        "pattern_efficiency": "Better handling of mixed-scale attention",
+        "memory_overhead": "5% increase"
+      }
+    },
+    {
+      "name": "Cross-Model Pattern Transfer (CMPT)",
+      "description": "Transfer learned patterns across similar architectures",
+      "technical_implementation": "Meta-learning approach with 10% of original search cost per new model",
+      "runtime_representation": "Transfer computation: [M, M', H] where M, M' = model dimensions",
+      "expected_gains": {
+        "setup_reduction": "90% faster deployment on new models",
+        "adaptation_steps": "50 per new model"
+      }
+    }
+  ],
+  "experimental_parameters": {
+    "models": ["Wan2.1 (14B)", "Hunyuan"],
+    "video_specs": {
+      "wan2.1": "81 frames at 768×1280",
+      "hunyuan": "129 frames at 768×1280"
+    },
+    "hardware": "Single H800 GPU",
+    "framework": "ThunderKittens",
+    "thresholds": {
+      "recall_tau": 0.9,
+      "cost_lambda": {
+        "wan2.1": 0.011,
+        "hunyuan": 0.04
+      }
+    },
+    "step_reuse": "n consecutive denoising steps"
+  },
+  "final_enhanced_runtime": {
+    "adp_compact_attention": {
+      "expected_speedup": "3.0× over full attention (vs 2.5× current)",
+      "expected_sparsity": {
+        "hunyuan": "70%",
+        "wan2.1": "45%"
+      },
+      "quality_preservation": "Maintains current quality levels",
+      "communication_overhead": "<2% of attention computation time"
+    }
+  },
+  "file_paths": {
+    "phase1_keypoints": "/home/wzc/data/file-share/logs/2025-09-23-14-45-18/phase1_keypoints.md",
+    "phase2_methodology": "/home/wzc/data/file-share/logs/2025-09-23-14-45-18/phase2_methodology.md",
+    "phase3_experiments": "/home/wzc/data/file-share/logs/2025-09-23-14-45-18/phase3_experiments.md",
+    "gaps_improvements": "/home/wzc/data/file-share/logs/2025-09-23-14-45-18/gaps_improvements.md",
+    "final_analysis": "/home/wzc/data/file-share/logs/2025-09-23-14-45-18/final_analysis.json"
+  }
+}

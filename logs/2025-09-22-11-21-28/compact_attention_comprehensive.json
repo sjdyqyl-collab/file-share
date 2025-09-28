@@ -1,0 +1,103 @@
+{
+  "title": "Compact Attention: Exploiting Structured Spatio-Temporal Sparsity for Fast Video Generation",
+  "original_abstract": "The computational demands of self-attention mechanisms pose a critical challenge for transformer-based video generation, particularly in synthesizing ultra-long sequences. Current approaches, such as factorized attention and fixed sparse patterns, fail to fully exploit the inherent spatio-temporal redundancies in video data. Through systematic analysis of video diffusion transformers (DiT), we uncover a key insight: Attention matrices exhibit structured, yet heterogeneous sparsity patterns, where specialized heads dynamically attend to distinct spatiotemporal regions (e.g., local pattern, cross-shaped pattern, or global pattern). Existing sparse attention methods either impose rigid constraints or introduce significant overhead, limiting their effectiveness. To address this, we propose Compact Attention, a hardware-aware acceleration framework featuring three innovations: 1) Adaptive tiling strategies that approximate diverse spatial interaction patterns via dynamic tile grouping, 2) Temporally varying windows that adjust sparsity levels based on frame proximity, and 3) An automated configuration search algorithm that optimizes sparse patterns while preserving critical attention pathways. Our method achieves 1.6∼2.5×acceleration in attention computation on single-GPU setups while maintaining comparable visual quality with full-attention baselines. This work provides a principled approach to unlocking efficient long-form video generation through structured sparsity exploitation.",
+  "innovative_points": [
+    {
+      "point": "Structured Spatio-Temporal Pattern Discovery",
+      "explanation": "Systematically identified five distinct attention patterns in video diffusion transformers through empirical analysis: local (compact neighborhoods), cross-shaped (horizontal/vertical corridors), global (full connectivity), time-variant (temporal distance correlation), and time-invariant (frame-agnostic) patterns. This discovery enables targeted sparse approximation strategies.",
+      "runtime_impact": "Baseline: [100k, 100k, 64] for full attention → Discovered patterns enable [100k, 33k, 64] with 33-62% sparsity"
+    },
+    {
+      "point": "Tile-Based Deformable Sparse Patterns",
+      "explanation": "Introduced hierarchical tile grouping that respects video's natural spatio-temporal locality. Uses frame-group-wise patterns for temporal dynamics and dual attention windows (complementary window shapes) to approximate complex patterns without explicit classification.",
+      "runtime_impact": "[100k, 33k, 64] → [100k, 33k, 64] with block-wise processing reducing memory by 40% and enabling GPU-friendly computation"
+    },
+    {
+      "point": "Offline Auto-Search Algorithm",
+      "explanation": "Decouples pattern discovery from runtime through offline configuration pipeline. Uses boundary contraction with dual thresholds (τ=0.9 recall, λ=cost) and conservative cross-prompt merging to ensure robustness.",
+      "runtime_impact": "[100k, 33k, 64] → [100k, 33k, 64] with O(1) mask lookup at runtime vs O(n²) online computation"
+    },
+    {
+      "point": "Pattern Stability Analysis",
+      "explanation": "Demonstrated that attention patterns are inherent model properties, stable across inputs (similarity >0.8) and denoising steps, enabling reliable offline pre-computation and mask reuse.",
+      "runtime_impact": "Reduces search frequency by 10× through configuration caching across denoising steps"
+    },
+    {
+      "point": "Hardware-Aware Implementation",
+      "explanation": "Designed specifically for GPU architectures using ThunderKittens framework, maintaining computational regularity through tile abstraction while achieving 1.6-2.5× speedup.",
+      "runtime_impact": "[100k, 100k, 64] → [100k, 33k, 64] with 2.51× speedup on single H800 GPU"
+    }
+  ],
+  "runtime_calculations": {
+    "baseline_full_attention": {
+      "computation": "[100k, 100k, 64]",
+      "time_complexity": "O(n²d) where n=100k tokens, d=64 dimensions",
+      "memory": "O(n²) = 100GB for attention matrix"
+    },
+    "proposed_compact_attention": {
+      "computation": "[100k, 33k, 64] with 33-62% sparsity",
+      "time_complexity": "O(snd) where s=0.33-0.62 sparsity ratio",
+      "memory": "O(sn²) = 33-62GB for sparse attention",
+      "speedup": "1.6-2.5× end-to-end"
+    },
+    "improved_method": {
+      "computation": "[100k, 20k, 64] with adaptive thresholding",
+      "time_complexity": "O(s'nd) where s'=0.2-0.4 with content adaptation",
+      "memory": "O(s'n²) = 20-40GB with hierarchical compression",
+      "speedup": "3.5-4.2× projected with multi-GPU and learnable patterns",
+      "communication": "2×[100k/p, 100k/p, 64] for p-GPU distributed setup"
+    }
+  },
+  "experimental_parameters": {
+    "models": {
+      "Wan2.1": {"parameters": "14B", "frames": 81, "resolution": "768×1280", "tokens": "80k"},
+      "Hunyuan": {"parameters": "Large", "frames": 129, "resolution": "768×1280", "tokens": "127k"}
+    },
+    "thresholds": {
+      "recall_threshold": "τ=0.9",
+      "cost_threshold": {"Wan": "λ=0.011", "Hunyuan": "λ=0.04"}
+    },
+    "hardware": "Single H800 GPU",
+    "framework": "ThunderKittens with FlashAttention-2"
+  },
+  "limitations_and_improvements": [
+    {
+      "limitation": "Static threshold parameters (τ, λ) across all layers",
+      "improvement": "Adaptive dynamic thresholding based on content complexity and layer characteristics",
+      "runtime_change": "[100k, 33k, 64] → [100k, 20k, 64] with O(d) complexity analysis overhead"
+    },
+    {
+      "limitation": "Limited to 5 predefined patterns",
+      "improvement": "Learnable pattern discovery with neural extractors and rotated cross patterns",
+      "runtime_change": "[100k, 33k, 64] → [100k, 25k, 64] with pattern extraction overhead + [p,k,n] learning"
+    },
+    {
+      "limitation": "Memory inefficiency for long videos",
+      "improvement": "Hierarchical mask compression with delta encoding and pattern dictionaries",
+      "runtime_change": "Memory: O(T×H×W) → O(T/k × H×W) with clustering factor k"
+    },
+    {
+      "limitation": "Single-GPU constraint",
+      "improvement": "Multi-GPU distributed design with spatial partitioning and attention pipelining",
+      "runtime_change": "[100k, 33k, 64] → [100k/p, 33k, 64] + 2×communication_cost × boundary_size"
+    },
+    {
+      "limitation": "Simple frame grouping based on distance",
+      "improvement": "Motion-aware temporal attention with optical flow integration and object tracking",
+      "runtime_change": "[100k, 33k, 64] → [100k, 28k, 64] + optical_flow_computation[100k,k,64] + tracking_overhead"
+    }
+  ],
+  "refined_paper_files": [
+    "/home/wzc/data/file-share/logs/2025-09-22-11-21-28/phase1_keypoints.md",
+    "/home/wzc/data/file-share/logs/2025-09-22-11-21-28/phase2_methodology.md",
+    "/home/wzc/data/file-share/logs/2025-09-22-11-21-28/phase3_experiments.md",
+    "/home/wzc/data/file-share/logs/2025-09-22-11-21-28/gaps_improvements.md"
+  ],
+  "improvement_roadmap": {
+    "phase1": {"duration": "3 months", "focus": "Adaptive thresholding", "expected_speedup": "1.85×"},
+    "phase2": {"duration": "6 months", "focus": "Multi-GPU support", "expected_speedup": "3.2×"},
+    "phase3": {"duration": "4 months", "focus": "Motion-aware temporal modeling", "expected_speedup": "1.95×"},
+    "phase4": {"duration": "8 months", "focus": "Learnable patterns", "expected_speedup": "2.15×"},
+    "combined_target": "4.5-6.2× speedup with <2% quality degradation"
+  }
+}

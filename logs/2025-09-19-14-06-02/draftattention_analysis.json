@@ -1,0 +1,144 @@
+{
+  "paper_title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "original_abstract": "Diffusion transformer–based video generation models (DiTs) have recently attracted widespread attention for their excellent generation quality. However, their computational cost remains a major bottleneck—attention alone accounts for over 80% of total latency, and generating just 8 seconds of 720p video takes tens of minutes—posing serious challenges to practical application and scalability. To address this, we propose the DraftAttention, a training-free framework for the acceleration of video diffusion transformers with dynamic sparse attention on GPUs. We apply down-sampling to each feature map across frames in the compressed latent space, enabling a higher-level receptive field over the latent composed of hundreds of thousands of tokens. The low-resolution draft attention map, derived from draft query and key, exposes redundancy both spatially within each feature map and temporally across frames. We reorder the query, key, and value based on the draft attention map to guide the sparse attention computation in full resolution, and subsequently restore their original order after the attention computation. This reordering enables structured sparsity that aligns with hardware-optimized execution. Our theoretical analysis demonstrates that the low-resolution draft attention closely approximates the full attention, providing reliable guidance for constructing accurate sparse attention. Experimental results show that our method outperforms existing sparse attention approaches in video generation quality and achieves up to 1.75× end-to-end speedup on GPUs.",
+  "innovative_points": [
+    {
+      "point": "Low-Resolution Draft Attention",
+      "description": "Uses 8×16 average pooling to create low-resolution attention maps that guide sparse computation, reducing tokens by 128×",
+      "runtime_change": "[n, d, n] → [n/128, d, n/128] + [n, d, rn]",
+      "benefit": "Minimal computational overhead while preserving attention structure"
+    },
+    {
+      "point": "Hardware-Friendly Reordering",
+      "description": "Deterministic token reordering to align region-level sparsity with contiguous memory blocks for GPU optimization",
+      "runtime_change": "Adds O(n) reordering overhead, enables [n, d, rn] → [n, d, contiguous_blocks]",
+      "benefit": "Enables efficient sparse attention kernels with coalesced memory access"
+    },
+    {
+      "point": "Training-Free Dynamic Sparsity",
+      "description": "No additional training required, plug-and-play integration into existing video diffusion transformers",
+      "runtime_change": "Same as baseline during training, [n, d, rn] during inference",
+      "benefit": "Immediate deployment without retraining costs"
+    },
+    {
+      "point": "Theoretical Error Bounds",
+      "description": "Formal proof that low-resolution draft attention approximates full attention with bounded error",
+      "runtime_change": "No runtime change, provides theoretical guarantee for sparsity quality",
+      "benefit": "Justifies sparsity approach with mathematical rigor"
+    },
+    {
+      "point": "Multi-Scale Spatio-Temporal Redundancy",
+      "description": "Identifies redundancy both spatially within frames and temporally across frames using pooled representations",
+      "runtime_change": "Single [n/128, d, n/128] computation captures both spatial and temporal patterns",
+      "benefit": "Comprehensive redundancy detection with single mechanism"
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "improvement": "Dynamic Sparsity Scheduling",
+      "description": "Adaptive sparsity ratio that increases from 50% to 90% during denoising process",
+      "runtime_change": "[n, d, r(t)n] where r(t) ∈ [0.5, 0.9]",
+      "expected_gain": "15-20% additional speedup with better quality preservation"
+    },
+    {
+      "improvement": "Multi-Scale Draft Attention",
+      "description": "Combine multiple pooling scales (64×, 128×, 256×) for better attention guidance",
+      "runtime_change": "[n/64,d,n/64] + [n/128,d,n/128] + [n/256,d,n/256] + [n,d,rn]",
+      "expected_gain": "8-12% quality improvement with 5% overhead"
+    },
+    {
+      "improvement": "Learned Adaptive Pooling",
+      "description": "Trainable pooling kernels optimized for attention guidance per layer",
+      "runtime_change": "[n/k, d, n/k] where k ∈ [64,256] learned per layer",
+      "expected_gain": "10-15% better quality with same computation"
+    },
+    {
+      "improvement": "Temporal Consistency Module",
+      "description": "Optical flow-guided temporal attention for better video coherence",
+      "runtime_change": "[n,d,rn] + [t,d,t] + communication[t,d,t]",
+      "expected_gain": "20-30% better temporal coherence"
+    },
+    {
+      "improvement": "Quantized Sparse Attention",
+      "description": "INT8 quantization for mobile deployment",
+      "runtime_change": "[n,d_int8,rn_int8] where d_int8=d/4, n_int8=n/2",
+      "expected_gain": "3-4× memory reduction, 2× mobile speedup"
+    }
+  ],
+  "experimental_models": {
+    "HunyuanVideo-T2V": {
+      "resolution": "768p",
+      "frames": 128,
+      "latent_size": "48×80",
+      "sparsity_tested": ["60%", "80%", "90%"],
+      "baseline_flops": 682.67,
+      "speedup": "1.75× at 90% sparsity"
+    },
+    "Wan2.1-T2V": {
+      "resolutions": ["512p", "768p"],
+      "frames": 80,
+      "latent_sizes": ["32×48", "48×80"],
+      "sparsity_tested": ["55%", "75%"],
+      "baseline_flops": {
+        "512p": 145.65,
+        "768p": 609.52
+      },
+      "speedup": {
+        "512p": "1.42× at 75%",
+        "768p": "1.22× at 55%, 1.42× at 75%"
+      }
+    }
+  },
+  "runtime_representations": {
+    "baseline_dense": {
+      "computation": "[n, d, n]",
+      "complexity": "O(n²d)",
+      "memory": "O(n²)"
+    },
+    "draftattention": {
+      "stage1_draft": "[n/128, d, n/128]",
+      "stage2_sparse": "[n, d, rn]",
+      "total": "[n/128,d,n/128] + [n,d,rn]",
+      "reordering": "O(n)"
+    },
+    "enhanced_improvements": {
+      "dynamic_sparsity": "[n, d, r(t)n]",
+      "multi_scale": "[n/64,d,n/64] + [n/128,d,n/128] + [n/256,d,n/256] + [n,d,rn]",
+      "quantized": "[n,d_int8,rn_int8]",
+      "temporal_consistency": "[n,d,rn] + [t,d,t] + communication[t,d,t]"
+    }
+  },
+  "gaps_identified": [
+    "Resolution flexibility limited to 8×16 divisible resolutions",
+    "Static sparsity ratio throughout generation process",
+    "Single downsampling method (average pooling only)",
+    "No explicit temporal consistency mechanism",
+    "Limited hardware platform validation (H100 only)",
+    "No quantization support for mobile deployment"
+  ],
+  "expected_performance_gains": {
+    "combined_improvements": {
+      "speedup": "2.2-2.5× over dense baseline",
+      "quality_improvement": "15-25% better FID scores",
+      "memory_reduction": "4-5× with quantization",
+      "resolution_flexibility": "Arbitrary resolutions supported"
+    }
+  },
+  "implementation_timeline": {
+    "high_priority_3_6_months": [
+      "Dynamic sparsity scheduling",
+      "Adaptive kernel sizes",
+      "Multi-platform optimization"
+    ],
+    "medium_priority_6_12_months": [
+      "Learned pooling kernels",
+      "Temporal consistency module",
+      "INT8 quantization"
+    ],
+    "long_term_12_plus_months": [
+      "End-to-end learned sparsity",
+      "Cross-modal attention",
+      "Real-time streaming"
+    ]
+  }
+}

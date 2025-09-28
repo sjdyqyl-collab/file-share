@@ -1,0 +1,532 @@
+{
+  "paper_title": "XAttention: Block-Cross Attention for Long-Context Modeling",
+  "summary": {
+    "total_tests": 15,
+    "successful_tests": 15,
+    "failed_tests": 0,
+    "geometric_mean_runtime_ratio": 7.472042769712587,
+    "geometric_mean_output_mse_ratio": NaN,
+    "average_speedup": 0.14224325496638196,
+    "average_sparsity": 0.03177083333333333,
+    "min_speedup": 0.0691409493931031,
+    "max_speedup": 0.23456922584544054
+  },
+  "detailed_results": [
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 256,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 8,
+        "threshold": 0.7
+      },
+      "base_time": 0.0007755756378173828,
+      "xattention_time": 0.007050228118896484,
+      "speedup": 0.11000716923451513,
+      "sparsity_stats": {
+        "sparsity": 0.0625,
+        "density": 0.9375,
+        "selected_blocks": 491520,
+        "total_blocks": 524288
+      },
+      "accuracy_metrics": {
+        "mse": 4.888843250228092e-05,
+        "mae": 0.004590000491589308,
+        "cosine_similarity": 0.991796612739563,
+        "relative_error": 0.12954682111740112
+      },
+      "runtime_ratio": 9.090316630802336,
+      "output_mse_ratio": 4.888843250228092e-05,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 256,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 32,
+        "stride": 4,
+        "threshold": 0.8
+      },
+      "base_time": 0.0007860660552978516,
+      "xattention_time": 0.011369037628173827,
+      "speedup": 0.0691409493931031,
+      "sparsity_stats": {
+        "sparsity": 0.015625,
+        "density": 0.984375,
+        "selected_blocks": 516096,
+        "total_blocks": 524288
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 14.463208977858658,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 256,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 16,
+        "threshold": 0.9
+      },
+      "base_time": 0.0007616996765136719,
+      "xattention_time": 0.008192682266235351,
+      "speedup": 0.0929731743232468,
+      "sparsity_stats": {
+        "sparsity": 0.0,
+        "density": 1.0,
+        "selected_blocks": 524288,
+        "total_blocks": 524288
+      },
+      "accuracy_metrics": {
+        "mse": 1e-10,
+        "mae": 7.162379134229013e-09,
+        "cosine_similarity": 1.0,
+        "relative_error": 1.759387942001922e-07
+      },
+      "runtime_ratio": 10.75579065982221,
+      "output_mse_ratio": 1e-10,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 2,
+        "seq_len": 512,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 8,
+        "threshold": 0.7
+      },
+      "base_time": 0.0030762672424316405,
+      "xattention_time": 0.017618370056152344,
+      "speedup": 0.17460566628054258,
+      "sparsity_stats": {
+        "sparsity": 0.0625,
+        "density": 0.9375,
+        "selected_blocks": 3932160,
+        "total_blocks": 4194304
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 5.727190997302912,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 2,
+        "seq_len": 512,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 32,
+        "stride": 4,
+        "threshold": 0.8
+      },
+      "base_time": 0.0030775547027587892,
+      "xattention_time": 0.031889915466308594,
+      "speedup": 0.09650557731989594,
+      "sparsity_stats": {
+        "sparsity": 0.03515625,
+        "density": 0.96484375,
+        "selected_blocks": 4046848,
+        "total_blocks": 4194304
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 10.36209541221859,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 2,
+        "seq_len": 512,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 16,
+        "threshold": 0.9
+      },
+      "base_time": 0.0030763626098632814,
+      "xattention_time": 0.02147645950317383,
+      "speedup": 0.1432434712718198,
+      "sparsity_stats": {
+        "sparsity": 0.0,
+        "density": 1.0,
+        "selected_blocks": 4194304,
+        "total_blocks": 4194304
+      },
+      "accuracy_metrics": {
+        "mse": 1e-10,
+        "mae": 0.0,
+        "cosine_similarity": 0.9999999403953552,
+        "relative_error": 0.0
+      },
+      "runtime_ratio": 6.981120962241924,
+      "output_mse_ratio": 1e-10,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 1024,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 8,
+        "threshold": 0.7
+      },
+      "base_time": 0.00462646484375,
+      "xattention_time": 0.019864988327026368,
+      "speedup": 0.23289542221656795,
+      "sparsity_stats": {
+        "sparsity": 0.0625,
+        "density": 0.9375,
+        "selected_blocks": 7864320,
+        "total_blocks": 8388608
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 4.293772674802111,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 1024,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 32,
+        "stride": 4,
+        "threshold": 0.8
+      },
+      "base_time": 0.004456186294555664,
+      "xattention_time": 0.03524460792541504,
+      "speedup": 0.1264359729575056,
+      "sparsity_stats": {
+        "sparsity": 0.03515625,
+        "density": 0.96484375,
+        "selected_blocks": 8093696,
+        "total_blocks": 8388608
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 7.909141493585012,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 1024,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 16,
+        "threshold": 0.9
+      },
+      "base_time": 0.004339027404785156,
+      "xattention_time": 0.022507667541503906,
+      "speedup": 0.19277996695055294,
+      "sparsity_stats": {
+        "sparsity": 0.00390625,
+        "density": 0.99609375,
+        "selected_blocks": 8355840,
+        "total_blocks": 8388608
+      },
+      "accuracy_metrics": {
+        "mse": 1.5961612689352478e-06,
+        "mae": 0.0005543864681385458,
+        "cosine_similarity": 0.9990764856338501,
+        "relative_error": 0.04300493746995926
+      },
+      "runtime_ratio": 5.18726097850455,
+      "output_mse_ratio": 1.5961612689352478e-06,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 512,
+        "hidden_size": 768,
+        "num_heads": 12
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 8,
+        "threshold": 0.7
+      },
+      "base_time": 0.0022749900817871094,
+      "xattention_time": 0.015423345565795898,
+      "speedup": 0.14750302209608257,
+      "sparsity_stats": {
+        "sparsity": 0.0625,
+        "density": 0.9375,
+        "selected_blocks": 2949120,
+        "total_blocks": 3145728
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 6.779522112764619,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 512,
+        "hidden_size": 768,
+        "num_heads": 12
+      },
+      "xattention_params": {
+        "block_size": 32,
+        "stride": 4,
+        "threshold": 0.8
+      },
+      "base_time": 0.002283048629760742,
+      "xattention_time": 0.026500797271728514,
+      "speedup": 0.08615018659066291,
+      "sparsity_stats": {
+        "sparsity": 0.03515625,
+        "density": 0.96484375,
+        "selected_blocks": 3035136,
+        "total_blocks": 3145728
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 11.607635915537083,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 1,
+        "seq_len": 512,
+        "hidden_size": 768,
+        "num_heads": 12
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 16,
+        "threshold": 0.9
+      },
+      "base_time": 0.0022752761840820314,
+      "xattention_time": 0.018409156799316408,
+      "speedup": 0.12359480713242227,
+      "sparsity_stats": {
+        "sparsity": 0.0,
+        "density": 1.0,
+        "selected_blocks": 3145728,
+        "total_blocks": 3145728
+      },
+      "accuracy_metrics": {
+        "mse": 1e-10,
+        "mae": 7.940456292487852e-09,
+        "cosine_similarity": 1.0,
+        "relative_error": 2.571884465396579e-07
+      },
+      "runtime_ratio": 8.090954815994635,
+      "output_mse_ratio": 1e-10,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 2,
+        "seq_len": 1024,
+        "hidden_size": 768,
+        "num_heads": 12
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 8,
+        "threshold": 0.7
+      },
+      "base_time": 0.012197017669677734,
+      "xattention_time": 0.05199751853942871,
+      "speedup": 0.23456922584544054,
+      "sparsity_stats": {
+        "sparsity": 0.0625,
+        "density": 0.9375,
+        "selected_blocks": 23592960,
+        "total_blocks": 25165824
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 4.263133820712303,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 2,
+        "seq_len": 1024,
+        "hidden_size": 768,
+        "num_heads": 12
+      },
+      "xattention_params": {
+        "block_size": 32,
+        "stride": 4,
+        "threshold": 0.8
+      },
+      "base_time": 0.011111831665039063,
+      "xattention_time": 0.09032578468322754,
+      "speedup": 0.12301948667269538,
+      "sparsity_stats": {
+        "sparsity": 0.03515625,
+        "density": 0.96484375,
+        "selected_blocks": 24281088,
+        "total_blocks": 25165824
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 8.128793470424663,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    },
+    {
+      "config": {
+        "batch_size": 2,
+        "seq_len": 1024,
+        "hidden_size": 768,
+        "num_heads": 12
+      },
+      "xattention_params": {
+        "block_size": 64,
+        "stride": 16,
+        "threshold": 0.9
+      },
+      "base_time": 0.010322046279907227,
+      "xattention_time": 0.05727319717407227,
+      "speedup": 0.18022472621067584,
+      "sparsity_stats": {
+        "sparsity": 0.00390625,
+        "density": 0.99609375,
+        "selected_blocks": 25067520,
+        "total_blocks": 25165824
+      },
+      "accuracy_metrics": {
+        "mse": NaN,
+        "mae": NaN,
+        "cosine_similarity": NaN,
+        "relative_error": NaN
+      },
+      "runtime_ratio": 5.548628210043932,
+      "output_mse_ratio": NaN,
+      "status": "success"
+    }
+  ],
+  "test_configurations": {
+    "test_configs": [
+      {
+        "batch_size": 1,
+        "seq_len": 256,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      {
+        "batch_size": 2,
+        "seq_len": 512,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      {
+        "batch_size": 1,
+        "seq_len": 1024,
+        "hidden_size": 512,
+        "num_heads": 8
+      },
+      {
+        "batch_size": 1,
+        "seq_len": 512,
+        "hidden_size": 768,
+        "num_heads": 12
+      },
+      {
+        "batch_size": 2,
+        "seq_len": 1024,
+        "hidden_size": 768,
+        "num_heads": 12
+      }
+    ],
+    "xattention_params": [
+      {
+        "block_size": 64,
+        "stride": 8,
+        "threshold": 0.7
+      },
+      {
+        "block_size": 32,
+        "stride": 4,
+        "threshold": 0.8
+      },
+      {
+        "block_size": 64,
+        "stride": 16,
+        "threshold": 0.9
+      }
+    ]
+  }
+}

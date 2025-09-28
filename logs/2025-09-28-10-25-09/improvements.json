@@ -1,0 +1,156 @@
+{
+  "title": "XAttention: Block Sparse Attention with Antidiagonal Scoring",
+  "gaps_and_limitations": [
+    {
+      "id": 1,
+      "description": "Fixed antidiagonal stride S across all layers and heads",
+      "limitation": "Same stride S=8 or S=16 used globally, ignoring that different layers/heads may have different optimal patterns",
+      "current_runtime": "[L, L, d] → O(L²d·τ² + L·B·d/S) with fixed S",
+      "proposed_improvement": "Adaptive stride selection per layer/head based on attention pattern variance",
+      "improved_runtime": "[L, L, d] → O(L²d·τ² + L·B·d/S_opt) where S_opt varies by layer (4-32)",
+      "expected_benefit": "2-5% additional sparsity without accuracy loss",
+      "implementation": "Compute attention entropy per layer to dynamically set S ∈ {4,8,16,32}"
+    },
+    {
+      "id": 2,
+      "description": "Threshold-based selection may miss important low-scoring blocks",
+      "limitation": "Hard threshold τ can prune blocks with concentrated but low attention values",
+      "current_runtime": "[L·τ, L·τ, d] for sparse computation",
+      "proposed_improvement": "Hybrid selection: threshold + top-k per block row",
+      "improved_runtime": "[L·(τ+α), L·(τ+α), d] where α=0.01-0.05 additional blocks",
+      "expected_benefit": "1-2% accuracy improvement for same density",
+      "implementation": "Add top-1 block per row after threshold selection"
+    },
+    {
+      "id": 3,
+      "description": "No consideration of attention head specialization",
+      "limitation": "All heads treated equally despite different roles (local vs global patterns)",
+      "current_runtime": "H × [L·τ, L·τ, d_h] for H heads",
+      "proposed_improvement": "Head-aware patterns: local heads use diagonal, global heads use antidiagonal",
+      "improved_runtime": "H_local × [L·τ_local, L·τ_local, d_h] + H_global × [L·τ_global, L·τ_global, d_h]",
+      "expected_benefit": "10-15% additional speedup for local pattern heads",
+      "implementation": "Classify heads via attention distance analysis, apply pattern-specific sparsity"
+    },
+    {
+      "id": 4,
+      "description": "Static warmup strategy for video generation",
+      "limitation": "Fixed 5-step warmup may be suboptimal for different video lengths/resolutions",
+      "current_runtime": "5×[L, L, d] + (T-5)×[L·τ, L·τ, d] for T denoising steps",
+      "proposed_improvement": "Dynamic warmup based on video complexity (motion/scene changes)",
+      "improved_runtime": "k×[L, L, d] + (T-k)×[L·τ, L·τ, d] where k ∈ {0,3,5,8}",
+      "expected_benefit": "5-10% speedup for simple videos, maintain quality for complex ones",
+      "implementation": "Use optical flow estimation in first frame to predict warmup steps"
+    },
+    {
+      "id": 5,
+      "description": "Limited to prefill stage optimization",
+      "limitation": "Does not address decoding stage attention computation",
+      "current_runtime": "Not applicable (prefill only)",
+      "proposed_improvement": "Extend antidiagonal scoring to decoding with KV-cache awareness",
+      "improved_runtime": "[1, L_cache, d] → [1, L_cache·τ, d] per decoding step",
+      "expected_benefit": "2-4× speedup in long-context decoding",
+      "implementation": "Cache antidiagonal scores from prefill, reuse during decoding with incremental updates"
+    },
+    {
+      "id": 6,
+      "description": "No batch processing optimization",
+      "limitation": "Current evaluation focuses on single-sequence processing",
+      "current_runtime": "B×[L, L, d] for batch size B",
+      "proposed_improvement": "Shared pattern selection across batch sequences with similar structure",
+      "improved_runtime": "[B, L, L, d] → [B, L, L·τ_shared, d] + [B, L, L·τ_unique, d]",
+      "expected_benefit": "30-50% memory reduction for batched inference",
+      "implementation": "Cluster sequences by attention pattern similarity, share sparsity masks"
+    }
+  ],
+  "innovative_points": [
+    {
+      "point": "Antidiagonal Scoring Mechanism",
+      "explanation": "Novel insight that antidiagonal sums capture both vertical and slash attention patterns efficiently, reducing pattern selection time by 24.9× compared to search-based methods",
+      "runtime_impact": "[L, L, d] pattern selection → [B, B, d] antidiagonal computation",
+      "originality": "First to use antidiagonal patterns for block importance in attention"
+    },
+    {
+      "point": "Dynamic Threshold Prediction",
+      "explanation": "Per-head threshold optimization using dynamic programming, achieving 3.5% better accuracy with 5% more sparsity than fixed threshold",
+      "runtime_impact": "O(H×M) DP computation → O(1) per-head threshold lookup",
+      "originality": "Novel application of DP to attention sparsity optimization"
+    },
+    {
+      "point": "Training-Free Implementation",
+      "explanation": "Plug-and-play framework requiring no model retraining or additional parameters, enabling immediate deployment",
+      "runtime_impact": "Same as baseline inference, no additional training cost",
+      "originality": "Achieves training-based method performance without training overhead"
+    },
+    {
+      "point": "Cross-Domain Generalization",
+      "explanation": "Demonstrated effectiveness across language (RULER), video understanding (VideoMME), and video generation (VBench) tasks",
+      "runtime_impact": "Same algorithm across domains with task-specific parameter tuning",
+      "originality": "First sparse attention method validated on both understanding and generation tasks"
+    },
+    {
+      "point": "Warmup Strategy for Generation",
+      "explanation": "Introduces full-attention warmup for video generation to prevent layout shifts, maintaining visual fidelity",
+      "runtime_impact": "k×[L, L, d] + (T-k)×[L·τ, L·τ, d] vs T×[L, L, d]",
+      "originality": "First to address sparse attention artifacts in diffusion models"
+    }
+  ],
+  "experimental_parameters": {
+    "models": {
+      "llama-3.1-8b": {
+        "tasks": ["RULER", "LongBench"],
+        "stride": [8, 16],
+        "threshold": "dynamic via DP",
+        "context_lengths": ["4k", "8k", "16k", "32k", "64k", "128k"]
+      },
+      "qwen2-vl-7b": {
+        "tasks": ["VideoMME"],
+        "stride": 16,
+        "threshold": 0.9,
+        "video_lengths": ["short", "medium", "long"]
+      },
+      "hunyuanvideo": {
+        "tasks": ["VBench"],
+        "stride": 8,
+        "threshold": [0.9, 0.95],
+        "warmup_steps": 5,
+        "resolution": "720×1280",
+        "frames": 129,
+        "denoising_steps": 50
+      }
+    },
+    "baseline_methods": [
+      "FlashAttention",
+      "MInference",
+      "FlexPrefill",
+      "SeerAttention"
+    ],
+    "key_metrics": [
+      "accuracy",
+      "attention_speedup",
+      "density",
+      "pattern_selection_time",
+      "psnr",
+      "ssim",
+      "lpips"
+    ]
+  },
+  "runtime_comparison": {
+    "baseline_full_attention": {
+      "description": "Standard dense attention computation",
+      "time": "[L, L, d] → O(L²d)",
+      "example": "256K tokens: [256000, 256000, 4096]"
+    },
+    "xattention_original": {
+      "description": "Proposed antidiagonal sparse attention",
+      "time": "[L·τ, L·τ, d] + [B, B, d]·(L/B)",
+      "example": "256K tokens, τ=0.073: [18688, 18688, 4096] + [64,64,4096]×4000",
+      "speedup": "13.5× at 256K tokens"
+    },
+    "xattention_improved": {
+      "description": "With adaptive stride and hybrid selection",
+      "time": "[L·τ', L·τ', d] + [B, B, d]·(L/B)·(1/S_opt)",
+      "example": "256K tokens, τ'=0.068, S_opt varies: [17408, 17408, 4096] + [64,64,4096]×4000×(1/S_opt)",
+      "expected_speedup": "15-18× at 256K tokens"
+    }
+  }
+}

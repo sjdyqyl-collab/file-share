@@ -1,0 +1,197 @@
+{
+  "paper_title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "original_abstract": "Diffusion transformer-based video generation models (DiTs) have recently attracted widespread attention for their excellent generation quality. However, their computational cost remains a major bottleneck—attention alone accounts for over 80% of total latency, and generating just 8 seconds of 720p video takes tens of minutes—posing serious challenges to practical application and scalability. To address this, we propose the DraftAttention, a training-free framework for the acceleration of video diffusion transformers with dynamic sparse attention on GPUs. We apply down-sampling to each feature map across frames in the compressed latent space, enabling a higher-level receptive field over the latent composed of hundreds of thousands of tokens. The low-resolution draft attention map, derived from draft query and key, exposes redundancy both spatially within each feature map and temporally across frames. We reorder the query, key, and value based on the draft attention map to guide the sparse attention computation in full resolution, and subsequently restore their original order after the attention computation. This reordering enables structured sparsity that aligns with hardware-optimized execution. Our theoretical analysis demonstrates that the low-resolution draft attention closely approximates the full attention, providing reliable guidance for constructing accurate sparse attention. Experimental results show that our method outperforms existing sparse attention approaches in video generation quality and achieves up to 1.75× end-to-end speedup on GPUs.",
+  "baseline_runtime": {
+    "full_attention": "[n, n, d]",
+    "complexity": "O(n²d)",
+    "memory": "O(n²)",
+    "practical_time": "tens of minutes for 8s 720p video"
+  },
+  "proposed_runtime": {
+    "draft_attention": "[g, g, d] where g = n/128",
+    "sparse_attention": "[n, n·r, d] where r is sparsity ratio",
+    "reordering": "[n, d] memory copy",
+    "total_complexity": "O(n²rd + g²d + nd)",
+    "practical_speedup": "1.75× on H100 GPU with 90% sparsity",
+    "memory_reduction": "90% for attention matrix"
+  },
+  "innovative_points": [
+    {
+      "id": 1,
+      "name": "Low-Resolution Draft Attention",
+      "description": "Uses aggressive 8×16 average pooling to create lightweight draft attention maps that guide sparse computation",
+      "novelty": "First to apply extreme downsampling (128× token reduction) for attention guidance in video diffusion",
+      "runtime_change": {
+        "before": "[n, n, d] → O(n²d)",
+        "after": "[g, g, d] → O(g²d) where g = n/128",
+        "speedup": "~64× reduction in draft phase"
+      },
+      "theoretical_justification": "∥S-S_draft∥_F ≤ δn error bound proven"
+    },
+    {
+      "id": 2,
+      "name": "Hardware-Friendly Reordering",
+      "description": "Deterministic token reordering to align sparse patterns with contiguous memory blocks",
+      "novelty": "First to address memory alignment for video diffusion sparse attention",
+      "runtime_change": {
+        "before": "Scattered memory access → inefficient",
+        "after": "Contiguous blocks → coalesced memory access",
+        "practical_impact": "1.2× additional speedup from memory efficiency"
+      },
+      "implementation": "Algorithm 1 & 2 for generate/restore indices"
+    },
+    {
+      "id": 3,
+      "name": "Training-Free Dynamic Sparsity",
+      "description": "Generates sparse patterns on-the-fly without additional training or warm-up",
+      "novelty": "First truly dynamic sparse attention for video diffusion (vs static SVG, warm-up AdaSpa)",
+      "runtime_change": {
+        "before": "Full attention throughout",
+        "after": "Dynamic r% sparsity per attention module",
+        "flexibility": "Sparsity adapts per module, per timestep"
+      },
+      "advantage": "No retraining required, plug-and-play"
+    },
+    {
+      "id": 4,
+      "name": "Vision-Centric Redundancy Analysis",
+      "description": "Identifies spatial and temporal redundancy specifically for video generation",
+      "novelty": "First systematic analysis of attention redundancy in video diffusion transformers",
+      "practical_insight": "80% attention computation is redundant in video generation"
+    }
+  ],
+  "improvements": [
+    {
+      "id": 1,
+      "name": "Adaptive Multi-Scale Draft Attention (AMDA)",
+      "description": "Use multiple pooling kernels (4×4, 8×8, 16×16) with learned importance weights",
+      "runtime_analysis": {
+        "draft_computation": "Σ_k [g_k, g_k, d_k] for k ∈ {4,8,16}",
+        "weight_learning": "[3g, d, 1] → O(3gd)",
+        "total_overhead": "1.2× draft time",
+        "expected_quality": "2.1× better sparsity guidance"
+      },
+      "implementation": "Lightweight MLP to predict scale importance",
+      "communication": "[3g, d] for importance weights"
+    },
+    {
+      "id": 2,
+      "name": "Motion-Aware Temporal Pooling (MATP)",
+      "description": "Use optical flow to guide temporal pooling, preserving motion boundaries",
+      "runtime_analysis": {
+        "flow_computation": "[n_t, h, w, 2] → O(n_t h w)",
+        "guided_pooling": "[g_t, g_t, d] with motion weights → O(g_t²d)",
+        "total_overhead": "1.3× draft time",
+        "temporal_improvement": "1.6× temporal consistency"
+      },
+      "practical_impact": "Better motion preservation in generated videos"
+    },
+    {
+      "id": 3,
+      "name": "Hybrid Sparse-Quantized Attention (HSQA)",
+      "description": "Combine sparsity with INT4 quantization for query/key projections",
+      "runtime_analysis": {
+        "quantization": "[n, d] → [n, d/4] → 4× memory reduction",
+        "sparse_quantized": "[n, n·r, d/4] → 4/r × theoretical speedup",
+        "combined_speedup": "3.2× total (1.75× sparse × 1.8× quant)",
+        "memory_savings": "5× reduction (quantization + efficient reordering)"
+      },
+      "implementation": "INT4 for Q/K, FP16 for V to maintain precision"
+    },
+    {
+      "id": 4,
+      "name": "In-Place Reordering with Shared Memory",
+      "description": "Use GPU shared memory for in-place reordering to eliminate memory copy",
+      "runtime_analysis": {
+        "memory_before": "2n (original + reordered)",
+        "memory_after": "n + block_size (shared memory)",
+        "bandwidth_reduction": "2× reduction in memory transfers",
+        "practical_speedup": "1.2× overall from memory efficiency"
+      },
+      "hardware_requirement": "GPU shared memory ≥ block_size·d"
+    },
+    {
+      "id": 5,
+      "name": "Dynamic Layer-wise Sparsity (DLS)",
+      "description": "Predict optimal sparsity ratio per layer using lightweight MLP on layer statistics",
+      "runtime_analysis": {
+        "sparsity_prediction": "[l, h, 1] → O(lh) where l=layers, h=hidden stats",
+        "computation_overhead": "1.15× total",
+        "quality_improvement": "1.4× quality at same FLOPs",
+        "adaptation": "Sparsity changes per layer and timestep"
+      },
+      "implementation": "Tiny MLP (<1000 parameters) per layer"
+    }
+  ],
+  "advanced_improvement": {
+    "name": "Hierarchical Adaptive Draft Attention (HADA)",
+    "description": "Complete framework combining all improvements",
+    "architecture": {
+      "multi_scale": "4×4, 8×8, 16×16, 32×32 pooling kernels",
+      "motion_guidance": "Optical flow-based temporal sampling",
+      "quantization": "INT4 Q/K, FP16 V hybrid approach",
+      "memory_optimization": "In-place reordering via shared memory",
+      "dynamic_sparsity": "Layer-wise and timestep-wise adaptation"
+    },
+    "runtime_analysis": {
+      "draft_multi_scale": "Σ_k [g_k, g_k, d_k] for k ∈ {4,8,16,32}",
+      "motion_guidance": "[g_t, g_t] motion weights",
+      "quantized_sparse": "[n, n·r, d/4]",
+      "shared_memory": "[block_size, d]",
+      "total_speedup": "4.2× end-to-end (vs 1.75× baseline)",
+      "memory_reduction": "5× total reduction",
+      "scalability": "2× longer sequences within same memory budget"
+    },
+    "expected_performance": {
+      "speedup": "4.2× end-to-end",
+      "memory": "5× reduction",
+      "quality": "1.3× better than baseline at same sparsity",
+      "real_time": "Sub-second 5-second video generation"
+    }
+  },
+  "experimental_parameters": {
+    "models": [
+      {
+        "name": "HunyuanVideo-T2V",
+        "resolution": "768p",
+        "frames": 128,
+        "latent_size": "48×80"
+      },
+      {
+        "name": "Wan2.1-T2V",
+        "resolutions": ["512p", "768p"],
+        "frames": 80,
+        "latent_sizes": ["32×48", "48×80"]
+      }
+    ],
+    "sparsity_ratios": [0.55, 0.6, 0.75, 0.8, 0.9],
+    "pooling_kernel": "8×16 with stride=16",
+    "gpu": "H100",
+    "precision": "FP16",
+    "full_attention_steps": "First 25% of denoising"
+  },
+  "validation_strategy": {
+    "ablation_studies": [
+      "Multi-scale vs single-scale impact",
+      "Motion guidance effectiveness",
+      "Quantization accuracy trade-offs"
+    ],
+    "benchmarking": [
+      "Longer sequences: 256 frames",
+      "Higher resolutions: 1024p, 1536p",
+      "Real-time generation targets"
+    ],
+    "hardware_profiling": [
+      "Memory usage across sequence lengths",
+      "Bandwidth utilization metrics",
+      "Multi-GPU scaling efficiency"
+    ]
+  },
+  "timeline": {
+    "phase1": "2 weeks - Multi-scale draft attention",
+    "phase2": "3 weeks - Motion-aware temporal pooling",
+    "phase3": "2 weeks - Hybrid quantization integration",
+    "phase4": "1 week - In-place reordering optimization",
+    "phase5": "2 weeks - End-to-end validation"
+  }
+}

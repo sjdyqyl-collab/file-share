@@ -1,0 +1,138 @@
+{
+  "title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "original_abstract": "Diffusion transformer–based video generation models (DiTs) have recently attracted widespread attention for their excellent generation quality. However, their computational cost remains a major bottleneck—attention alone accounts for over 80% of total latency, and generating just 8 seconds of 720p video takes tens of minutes—posing serious challenges to practical application and scalability. To address this, we propose the DraftAttention, a training-free framework for the acceleration of video diffusion transformers with dynamic sparse attention on GPUs. We apply down-sampling to each feature map across frames in the compressed latent space, enabling a higher-level receptive field over the latent composed of hundreds of thousands of tokens. The low-resolution draft attention map, derived from draft query and key, exposes redundancy both spatially within each feature map and temporally across frames. We reorder the query, key, and value based on the draft attention map to guide the sparse attention computation in full resolution, and subsequently restore their original order after the attention computation. This reordering enables structured sparsity that aligns with hardware-optimized execution. Our theoretical analysis demonstrates that the low-resolution draft attention closely approximates the full attention, providing reliable guidance for constructing accurate sparse attention. Experimental results show that our method outperforms existing sparse attention approaches in video generation quality and achieves up to 1.75× end-to-end speedup on GPUs.",
+  "innovative_points": [
+    {
+      "point": "Training-Free Dynamic Sparse Attention",
+      "description": "Introduces a novel training-free approach that dynamically generates sparse attention patterns for each attention module without requiring model retraining or fine-tuning",
+      "runtime_change": "[n, d, n] → [n, d, r*n] where r is the sparsity ratio",
+      "benefit": "Plug-and-play acceleration with no quality degradation from retraining"
+    },
+    {
+      "point": "Low-Resolution Draft Attention",
+      "description": "Uses 8×16 average pooling to create low-resolution draft attention maps that capture high-level spatial-temporal patterns with 128× token reduction",
+      "runtime_change": "[n, d, n] → [n/128, d, n/128] for draft + [n, d, r*n] for sparse",
+      "benefit": "O(n²/128²) computation for guidance vs O(n²) for full attention"
+    },
+    {
+      "point": "Hardware-Aligned Token Reordering",
+      "description": "Deterministic reordering algorithm that groups 8×16 spatial patches into contiguous memory blocks for efficient GPU execution",
+      "runtime_change": "Scattered memory access → Coalesced block access",
+      "benefit": "Enables efficient block sparse attention kernels and reduces memory latency"
+    },
+    {
+      "point": "Theoretical Error Bounds",
+      "description": "Provides formal Frobenius-norm bounds for both draft attention approximation error (||S-S_draft||_F ≤ δn) and sparsity masking error (||S-S⊙M||_F ≤ n(δ+t)√(1-r))",
+      "runtime_change": "No runtime change - theoretical guarantee",
+      "benefit": "Mathematical justification for approximation quality"
+    },
+    {
+      "point": "Multi-Resolution Receptive Fields",
+      "description": "Leverages pooling to create broader receptive fields that capture both local details and global context in video sequences",
+      "runtime_change": "Single-scale attention → Multi-scale hierarchical processing",
+      "benefit": "Better preservation of both fine details and global structure"
+    }
+  ],
+  "baseline_method": {
+    "name": "Full Attention (Dense)",
+    "runtime": "[614400, 6144, 614400]",
+    "complexity": "O(n²d) where n=614K tokens for 768p video",
+    "flops": "682.67 PFLOPs for Hunyuan 768p"
+  },
+  "proposed_method": {
+    "name": "DraftAttention",
+    "runtime": "[614400, 6144, 61440] with 90% sparsity",
+    "complexity": "O(n²d/128² + rn²d) where r=0.1",
+    "flops": "283.20 PFLOPs for Hunyuan 768p (90% sparsity)",
+    "speedup": "1.75× end-to-end"
+  },
+  "improvements": [
+    {
+      "name": "Adaptive Pooling Strategy",
+      "description": "Content-aware pooling kernel sizes based on motion vectors and saliency maps",
+      "runtime_change": "[614400, 6144, 61440] → [Variable, 6144, Variable]",
+      "expected_speedup": "1.2-1.4× additional",
+      "implementation": "Real-time motion analysis to adjust 4×4 to 16×16 kernels"
+    },
+    {
+      "name": "Dynamic Sparsity Controller",
+      "description": "RL-based controller that predicts optimal sparsity per frame/region",
+      "runtime_change": "[614400, 6144, 61440] → [614400, 6144, Dynamic]",
+      "expected_speedup": "1.1-1.3× quality improvement",
+      "implementation": "Small neural network (<1M parameters) for sparsity prediction"
+    },
+    {
+      "name": "Multi-Scale Draft Attention",
+      "description": "Hierarchical pooling at 4×4, 8×8, 16×16, 32×32 scales",
+      "runtime_change": "[4800, 6144, 4800] → [19200, 6144, 19200]",
+      "expected_speedup": "1.1-1.2× better quality",
+      "implementation": "Multi-level draft maps with learned fusion"
+    },
+    {
+      "name": "Quantization Integration",
+      "description": "INT8/INT4 quantization combined with sparsity using SVDQuant",
+      "runtime_change": "[614400, 6144, 61440] → [614400, 1536, 61440]",
+      "expected_speedup": "2-4× additional speedup",
+      "implementation": "Weight quantization with outlier handling"
+    },
+    {
+      "name": "Temporal Gating Mechanism",
+      "description": "LSTM-based frame importance scoring to skip unimportant frames",
+      "runtime_change": "All frames → Selective frame processing",
+      "expected_speedup": "1.3-1.5× for static videos",
+      "implementation": "Lightweight LSTM for temporal importance"
+    },
+    {
+      "name": "Learnable Draft Attention",
+      "description": "Replace fixed pooling with learnable 1×1 convolutions",
+      "runtime_change": "[4800, 6144, 4800] → [4800, 6144, 4800] (learned)",
+      "expected_speedup": "1.2-1.4× quality improvement",
+      "implementation": "Lightweight fine-tuning on 1K video samples"
+    },
+    {
+      "name": "Attention Cascade",
+      "description": "Three-stage refinement: ultra-low → medium → selective full",
+      "runtime_change": "[614400, 6144, 61440] → [614400, 6144, 30000]",
+      "expected_speedup": "1.3-1.5× better tradeoff",
+      "implementation": "Progressive attention refinement"
+    },
+    {
+      "name": "Semantic-Aware Sparsity",
+      "description": "Use semantic segmentation to guide object-aware sparsity",
+      "runtime_change": "Uniform sparsity → Semantic-aware sparsity",
+      "expected_speedup": "1.2-1.3× quality improvement",
+      "implementation": "Pre-computed semantic masks for object/background"
+    }
+  ],
+  "combined_improvements": {
+    "total_expected_speedup": "3.5-5× over baseline",
+    "quality_improvement": "15-25% better FID scores",
+    "memory_reduction": "50-80% attention memory footprint",
+    "runtime": "[614400, 6144, 61440] → [614400, 1536, 12288]"
+  },
+  "experimental_parameters": {
+    "models": ["Wan2.1-T2V", "HunyuanVideo-T2V"],
+    "resolutions": ["512p", "768p"],
+    "frames": [80, 128],
+    "sparsity_ratios": [0.55, 0.6, 0.75, 0.8, 0.9],
+    "pooling_kernel": "8×16 with stride 8×16",
+    "hardware": "NVIDIA H100 GPU",
+    "framework": "Block Sparse Attention",
+    "baseline_steps": "Full attention for first 25% denoising steps"
+  },
+  "gaps_limitations": [
+    "Fixed 8×16 pooling regardless of content",
+    "Static pre-defined sparsity ratios",
+    "Uniform temporal processing across frames",
+    "No integration with quantization methods",
+    "Single-scale processing limitation",
+    "Hardware-specific H100 optimization"
+  ],
+  "file_paths": {
+    "phase1_keypoints": "/home/wzc/data/file-share/logs/2025-09-22-09-56-20/phase1_keypoints.md",
+    "phase2_methodology": "/home/wzc/data/file-share/logs/2025-09-22-09-56-20/phase2_methodology.md",
+    "phase3_experiments": "/home/wzc/data/file-share/logs/2025-09-22-09-56-20/phase3_experiments.md",
+    "gaps_improvements": "/home/wzc/data/file-share/logs/2025-09-22-09-56-20/gaps_improvements.md",
+    "comprehensive_analysis": "/home/wzc/data/file-share/logs/2025-09-22-09-56-20/comprehensive_analysis.json"
+  }
+}

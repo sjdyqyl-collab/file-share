@@ -1,0 +1,112 @@
+{
+  "title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "original_abstract": "Diffusion transformer–based video generation models (DiTs) have recently attracted widespread attention for their excellent generation quality. However, their computational cost remains a major bottleneck—attention alone accounts for over 80% of total latency, and generating just 8 seconds of 720p video takes tens of minutes—posing serious challenges to practical application and scalability. To address this, we propose the DraftAttention, a training-free framework for the acceleration of video diffusion transformers with dynamic sparse attention on GPUs. We apply down-sampling to each feature map across frames in the compressed latent space, enabling a higher-level receptive field over the latent composed of hundreds of thousands of tokens. The low-resolution draft attention map, derived from draft query and key, exposes redundancy both spatially within each feature map and temporally across frames. We reorder the query, key, and value based on the draft attention map to guide the sparse attention computation in full resolution, and subsequently restore their original order after the attention computation. This reordering enables structured sparsity that aligns with hardware-optimized execution. Our theoretical analysis demonstrates that the low-resolution draft attention closely approximates the full attention, providing reliable guidance for constructing accurate sparse attention. Experimental results show that our method outperforms existing sparse attention approaches in video generation quality and achieves up to 1.75× end-to-end speedup on GPUs.",
+  "innovative_points": [
+    {
+      "point": "Dynamic Sparse Attention via Low-Resolution Draft Maps",
+      "explanation": "Instead of using static sparse patterns like previous methods (SVG), DraftAttention computes dynamic sparse patterns for each attention module using low-resolution draft attention maps. This is achieved by downsampling queries and keys using 8×16 average pooling (128× reduction), computing attention on the reduced tokens, then using this to guide full-resolution sparse attention.",
+      "runtime_change": "[n, n, d] → [n/128, n/128, d] + [n, n, d] with sparsity mask"
+    },
+    {
+      "point": "Hardware-Friendly Reordering Algorithm",
+      "explanation": "Proposes deterministic reordering of tokens to ensure spatial patches are contiguous in memory, enabling efficient block-wise sparse attention computation. This bridges the gap between coarse-grained sparsity from draft attention and fine-grained full-resolution computation.",
+      "runtime_change": "No additional computation cost, but enables efficient memory access patterns"
+    },
+    {
+      "point": "Training-Free Acceleration Framework",
+      "explanation": "Unlike distillation-based methods that require expensive retraining, DraftAttention is plug-and-play with existing pre-trained models. No additional training, fine-tuning, or calibration required.",
+      "runtime_change": "Zero training time, immediate deployment"
+    },
+    {
+      "point": "Theoretical Error Bounds",
+      "explanation": "Provides formal theoretical analysis with Frobenius-norm bounds: ||S - S_draft||_F ≤ δn for draft attention error and ||S - S⊙ĈM||_F ≤ n(δ+t)√(1-r) for sparsity mask error, proving the approximation quality.",
+      "runtime_change": "No runtime impact, provides theoretical guarantees"
+    }
+  ],
+  "models_and_parameters": {
+    "models_tested": [
+      {
+        "name": "HunyuanVideo-T2V",
+        "resolution": "768p",
+        "frames": 128,
+        "latent_size": "48×80"
+      },
+      {
+        "name": "Wan2.1-T2V",
+        "resolution": "512p",
+        "frames": 80,
+        "latent_size": "32×48"
+      },
+      {
+        "name": "Wan2.1-T2V",
+        "resolution": "768p",
+        "frames": 80,
+        "latent_size": "48×80"
+      }
+    ],
+    "key_parameters": {
+      "pooling_kernel": "8×16 with stride=kernel_size",
+      "token_reduction_factor": 128,
+      "sparsity_ratios": ["55%", "60%", "75%", "80%", "90%"],
+      "full_attention_steps": "First 25% of denoising steps",
+      "hardware": "H100 GPU"
+    }
+  },
+  "baseline_method": {
+    "name": "Sparse VideoGen (SVG)",
+    "runtime": "[n, n, d] for full attention, [n, n, d] with static spatial/temporal sparsity patterns",
+    "description": "Uses static sparse attention patterns targeting spatial and temporal dimensions separately"
+  },
+  "proposed_method": {
+    "name": "DraftAttention",
+    "runtime": "[n/128, n/128, d] + [n, n, d] with dynamic sparsity mask + reordering overhead",
+    "description": "Two-stage: low-resolution draft attention + full-resolution sparse attention with hardware-friendly reordering"
+  },
+  "improved_method": {
+    "name": "Enhanced DraftAttention++",
+    "runtime": "[n/256, n/256, d] + [n, n, d] with adaptive sparsity + quantization + multi-scale drafts",
+    "description": "Proposed improvements addressing identified limitations"
+  },
+  "gaps_and_improvements": [
+    {
+      "gap": "Limited to fixed pooling kernel size (8×16)",
+      "improvement": "Adaptive pooling kernel selection based on content characteristics. Use multi-scale draft attention with different kernel sizes (4×8, 8×16, 16×32) and dynamically select the best scale per attention module.",
+      "runtime_impact": "Additional [n/256, n/256, d] + [n/64, n/64, d] + [n/16, n/16, d] for multi-scale drafts, but with adaptive selection reducing effective overhead"
+    },
+    {
+      "gap": "No consideration for quantization opportunities",
+      "improvement": "Integrate 4-bit or 8-bit quantization for the draft attention computation. Apply INT4 quantization to draft queries/keys and INT8 for the sparse attention computation, building on recent quantization work like SVDQuant.",
+      "runtime_impact": "[n/128, n/128, d/4] + [n, n, d/8] with sparsity, providing 2-4× additional speedup"
+    },
+    {
+      "gap": "Fixed sparsity ratio throughout generation",
+      "improvement": "Dynamic sparsity scheduling that adapts during denoising steps. Start with high sparsity (90%) in early steps and gradually reduce to 50% in final steps where fine details matter more.",
+      "runtime_impact": "Average sparsity ~75% instead of fixed 90%, maintaining quality while reducing computation"
+    },
+    {
+      "gap": "Single GPU implementation only",
+      "improvement": "Extend to multi-GPU distributed inference using techniques like DistriFusion. Partition spatial/temporal dimensions across GPUs while maintaining the draft attention guidance across devices.",
+      "runtime_impact": "[n/128, n/128, d] + [n/p, n, d] where p=number of GPUs, plus communication overhead ~O(n×d)"
+    },
+    {
+      "gap": "Limited to 3D spatiotemporal attention",
+      "improvement": "Extend to factorized attention patterns that separate spatial and temporal dimensions more explicitly. Use different sparsity patterns for spatial vs temporal attention, potentially enabling even higher sparsity ratios.",
+      "runtime_impact": "[n_s, n_s, d] + [n_t, n_t, d] + [n, n, d] with adaptive sparsity for each factor"
+    },
+    {
+      "gap": "No consideration for temporal redundancy patterns",
+      "improvement": "Implement motion-aware sparsity that identifies static regions across frames and applies higher sparsity to temporally redundant areas. Could use optical flow estimation in the draft attention phase.",
+      "runtime_impact": "Additional [n/128, n/128, 2] for motion estimation, but enables >90% sparsity in static regions"
+    }
+  ],
+  "runtime_analysis": {
+    "baseline_dense": "[n, n, d] - Full attention with O(n²d) complexity",
+    "baseline_svg": "[n, n, d] with static sparsity - O(n²d) but with fixed patterns",
+    "proposed_draftattention": "[n/128, n/128, d] + [n, n, d] with r-sparsity - O((n/128)²d + rn²d)",
+    "improved_enhanced": "[n/256, n/256, d/4] + [n, n, d/8] with adaptive r-sparsity - O((n/256)²d/4 + rn²d/8)"
+  },
+  "communication_costs": {
+    "single_gpu": "0",
+    "multi_gpu": "O(n×d) for gradient synchronization in distributed setting"
+  }
+}

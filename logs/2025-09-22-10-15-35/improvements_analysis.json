@@ -1,0 +1,140 @@
+{
+  "paper_title": "DraftAttention: Fast Video Diffusion via Low-Resolution Attention Guidance",
+  "original_abstract": "Diffusion transformer–based video generation models (DiTs) have recently attracted widespread attention for their excellent generation quality. However, their computational cost remains a major bottleneck—attention alone accounts for over 80% of total latency, and generating just 8 seconds of 720p video takes tens of minutes—posing serious challenges to practical application and scalability. To address this, we propose the DraftAttention, a training-free framework for the acceleration of video diffusion transformers with dynamic sparse attention on GPUs. We apply down-sampling to each feature map across frames in the compressed latent space, enabling a higher-level receptive field over the latent composed of hundreds of thousands of tokens. The low-resolution draft attention map, derived from draft query and key, exposes redundancy both spatially within each feature map and temporally across frames. We reorder the query, key, and value based on the draft attention map to guide the sparse attention computation in full resolution, and subsequently restore their original order after the attention computation. This reordering enables structured sparsity that aligns with hardware-optimized execution. Our theoretical analysis demonstrates that the low-resolution draft attention closely approximates the full attention, providing reliable guidance for constructing accurate sparse attention. Experimental results show that our method outperforms existing sparse attention approaches in video generation quality and achieves up to 1.75× end-to-end speedup on GPUs.",
+  "innovations": [
+    {
+      "name": "Low-Resolution Draft Attention",
+      "description": "Uses average pooling to create downsampled query and key representations for efficient attention computation",
+      "runtime_change": "[n, n, d] → [n/128, n/128, d] for draft computation",
+      "benefit": "Reduces quadratic complexity by 128× for draft attention"
+    },
+    {
+      "name": "Dynamic Sparse Patterns",
+      "description": "Generates prompt-dependent sparse attention patterns for each attention module dynamically",
+      "runtime_change": "Static [n, n, d] → Dynamic r-sparse [n, n, d] where r ∈ {0.55, 0.75, 0.9}",
+      "benefit": "Adapts to content without retraining"
+    },
+    {
+      "name": "Hardware-Friendly Reordering",
+      "description": "Deterministic token reordering to ensure contiguous memory access for sparse computation",
+      "runtime_change": "Adds O(n) reordering overhead before/after attention",
+      "benefit": "Enables efficient GPU kernel execution"
+    },
+    {
+      "name": "Training-Free Integration",
+      "description": "Plug-and-play module requiring no additional training or fine-tuning",
+      "runtime_change": "No training time, direct inference application",
+      "benefit": "Immediate deployment on pre-trained models"
+    }
+  ],
+  "gaps_and_limitations": [
+    {
+      "limitation": "Fixed pooling kernel size (8×16)",
+      "description": "Uses static 8×16 pooling kernel regardless of video resolution or content",
+      "impact": "Suboptimal for non-divisible resolutions or varying content complexity"
+    },
+    {
+      "limitation": "Static sparsity ratio",
+      "description": "Same sparsity ratio applied across all attention layers and timesteps",
+      "impact": "May over-sparsify important layers or under-sparsify redundant ones"
+    },
+    {
+      "limitation": "Limited temporal modeling",
+      "description": "Average pooling treats temporal and spatial dimensions equally",
+      "impact": "Misses temporal attention patterns that could guide better sparsity"
+    },
+    {
+      "limitation": "Single GPU implementation",
+      "description": "No distributed computing or multi-GPU support",
+      "impact": "Limited scalability for longer videos or higher resolutions"
+    },
+    {
+      "limitation": "No quantization integration",
+      "description": "Uses full precision despite mentioning quantization as future work",
+      "impact": "Misses additional 2-4× speedup opportunities"
+    }
+  ],
+  "proposed_improvements": [
+    {
+      "improvement": "Adaptive Pooling Kernel",
+      "description": "Dynamic kernel size selection based on resolution and content complexity",
+      "implementation": "Use multi-scale pooling with learnable kernel selection per layer",
+      "runtime_change": "[n, n, d] → [n/k_i, n/k_i, d] where k_i ∈ {64, 128, 256} adaptive",
+      "expected_speedup": "Additional 1.2× over fixed kernel"
+    },
+    {
+      "improvement": "Layer-wise Adaptive Sparsity",
+      "description": "Dynamic sparsity ratios based on attention entropy and layer depth",
+      "implementation": "Compute attention entropy per layer to guide sparsity ratio r_i ∈ [0.5, 0.95]",
+      "runtime_change": "Adds O(g²) entropy computation per layer",
+      "expected_speedup": "1.3× better quality/speed trade-off"
+    },
+    {
+      "improvement": "Temporal Attention Guidance",
+      "description": "Separate temporal and spatial pooling with motion-aware sparsity",
+      "implementation": "3D pooling (T×H×W) with motion vector analysis for temporal sparsity",
+      "runtime_change": "[n_t×n_s, n_t×n_s, d] → [n_t/k_t, n_s/k_s, d] with k_t ≠ k_s",
+      "expected_speedup": "1.15× better temporal consistency"
+    },
+    {
+      "improvement": "Multi-GPU Distributed Draft Attention",
+      "description": "Parallel draft computation across GPUs with gradient sparsity",
+      "implementation": "Ring-allreduce for draft attention + pipeline parallel sparse attention",
+      "runtime_change": "[n, n, d] → ([n/p, n, d] + [n, n/p, d]) with p GPUs + communication",
+      "communication_time": "O(g²d/p) for draft sync + O(rn²d/p) for sparse gather",
+      "expected_speedup": "Linear scaling with GPUs (up to 8× with 8 GPUs)"
+    },
+    {
+      "improvement": "INT8 Quantized Draft Attention",
+      "description": "8-bit quantization for draft computation with mixed-precision sparse attention",
+      "implementation": "INT8 for draft Q/K/V + FP16 for critical sparse attention blocks",
+      "runtime_change": "[n/128, n/128, d] INT8 + [n, n, d] mixed-precision",
+      "expected_speedup": "2× memory bandwidth reduction + 1.5× compute speedup"
+    },
+    {
+      "improvement": "Learnable Draft Tokens",
+      "description": "Trainable draft tokens that adapt to specific video domains",
+      "implementation": "Lightweight MLP to learn optimal draft representations per domain",
+      "runtime_change": "Adds O(kd) parameters where k ≪ n (negligible)",
+      "expected_speedup": "1.4× better quality at same sparsity"
+    }
+  ],
+  "experimental_parameters": {
+    "models": ["HunyuanVideo-T2V", "Wan2.1-T2V"],
+    "resolutions": ["512p", "768p"],
+    "frames": [80, 128],
+    "pooling_kernel": "8×16",
+    "sparsity_ratios": [0.55, 0.6, 0.75, 0.8, 0.9],
+    "gpu": "H100",
+    "framework": "Block Sparse Attention",
+    "baseline": "Sparse VideoGen (SVG)"
+  },
+  "runtime_comparison": {
+    "baseline_full_attention": {
+      "computation": "[n, n, d]",
+      "complexity": "O(n²d)",
+      "example_n": 786432,
+      "example_d": 3072
+    },
+    "proposed_draft_attention": {
+      "draft_computation": "[n/128, n/128, d]",
+      "sparse_computation": "[n, n, d] with r-sparsity",
+      "total_complexity": "O((n/128)²d + r·n²d)",
+      "speedup": "1.75× at 90% sparsity"
+    },
+    "improved_method": {
+      "adaptive_pools": "[n/k_i, n/k_i, d] with k_i ∈ {64,128,256}",
+      "quantized_draft": "[n/128, n/128, d] INT8",
+      "multi_gpu": "[n/p, n, d] + [n, n/p, d] with p GPUs",
+      "expected_total_speedup": "4.2× (1.75× × 1.2× × 1.3× × 1.5×)"
+    }
+  },
+  "improved_runtime_breakdown": {
+    "adaptive_draft": "[n/k, n/k, d] where k ∈ {64,128,256}",
+    "layer_sparsity": "[n, n, d] with r_i ∈ [0.5,0.95] adaptive",
+    "temporal_guidance": "[n_t/k_t, n_s/k_s, d] with motion-aware k_t, k_s",
+    "quantized_compute": "INT8 draft + mixed-precision sparse",
+    "multi_gpu_comm": "[n/p, n, d] + [n, n/p, d] + O(g²d/p) comm",
+    "total_expected": "4.2× end-to-end speedup"
+  }
+}
