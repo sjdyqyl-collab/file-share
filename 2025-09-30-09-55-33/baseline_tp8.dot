@@ -1,0 +1,168 @@
+// Tensor Parallelism 8-Way
+digraph TP8_Baseline {
+	nodesep=0.8 rankdir=TB ranksep=1.2 splines=ortho
+	input [label="Input Layer
+[batch_size=1024, seq_len=2048, hidden_dim=4096]" fillcolor=lightyellow shape=parallelogram style=filled]
+	subgraph cluster_gpu0 {
+		bgcolor=lightgray label="GPU 0" style=rounded
+		qkv_0 [label="QKV Projection
+[1024,2048,512]
+Hidden split" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_0 [label="Multi-Head Attention
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		moe_0 [label="MoE Layer
+[1024,2048,512]
+2 experts" fillcolor=lightcyan shape=rectangle style=filled]
+		ln_0 [label="Layer Norm
+[1024,2048,512]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	subgraph cluster_gpu1 {
+		bgcolor=lightgray label="GPU 1" style=rounded
+		qkv_1 [label="QKV Projection
+[1024,2048,512]
+Hidden split" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_1 [label="Multi-Head Attention
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		moe_1 [label="MoE Layer
+[1024,2048,512]
+2 experts" fillcolor=lightcyan shape=rectangle style=filled]
+		ln_1 [label="Layer Norm
+[1024,2048,512]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	subgraph cluster_gpu2 {
+		bgcolor=lightgray label="GPU 2" style=rounded
+		qkv_2 [label="QKV Projection
+[1024,2048,512]
+Hidden split" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_2 [label="Multi-Head Attention
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		moe_2 [label="MoE Layer
+[1024,2048,512]
+2 experts" fillcolor=lightcyan shape=rectangle style=filled]
+		ln_2 [label="Layer Norm
+[1024,2048,512]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	subgraph cluster_gpu3 {
+		bgcolor=lightgray label="GPU 3" style=rounded
+		qkv_3 [label="QKV Projection
+[1024,2048,512]
+Hidden split" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_3 [label="Multi-Head Attention
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		moe_3 [label="MoE Layer
+[1024,2048,512]
+2 experts" fillcolor=lightcyan shape=rectangle style=filled]
+		ln_3 [label="Layer Norm
+[1024,2048,512]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	subgraph cluster_gpu4 {
+		bgcolor=lightgray label="GPU 4" style=rounded
+		qkv_4 [label="QKV Projection
+[1024,2048,512]
+Hidden split" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_4 [label="Multi-Head Attention
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		moe_4 [label="MoE Layer
+[1024,2048,512]
+2 experts" fillcolor=lightcyan shape=rectangle style=filled]
+		ln_4 [label="Layer Norm
+[1024,2048,512]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	subgraph cluster_gpu5 {
+		bgcolor=lightgray label="GPU 5" style=rounded
+		qkv_5 [label="QKV Projection
+[1024,2048,512]
+Hidden split" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_5 [label="Multi-Head Attention
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		moe_5 [label="MoE Layer
+[1024,2048,512]
+2 experts" fillcolor=lightcyan shape=rectangle style=filled]
+		ln_5 [label="Layer Norm
+[1024,2048,512]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	subgraph cluster_gpu6 {
+		bgcolor=lightgray label="GPU 6" style=rounded
+		qkv_6 [label="QKV Projection
+[1024,2048,512]
+Hidden split" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_6 [label="Multi-Head Attention
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		moe_6 [label="MoE Layer
+[1024,2048,512]
+2 experts" fillcolor=lightcyan shape=rectangle style=filled]
+		ln_6 [label="Layer Norm
+[1024,2048,512]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	subgraph cluster_gpu7 {
+		bgcolor=lightgray label="GPU 7" style=rounded
+		qkv_7 [label="QKV Projection
+[1024,2048,512]
+Hidden split" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_7 [label="Multi-Head Attention
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		moe_7 [label="MoE Layer
+[1024,2048,512]
+2 experts" fillcolor=lightcyan shape=rectangle style=filled]
+		ln_7 [label="Layer Norm
+[1024,2048,512]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	ar1 [label="All-Reduce
+Attention Output
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+	ar2 [label="All-Reduce
+MoE Output
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+	output [label="Output Layer
+[batch_size=1024, seq_len=2048, hidden_dim=4096]" fillcolor=lightyellow shape=parallelogram style=filled]
+	input -> qkv_0
+	qkv_0 -> attn_0
+	attn_0 -> ln_0
+	ln_0 -> moe_0
+	moe_0 -> ar1
+	input -> qkv_1
+	qkv_1 -> attn_1
+	attn_1 -> ln_1
+	ln_1 -> moe_1
+	moe_1 -> ar1
+	input -> qkv_2
+	qkv_2 -> attn_2
+	attn_2 -> ln_2
+	ln_2 -> moe_2
+	moe_2 -> ar1
+	input -> qkv_3
+	qkv_3 -> attn_3
+	attn_3 -> ln_3
+	ln_3 -> moe_3
+	moe_3 -> ar1
+	input -> qkv_4
+	qkv_4 -> attn_4
+	attn_4 -> ln_4
+	ln_4 -> moe_4
+	moe_4 -> ar1
+	input -> qkv_5
+	qkv_5 -> attn_5
+	attn_5 -> ln_5
+	ln_5 -> moe_5
+	moe_5 -> ar1
+	input -> qkv_6
+	qkv_6 -> attn_6
+	attn_6 -> ln_6
+	ln_6 -> moe_6
+	moe_6 -> ar1
+	input -> qkv_7
+	qkv_7 -> attn_7
+	attn_7 -> ln_7
+	ln_7 -> moe_7
+	moe_7 -> ar1
+	ar1 -> ar2
+	ar2 -> output
+}

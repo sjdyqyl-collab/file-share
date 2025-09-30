@@ -1,0 +1,290 @@
+// Hybrid TP=8, PP=2
+digraph TPPP_Baseline {
+	nodesep=0.8 rankdir=TB ranksep=1.2 splines=ortho
+	input [label="Input Layer
+[batch_size=1024, seq_len=2048, hidden_dim=4096]" fillcolor=lightyellow shape=parallelogram style=filled]
+	subgraph cluster_stage0 {
+		bgcolor=lightblue label="Stage 0 (GPUs 0-7)
+TP=8, Layers 0-1" style=rounded
+		s0_l0_tp0 [label="Layer0 GPU0
+[1024,2048,512]
+TP split" fillcolor=lightgreen shape=rectangle style=filled]
+		s0_l1_tp0 [label="Layer1 GPU0
+[1024,2048,512]
+TP split" fillcolor=lightcoral shape=rectangle style=filled]
+		s0_ar0_0 [label="All-Reduce
+Layer0
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_ar1_0 [label="All-Reduce
+Layer1
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_l0_tp1 [label="Layer0 GPU1
+[1024,2048,512]
+TP split" fillcolor=lightgreen shape=rectangle style=filled]
+		s0_l1_tp1 [label="Layer1 GPU1
+[1024,2048,512]
+TP split" fillcolor=lightcoral shape=rectangle style=filled]
+		s0_ar0_1 [label="All-Reduce
+Layer0
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_ar1_1 [label="All-Reduce
+Layer1
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_l0_tp2 [label="Layer0 GPU2
+[1024,2048,512]
+TP split" fillcolor=lightgreen shape=rectangle style=filled]
+		s0_l1_tp2 [label="Layer1 GPU2
+[1024,2048,512]
+TP split" fillcolor=lightcoral shape=rectangle style=filled]
+		s0_ar0_2 [label="All-Reduce
+Layer0
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_ar1_2 [label="All-Reduce
+Layer1
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_l0_tp3 [label="Layer0 GPU3
+[1024,2048,512]
+TP split" fillcolor=lightgreen shape=rectangle style=filled]
+		s0_l1_tp3 [label="Layer1 GPU3
+[1024,2048,512]
+TP split" fillcolor=lightcoral shape=rectangle style=filled]
+		s0_ar0_3 [label="All-Reduce
+Layer0
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_ar1_3 [label="All-Reduce
+Layer1
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_l0_tp4 [label="Layer0 GPU4
+[1024,2048,512]
+TP split" fillcolor=lightgreen shape=rectangle style=filled]
+		s0_l1_tp4 [label="Layer1 GPU4
+[1024,2048,512]
+TP split" fillcolor=lightcoral shape=rectangle style=filled]
+		s0_ar0_4 [label="All-Reduce
+Layer0
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_ar1_4 [label="All-Reduce
+Layer1
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_l0_tp5 [label="Layer0 GPU5
+[1024,2048,512]
+TP split" fillcolor=lightgreen shape=rectangle style=filled]
+		s0_l1_tp5 [label="Layer1 GPU5
+[1024,2048,512]
+TP split" fillcolor=lightcoral shape=rectangle style=filled]
+		s0_ar0_5 [label="All-Reduce
+Layer0
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_ar1_5 [label="All-Reduce
+Layer1
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_l0_tp6 [label="Layer0 GPU6
+[1024,2048,512]
+TP split" fillcolor=lightgreen shape=rectangle style=filled]
+		s0_l1_tp6 [label="Layer1 GPU6
+[1024,2048,512]
+TP split" fillcolor=lightcoral shape=rectangle style=filled]
+		s0_ar0_6 [label="All-Reduce
+Layer0
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_ar1_6 [label="All-Reduce
+Layer1
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_l0_tp7 [label="Layer0 GPU7
+[1024,2048,512]
+TP split" fillcolor=lightgreen shape=rectangle style=filled]
+		s0_l1_tp7 [label="Layer1 GPU7
+[1024,2048,512]
+TP split" fillcolor=lightcoral shape=rectangle style=filled]
+		s0_ar0_7 [label="All-Reduce
+Layer0
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s0_ar1_7 [label="All-Reduce
+Layer1
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+	}
+	subgraph cluster_stage1 {
+		bgcolor=lightgreen label="Stage 1 (GPUs 8-15)
+TP=8, Layers 2-3" style=rounded
+		s1_l2_tp8 [label="Layer2 GPU8
+[1024,2048,512]
+TP split" fillcolor=lightcyan shape=rectangle style=filled]
+		s1_l3_tp8 [label="Layer3 GPU8
+[1024,2048,512]
+TP split" fillcolor=lightyellow shape=rectangle style=filled]
+		s1_ar2_8 [label="All-Reduce
+Layer2
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_ar3_8 [label="All-Reduce
+Layer3
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_l2_tp9 [label="Layer2 GPU9
+[1024,2048,512]
+TP split" fillcolor=lightcyan shape=rectangle style=filled]
+		s1_l3_tp9 [label="Layer3 GPU9
+[1024,2048,512]
+TP split" fillcolor=lightyellow shape=rectangle style=filled]
+		s1_ar2_9 [label="All-Reduce
+Layer2
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_ar3_9 [label="All-Reduce
+Layer3
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_l2_tp10 [label="Layer2 GPU10
+[1024,2048,512]
+TP split" fillcolor=lightcyan shape=rectangle style=filled]
+		s1_l3_tp10 [label="Layer3 GPU10
+[1024,2048,512]
+TP split" fillcolor=lightyellow shape=rectangle style=filled]
+		s1_ar2_10 [label="All-Reduce
+Layer2
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_ar3_10 [label="All-Reduce
+Layer3
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_l2_tp11 [label="Layer2 GPU11
+[1024,2048,512]
+TP split" fillcolor=lightcyan shape=rectangle style=filled]
+		s1_l3_tp11 [label="Layer3 GPU11
+[1024,2048,512]
+TP split" fillcolor=lightyellow shape=rectangle style=filled]
+		s1_ar2_11 [label="All-Reduce
+Layer2
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_ar3_11 [label="All-Reduce
+Layer3
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_l2_tp12 [label="Layer2 GPU12
+[1024,2048,512]
+TP split" fillcolor=lightcyan shape=rectangle style=filled]
+		s1_l3_tp12 [label="Layer3 GPU12
+[1024,2048,512]
+TP split" fillcolor=lightyellow shape=rectangle style=filled]
+		s1_ar2_12 [label="All-Reduce
+Layer2
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_ar3_12 [label="All-Reduce
+Layer3
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_l2_tp13 [label="Layer2 GPU13
+[1024,2048,512]
+TP split" fillcolor=lightcyan shape=rectangle style=filled]
+		s1_l3_tp13 [label="Layer3 GPU13
+[1024,2048,512]
+TP split" fillcolor=lightyellow shape=rectangle style=filled]
+		s1_ar2_13 [label="All-Reduce
+Layer2
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_ar3_13 [label="All-Reduce
+Layer3
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_l2_tp14 [label="Layer2 GPU14
+[1024,2048,512]
+TP split" fillcolor=lightcyan shape=rectangle style=filled]
+		s1_l3_tp14 [label="Layer3 GPU14
+[1024,2048,512]
+TP split" fillcolor=lightyellow shape=rectangle style=filled]
+		s1_ar2_14 [label="All-Reduce
+Layer2
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_ar3_14 [label="All-Reduce
+Layer3
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_l2_tp15 [label="Layer2 GPU15
+[1024,2048,512]
+TP split" fillcolor=lightcyan shape=rectangle style=filled]
+		s1_l3_tp15 [label="Layer3 GPU15
+[1024,2048,512]
+TP split" fillcolor=lightyellow shape=rectangle style=filled]
+		s1_ar2_15 [label="All-Reduce
+Layer2
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+		s1_ar3_15 [label="All-Reduce
+Layer3
+[1024,2048,4096]" fillcolor=orange shape=ellipse style=filled]
+	}
+	pipe_comm [label="Pipeline Communication
+Micro-batch transfer" fillcolor=orange shape=ellipse style=filled]
+	output [label="Output Layer
+[batch_size=1024, seq_len=2048, hidden_dim=4096]" fillcolor=lightyellow shape=parallelogram style=filled]
+	input -> s0_l0_tp0
+	s0_l0_tp0 -> s0_ar0_0
+	s0_ar0_0 -> s0_l1_tp0
+	s0_l1_tp0 -> s0_ar1_0
+	s0_ar1_0 -> pipe_comm
+	input -> s0_l0_tp1
+	s0_l0_tp1 -> s0_ar0_1
+	s0_ar0_1 -> s0_l1_tp1
+	s0_l1_tp1 -> s0_ar1_1
+	s0_ar1_1 -> pipe_comm
+	input -> s0_l0_tp2
+	s0_l0_tp2 -> s0_ar0_2
+	s0_ar0_2 -> s0_l1_tp2
+	s0_l1_tp2 -> s0_ar1_2
+	s0_ar1_2 -> pipe_comm
+	input -> s0_l0_tp3
+	s0_l0_tp3 -> s0_ar0_3
+	s0_ar0_3 -> s0_l1_tp3
+	s0_l1_tp3 -> s0_ar1_3
+	s0_ar1_3 -> pipe_comm
+	input -> s0_l0_tp4
+	s0_l0_tp4 -> s0_ar0_4
+	s0_ar0_4 -> s0_l1_tp4
+	s0_l1_tp4 -> s0_ar1_4
+	s0_ar1_4 -> pipe_comm
+	input -> s0_l0_tp5
+	s0_l0_tp5 -> s0_ar0_5
+	s0_ar0_5 -> s0_l1_tp5
+	s0_l1_tp5 -> s0_ar1_5
+	s0_ar1_5 -> pipe_comm
+	input -> s0_l0_tp6
+	s0_l0_tp6 -> s0_ar0_6
+	s0_ar0_6 -> s0_l1_tp6
+	s0_l1_tp6 -> s0_ar1_6
+	s0_ar1_6 -> pipe_comm
+	input -> s0_l0_tp7
+	s0_l0_tp7 -> s0_ar0_7
+	s0_ar0_7 -> s0_l1_tp7
+	s0_l1_tp7 -> s0_ar1_7
+	s0_ar1_7 -> pipe_comm
+	pipe_comm -> s1_l2_tp8
+	s1_l2_tp8 -> s1_ar2_8
+	s1_ar2_8 -> s1_l3_tp8
+	s1_l3_tp8 -> s1_ar3_8
+	s1_ar3_8 -> output
+	pipe_comm -> s1_l2_tp9
+	s1_l2_tp9 -> s1_ar2_9
+	s1_ar2_9 -> s1_l3_tp9
+	s1_l3_tp9 -> s1_ar3_9
+	s1_ar3_9 -> output
+	pipe_comm -> s1_l2_tp10
+	s1_l2_tp10 -> s1_ar2_10
+	s1_ar2_10 -> s1_l3_tp10
+	s1_l3_tp10 -> s1_ar3_10
+	s1_ar3_10 -> output
+	pipe_comm -> s1_l2_tp11
+	s1_l2_tp11 -> s1_ar2_11
+	s1_ar2_11 -> s1_l3_tp11
+	s1_l3_tp11 -> s1_ar3_11
+	s1_ar3_11 -> output
+	pipe_comm -> s1_l2_tp12
+	s1_l2_tp12 -> s1_ar2_12
+	s1_ar2_12 -> s1_l3_tp12
+	s1_l3_tp12 -> s1_ar3_12
+	s1_ar3_12 -> output
+	pipe_comm -> s1_l2_tp13
+	s1_l2_tp13 -> s1_ar2_13
+	s1_ar2_13 -> s1_l3_tp13
+	s1_l3_tp13 -> s1_ar3_13
+	s1_ar3_13 -> output
+	pipe_comm -> s1_l2_tp14
+	s1_l2_tp14 -> s1_ar2_14
+	s1_ar2_14 -> s1_l3_tp14
+	s1_l3_tp14 -> s1_ar3_14
+	s1_ar3_14 -> output
+	pipe_comm -> s1_l2_tp15
+	s1_l2_tp15 -> s1_ar2_15
+	s1_ar2_15 -> s1_l3_tp15
+	s1_l3_tp15 -> s1_ar3_15
+	s1_ar3_15 -> output
+}

@@ -1,0 +1,1474 @@
+// MA Separation Parallel Strategy for MoE-Attention Co-execution
+digraph MA_Separation {
+	rankdir=TB size="20,20"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	node [fillcolor=lightcoral shape=diamond style=filled]
+	input [label="Model Input\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: all" shape=ellipse]
+	l1_qkv_proj_0 [label="L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	l1_attn_score_0 [label="L1 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	l1_attn_out_0 [label="L1 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 0" shape=rectangle]
+	l1_qkv_proj_1 [label="L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	l1_attn_score_1 [label="L1 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	l1_attn_out_1 [label="L1 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 1" shape=rectangle]
+	l1_qkv_proj_2 [label="L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	l1_attn_score_2 [label="L1 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	l1_attn_out_2 [label="L1 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 2" shape=rectangle]
+	l1_qkv_proj_3 [label="L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	l1_attn_score_3 [label="L1 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	l1_attn_out_3 [label="L1 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 3" shape=rectangle]
+	l1_qkv_proj_4 [label="L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	l1_attn_score_4 [label="L1 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	l1_attn_out_4 [label="L1 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 4" shape=rectangle]
+	l1_qkv_proj_5 [label="L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	l1_attn_score_5 [label="L1 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	l1_attn_out_5 [label="L1 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 5" shape=rectangle]
+	l1_qkv_proj_6 [label="L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	l1_attn_score_6 [label="L1 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	l1_attn_out_6 [label="L1 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 6" shape=rectangle]
+	l1_qkv_proj_7 [label="L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	l1_attn_score_7 [label="L1 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	l1_attn_out_7 [label="L1 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 7" shape=rectangle]
+	l1_attn_agg_0 [label="L1 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=parallelogram]
+	l1_attn_agg_1 [label="L1 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=parallelogram]
+	l1_attn_agg_2 [label="L1 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=parallelogram]
+	l1_attn_agg_3 [label="L1 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=parallelogram]
+	l1_attn_agg_4 [label="L1 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=parallelogram]
+	l1_attn_agg_5 [label="L1 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=parallelogram]
+	l1_attn_agg_6 [label="L1 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=parallelogram]
+	l1_attn_agg_7 [label="L1 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=parallelogram]
+	l1_residual_0 [label="L1 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	l1_residual_1 [label="L1 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	l1_residual_2 [label="L1 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	l1_residual_3 [label="L1 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	l1_residual_4 [label="L1 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	l1_residual_5 [label="L1 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	l1_residual_6 [label="L1 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	l1_residual_7 [label="L1 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	l1_gate_8 [label="L1 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 8" shape=parallelogram]
+	l1_expert1_8 [label="L1 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l1_expert2_8 [label="L1 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l1_expert_agg_8 [label="L1 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=parallelogram]
+	l1_gate_9 [label="L1 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 9" shape=parallelogram]
+	l1_expert1_9 [label="L1 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l1_expert2_9 [label="L1 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l1_expert_agg_9 [label="L1 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=parallelogram]
+	l1_gate_10 [label="L1 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 10" shape=parallelogram]
+	l1_expert1_10 [label="L1 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l1_expert2_10 [label="L1 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l1_expert_agg_10 [label="L1 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=parallelogram]
+	l1_gate_11 [label="L1 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 11" shape=parallelogram]
+	l1_expert1_11 [label="L1 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l1_expert2_11 [label="L1 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l1_expert_agg_11 [label="L1 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=parallelogram]
+	l1_gate_12 [label="L1 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 12" shape=parallelogram]
+	l1_expert1_12 [label="L1 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l1_expert2_12 [label="L1 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l1_expert_agg_12 [label="L1 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=parallelogram]
+	l1_gate_13 [label="L1 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 13" shape=parallelogram]
+	l1_expert1_13 [label="L1 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l1_expert2_13 [label="L1 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l1_expert_agg_13 [label="L1 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=parallelogram]
+	l1_gate_14 [label="L1 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 14" shape=parallelogram]
+	l1_expert1_14 [label="L1 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l1_expert2_14 [label="L1 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l1_expert_agg_14 [label="L1 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=parallelogram]
+	l1_gate_15 [label="L1 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 15" shape=parallelogram]
+	l1_expert1_15 [label="L1 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l1_expert2_15 [label="L1 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l1_expert_agg_15 [label="L1 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=parallelogram]
+	l1_moe_residual_8 [label="L1 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l1_moe_residual_9 [label="L1 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l1_moe_residual_10 [label="L1 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l1_moe_residual_11 [label="L1 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l1_moe_residual_12 [label="L1 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l1_moe_residual_13 [label="L1 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l1_moe_residual_14 [label="L1 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l1_moe_residual_15 [label="L1 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l2_qkv_proj_0 [label="L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	l2_attn_score_0 [label="L2 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	l2_attn_out_0 [label="L2 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 0" shape=rectangle]
+	l2_qkv_proj_1 [label="L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	l2_attn_score_1 [label="L2 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	l2_attn_out_1 [label="L2 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 1" shape=rectangle]
+	l2_qkv_proj_2 [label="L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	l2_attn_score_2 [label="L2 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	l2_attn_out_2 [label="L2 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 2" shape=rectangle]
+	l2_qkv_proj_3 [label="L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	l2_attn_score_3 [label="L2 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	l2_attn_out_3 [label="L2 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 3" shape=rectangle]
+	l2_qkv_proj_4 [label="L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	l2_attn_score_4 [label="L2 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	l2_attn_out_4 [label="L2 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 4" shape=rectangle]
+	l2_qkv_proj_5 [label="L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	l2_attn_score_5 [label="L2 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	l2_attn_out_5 [label="L2 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 5" shape=rectangle]
+	l2_qkv_proj_6 [label="L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	l2_attn_score_6 [label="L2 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	l2_attn_out_6 [label="L2 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 6" shape=rectangle]
+	l2_qkv_proj_7 [label="L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	l2_attn_score_7 [label="L2 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	l2_attn_out_7 [label="L2 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 7" shape=rectangle]
+	l2_attn_agg_0 [label="L2 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=parallelogram]
+	l2_attn_agg_1 [label="L2 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=parallelogram]
+	l2_attn_agg_2 [label="L2 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=parallelogram]
+	l2_attn_agg_3 [label="L2 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=parallelogram]
+	l2_attn_agg_4 [label="L2 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=parallelogram]
+	l2_attn_agg_5 [label="L2 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=parallelogram]
+	l2_attn_agg_6 [label="L2 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=parallelogram]
+	l2_attn_agg_7 [label="L2 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=parallelogram]
+	l2_residual_0 [label="L2 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	l2_residual_1 [label="L2 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	l2_residual_2 [label="L2 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	l2_residual_3 [label="L2 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	l2_residual_4 [label="L2 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	l2_residual_5 [label="L2 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	l2_residual_6 [label="L2 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	l2_residual_7 [label="L2 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	l2_gate_8 [label="L2 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 8" shape=parallelogram]
+	l2_expert1_8 [label="L2 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l2_expert2_8 [label="L2 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l2_expert_agg_8 [label="L2 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=parallelogram]
+	l2_gate_9 [label="L2 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 9" shape=parallelogram]
+	l2_expert1_9 [label="L2 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l2_expert2_9 [label="L2 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l2_expert_agg_9 [label="L2 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=parallelogram]
+	l2_gate_10 [label="L2 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 10" shape=parallelogram]
+	l2_expert1_10 [label="L2 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l2_expert2_10 [label="L2 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l2_expert_agg_10 [label="L2 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=parallelogram]
+	l2_gate_11 [label="L2 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 11" shape=parallelogram]
+	l2_expert1_11 [label="L2 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l2_expert2_11 [label="L2 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l2_expert_agg_11 [label="L2 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=parallelogram]
+	l2_gate_12 [label="L2 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 12" shape=parallelogram]
+	l2_expert1_12 [label="L2 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l2_expert2_12 [label="L2 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l2_expert_agg_12 [label="L2 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=parallelogram]
+	l2_gate_13 [label="L2 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 13" shape=parallelogram]
+	l2_expert1_13 [label="L2 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l2_expert2_13 [label="L2 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l2_expert_agg_13 [label="L2 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=parallelogram]
+	l2_gate_14 [label="L2 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 14" shape=parallelogram]
+	l2_expert1_14 [label="L2 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l2_expert2_14 [label="L2 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l2_expert_agg_14 [label="L2 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=parallelogram]
+	l2_gate_15 [label="L2 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 15" shape=parallelogram]
+	l2_expert1_15 [label="L2 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l2_expert2_15 [label="L2 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l2_expert_agg_15 [label="L2 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=parallelogram]
+	l2_moe_residual_8 [label="L2 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l2_moe_residual_9 [label="L2 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l2_moe_residual_10 [label="L2 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l2_moe_residual_11 [label="L2 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l2_moe_residual_12 [label="L2 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l2_moe_residual_13 [label="L2 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l2_moe_residual_14 [label="L2 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l2_moe_residual_15 [label="L2 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l3_qkv_proj_0 [label="L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	l3_attn_score_0 [label="L3 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	l3_attn_out_0 [label="L3 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 0" shape=rectangle]
+	l3_qkv_proj_1 [label="L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	l3_attn_score_1 [label="L3 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	l3_attn_out_1 [label="L3 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 1" shape=rectangle]
+	l3_qkv_proj_2 [label="L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	l3_attn_score_2 [label="L3 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	l3_attn_out_2 [label="L3 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 2" shape=rectangle]
+	l3_qkv_proj_3 [label="L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	l3_attn_score_3 [label="L3 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	l3_attn_out_3 [label="L3 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 3" shape=rectangle]
+	l3_qkv_proj_4 [label="L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	l3_attn_score_4 [label="L3 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	l3_attn_out_4 [label="L3 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 4" shape=rectangle]
+	l3_qkv_proj_5 [label="L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	l3_attn_score_5 [label="L3 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	l3_attn_out_5 [label="L3 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 5" shape=rectangle]
+	l3_qkv_proj_6 [label="L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	l3_attn_score_6 [label="L3 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	l3_attn_out_6 [label="L3 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 6" shape=rectangle]
+	l3_qkv_proj_7 [label="L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	l3_attn_score_7 [label="L3 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	l3_attn_out_7 [label="L3 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 7" shape=rectangle]
+	l3_attn_agg_0 [label="L3 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=parallelogram]
+	l3_attn_agg_1 [label="L3 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=parallelogram]
+	l3_attn_agg_2 [label="L3 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=parallelogram]
+	l3_attn_agg_3 [label="L3 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=parallelogram]
+	l3_attn_agg_4 [label="L3 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=parallelogram]
+	l3_attn_agg_5 [label="L3 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=parallelogram]
+	l3_attn_agg_6 [label="L3 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=parallelogram]
+	l3_attn_agg_7 [label="L3 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=parallelogram]
+	l3_residual_0 [label="L3 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	l3_residual_1 [label="L3 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	l3_residual_2 [label="L3 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	l3_residual_3 [label="L3 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	l3_residual_4 [label="L3 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	l3_residual_5 [label="L3 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	l3_residual_6 [label="L3 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	l3_residual_7 [label="L3 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	l3_gate_8 [label="L3 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 8" shape=parallelogram]
+	l3_expert1_8 [label="L3 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l3_expert2_8 [label="L3 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l3_expert_agg_8 [label="L3 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=parallelogram]
+	l3_gate_9 [label="L3 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 9" shape=parallelogram]
+	l3_expert1_9 [label="L3 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l3_expert2_9 [label="L3 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l3_expert_agg_9 [label="L3 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=parallelogram]
+	l3_gate_10 [label="L3 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 10" shape=parallelogram]
+	l3_expert1_10 [label="L3 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l3_expert2_10 [label="L3 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l3_expert_agg_10 [label="L3 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=parallelogram]
+	l3_gate_11 [label="L3 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 11" shape=parallelogram]
+	l3_expert1_11 [label="L3 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l3_expert2_11 [label="L3 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l3_expert_agg_11 [label="L3 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=parallelogram]
+	l3_gate_12 [label="L3 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 12" shape=parallelogram]
+	l3_expert1_12 [label="L3 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l3_expert2_12 [label="L3 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l3_expert_agg_12 [label="L3 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=parallelogram]
+	l3_gate_13 [label="L3 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 13" shape=parallelogram]
+	l3_expert1_13 [label="L3 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l3_expert2_13 [label="L3 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l3_expert_agg_13 [label="L3 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=parallelogram]
+	l3_gate_14 [label="L3 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 14" shape=parallelogram]
+	l3_expert1_14 [label="L3 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l3_expert2_14 [label="L3 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l3_expert_agg_14 [label="L3 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=parallelogram]
+	l3_gate_15 [label="L3 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 15" shape=parallelogram]
+	l3_expert1_15 [label="L3 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l3_expert2_15 [label="L3 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l3_expert_agg_15 [label="L3 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=parallelogram]
+	l3_moe_residual_8 [label="L3 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l3_moe_residual_9 [label="L3 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l3_moe_residual_10 [label="L3 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l3_moe_residual_11 [label="L3 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l3_moe_residual_12 [label="L3 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l3_moe_residual_13 [label="L3 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l3_moe_residual_14 [label="L3 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l3_moe_residual_15 [label="L3 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l4_qkv_proj_0 [label="L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	l4_attn_score_0 [label="L4 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	l4_attn_out_0 [label="L4 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 0" shape=rectangle]
+	l4_qkv_proj_1 [label="L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	l4_attn_score_1 [label="L4 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	l4_attn_out_1 [label="L4 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 1" shape=rectangle]
+	l4_qkv_proj_2 [label="L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	l4_attn_score_2 [label="L4 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	l4_attn_out_2 [label="L4 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 2" shape=rectangle]
+	l4_qkv_proj_3 [label="L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	l4_attn_score_3 [label="L4 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	l4_attn_out_3 [label="L4 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 3" shape=rectangle]
+	l4_qkv_proj_4 [label="L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	l4_attn_score_4 [label="L4 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	l4_attn_out_4 [label="L4 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 4" shape=rectangle]
+	l4_qkv_proj_5 [label="L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	l4_attn_score_5 [label="L4 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	l4_attn_out_5 [label="L4 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 5" shape=rectangle]
+	l4_qkv_proj_6 [label="L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	l4_attn_score_6 [label="L4 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	l4_attn_out_6 [label="L4 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 6" shape=rectangle]
+	l4_qkv_proj_7 [label="L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	l4_attn_score_7 [label="L4 Attention Score\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	l4_attn_out_7 [label="L4 Attention Output\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 7" shape=rectangle]
+	l4_attn_agg_0 [label="L4 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=parallelogram]
+	l4_attn_agg_1 [label="L4 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=parallelogram]
+	l4_attn_agg_2 [label="L4 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=parallelogram]
+	l4_attn_agg_3 [label="L4 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=parallelogram]
+	l4_attn_agg_4 [label="L4 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=parallelogram]
+	l4_attn_agg_5 [label="L4 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=parallelogram]
+	l4_attn_agg_6 [label="L4 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=parallelogram]
+	l4_attn_agg_7 [label="L4 Attention Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=parallelogram]
+	l4_residual_0 [label="L4 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	l4_residual_1 [label="L4 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	l4_residual_2 [label="L4 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	l4_residual_3 [label="L4 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	l4_residual_4 [label="L4 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	l4_residual_5 [label="L4 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	l4_residual_6 [label="L4 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	l4_residual_7 [label="L4 Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	l4_gate_8 [label="L4 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 8" shape=parallelogram]
+	l4_expert1_8 [label="L4 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l4_expert2_8 [label="L4 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l4_expert_agg_8 [label="L4 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=parallelogram]
+	l4_gate_9 [label="L4 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 9" shape=parallelogram]
+	l4_expert1_9 [label="L4 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l4_expert2_9 [label="L4 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l4_expert_agg_9 [label="L4 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=parallelogram]
+	l4_gate_10 [label="L4 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 10" shape=parallelogram]
+	l4_expert1_10 [label="L4 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l4_expert2_10 [label="L4 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l4_expert_agg_10 [label="L4 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=parallelogram]
+	l4_gate_11 [label="L4 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 11" shape=parallelogram]
+	l4_expert1_11 [label="L4 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l4_expert2_11 [label="L4 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l4_expert_agg_11 [label="L4 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=parallelogram]
+	l4_gate_12 [label="L4 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 12" shape=parallelogram]
+	l4_expert1_12 [label="L4 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l4_expert2_12 [label="L4 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l4_expert_agg_12 [label="L4 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=parallelogram]
+	l4_gate_13 [label="L4 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 13" shape=parallelogram]
+	l4_expert1_13 [label="L4 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l4_expert2_13 [label="L4 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l4_expert_agg_13 [label="L4 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=parallelogram]
+	l4_gate_14 [label="L4 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 14" shape=parallelogram]
+	l4_expert1_14 [label="L4 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l4_expert2_14 [label="L4 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l4_expert_agg_14 [label="L4 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=parallelogram]
+	l4_gate_15 [label="L4 Gating Network\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, experts=2]\nGPU: 15" shape=parallelogram]
+	l4_expert1_15 [label="L4 Expert 1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l4_expert2_15 [label="L4 Expert 2\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	l4_expert_agg_15 [label="L4 Expert Aggregate\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=parallelogram]
+	l4_moe_residual_8 [label="L4 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	l4_moe_residual_9 [label="L4 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	l4_moe_residual_10 [label="L4 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	l4_moe_residual_11 [label="L4 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	l4_moe_residual_12 [label="L4 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	l4_moe_residual_13 [label="L4 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	l4_moe_residual_14 [label="L4 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	l4_moe_residual_15 [label="L4 MoE Residual Add\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	output [label="Model Output\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, vocab_size]\nGPU: 15" shape=ellipse]
+	l1_attn_comm_0 [label="L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l1_attn_comm_1 [label="L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l1_attn_comm_2 [label="L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l1_attn_comm_3 [label="L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l1_attn_comm_4 [label="L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l1_attn_comm_5 [label="L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l1_attn_comm_6 [label="L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l1_attn_comm_7 [label="L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l2_attn_comm_0 [label="L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l2_attn_comm_1 [label="L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l2_attn_comm_2 [label="L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l2_attn_comm_3 [label="L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l2_attn_comm_4 [label="L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l2_attn_comm_5 [label="L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l2_attn_comm_6 [label="L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l2_attn_comm_7 [label="L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l3_attn_comm_0 [label="L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l3_attn_comm_1 [label="L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l3_attn_comm_2 [label="L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l3_attn_comm_3 [label="L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l3_attn_comm_4 [label="L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l3_attn_comm_5 [label="L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l3_attn_comm_6 [label="L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l3_attn_comm_7 [label="L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l4_attn_comm_0 [label="L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l4_attn_comm_1 [label="L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l4_attn_comm_2 [label="L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l4_attn_comm_3 [label="L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l4_attn_comm_4 [label="L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l4_attn_comm_5 [label="L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l4_attn_comm_6 [label="L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l4_attn_comm_7 [label="L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7" shape=diamond]
+	l1_moe_comm_8 [label="L1 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l1_moe_comm_9 [label="L1 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l1_moe_comm_10 [label="L1 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l1_moe_comm_11 [label="L1 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l1_moe_comm_12 [label="L1 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l1_moe_comm_13 [label="L1 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l1_moe_comm_14 [label="L1 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l1_moe_comm_15 [label="L1 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l2_moe_comm_8 [label="L2 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l2_moe_comm_9 [label="L2 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l2_moe_comm_10 [label="L2 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l2_moe_comm_11 [label="L2 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l2_moe_comm_12 [label="L2 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l2_moe_comm_13 [label="L2 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l2_moe_comm_14 [label="L2 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l2_moe_comm_15 [label="L2 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l3_moe_comm_8 [label="L3 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l3_moe_comm_9 [label="L3 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l3_moe_comm_10 [label="L3 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l3_moe_comm_11 [label="L3 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l3_moe_comm_12 [label="L3 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l3_moe_comm_13 [label="L3 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l3_moe_comm_14 [label="L3 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l3_moe_comm_15 [label="L3 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l4_moe_comm_8 [label="L4 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l4_moe_comm_9 [label="L4 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l4_moe_comm_10 [label="L4 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l4_moe_comm_11 [label="L4 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l4_moe_comm_12 [label="L4 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l4_moe_comm_13 [label="L4 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l4_moe_comm_14 [label="L4 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	l4_moe_comm_15 [label="L4 MoE All-to-All\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 8-15" shape=diamond]
+	input -> l1_qkv_proj_0
+	input -> l1_qkv_proj_1
+	input -> l1_qkv_proj_2
+	input -> l1_qkv_proj_3
+	input -> l1_qkv_proj_4
+	input -> l1_qkv_proj_5
+	input -> l1_qkv_proj_6
+	input -> l1_qkv_proj_7
+	l1_qkv_proj_0 -> l1_attn_score_0
+	l1_attn_score_0 -> l1_attn_out_0
+	l1_attn_out_0 -> l1_attn_comm_0
+	l1_attn_comm_0 -> l1_attn_agg_0
+	l1_attn_agg_0 -> l1_residual_0
+	input -> l1_residual_0
+	l1_qkv_proj_1 -> l1_attn_score_1
+	l1_attn_score_1 -> l1_attn_out_1
+	l1_attn_out_1 -> l1_attn_comm_1
+	l1_attn_comm_1 -> l1_attn_agg_1
+	l1_attn_agg_1 -> l1_residual_1
+	input -> l1_residual_1
+	l1_qkv_proj_2 -> l1_attn_score_2
+	l1_attn_score_2 -> l1_attn_out_2
+	l1_attn_out_2 -> l1_attn_comm_2
+	l1_attn_comm_2 -> l1_attn_agg_2
+	l1_attn_agg_2 -> l1_residual_2
+	input -> l1_residual_2
+	l1_qkv_proj_3 -> l1_attn_score_3
+	l1_attn_score_3 -> l1_attn_out_3
+	l1_attn_out_3 -> l1_attn_comm_3
+	l1_attn_comm_3 -> l1_attn_agg_3
+	l1_attn_agg_3 -> l1_residual_3
+	input -> l1_residual_3
+	l1_qkv_proj_4 -> l1_attn_score_4
+	l1_attn_score_4 -> l1_attn_out_4
+	l1_attn_out_4 -> l1_attn_comm_4
+	l1_attn_comm_4 -> l1_attn_agg_4
+	l1_attn_agg_4 -> l1_residual_4
+	input -> l1_residual_4
+	l1_qkv_proj_5 -> l1_attn_score_5
+	l1_attn_score_5 -> l1_attn_out_5
+	l1_attn_out_5 -> l1_attn_comm_5
+	l1_attn_comm_5 -> l1_attn_agg_5
+	l1_attn_agg_5 -> l1_residual_5
+	input -> l1_residual_5
+	l1_qkv_proj_6 -> l1_attn_score_6
+	l1_attn_score_6 -> l1_attn_out_6
+	l1_attn_out_6 -> l1_attn_comm_6
+	l1_attn_comm_6 -> l1_attn_agg_6
+	l1_attn_agg_6 -> l1_residual_6
+	input -> l1_residual_6
+	l1_qkv_proj_7 -> l1_attn_score_7
+	l1_attn_score_7 -> l1_attn_out_7
+	l1_attn_out_7 -> l1_attn_comm_7
+	l1_attn_comm_7 -> l1_attn_agg_7
+	l1_attn_agg_7 -> l1_residual_7
+	input -> l1_residual_7
+	l1_residual_0 -> l1_gate_8
+	l1_residual_0 -> l1_gate_9
+	l1_residual_0 -> l1_gate_10
+	l1_residual_0 -> l1_gate_11
+	l1_residual_0 -> l1_gate_12
+	l1_residual_0 -> l1_gate_13
+	l1_residual_0 -> l1_gate_14
+	l1_residual_0 -> l1_gate_15
+	l1_residual_1 -> l1_gate_8
+	l1_residual_1 -> l1_gate_9
+	l1_residual_1 -> l1_gate_10
+	l1_residual_1 -> l1_gate_11
+	l1_residual_1 -> l1_gate_12
+	l1_residual_1 -> l1_gate_13
+	l1_residual_1 -> l1_gate_14
+	l1_residual_1 -> l1_gate_15
+	l1_residual_2 -> l1_gate_8
+	l1_residual_2 -> l1_gate_9
+	l1_residual_2 -> l1_gate_10
+	l1_residual_2 -> l1_gate_11
+	l1_residual_2 -> l1_gate_12
+	l1_residual_2 -> l1_gate_13
+	l1_residual_2 -> l1_gate_14
+	l1_residual_2 -> l1_gate_15
+	l1_residual_3 -> l1_gate_8
+	l1_residual_3 -> l1_gate_9
+	l1_residual_3 -> l1_gate_10
+	l1_residual_3 -> l1_gate_11
+	l1_residual_3 -> l1_gate_12
+	l1_residual_3 -> l1_gate_13
+	l1_residual_3 -> l1_gate_14
+	l1_residual_3 -> l1_gate_15
+	l1_residual_4 -> l1_gate_8
+	l1_residual_4 -> l1_gate_9
+	l1_residual_4 -> l1_gate_10
+	l1_residual_4 -> l1_gate_11
+	l1_residual_4 -> l1_gate_12
+	l1_residual_4 -> l1_gate_13
+	l1_residual_4 -> l1_gate_14
+	l1_residual_4 -> l1_gate_15
+	l1_residual_5 -> l1_gate_8
+	l1_residual_5 -> l1_gate_9
+	l1_residual_5 -> l1_gate_10
+	l1_residual_5 -> l1_gate_11
+	l1_residual_5 -> l1_gate_12
+	l1_residual_5 -> l1_gate_13
+	l1_residual_5 -> l1_gate_14
+	l1_residual_5 -> l1_gate_15
+	l1_residual_6 -> l1_gate_8
+	l1_residual_6 -> l1_gate_9
+	l1_residual_6 -> l1_gate_10
+	l1_residual_6 -> l1_gate_11
+	l1_residual_6 -> l1_gate_12
+	l1_residual_6 -> l1_gate_13
+	l1_residual_6 -> l1_gate_14
+	l1_residual_6 -> l1_gate_15
+	l1_residual_7 -> l1_gate_8
+	l1_residual_7 -> l1_gate_9
+	l1_residual_7 -> l1_gate_10
+	l1_residual_7 -> l1_gate_11
+	l1_residual_7 -> l1_gate_12
+	l1_residual_7 -> l1_gate_13
+	l1_residual_7 -> l1_gate_14
+	l1_residual_7 -> l1_gate_15
+	l1_gate_8 -> l1_expert1_8 [style=dashed]
+	l1_gate_8 -> l1_expert2_8 [style=dashed]
+	l1_expert1_8 -> l1_expert_agg_8
+	l1_expert2_8 -> l1_expert_agg_8
+	l1_expert_agg_8 -> l1_moe_comm_8
+	l1_moe_comm_8 -> l1_moe_residual_8
+	l1_residual_0 -> l1_moe_residual_8
+	l1_residual_1 -> l1_moe_residual_8
+	l1_residual_2 -> l1_moe_residual_8
+	l1_residual_3 -> l1_moe_residual_8
+	l1_residual_4 -> l1_moe_residual_8
+	l1_residual_5 -> l1_moe_residual_8
+	l1_residual_6 -> l1_moe_residual_8
+	l1_residual_7 -> l1_moe_residual_8
+	l1_gate_9 -> l1_expert1_9 [style=dashed]
+	l1_gate_9 -> l1_expert2_9 [style=dashed]
+	l1_expert1_9 -> l1_expert_agg_9
+	l1_expert2_9 -> l1_expert_agg_9
+	l1_expert_agg_9 -> l1_moe_comm_9
+	l1_moe_comm_9 -> l1_moe_residual_9
+	l1_residual_0 -> l1_moe_residual_9
+	l1_residual_1 -> l1_moe_residual_9
+	l1_residual_2 -> l1_moe_residual_9
+	l1_residual_3 -> l1_moe_residual_9
+	l1_residual_4 -> l1_moe_residual_9
+	l1_residual_5 -> l1_moe_residual_9
+	l1_residual_6 -> l1_moe_residual_9
+	l1_residual_7 -> l1_moe_residual_9
+	l1_gate_10 -> l1_expert1_10 [style=dashed]
+	l1_gate_10 -> l1_expert2_10 [style=dashed]
+	l1_expert1_10 -> l1_expert_agg_10
+	l1_expert2_10 -> l1_expert_agg_10
+	l1_expert_agg_10 -> l1_moe_comm_10
+	l1_moe_comm_10 -> l1_moe_residual_10
+	l1_residual_0 -> l1_moe_residual_10
+	l1_residual_1 -> l1_moe_residual_10
+	l1_residual_2 -> l1_moe_residual_10
+	l1_residual_3 -> l1_moe_residual_10
+	l1_residual_4 -> l1_moe_residual_10
+	l1_residual_5 -> l1_moe_residual_10
+	l1_residual_6 -> l1_moe_residual_10
+	l1_residual_7 -> l1_moe_residual_10
+	l1_gate_11 -> l1_expert1_11 [style=dashed]
+	l1_gate_11 -> l1_expert2_11 [style=dashed]
+	l1_expert1_11 -> l1_expert_agg_11
+	l1_expert2_11 -> l1_expert_agg_11
+	l1_expert_agg_11 -> l1_moe_comm_11
+	l1_moe_comm_11 -> l1_moe_residual_11
+	l1_residual_0 -> l1_moe_residual_11
+	l1_residual_1 -> l1_moe_residual_11
+	l1_residual_2 -> l1_moe_residual_11
+	l1_residual_3 -> l1_moe_residual_11
+	l1_residual_4 -> l1_moe_residual_11
+	l1_residual_5 -> l1_moe_residual_11
+	l1_residual_6 -> l1_moe_residual_11
+	l1_residual_7 -> l1_moe_residual_11
+	l1_gate_12 -> l1_expert1_12 [style=dashed]
+	l1_gate_12 -> l1_expert2_12 [style=dashed]
+	l1_expert1_12 -> l1_expert_agg_12
+	l1_expert2_12 -> l1_expert_agg_12
+	l1_expert_agg_12 -> l1_moe_comm_12
+	l1_moe_comm_12 -> l1_moe_residual_12
+	l1_residual_0 -> l1_moe_residual_12
+	l1_residual_1 -> l1_moe_residual_12
+	l1_residual_2 -> l1_moe_residual_12
+	l1_residual_3 -> l1_moe_residual_12
+	l1_residual_4 -> l1_moe_residual_12
+	l1_residual_5 -> l1_moe_residual_12
+	l1_residual_6 -> l1_moe_residual_12
+	l1_residual_7 -> l1_moe_residual_12
+	l1_gate_13 -> l1_expert1_13 [style=dashed]
+	l1_gate_13 -> l1_expert2_13 [style=dashed]
+	l1_expert1_13 -> l1_expert_agg_13
+	l1_expert2_13 -> l1_expert_agg_13
+	l1_expert_agg_13 -> l1_moe_comm_13
+	l1_moe_comm_13 -> l1_moe_residual_13
+	l1_residual_0 -> l1_moe_residual_13
+	l1_residual_1 -> l1_moe_residual_13
+	l1_residual_2 -> l1_moe_residual_13
+	l1_residual_3 -> l1_moe_residual_13
+	l1_residual_4 -> l1_moe_residual_13
+	l1_residual_5 -> l1_moe_residual_13
+	l1_residual_6 -> l1_moe_residual_13
+	l1_residual_7 -> l1_moe_residual_13
+	l1_gate_14 -> l1_expert1_14 [style=dashed]
+	l1_gate_14 -> l1_expert2_14 [style=dashed]
+	l1_expert1_14 -> l1_expert_agg_14
+	l1_expert2_14 -> l1_expert_agg_14
+	l1_expert_agg_14 -> l1_moe_comm_14
+	l1_moe_comm_14 -> l1_moe_residual_14
+	l1_residual_0 -> l1_moe_residual_14
+	l1_residual_1 -> l1_moe_residual_14
+	l1_residual_2 -> l1_moe_residual_14
+	l1_residual_3 -> l1_moe_residual_14
+	l1_residual_4 -> l1_moe_residual_14
+	l1_residual_5 -> l1_moe_residual_14
+	l1_residual_6 -> l1_moe_residual_14
+	l1_residual_7 -> l1_moe_residual_14
+	l1_gate_15 -> l1_expert1_15 [style=dashed]
+	l1_gate_15 -> l1_expert2_15 [style=dashed]
+	l1_expert1_15 -> l1_expert_agg_15
+	l1_expert2_15 -> l1_expert_agg_15
+	l1_expert_agg_15 -> l1_moe_comm_15
+	l1_moe_comm_15 -> l1_moe_residual_15
+	l1_residual_0 -> l1_moe_residual_15
+	l1_residual_1 -> l1_moe_residual_15
+	l1_residual_2 -> l1_moe_residual_15
+	l1_residual_3 -> l1_moe_residual_15
+	l1_residual_4 -> l1_moe_residual_15
+	l1_residual_5 -> l1_moe_residual_15
+	l1_residual_6 -> l1_moe_residual_15
+	l1_residual_7 -> l1_moe_residual_15
+	l1_moe_residual_8 -> l2_qkv_proj_0
+	l1_moe_residual_8 -> l2_qkv_proj_1
+	l1_moe_residual_8 -> l2_qkv_proj_2
+	l1_moe_residual_8 -> l2_qkv_proj_3
+	l1_moe_residual_8 -> l2_qkv_proj_4
+	l1_moe_residual_8 -> l2_qkv_proj_5
+	l1_moe_residual_8 -> l2_qkv_proj_6
+	l1_moe_residual_8 -> l2_qkv_proj_7
+	l1_moe_residual_9 -> l2_qkv_proj_0
+	l1_moe_residual_9 -> l2_qkv_proj_1
+	l1_moe_residual_9 -> l2_qkv_proj_2
+	l1_moe_residual_9 -> l2_qkv_proj_3
+	l1_moe_residual_9 -> l2_qkv_proj_4
+	l1_moe_residual_9 -> l2_qkv_proj_5
+	l1_moe_residual_9 -> l2_qkv_proj_6
+	l1_moe_residual_9 -> l2_qkv_proj_7
+	l1_moe_residual_10 -> l2_qkv_proj_0
+	l1_moe_residual_10 -> l2_qkv_proj_1
+	l1_moe_residual_10 -> l2_qkv_proj_2
+	l1_moe_residual_10 -> l2_qkv_proj_3
+	l1_moe_residual_10 -> l2_qkv_proj_4
+	l1_moe_residual_10 -> l2_qkv_proj_5
+	l1_moe_residual_10 -> l2_qkv_proj_6
+	l1_moe_residual_10 -> l2_qkv_proj_7
+	l1_moe_residual_11 -> l2_qkv_proj_0
+	l1_moe_residual_11 -> l2_qkv_proj_1
+	l1_moe_residual_11 -> l2_qkv_proj_2
+	l1_moe_residual_11 -> l2_qkv_proj_3
+	l1_moe_residual_11 -> l2_qkv_proj_4
+	l1_moe_residual_11 -> l2_qkv_proj_5
+	l1_moe_residual_11 -> l2_qkv_proj_6
+	l1_moe_residual_11 -> l2_qkv_proj_7
+	l1_moe_residual_12 -> l2_qkv_proj_0
+	l1_moe_residual_12 -> l2_qkv_proj_1
+	l1_moe_residual_12 -> l2_qkv_proj_2
+	l1_moe_residual_12 -> l2_qkv_proj_3
+	l1_moe_residual_12 -> l2_qkv_proj_4
+	l1_moe_residual_12 -> l2_qkv_proj_5
+	l1_moe_residual_12 -> l2_qkv_proj_6
+	l1_moe_residual_12 -> l2_qkv_proj_7
+	l1_moe_residual_13 -> l2_qkv_proj_0
+	l1_moe_residual_13 -> l2_qkv_proj_1
+	l1_moe_residual_13 -> l2_qkv_proj_2
+	l1_moe_residual_13 -> l2_qkv_proj_3
+	l1_moe_residual_13 -> l2_qkv_proj_4
+	l1_moe_residual_13 -> l2_qkv_proj_5
+	l1_moe_residual_13 -> l2_qkv_proj_6
+	l1_moe_residual_13 -> l2_qkv_proj_7
+	l1_moe_residual_14 -> l2_qkv_proj_0
+	l1_moe_residual_14 -> l2_qkv_proj_1
+	l1_moe_residual_14 -> l2_qkv_proj_2
+	l1_moe_residual_14 -> l2_qkv_proj_3
+	l1_moe_residual_14 -> l2_qkv_proj_4
+	l1_moe_residual_14 -> l2_qkv_proj_5
+	l1_moe_residual_14 -> l2_qkv_proj_6
+	l1_moe_residual_14 -> l2_qkv_proj_7
+	l1_moe_residual_15 -> l2_qkv_proj_0
+	l1_moe_residual_15 -> l2_qkv_proj_1
+	l1_moe_residual_15 -> l2_qkv_proj_2
+	l1_moe_residual_15 -> l2_qkv_proj_3
+	l1_moe_residual_15 -> l2_qkv_proj_4
+	l1_moe_residual_15 -> l2_qkv_proj_5
+	l1_moe_residual_15 -> l2_qkv_proj_6
+	l1_moe_residual_15 -> l2_qkv_proj_7
+	l2_qkv_proj_0 -> l2_attn_score_0
+	l2_attn_score_0 -> l2_attn_out_0
+	l2_attn_out_0 -> l2_attn_comm_0
+	l2_attn_comm_0 -> l2_attn_agg_0
+	l2_attn_agg_0 -> l2_residual_0
+	l1_moe_residual_8 -> l2_residual_0
+	l1_moe_residual_9 -> l2_residual_0
+	l1_moe_residual_10 -> l2_residual_0
+	l1_moe_residual_11 -> l2_residual_0
+	l1_moe_residual_12 -> l2_residual_0
+	l1_moe_residual_13 -> l2_residual_0
+	l1_moe_residual_14 -> l2_residual_0
+	l1_moe_residual_15 -> l2_residual_0
+	l2_qkv_proj_1 -> l2_attn_score_1
+	l2_attn_score_1 -> l2_attn_out_1
+	l2_attn_out_1 -> l2_attn_comm_1
+	l2_attn_comm_1 -> l2_attn_agg_1
+	l2_attn_agg_1 -> l2_residual_1
+	l1_moe_residual_8 -> l2_residual_1
+	l1_moe_residual_9 -> l2_residual_1
+	l1_moe_residual_10 -> l2_residual_1
+	l1_moe_residual_11 -> l2_residual_1
+	l1_moe_residual_12 -> l2_residual_1
+	l1_moe_residual_13 -> l2_residual_1
+	l1_moe_residual_14 -> l2_residual_1
+	l1_moe_residual_15 -> l2_residual_1
+	l2_qkv_proj_2 -> l2_attn_score_2
+	l2_attn_score_2 -> l2_attn_out_2
+	l2_attn_out_2 -> l2_attn_comm_2
+	l2_attn_comm_2 -> l2_attn_agg_2
+	l2_attn_agg_2 -> l2_residual_2
+	l1_moe_residual_8 -> l2_residual_2
+	l1_moe_residual_9 -> l2_residual_2
+	l1_moe_residual_10 -> l2_residual_2
+	l1_moe_residual_11 -> l2_residual_2
+	l1_moe_residual_12 -> l2_residual_2
+	l1_moe_residual_13 -> l2_residual_2
+	l1_moe_residual_14 -> l2_residual_2
+	l1_moe_residual_15 -> l2_residual_2
+	l2_qkv_proj_3 -> l2_attn_score_3
+	l2_attn_score_3 -> l2_attn_out_3
+	l2_attn_out_3 -> l2_attn_comm_3
+	l2_attn_comm_3 -> l2_attn_agg_3
+	l2_attn_agg_3 -> l2_residual_3
+	l1_moe_residual_8 -> l2_residual_3
+	l1_moe_residual_9 -> l2_residual_3
+	l1_moe_residual_10 -> l2_residual_3
+	l1_moe_residual_11 -> l2_residual_3
+	l1_moe_residual_12 -> l2_residual_3
+	l1_moe_residual_13 -> l2_residual_3
+	l1_moe_residual_14 -> l2_residual_3
+	l1_moe_residual_15 -> l2_residual_3
+	l2_qkv_proj_4 -> l2_attn_score_4
+	l2_attn_score_4 -> l2_attn_out_4
+	l2_attn_out_4 -> l2_attn_comm_4
+	l2_attn_comm_4 -> l2_attn_agg_4
+	l2_attn_agg_4 -> l2_residual_4
+	l1_moe_residual_8 -> l2_residual_4
+	l1_moe_residual_9 -> l2_residual_4
+	l1_moe_residual_10 -> l2_residual_4
+	l1_moe_residual_11 -> l2_residual_4
+	l1_moe_residual_12 -> l2_residual_4
+	l1_moe_residual_13 -> l2_residual_4
+	l1_moe_residual_14 -> l2_residual_4
+	l1_moe_residual_15 -> l2_residual_4
+	l2_qkv_proj_5 -> l2_attn_score_5
+	l2_attn_score_5 -> l2_attn_out_5
+	l2_attn_out_5 -> l2_attn_comm_5
+	l2_attn_comm_5 -> l2_attn_agg_5
+	l2_attn_agg_5 -> l2_residual_5
+	l1_moe_residual_8 -> l2_residual_5
+	l1_moe_residual_9 -> l2_residual_5
+	l1_moe_residual_10 -> l2_residual_5
+	l1_moe_residual_11 -> l2_residual_5
+	l1_moe_residual_12 -> l2_residual_5
+	l1_moe_residual_13 -> l2_residual_5
+	l1_moe_residual_14 -> l2_residual_5
+	l1_moe_residual_15 -> l2_residual_5
+	l2_qkv_proj_6 -> l2_attn_score_6
+	l2_attn_score_6 -> l2_attn_out_6
+	l2_attn_out_6 -> l2_attn_comm_6
+	l2_attn_comm_6 -> l2_attn_agg_6
+	l2_attn_agg_6 -> l2_residual_6
+	l1_moe_residual_8 -> l2_residual_6
+	l1_moe_residual_9 -> l2_residual_6
+	l1_moe_residual_10 -> l2_residual_6
+	l1_moe_residual_11 -> l2_residual_6
+	l1_moe_residual_12 -> l2_residual_6
+	l1_moe_residual_13 -> l2_residual_6
+	l1_moe_residual_14 -> l2_residual_6
+	l1_moe_residual_15 -> l2_residual_6
+	l2_qkv_proj_7 -> l2_attn_score_7
+	l2_attn_score_7 -> l2_attn_out_7
+	l2_attn_out_7 -> l2_attn_comm_7
+	l2_attn_comm_7 -> l2_attn_agg_7
+	l2_attn_agg_7 -> l2_residual_7
+	l1_moe_residual_8 -> l2_residual_7
+	l1_moe_residual_9 -> l2_residual_7
+	l1_moe_residual_10 -> l2_residual_7
+	l1_moe_residual_11 -> l2_residual_7
+	l1_moe_residual_12 -> l2_residual_7
+	l1_moe_residual_13 -> l2_residual_7
+	l1_moe_residual_14 -> l2_residual_7
+	l1_moe_residual_15 -> l2_residual_7
+	l2_gate_8 -> l2_expert1_8 [style=dashed]
+	l2_gate_8 -> l2_expert2_8 [style=dashed]
+	l2_expert1_8 -> l2_expert_agg_8
+	l2_expert2_8 -> l2_expert_agg_8
+	l2_expert_agg_8 -> l2_moe_comm_8
+	l2_moe_comm_8 -> l2_moe_residual_8
+	l2_residual_0 -> l2_moe_residual_8
+	l2_residual_1 -> l2_moe_residual_8
+	l2_residual_2 -> l2_moe_residual_8
+	l2_residual_3 -> l2_moe_residual_8
+	l2_residual_4 -> l2_moe_residual_8
+	l2_residual_5 -> l2_moe_residual_8
+	l2_residual_6 -> l2_moe_residual_8
+	l2_residual_7 -> l2_moe_residual_8
+	l2_gate_9 -> l2_expert1_9 [style=dashed]
+	l2_gate_9 -> l2_expert2_9 [style=dashed]
+	l2_expert1_9 -> l2_expert_agg_9
+	l2_expert2_9 -> l2_expert_agg_9
+	l2_expert_agg_9 -> l2_moe_comm_9
+	l2_moe_comm_9 -> l2_moe_residual_9
+	l2_residual_0 -> l2_moe_residual_9
+	l2_residual_1 -> l2_moe_residual_9
+	l2_residual_2 -> l2_moe_residual_9
+	l2_residual_3 -> l2_moe_residual_9
+	l2_residual_4 -> l2_moe_residual_9
+	l2_residual_5 -> l2_moe_residual_9
+	l2_residual_6 -> l2_moe_residual_9
+	l2_residual_7 -> l2_moe_residual_9
+	l2_gate_10 -> l2_expert1_10 [style=dashed]
+	l2_gate_10 -> l2_expert2_10 [style=dashed]
+	l2_expert1_10 -> l2_expert_agg_10
+	l2_expert2_10 -> l2_expert_agg_10
+	l2_expert_agg_10 -> l2_moe_comm_10
+	l2_moe_comm_10 -> l2_moe_residual_10
+	l2_residual_0 -> l2_moe_residual_10
+	l2_residual_1 -> l2_moe_residual_10
+	l2_residual_2 -> l2_moe_residual_10
+	l2_residual_3 -> l2_moe_residual_10
+	l2_residual_4 -> l2_moe_residual_10
+	l2_residual_5 -> l2_moe_residual_10
+	l2_residual_6 -> l2_moe_residual_10
+	l2_residual_7 -> l2_moe_residual_10
+	l2_gate_11 -> l2_expert1_11 [style=dashed]
+	l2_gate_11 -> l2_expert2_11 [style=dashed]
+	l2_expert1_11 -> l2_expert_agg_11
+	l2_expert2_11 -> l2_expert_agg_11
+	l2_expert_agg_11 -> l2_moe_comm_11
+	l2_moe_comm_11 -> l2_moe_residual_11
+	l2_residual_0 -> l2_moe_residual_11
+	l2_residual_1 -> l2_moe_residual_11
+	l2_residual_2 -> l2_moe_residual_11
+	l2_residual_3 -> l2_moe_residual_11
+	l2_residual_4 -> l2_moe_residual_11
+	l2_residual_5 -> l2_moe_residual_11
+	l2_residual_6 -> l2_moe_residual_11
+	l2_residual_7 -> l2_moe_residual_11
+	l2_gate_12 -> l2_expert1_12 [style=dashed]
+	l2_gate_12 -> l2_expert2_12 [style=dashed]
+	l2_expert1_12 -> l2_expert_agg_12
+	l2_expert2_12 -> l2_expert_agg_12
+	l2_expert_agg_12 -> l2_moe_comm_12
+	l2_moe_comm_12 -> l2_moe_residual_12
+	l2_residual_0 -> l2_moe_residual_12
+	l2_residual_1 -> l2_moe_residual_12
+	l2_residual_2 -> l2_moe_residual_12
+	l2_residual_3 -> l2_moe_residual_12
+	l2_residual_4 -> l2_moe_residual_12
+	l2_residual_5 -> l2_moe_residual_12
+	l2_residual_6 -> l2_moe_residual_12
+	l2_residual_7 -> l2_moe_residual_12
+	l2_gate_13 -> l2_expert1_13 [style=dashed]
+	l2_gate_13 -> l2_expert2_13 [style=dashed]
+	l2_expert1_13 -> l2_expert_agg_13
+	l2_expert2_13 -> l2_expert_agg_13
+	l2_expert_agg_13 -> l2_moe_comm_13
+	l2_moe_comm_13 -> l2_moe_residual_13
+	l2_residual_0 -> l2_moe_residual_13
+	l2_residual_1 -> l2_moe_residual_13
+	l2_residual_2 -> l2_moe_residual_13
+	l2_residual_3 -> l2_moe_residual_13
+	l2_residual_4 -> l2_moe_residual_13
+	l2_residual_5 -> l2_moe_residual_13
+	l2_residual_6 -> l2_moe_residual_13
+	l2_residual_7 -> l2_moe_residual_13
+	l2_gate_14 -> l2_expert1_14 [style=dashed]
+	l2_gate_14 -> l2_expert2_14 [style=dashed]
+	l2_expert1_14 -> l2_expert_agg_14
+	l2_expert2_14 -> l2_expert_agg_14
+	l2_expert_agg_14 -> l2_moe_comm_14
+	l2_moe_comm_14 -> l2_moe_residual_14
+	l2_residual_0 -> l2_moe_residual_14
+	l2_residual_1 -> l2_moe_residual_14
+	l2_residual_2 -> l2_moe_residual_14
+	l2_residual_3 -> l2_moe_residual_14
+	l2_residual_4 -> l2_moe_residual_14
+	l2_residual_5 -> l2_moe_residual_14
+	l2_residual_6 -> l2_moe_residual_14
+	l2_residual_7 -> l2_moe_residual_14
+	l2_gate_15 -> l2_expert1_15 [style=dashed]
+	l2_gate_15 -> l2_expert2_15 [style=dashed]
+	l2_expert1_15 -> l2_expert_agg_15
+	l2_expert2_15 -> l2_expert_agg_15
+	l2_expert_agg_15 -> l2_moe_comm_15
+	l2_moe_comm_15 -> l2_moe_residual_15
+	l2_residual_0 -> l2_moe_residual_15
+	l2_residual_1 -> l2_moe_residual_15
+	l2_residual_2 -> l2_moe_residual_15
+	l2_residual_3 -> l2_moe_residual_15
+	l2_residual_4 -> l2_moe_residual_15
+	l2_residual_5 -> l2_moe_residual_15
+	l2_residual_6 -> l2_moe_residual_15
+	l2_residual_7 -> l2_moe_residual_15
+	l2_moe_residual_8 -> l3_qkv_proj_0
+	l2_moe_residual_8 -> l3_qkv_proj_1
+	l2_moe_residual_8 -> l3_qkv_proj_2
+	l2_moe_residual_8 -> l3_qkv_proj_3
+	l2_moe_residual_8 -> l3_qkv_proj_4
+	l2_moe_residual_8 -> l3_qkv_proj_5
+	l2_moe_residual_8 -> l3_qkv_proj_6
+	l2_moe_residual_8 -> l3_qkv_proj_7
+	l2_moe_residual_9 -> l3_qkv_proj_0
+	l2_moe_residual_9 -> l3_qkv_proj_1
+	l2_moe_residual_9 -> l3_qkv_proj_2
+	l2_moe_residual_9 -> l3_qkv_proj_3
+	l2_moe_residual_9 -> l3_qkv_proj_4
+	l2_moe_residual_9 -> l3_qkv_proj_5
+	l2_moe_residual_9 -> l3_qkv_proj_6
+	l2_moe_residual_9 -> l3_qkv_proj_7
+	l2_moe_residual_10 -> l3_qkv_proj_0
+	l2_moe_residual_10 -> l3_qkv_proj_1
+	l2_moe_residual_10 -> l3_qkv_proj_2
+	l2_moe_residual_10 -> l3_qkv_proj_3
+	l2_moe_residual_10 -> l3_qkv_proj_4
+	l2_moe_residual_10 -> l3_qkv_proj_5
+	l2_moe_residual_10 -> l3_qkv_proj_6
+	l2_moe_residual_10 -> l3_qkv_proj_7
+	l2_moe_residual_11 -> l3_qkv_proj_0
+	l2_moe_residual_11 -> l3_qkv_proj_1
+	l2_moe_residual_11 -> l3_qkv_proj_2
+	l2_moe_residual_11 -> l3_qkv_proj_3
+	l2_moe_residual_11 -> l3_qkv_proj_4
+	l2_moe_residual_11 -> l3_qkv_proj_5
+	l2_moe_residual_11 -> l3_qkv_proj_6
+	l2_moe_residual_11 -> l3_qkv_proj_7
+	l2_moe_residual_12 -> l3_qkv_proj_0
+	l2_moe_residual_12 -> l3_qkv_proj_1
+	l2_moe_residual_12 -> l3_qkv_proj_2
+	l2_moe_residual_12 -> l3_qkv_proj_3
+	l2_moe_residual_12 -> l3_qkv_proj_4
+	l2_moe_residual_12 -> l3_qkv_proj_5
+	l2_moe_residual_12 -> l3_qkv_proj_6
+	l2_moe_residual_12 -> l3_qkv_proj_7
+	l2_moe_residual_13 -> l3_qkv_proj_0
+	l2_moe_residual_13 -> l3_qkv_proj_1
+	l2_moe_residual_13 -> l3_qkv_proj_2
+	l2_moe_residual_13 -> l3_qkv_proj_3
+	l2_moe_residual_13 -> l3_qkv_proj_4
+	l2_moe_residual_13 -> l3_qkv_proj_5
+	l2_moe_residual_13 -> l3_qkv_proj_6
+	l2_moe_residual_13 -> l3_qkv_proj_7
+	l2_moe_residual_14 -> l3_qkv_proj_0
+	l2_moe_residual_14 -> l3_qkv_proj_1
+	l2_moe_residual_14 -> l3_qkv_proj_2
+	l2_moe_residual_14 -> l3_qkv_proj_3
+	l2_moe_residual_14 -> l3_qkv_proj_4
+	l2_moe_residual_14 -> l3_qkv_proj_5
+	l2_moe_residual_14 -> l3_qkv_proj_6
+	l2_moe_residual_14 -> l3_qkv_proj_7
+	l2_moe_residual_15 -> l3_qkv_proj_0
+	l2_moe_residual_15 -> l3_qkv_proj_1
+	l2_moe_residual_15 -> l3_qkv_proj_2
+	l2_moe_residual_15 -> l3_qkv_proj_3
+	l2_moe_residual_15 -> l3_qkv_proj_4
+	l2_moe_residual_15 -> l3_qkv_proj_5
+	l2_moe_residual_15 -> l3_qkv_proj_6
+	l2_moe_residual_15 -> l3_qkv_proj_7
+	l3_qkv_proj_0 -> l3_attn_score_0
+	l3_attn_score_0 -> l3_attn_out_0
+	l3_attn_out_0 -> l3_attn_comm_0
+	l3_attn_comm_0 -> l3_attn_agg_0
+	l3_attn_agg_0 -> l3_residual_0
+	l2_moe_residual_8 -> l3_residual_0
+	l2_moe_residual_9 -> l3_residual_0
+	l2_moe_residual_10 -> l3_residual_0
+	l2_moe_residual_11 -> l3_residual_0
+	l2_moe_residual_12 -> l3_residual_0
+	l2_moe_residual_13 -> l3_residual_0
+	l2_moe_residual_14 -> l3_residual_0
+	l2_moe_residual_15 -> l3_residual_0
+	l3_qkv_proj_1 -> l3_attn_score_1
+	l3_attn_score_1 -> l3_attn_out_1
+	l3_attn_out_1 -> l3_attn_comm_1
+	l3_attn_comm_1 -> l3_attn_agg_1
+	l3_attn_agg_1 -> l3_residual_1
+	l2_moe_residual_8 -> l3_residual_1
+	l2_moe_residual_9 -> l3_residual_1
+	l2_moe_residual_10 -> l3_residual_1
+	l2_moe_residual_11 -> l3_residual_1
+	l2_moe_residual_12 -> l3_residual_1
+	l2_moe_residual_13 -> l3_residual_1
+	l2_moe_residual_14 -> l3_residual_1
+	l2_moe_residual_15 -> l3_residual_1
+	l3_qkv_proj_2 -> l3_attn_score_2
+	l3_attn_score_2 -> l3_attn_out_2
+	l3_attn_out_2 -> l3_attn_comm_2
+	l3_attn_comm_2 -> l3_attn_agg_2
+	l3_attn_agg_2 -> l3_residual_2
+	l2_moe_residual_8 -> l3_residual_2
+	l2_moe_residual_9 -> l3_residual_2
+	l2_moe_residual_10 -> l3_residual_2
+	l2_moe_residual_11 -> l3_residual_2
+	l2_moe_residual_12 -> l3_residual_2
+	l2_moe_residual_13 -> l3_residual_2
+	l2_moe_residual_14 -> l3_residual_2
+	l2_moe_residual_15 -> l3_residual_2
+	l3_qkv_proj_3 -> l3_attn_score_3
+	l3_attn_score_3 -> l3_attn_out_3
+	l3_attn_out_3 -> l3_attn_comm_3
+	l3_attn_comm_3 -> l3_attn_agg_3
+	l3_attn_agg_3 -> l3_residual_3
+	l2_moe_residual_8 -> l3_residual_3
+	l2_moe_residual_9 -> l3_residual_3
+	l2_moe_residual_10 -> l3_residual_3
+	l2_moe_residual_11 -> l3_residual_3
+	l2_moe_residual_12 -> l3_residual_3
+	l2_moe_residual_13 -> l3_residual_3
+	l2_moe_residual_14 -> l3_residual_3
+	l2_moe_residual_15 -> l3_residual_3
+	l3_qkv_proj_4 -> l3_attn_score_4
+	l3_attn_score_4 -> l3_attn_out_4
+	l3_attn_out_4 -> l3_attn_comm_4
+	l3_attn_comm_4 -> l3_attn_agg_4
+	l3_attn_agg_4 -> l3_residual_4
+	l2_moe_residual_8 -> l3_residual_4
+	l2_moe_residual_9 -> l3_residual_4
+	l2_moe_residual_10 -> l3_residual_4
+	l2_moe_residual_11 -> l3_residual_4
+	l2_moe_residual_12 -> l3_residual_4
+	l2_moe_residual_13 -> l3_residual_4
+	l2_moe_residual_14 -> l3_residual_4
+	l2_moe_residual_15 -> l3_residual_4
+	l3_qkv_proj_5 -> l3_attn_score_5
+	l3_attn_score_5 -> l3_attn_out_5
+	l3_attn_out_5 -> l3_attn_comm_5
+	l3_attn_comm_5 -> l3_attn_agg_5
+	l3_attn_agg_5 -> l3_residual_5
+	l2_moe_residual_8 -> l3_residual_5
+	l2_moe_residual_9 -> l3_residual_5
+	l2_moe_residual_10 -> l3_residual_5
+	l2_moe_residual_11 -> l3_residual_5
+	l2_moe_residual_12 -> l3_residual_5
+	l2_moe_residual_13 -> l3_residual_5
+	l2_moe_residual_14 -> l3_residual_5
+	l2_moe_residual_15 -> l3_residual_5
+	l3_qkv_proj_6 -> l3_attn_score_6
+	l3_attn_score_6 -> l3_attn_out_6
+	l3_attn_out_6 -> l3_attn_comm_6
+	l3_attn_comm_6 -> l3_attn_agg_6
+	l3_attn_agg_6 -> l3_residual_6
+	l2_moe_residual_8 -> l3_residual_6
+	l2_moe_residual_9 -> l3_residual_6
+	l2_moe_residual_10 -> l3_residual_6
+	l2_moe_residual_11 -> l3_residual_6
+	l2_moe_residual_12 -> l3_residual_6
+	l2_moe_residual_13 -> l3_residual_6
+	l2_moe_residual_14 -> l3_residual_6
+	l2_moe_residual_15 -> l3_residual_6
+	l3_qkv_proj_7 -> l3_attn_score_7
+	l3_attn_score_7 -> l3_attn_out_7
+	l3_attn_out_7 -> l3_attn_comm_7
+	l3_attn_comm_7 -> l3_attn_agg_7
+	l3_attn_agg_7 -> l3_residual_7
+	l2_moe_residual_8 -> l3_residual_7
+	l2_moe_residual_9 -> l3_residual_7
+	l2_moe_residual_10 -> l3_residual_7
+	l2_moe_residual_11 -> l3_residual_7
+	l2_moe_residual_12 -> l3_residual_7
+	l2_moe_residual_13 -> l3_residual_7
+	l2_moe_residual_14 -> l3_residual_7
+	l2_moe_residual_15 -> l3_residual_7
+	l3_gate_8 -> l3_expert1_8 [style=dashed]
+	l3_gate_8 -> l3_expert2_8 [style=dashed]
+	l3_expert1_8 -> l3_expert_agg_8
+	l3_expert2_8 -> l3_expert_agg_8
+	l3_expert_agg_8 -> l3_moe_comm_8
+	l3_moe_comm_8 -> l3_moe_residual_8
+	l3_residual_0 -> l3_moe_residual_8
+	l3_residual_1 -> l3_moe_residual_8
+	l3_residual_2 -> l3_moe_residual_8
+	l3_residual_3 -> l3_moe_residual_8
+	l3_residual_4 -> l3_moe_residual_8
+	l3_residual_5 -> l3_moe_residual_8
+	l3_residual_6 -> l3_moe_residual_8
+	l3_residual_7 -> l3_moe_residual_8
+	l3_gate_9 -> l3_expert1_9 [style=dashed]
+	l3_gate_9 -> l3_expert2_9 [style=dashed]
+	l3_expert1_9 -> l3_expert_agg_9
+	l3_expert2_9 -> l3_expert_agg_9
+	l3_expert_agg_9 -> l3_moe_comm_9
+	l3_moe_comm_9 -> l3_moe_residual_9
+	l3_residual_0 -> l3_moe_residual_9
+	l3_residual_1 -> l3_moe_residual_9
+	l3_residual_2 -> l3_moe_residual_9
+	l3_residual_3 -> l3_moe_residual_9
+	l3_residual_4 -> l3_moe_residual_9
+	l3_residual_5 -> l3_moe_residual_9
+	l3_residual_6 -> l3_moe_residual_9
+	l3_residual_7 -> l3_moe_residual_9
+	l3_gate_10 -> l3_expert1_10 [style=dashed]
+	l3_gate_10 -> l3_expert2_10 [style=dashed]
+	l3_expert1_10 -> l3_expert_agg_10
+	l3_expert2_10 -> l3_expert_agg_10
+	l3_expert_agg_10 -> l3_moe_comm_10
+	l3_moe_comm_10 -> l3_moe_residual_10
+	l3_residual_0 -> l3_moe_residual_10
+	l3_residual_1 -> l3_moe_residual_10
+	l3_residual_2 -> l3_moe_residual_10
+	l3_residual_3 -> l3_moe_residual_10
+	l3_residual_4 -> l3_moe_residual_10
+	l3_residual_5 -> l3_moe_residual_10
+	l3_residual_6 -> l3_moe_residual_10
+	l3_residual_7 -> l3_moe_residual_10
+	l3_gate_11 -> l3_expert1_11 [style=dashed]
+	l3_gate_11 -> l3_expert2_11 [style=dashed]
+	l3_expert1_11 -> l3_expert_agg_11
+	l3_expert2_11 -> l3_expert_agg_11
+	l3_expert_agg_11 -> l3_moe_comm_11
+	l3_moe_comm_11 -> l3_moe_residual_11
+	l3_residual_0 -> l3_moe_residual_11
+	l3_residual_1 -> l3_moe_residual_11
+	l3_residual_2 -> l3_moe_residual_11
+	l3_residual_3 -> l3_moe_residual_11
+	l3_residual_4 -> l3_moe_residual_11
+	l3_residual_5 -> l3_moe_residual_11
+	l3_residual_6 -> l3_moe_residual_11
+	l3_residual_7 -> l3_moe_residual_11
+	l3_gate_12 -> l3_expert1_12 [style=dashed]
+	l3_gate_12 -> l3_expert2_12 [style=dashed]
+	l3_expert1_12 -> l3_expert_agg_12
+	l3_expert2_12 -> l3_expert_agg_12
+	l3_expert_agg_12 -> l3_moe_comm_12
+	l3_moe_comm_12 -> l3_moe_residual_12
+	l3_residual_0 -> l3_moe_residual_12
+	l3_residual_1 -> l3_moe_residual_12
+	l3_residual_2 -> l3_moe_residual_12
+	l3_residual_3 -> l3_moe_residual_12
+	l3_residual_4 -> l3_moe_residual_12
+	l3_residual_5 -> l3_moe_residual_12
+	l3_residual_6 -> l3_moe_residual_12
+	l3_residual_7 -> l3_moe_residual_12
+	l3_gate_13 -> l3_expert1_13 [style=dashed]
+	l3_gate_13 -> l3_expert2_13 [style=dashed]
+	l3_expert1_13 -> l3_expert_agg_13
+	l3_expert2_13 -> l3_expert_agg_13
+	l3_expert_agg_13 -> l3_moe_comm_13
+	l3_moe_comm_13 -> l3_moe_residual_13
+	l3_residual_0 -> l3_moe_residual_13
+	l3_residual_1 -> l3_moe_residual_13
+	l3_residual_2 -> l3_moe_residual_13
+	l3_residual_3 -> l3_moe_residual_13
+	l3_residual_4 -> l3_moe_residual_13
+	l3_residual_5 -> l3_moe_residual_13
+	l3_residual_6 -> l3_moe_residual_13
+	l3_residual_7 -> l3_moe_residual_13
+	l3_gate_14 -> l3_expert1_14 [style=dashed]
+	l3_gate_14 -> l3_expert2_14 [style=dashed]
+	l3_expert1_14 -> l3_expert_agg_14
+	l3_expert2_14 -> l3_expert_agg_14
+	l3_expert_agg_14 -> l3_moe_comm_14
+	l3_moe_comm_14 -> l3_moe_residual_14
+	l3_residual_0 -> l3_moe_residual_14
+	l3_residual_1 -> l3_moe_residual_14
+	l3_residual_2 -> l3_moe_residual_14
+	l3_residual_3 -> l3_moe_residual_14
+	l3_residual_4 -> l3_moe_residual_14
+	l3_residual_5 -> l3_moe_residual_14
+	l3_residual_6 -> l3_moe_residual_14
+	l3_residual_7 -> l3_moe_residual_14
+	l3_gate_15 -> l3_expert1_15 [style=dashed]
+	l3_gate_15 -> l3_expert2_15 [style=dashed]
+	l3_expert1_15 -> l3_expert_agg_15
+	l3_expert2_15 -> l3_expert_agg_15
+	l3_expert_agg_15 -> l3_moe_comm_15
+	l3_moe_comm_15 -> l3_moe_residual_15
+	l3_residual_0 -> l3_moe_residual_15
+	l3_residual_1 -> l3_moe_residual_15
+	l3_residual_2 -> l3_moe_residual_15
+	l3_residual_3 -> l3_moe_residual_15
+	l3_residual_4 -> l3_moe_residual_15
+	l3_residual_5 -> l3_moe_residual_15
+	l3_residual_6 -> l3_moe_residual_15
+	l3_residual_7 -> l3_moe_residual_15
+	l3_moe_residual_8 -> l4_qkv_proj_0
+	l3_moe_residual_8 -> l4_qkv_proj_1
+	l3_moe_residual_8 -> l4_qkv_proj_2
+	l3_moe_residual_8 -> l4_qkv_proj_3
+	l3_moe_residual_8 -> l4_qkv_proj_4
+	l3_moe_residual_8 -> l4_qkv_proj_5
+	l3_moe_residual_8 -> l4_qkv_proj_6
+	l3_moe_residual_8 -> l4_qkv_proj_7
+	l3_moe_residual_9 -> l4_qkv_proj_0
+	l3_moe_residual_9 -> l4_qkv_proj_1
+	l3_moe_residual_9 -> l4_qkv_proj_2
+	l3_moe_residual_9 -> l4_qkv_proj_3
+	l3_moe_residual_9 -> l4_qkv_proj_4
+	l3_moe_residual_9 -> l4_qkv_proj_5
+	l3_moe_residual_9 -> l4_qkv_proj_6
+	l3_moe_residual_9 -> l4_qkv_proj_7
+	l3_moe_residual_10 -> l4_qkv_proj_0
+	l3_moe_residual_10 -> l4_qkv_proj_1
+	l3_moe_residual_10 -> l4_qkv_proj_2
+	l3_moe_residual_10 -> l4_qkv_proj_3
+	l3_moe_residual_10 -> l4_qkv_proj_4
+	l3_moe_residual_10 -> l4_qkv_proj_5
+	l3_moe_residual_10 -> l4_qkv_proj_6
+	l3_moe_residual_10 -> l4_qkv_proj_7
+	l3_moe_residual_11 -> l4_qkv_proj_0
+	l3_moe_residual_11 -> l4_qkv_proj_1
+	l3_moe_residual_11 -> l4_qkv_proj_2
+	l3_moe_residual_11 -> l4_qkv_proj_3
+	l3_moe_residual_11 -> l4_qkv_proj_4
+	l3_moe_residual_11 -> l4_qkv_proj_5
+	l3_moe_residual_11 -> l4_qkv_proj_6
+	l3_moe_residual_11 -> l4_qkv_proj_7
+	l3_moe_residual_12 -> l4_qkv_proj_0
+	l3_moe_residual_12 -> l4_qkv_proj_1
+	l3_moe_residual_12 -> l4_qkv_proj_2
+	l3_moe_residual_12 -> l4_qkv_proj_3
+	l3_moe_residual_12 -> l4_qkv_proj_4
+	l3_moe_residual_12 -> l4_qkv_proj_5
+	l3_moe_residual_12 -> l4_qkv_proj_6
+	l3_moe_residual_12 -> l4_qkv_proj_7
+	l3_moe_residual_13 -> l4_qkv_proj_0
+	l3_moe_residual_13 -> l4_qkv_proj_1
+	l3_moe_residual_13 -> l4_qkv_proj_2
+	l3_moe_residual_13 -> l4_qkv_proj_3
+	l3_moe_residual_13 -> l4_qkv_proj_4
+	l3_moe_residual_13 -> l4_qkv_proj_5
+	l3_moe_residual_13 -> l4_qkv_proj_6
+	l3_moe_residual_13 -> l4_qkv_proj_7
+	l3_moe_residual_14 -> l4_qkv_proj_0
+	l3_moe_residual_14 -> l4_qkv_proj_1
+	l3_moe_residual_14 -> l4_qkv_proj_2
+	l3_moe_residual_14 -> l4_qkv_proj_3
+	l3_moe_residual_14 -> l4_qkv_proj_4
+	l3_moe_residual_14 -> l4_qkv_proj_5
+	l3_moe_residual_14 -> l4_qkv_proj_6
+	l3_moe_residual_14 -> l4_qkv_proj_7
+	l3_moe_residual_15 -> l4_qkv_proj_0
+	l3_moe_residual_15 -> l4_qkv_proj_1
+	l3_moe_residual_15 -> l4_qkv_proj_2
+	l3_moe_residual_15 -> l4_qkv_proj_3
+	l3_moe_residual_15 -> l4_qkv_proj_4
+	l3_moe_residual_15 -> l4_qkv_proj_5
+	l3_moe_residual_15 -> l4_qkv_proj_6
+	l3_moe_residual_15 -> l4_qkv_proj_7
+	l4_qkv_proj_0 -> l4_attn_score_0
+	l4_attn_score_0 -> l4_attn_out_0
+	l4_attn_out_0 -> l4_attn_comm_0
+	l4_attn_comm_0 -> l4_attn_agg_0
+	l4_attn_agg_0 -> l4_residual_0
+	l3_moe_residual_8 -> l4_residual_0
+	l3_moe_residual_9 -> l4_residual_0
+	l3_moe_residual_10 -> l4_residual_0
+	l3_moe_residual_11 -> l4_residual_0
+	l3_moe_residual_12 -> l4_residual_0
+	l3_moe_residual_13 -> l4_residual_0
+	l3_moe_residual_14 -> l4_residual_0
+	l3_moe_residual_15 -> l4_residual_0
+	l4_qkv_proj_1 -> l4_attn_score_1
+	l4_attn_score_1 -> l4_attn_out_1
+	l4_attn_out_1 -> l4_attn_comm_1
+	l4_attn_comm_1 -> l4_attn_agg_1
+	l4_attn_agg_1 -> l4_residual_1
+	l3_moe_residual_8 -> l4_residual_1
+	l3_moe_residual_9 -> l4_residual_1
+	l3_moe_residual_10 -> l4_residual_1
+	l3_moe_residual_11 -> l4_residual_1
+	l3_moe_residual_12 -> l4_residual_1
+	l3_moe_residual_13 -> l4_residual_1
+	l3_moe_residual_14 -> l4_residual_1
+	l3_moe_residual_15 -> l4_residual_1
+	l4_qkv_proj_2 -> l4_attn_score_2
+	l4_attn_score_2 -> l4_attn_out_2
+	l4_attn_out_2 -> l4_attn_comm_2
+	l4_attn_comm_2 -> l4_attn_agg_2
+	l4_attn_agg_2 -> l4_residual_2
+	l3_moe_residual_8 -> l4_residual_2
+	l3_moe_residual_9 -> l4_residual_2
+	l3_moe_residual_10 -> l4_residual_2
+	l3_moe_residual_11 -> l4_residual_2
+	l3_moe_residual_12 -> l4_residual_2
+	l3_moe_residual_13 -> l4_residual_2
+	l3_moe_residual_14 -> l4_residual_2
+	l3_moe_residual_15 -> l4_residual_2
+	l4_qkv_proj_3 -> l4_attn_score_3
+	l4_attn_score_3 -> l4_attn_out_3
+	l4_attn_out_3 -> l4_attn_comm_3
+	l4_attn_comm_3 -> l4_attn_agg_3
+	l4_attn_agg_3 -> l4_residual_3
+	l3_moe_residual_8 -> l4_residual_3
+	l3_moe_residual_9 -> l4_residual_3
+	l3_moe_residual_10 -> l4_residual_3
+	l3_moe_residual_11 -> l4_residual_3
+	l3_moe_residual_12 -> l4_residual_3
+	l3_moe_residual_13 -> l4_residual_3
+	l3_moe_residual_14 -> l4_residual_3
+	l3_moe_residual_15 -> l4_residual_3
+	l4_qkv_proj_4 -> l4_attn_score_4
+	l4_attn_score_4 -> l4_attn_out_4
+	l4_attn_out_4 -> l4_attn_comm_4
+	l4_attn_comm_4 -> l4_attn_agg_4
+	l4_attn_agg_4 -> l4_residual_4
+	l3_moe_residual_8 -> l4_residual_4
+	l3_moe_residual_9 -> l4_residual_4
+	l3_moe_residual_10 -> l4_residual_4
+	l3_moe_residual_11 -> l4_residual_4
+	l3_moe_residual_12 -> l4_residual_4
+	l3_moe_residual_13 -> l4_residual_4
+	l3_moe_residual_14 -> l4_residual_4
+	l3_moe_residual_15 -> l4_residual_4
+	l4_qkv_proj_5 -> l4_attn_score_5
+	l4_attn_score_5 -> l4_attn_out_5
+	l4_attn_out_5 -> l4_attn_comm_5
+	l4_attn_comm_5 -> l4_attn_agg_5
+	l4_attn_agg_5 -> l4_residual_5
+	l3_moe_residual_8 -> l4_residual_5
+	l3_moe_residual_9 -> l4_residual_5
+	l3_moe_residual_10 -> l4_residual_5
+	l3_moe_residual_11 -> l4_residual_5
+	l3_moe_residual_12 -> l4_residual_5
+	l3_moe_residual_13 -> l4_residual_5
+	l3_moe_residual_14 -> l4_residual_5
+	l3_moe_residual_15 -> l4_residual_5
+	l4_qkv_proj_6 -> l4_attn_score_6
+	l4_attn_score_6 -> l4_attn_out_6
+	l4_attn_out_6 -> l4_attn_comm_6
+	l4_attn_comm_6 -> l4_attn_agg_6
+	l4_attn_agg_6 -> l4_residual_6
+	l3_moe_residual_8 -> l4_residual_6
+	l3_moe_residual_9 -> l4_residual_6
+	l3_moe_residual_10 -> l4_residual_6
+	l3_moe_residual_11 -> l4_residual_6
+	l3_moe_residual_12 -> l4_residual_6
+	l3_moe_residual_13 -> l4_residual_6
+	l3_moe_residual_14 -> l4_residual_6
+	l3_moe_residual_15 -> l4_residual_6
+	l4_qkv_proj_7 -> l4_attn_score_7
+	l4_attn_score_7 -> l4_attn_out_7
+	l4_attn_out_7 -> l4_attn_comm_7
+	l4_attn_comm_7 -> l4_attn_agg_7
+	l4_attn_agg_7 -> l4_residual_7
+	l3_moe_residual_8 -> l4_residual_7
+	l3_moe_residual_9 -> l4_residual_7
+	l3_moe_residual_10 -> l4_residual_7
+	l3_moe_residual_11 -> l4_residual_7
+	l3_moe_residual_12 -> l4_residual_7
+	l3_moe_residual_13 -> l4_residual_7
+	l3_moe_residual_14 -> l4_residual_7
+	l3_moe_residual_15 -> l4_residual_7
+	l4_gate_8 -> l4_expert1_8 [style=dashed]
+	l4_gate_8 -> l4_expert2_8 [style=dashed]
+	l4_expert1_8 -> l4_expert_agg_8
+	l4_expert2_8 -> l4_expert_agg_8
+	l4_expert_agg_8 -> l4_moe_comm_8
+	l4_moe_comm_8 -> l4_moe_residual_8
+	l4_residual_0 -> l4_moe_residual_8
+	l4_residual_1 -> l4_moe_residual_8
+	l4_residual_2 -> l4_moe_residual_8
+	l4_residual_3 -> l4_moe_residual_8
+	l4_residual_4 -> l4_moe_residual_8
+	l4_residual_5 -> l4_moe_residual_8
+	l4_residual_6 -> l4_moe_residual_8
+	l4_residual_7 -> l4_moe_residual_8
+	l4_gate_9 -> l4_expert1_9 [style=dashed]
+	l4_gate_9 -> l4_expert2_9 [style=dashed]
+	l4_expert1_9 -> l4_expert_agg_9
+	l4_expert2_9 -> l4_expert_agg_9
+	l4_expert_agg_9 -> l4_moe_comm_9
+	l4_moe_comm_9 -> l4_moe_residual_9
+	l4_residual_0 -> l4_moe_residual_9
+	l4_residual_1 -> l4_moe_residual_9
+	l4_residual_2 -> l4_moe_residual_9
+	l4_residual_3 -> l4_moe_residual_9
+	l4_residual_4 -> l4_moe_residual_9
+	l4_residual_5 -> l4_moe_residual_9
+	l4_residual_6 -> l4_moe_residual_9
+	l4_residual_7 -> l4_moe_residual_9
+	l4_gate_10 -> l4_expert1_10 [style=dashed]
+	l4_gate_10 -> l4_expert2_10 [style=dashed]
+	l4_expert1_10 -> l4_expert_agg_10
+	l4_expert2_10 -> l4_expert_agg_10
+	l4_expert_agg_10 -> l4_moe_comm_10
+	l4_moe_comm_10 -> l4_moe_residual_10
+	l4_residual_0 -> l4_moe_residual_10
+	l4_residual_1 -> l4_moe_residual_10
+	l4_residual_2 -> l4_moe_residual_10
+	l4_residual_3 -> l4_moe_residual_10
+	l4_residual_4 -> l4_moe_residual_10
+	l4_residual_5 -> l4_moe_residual_10
+	l4_residual_6 -> l4_moe_residual_10
+	l4_residual_7 -> l4_moe_residual_10
+	l4_gate_11 -> l4_expert1_11 [style=dashed]
+	l4_gate_11 -> l4_expert2_11 [style=dashed]
+	l4_expert1_11 -> l4_expert_agg_11
+	l4_expert2_11 -> l4_expert_agg_11
+	l4_expert_agg_11 -> l4_moe_comm_11
+	l4_moe_comm_11 -> l4_moe_residual_11
+	l4_residual_0 -> l4_moe_residual_11
+	l4_residual_1 -> l4_moe_residual_11
+	l4_residual_2 -> l4_moe_residual_11
+	l4_residual_3 -> l4_moe_residual_11
+	l4_residual_4 -> l4_moe_residual_11
+	l4_residual_5 -> l4_moe_residual_11
+	l4_residual_6 -> l4_moe_residual_11
+	l4_residual_7 -> l4_moe_residual_11
+	l4_gate_12 -> l4_expert1_12 [style=dashed]
+	l4_gate_12 -> l4_expert2_12 [style=dashed]
+	l4_expert1_12 -> l4_expert_agg_12
+	l4_expert2_12 -> l4_expert_agg_12
+	l4_expert_agg_12 -> l4_moe_comm_12
+	l4_moe_comm_12 -> l4_moe_residual_12
+	l4_residual_0 -> l4_moe_residual_12
+	l4_residual_1 -> l4_moe_residual_12
+	l4_residual_2 -> l4_moe_residual_12
+	l4_residual_3 -> l4_moe_residual_12
+	l4_residual_4 -> l4_moe_residual_12
+	l4_residual_5 -> l4_moe_residual_12
+	l4_residual_6 -> l4_moe_residual_12
+	l4_residual_7 -> l4_moe_residual_12
+	l4_gate_13 -> l4_expert1_13 [style=dashed]
+	l4_gate_13 -> l4_expert2_13 [style=dashed]
+	l4_expert1_13 -> l4_expert_agg_13
+	l4_expert2_13 -> l4_expert_agg_13
+	l4_expert_agg_13 -> l4_moe_comm_13
+	l4_moe_comm_13 -> l4_moe_residual_13
+	l4_residual_0 -> l4_moe_residual_13
+	l4_residual_1 -> l4_moe_residual_13
+	l4_residual_2 -> l4_moe_residual_13
+	l4_residual_3 -> l4_moe_residual_13
+	l4_residual_4 -> l4_moe_residual_13
+	l4_residual_5 -> l4_moe_residual_13
+	l4_residual_6 -> l4_moe_residual_13
+	l4_residual_7 -> l4_moe_residual_13
+	l4_gate_14 -> l4_expert1_14 [style=dashed]
+	l4_gate_14 -> l4_expert2_14 [style=dashed]
+	l4_expert1_14 -> l4_expert_agg_14
+	l4_expert2_14 -> l4_expert_agg_14
+	l4_expert_agg_14 -> l4_moe_comm_14
+	l4_moe_comm_14 -> l4_moe_residual_14
+	l4_residual_0 -> l4_moe_residual_14
+	l4_residual_1 -> l4_moe_residual_14
+	l4_residual_2 -> l4_moe_residual_14
+	l4_residual_3 -> l4_moe_residual_14
+	l4_residual_4 -> l4_moe_residual_14
+	l4_residual_5 -> l4_moe_residual_14
+	l4_residual_6 -> l4_moe_residual_14
+	l4_residual_7 -> l4_moe_residual_14
+	l4_gate_15 -> l4_expert1_15 [style=dashed]
+	l4_gate_15 -> l4_expert2_15 [style=dashed]
+	l4_expert1_15 -> l4_expert_agg_15
+	l4_expert2_15 -> l4_expert_agg_15
+	l4_expert_agg_15 -> l4_moe_comm_15
+	l4_moe_comm_15 -> l4_moe_residual_15
+	l4_residual_0 -> l4_moe_residual_15
+	l4_residual_1 -> l4_moe_residual_15
+	l4_residual_2 -> l4_moe_residual_15
+	l4_residual_3 -> l4_moe_residual_15
+	l4_residual_4 -> l4_moe_residual_15
+	l4_residual_5 -> l4_moe_residual_15
+	l4_residual_6 -> l4_moe_residual_15
+	l4_residual_7 -> l4_moe_residual_15
+	l4_moe_residual_8 -> output
+	l4_moe_residual_9 -> output
+	l4_moe_residual_10 -> output
+	l4_moe_residual_11 -> output
+	l4_moe_residual_12 -> output
+	l4_moe_residual_13 -> output
+	l4_moe_residual_14 -> output
+	l4_moe_residual_15 -> output
+}

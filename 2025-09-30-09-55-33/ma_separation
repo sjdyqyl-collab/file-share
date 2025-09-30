@@ -1,0 +1,192 @@
+// MA Separation Architecture
+digraph MA_Separation {
+	nodesep=0.8 rankdir=TB ranksep=1.2 splines=ortho
+	subgraph cluster_attention {
+		bgcolor=lightblue label="Attention GPUs (0-7)" style=rounded
+		input [label="Input Layer
+[batch_size=1024, seq_len=2048, hidden_dim=4096]" fillcolor=lightyellow shape=parallelogram style=filled]
+		qkv_proj_0 [label="QKV Projection GPU0
+[1024,2048,512]
+4 heads×128" fillcolor=lightgreen shape=rectangle style=filled]
+		qkv_proj_1 [label="QKV Projection GPU1
+[1024,2048,512]
+4 heads×128" fillcolor=lightgreen shape=rectangle style=filled]
+		qkv_proj_2 [label="QKV Projection GPU2
+[1024,2048,512]
+4 heads×128" fillcolor=lightgreen shape=rectangle style=filled]
+		qkv_proj_3 [label="QKV Projection GPU3
+[1024,2048,512]
+4 heads×128" fillcolor=lightgreen shape=rectangle style=filled]
+		qkv_proj_4 [label="QKV Projection GPU4
+[1024,2048,512]
+4 heads×128" fillcolor=lightgreen shape=rectangle style=filled]
+		qkv_proj_5 [label="QKV Projection GPU5
+[1024,2048,512]
+4 heads×128" fillcolor=lightgreen shape=rectangle style=filled]
+		qkv_proj_6 [label="QKV Projection GPU6
+[1024,2048,512]
+4 heads×128" fillcolor=lightgreen shape=rectangle style=filled]
+		qkv_proj_7 [label="QKV Projection GPU7
+[1024,2048,512]
+4 heads×128" fillcolor=lightgreen shape=rectangle style=filled]
+		attn_0 [label="Attention GPU0
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_1 [label="Attention GPU1
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_2 [label="Attention GPU2
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_3 [label="Attention GPU3
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_4 [label="Attention GPU4
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_5 [label="Attention GPU5
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_6 [label="Attention GPU6
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_7 [label="Attention GPU7
+[1024,2048,512]
+4 heads" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_agg [label="Attention All-Reduce
+[1024,2048,4096]
+8×512→4096" fillcolor=orange shape=ellipse style=filled]
+		attn_residual [label="Attention Residual Add
+[1024,2048,4096]" fillcolor=pink shape=ellipse style=filled]
+		attn_ln [label="Layer Norm
+[1024,2048,4096]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	subgraph cluster_moe {
+		bgcolor=lightgreen label="MoE GPUs (8-15)" style=rounded
+		gate [label="Gate Network
+[1024×2048,4096]→[1024×2048,16]
+Top-2 routing" fillcolor=yellow shape=rectangle style="filled, dashed"]
+		expert_0 [label="Expert0 GPU8
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_1 [label="Expert1 GPU8
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_2 [label="Expert2 GPU9
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_3 [label="Expert3 GPU9
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_4 [label="Expert4 GPU10
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_5 [label="Expert5 GPU10
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_6 [label="Expert6 GPU11
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_7 [label="Expert7 GPU11
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_8 [label="Expert8 GPU12
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_9 [label="Expert9 GPU12
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_10 [label="Expert10 GPU13
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_11 [label="Expert11 GPU13
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_12 [label="Expert12 GPU14
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_13 [label="Expert13 GPU14
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_14 [label="Expert14 GPU15
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_15 [label="Expert15 GPU15
+[1024×2048,4096]→[1024×2048,4096]
+16384 hidden" fillcolor=lightcyan shape=rectangle style=filled]
+		expert_agg [label="Expert Aggregation
+[1024×2048,4096]
+Weighted sum" fillcolor=orange shape=ellipse style=filled]
+		moe_residual [label="MoE Residual Add
+[1024,2048,4096]" fillcolor=pink shape=ellipse style=filled]
+		moe_ln [label="Layer Norm
+[1024,2048,4096]" fillcolor=lightblue shape=rectangle style=filled]
+	}
+	output [label="Output Layer
+[batch_size=1024, seq_len=2048, hidden_dim=4096]" fillcolor=lightyellow shape=parallelogram style=filled]
+	input -> qkv_proj_0
+	input -> qkv_proj_1
+	input -> qkv_proj_2
+	input -> qkv_proj_3
+	input -> qkv_proj_4
+	input -> qkv_proj_5
+	input -> qkv_proj_6
+	input -> qkv_proj_7
+	qkv_proj_0 -> attn_0
+	attn_0 -> attn_agg
+	qkv_proj_1 -> attn_1
+	attn_1 -> attn_agg
+	qkv_proj_2 -> attn_2
+	attn_2 -> attn_agg
+	qkv_proj_3 -> attn_3
+	attn_3 -> attn_agg
+	qkv_proj_4 -> attn_4
+	attn_4 -> attn_agg
+	qkv_proj_5 -> attn_5
+	attn_5 -> attn_agg
+	qkv_proj_6 -> attn_6
+	attn_6 -> attn_agg
+	qkv_proj_7 -> attn_7
+	attn_7 -> attn_agg
+	attn_agg -> attn_residual
+	input -> attn_residual
+	attn_residual -> attn_ln
+	attn_ln -> gate [label="Cross-GPU
+Communication" style=dashed]
+	gate -> expert_0 [label="route tokens" style=dashed]
+	gate -> expert_1 [label="route tokens" style=dashed]
+	gate -> expert_2 [label="route tokens" style=dashed]
+	gate -> expert_3 [label="route tokens" style=dashed]
+	gate -> expert_4 [label="route tokens" style=dashed]
+	gate -> expert_5 [label="route tokens" style=dashed]
+	gate -> expert_6 [label="route tokens" style=dashed]
+	gate -> expert_7 [label="route tokens" style=dashed]
+	gate -> expert_8 [label="route tokens" style=dashed]
+	gate -> expert_9 [label="route tokens" style=dashed]
+	gate -> expert_10 [label="route tokens" style=dashed]
+	gate -> expert_11 [label="route tokens" style=dashed]
+	gate -> expert_12 [label="route tokens" style=dashed]
+	gate -> expert_13 [label="route tokens" style=dashed]
+	gate -> expert_14 [label="route tokens" style=dashed]
+	gate -> expert_15 [label="route tokens" style=dashed]
+	expert_0 -> expert_agg
+	expert_1 -> expert_agg
+	expert_2 -> expert_agg
+	expert_3 -> expert_agg
+	expert_4 -> expert_agg
+	expert_5 -> expert_agg
+	expert_6 -> expert_agg
+	expert_7 -> expert_agg
+	expert_8 -> expert_agg
+	expert_9 -> expert_agg
+	expert_10 -> expert_agg
+	expert_11 -> expert_agg
+	expert_12 -> expert_agg
+	expert_13 -> expert_agg
+	expert_14 -> expert_agg
+	expert_15 -> expert_agg
+	expert_agg -> moe_residual
+	attn_ln -> moe_residual
+	moe_residual -> moe_ln
+	moe_ln -> output
+}

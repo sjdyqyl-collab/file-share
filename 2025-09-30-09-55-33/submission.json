@@ -1,0 +1,30 @@
+{
+  "generated_dags": {
+    "ma_separation": {
+      "dot_file": "/home/wzc/data/file-share/2025-09-30-09-55-33/ma_separation.dot",
+      "svg_file": "/home/wzc/data/file-share/2025-09-30-09-55-33/ma_separation.svg",
+      "description": "MA Separation architecture with 16 GPUs (8 attention + 8 MoE)"
+    },
+    "baseline_tp8": {
+      "dot_file": "/home/wzc/data/file-share/2025-09-30-09-55-33/baseline_tp8.dot",
+      "svg_file": "/home/wzc/data/file-share/2025-09-30-09-55-33/baseline_tp8.svg",
+      "description": "Tensor Parallelism baseline (TP=8) with 8 GPUs"
+    },
+    "baseline_pp2": {
+      "dot_file": "/home/wzc/data/file-share/2025-09-30-09-55-33/baseline_pp2.dot",
+      "svg_file": "/home/wzc/data/file-share/2025-09-30-09-55-33/baseline_pp2.svg",
+      "description": "Pipeline Parallelism baseline (PP=2) with 16 GPUs"
+    },
+    "baseline_tppp": {
+      "dot_file": "/home/wzc/data/file-share/2025-09-30-09-55-33/baseline_tppp.dot",
+      "svg_file": "/home/wzc/data/file-share/2025-09-30-09-55-33/baseline_tppp.svg",
+      "description": "Hybrid TP+PP baseline (TP=8, PP=2) with 16 GPUs"
+    }
+  },
+  "summary": {
+    "total_dags_generated": 4,
+    "ma_separation_gpus": 16,
+    "baseline_gpus": [8, 16, 16],
+    "validation_status": "All DAGs validated with no cycles and proper connectivity"
+  }
+}

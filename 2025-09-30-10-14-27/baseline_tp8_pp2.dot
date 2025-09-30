@@ -1,0 +1,924 @@
+// Baseline: Tensor Parallelism=8, Pipeline Parallelism=2
+digraph Baseline_TP8_PP2 {
+	rankdir=TB size="20,20"
+	node [fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	node [fillcolor=lightyellow shape=parallelogram style=filled]
+	node [fillcolor=lightcoral shape=diamond style=filled]
+	input [label="Model Input\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=ellipse]
+	ps1_l1_norm_0 [label="PS1 L1 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l1_qkv_0 [label="PS1 L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	ps1_l1_attn_0 [label="PS1 L1 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 0" shape=rectangle]
+	ps1_l1_attn_proj_0 [label="PS1 L1 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l1_attn_res_0 [label="PS1 L1 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l1_mlp_norm_0 [label="PS1 L1 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l1_mlp_fc1_0 [label="PS1 L1 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 0" shape=rectangle]
+	ps1_l1_mlp_act_0 [label="PS1 L1 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 0" shape=rectangle]
+	ps1_l1_mlp_fc2_0 [label="PS1 L1 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l1_mlp_res_0 [label="PS1 L1 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l1_norm_1 [label="PS1 L1 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l1_qkv_1 [label="PS1 L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	ps1_l1_attn_1 [label="PS1 L1 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 1" shape=rectangle]
+	ps1_l1_attn_proj_1 [label="PS1 L1 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l1_attn_res_1 [label="PS1 L1 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l1_mlp_norm_1 [label="PS1 L1 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l1_mlp_fc1_1 [label="PS1 L1 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 1" shape=rectangle]
+	ps1_l1_mlp_act_1 [label="PS1 L1 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 1" shape=rectangle]
+	ps1_l1_mlp_fc2_1 [label="PS1 L1 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l1_mlp_res_1 [label="PS1 L1 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l1_norm_2 [label="PS1 L1 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l1_qkv_2 [label="PS1 L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	ps1_l1_attn_2 [label="PS1 L1 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 2" shape=rectangle]
+	ps1_l1_attn_proj_2 [label="PS1 L1 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l1_attn_res_2 [label="PS1 L1 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l1_mlp_norm_2 [label="PS1 L1 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l1_mlp_fc1_2 [label="PS1 L1 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 2" shape=rectangle]
+	ps1_l1_mlp_act_2 [label="PS1 L1 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 2" shape=rectangle]
+	ps1_l1_mlp_fc2_2 [label="PS1 L1 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l1_mlp_res_2 [label="PS1 L1 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l1_norm_3 [label="PS1 L1 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l1_qkv_3 [label="PS1 L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	ps1_l1_attn_3 [label="PS1 L1 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 3" shape=rectangle]
+	ps1_l1_attn_proj_3 [label="PS1 L1 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l1_attn_res_3 [label="PS1 L1 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l1_mlp_norm_3 [label="PS1 L1 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l1_mlp_fc1_3 [label="PS1 L1 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 3" shape=rectangle]
+	ps1_l1_mlp_act_3 [label="PS1 L1 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 3" shape=rectangle]
+	ps1_l1_mlp_fc2_3 [label="PS1 L1 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l1_mlp_res_3 [label="PS1 L1 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l1_norm_4 [label="PS1 L1 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l1_qkv_4 [label="PS1 L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	ps1_l1_attn_4 [label="PS1 L1 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 4" shape=rectangle]
+	ps1_l1_attn_proj_4 [label="PS1 L1 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l1_attn_res_4 [label="PS1 L1 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l1_mlp_norm_4 [label="PS1 L1 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l1_mlp_fc1_4 [label="PS1 L1 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 4" shape=rectangle]
+	ps1_l1_mlp_act_4 [label="PS1 L1 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 4" shape=rectangle]
+	ps1_l1_mlp_fc2_4 [label="PS1 L1 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l1_mlp_res_4 [label="PS1 L1 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l1_norm_5 [label="PS1 L1 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l1_qkv_5 [label="PS1 L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	ps1_l1_attn_5 [label="PS1 L1 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 5" shape=rectangle]
+	ps1_l1_attn_proj_5 [label="PS1 L1 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l1_attn_res_5 [label="PS1 L1 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l1_mlp_norm_5 [label="PS1 L1 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l1_mlp_fc1_5 [label="PS1 L1 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 5" shape=rectangle]
+	ps1_l1_mlp_act_5 [label="PS1 L1 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 5" shape=rectangle]
+	ps1_l1_mlp_fc2_5 [label="PS1 L1 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l1_mlp_res_5 [label="PS1 L1 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l1_norm_6 [label="PS1 L1 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l1_qkv_6 [label="PS1 L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	ps1_l1_attn_6 [label="PS1 L1 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 6" shape=rectangle]
+	ps1_l1_attn_proj_6 [label="PS1 L1 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l1_attn_res_6 [label="PS1 L1 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l1_mlp_norm_6 [label="PS1 L1 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l1_mlp_fc1_6 [label="PS1 L1 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 6" shape=rectangle]
+	ps1_l1_mlp_act_6 [label="PS1 L1 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 6" shape=rectangle]
+	ps1_l1_mlp_fc2_6 [label="PS1 L1 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l1_mlp_res_6 [label="PS1 L1 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l1_norm_7 [label="PS1 L1 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l1_qkv_7 [label="PS1 L1 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	ps1_l1_attn_7 [label="PS1 L1 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 7" shape=rectangle]
+	ps1_l1_attn_proj_7 [label="PS1 L1 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l1_attn_res_7 [label="PS1 L1 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l1_mlp_norm_7 [label="PS1 L1 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l1_mlp_fc1_7 [label="PS1 L1 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 7" shape=rectangle]
+	ps1_l1_mlp_act_7 [label="PS1 L1 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 7" shape=rectangle]
+	ps1_l1_mlp_fc2_7 [label="PS1 L1 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l1_mlp_res_7 [label="PS1 L1 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l2_norm_0 [label="PS1 L2 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l2_qkv_0 [label="PS1 L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 0" shape=rectangle]
+	ps1_l2_attn_0 [label="PS1 L2 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 0" shape=rectangle]
+	ps1_l2_attn_proj_0 [label="PS1 L2 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l2_attn_res_0 [label="PS1 L2 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l2_mlp_norm_0 [label="PS1 L2 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l2_mlp_fc1_0 [label="PS1 L2 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 0" shape=rectangle]
+	ps1_l2_mlp_act_0 [label="PS1 L2 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 0" shape=rectangle]
+	ps1_l2_mlp_fc2_0 [label="PS1 L2 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l2_mlp_res_0 [label="PS1 L2 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 0" shape=rectangle]
+	ps1_l2_norm_1 [label="PS1 L2 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l2_qkv_1 [label="PS1 L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 1" shape=rectangle]
+	ps1_l2_attn_1 [label="PS1 L2 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 1" shape=rectangle]
+	ps1_l2_attn_proj_1 [label="PS1 L2 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l2_attn_res_1 [label="PS1 L2 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l2_mlp_norm_1 [label="PS1 L2 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l2_mlp_fc1_1 [label="PS1 L2 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 1" shape=rectangle]
+	ps1_l2_mlp_act_1 [label="PS1 L2 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 1" shape=rectangle]
+	ps1_l2_mlp_fc2_1 [label="PS1 L2 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l2_mlp_res_1 [label="PS1 L2 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 1" shape=rectangle]
+	ps1_l2_norm_2 [label="PS1 L2 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l2_qkv_2 [label="PS1 L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 2" shape=rectangle]
+	ps1_l2_attn_2 [label="PS1 L2 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 2" shape=rectangle]
+	ps1_l2_attn_proj_2 [label="PS1 L2 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l2_attn_res_2 [label="PS1 L2 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l2_mlp_norm_2 [label="PS1 L2 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l2_mlp_fc1_2 [label="PS1 L2 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 2" shape=rectangle]
+	ps1_l2_mlp_act_2 [label="PS1 L2 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 2" shape=rectangle]
+	ps1_l2_mlp_fc2_2 [label="PS1 L2 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l2_mlp_res_2 [label="PS1 L2 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 2" shape=rectangle]
+	ps1_l2_norm_3 [label="PS1 L2 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l2_qkv_3 [label="PS1 L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 3" shape=rectangle]
+	ps1_l2_attn_3 [label="PS1 L2 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 3" shape=rectangle]
+	ps1_l2_attn_proj_3 [label="PS1 L2 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l2_attn_res_3 [label="PS1 L2 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l2_mlp_norm_3 [label="PS1 L2 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l2_mlp_fc1_3 [label="PS1 L2 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 3" shape=rectangle]
+	ps1_l2_mlp_act_3 [label="PS1 L2 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 3" shape=rectangle]
+	ps1_l2_mlp_fc2_3 [label="PS1 L2 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l2_mlp_res_3 [label="PS1 L2 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 3" shape=rectangle]
+	ps1_l2_norm_4 [label="PS1 L2 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l2_qkv_4 [label="PS1 L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 4" shape=rectangle]
+	ps1_l2_attn_4 [label="PS1 L2 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 4" shape=rectangle]
+	ps1_l2_attn_proj_4 [label="PS1 L2 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l2_attn_res_4 [label="PS1 L2 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l2_mlp_norm_4 [label="PS1 L2 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l2_mlp_fc1_4 [label="PS1 L2 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 4" shape=rectangle]
+	ps1_l2_mlp_act_4 [label="PS1 L2 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 4" shape=rectangle]
+	ps1_l2_mlp_fc2_4 [label="PS1 L2 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l2_mlp_res_4 [label="PS1 L2 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 4" shape=rectangle]
+	ps1_l2_norm_5 [label="PS1 L2 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l2_qkv_5 [label="PS1 L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 5" shape=rectangle]
+	ps1_l2_attn_5 [label="PS1 L2 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 5" shape=rectangle]
+	ps1_l2_attn_proj_5 [label="PS1 L2 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l2_attn_res_5 [label="PS1 L2 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l2_mlp_norm_5 [label="PS1 L2 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l2_mlp_fc1_5 [label="PS1 L2 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 5" shape=rectangle]
+	ps1_l2_mlp_act_5 [label="PS1 L2 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 5" shape=rectangle]
+	ps1_l2_mlp_fc2_5 [label="PS1 L2 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l2_mlp_res_5 [label="PS1 L2 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 5" shape=rectangle]
+	ps1_l2_norm_6 [label="PS1 L2 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l2_qkv_6 [label="PS1 L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 6" shape=rectangle]
+	ps1_l2_attn_6 [label="PS1 L2 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 6" shape=rectangle]
+	ps1_l2_attn_proj_6 [label="PS1 L2 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l2_attn_res_6 [label="PS1 L2 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l2_mlp_norm_6 [label="PS1 L2 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l2_mlp_fc1_6 [label="PS1 L2 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 6" shape=rectangle]
+	ps1_l2_mlp_act_6 [label="PS1 L2 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 6" shape=rectangle]
+	ps1_l2_mlp_fc2_6 [label="PS1 L2 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l2_mlp_res_6 [label="PS1 L2 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 6" shape=rectangle]
+	ps1_l2_norm_7 [label="PS1 L2 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l2_qkv_7 [label="PS1 L2 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 7" shape=rectangle]
+	ps1_l2_attn_7 [label="PS1 L2 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 7" shape=rectangle]
+	ps1_l2_attn_proj_7 [label="PS1 L2 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l2_attn_res_7 [label="PS1 L2 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l2_mlp_norm_7 [label="PS1 L2 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l2_mlp_fc1_7 [label="PS1 L2 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 7" shape=rectangle]
+	ps1_l2_mlp_act_7 [label="PS1 L2 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 7" shape=rectangle]
+	ps1_l2_mlp_fc2_7 [label="PS1 L2 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps1_l2_mlp_res_7 [label="PS1 L2 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 7" shape=rectangle]
+	ps2_l3_norm_8 [label="PS2 L3 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l3_qkv_8 [label="PS2 L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 8" shape=rectangle]
+	ps2_l3_attn_8 [label="PS2 L3 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 8" shape=rectangle]
+	ps2_l3_attn_proj_8 [label="PS2 L3 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l3_attn_res_8 [label="PS2 L3 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l3_mlp_norm_8 [label="PS2 L3 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l3_mlp_fc1_8 [label="PS2 L3 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 8" shape=rectangle]
+	ps2_l3_mlp_act_8 [label="PS2 L3 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 8" shape=rectangle]
+	ps2_l3_mlp_fc2_8 [label="PS2 L3 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l3_mlp_res_8 [label="PS2 L3 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l3_norm_9 [label="PS2 L3 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l3_qkv_9 [label="PS2 L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 9" shape=rectangle]
+	ps2_l3_attn_9 [label="PS2 L3 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 9" shape=rectangle]
+	ps2_l3_attn_proj_9 [label="PS2 L3 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l3_attn_res_9 [label="PS2 L3 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l3_mlp_norm_9 [label="PS2 L3 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l3_mlp_fc1_9 [label="PS2 L3 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 9" shape=rectangle]
+	ps2_l3_mlp_act_9 [label="PS2 L3 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 9" shape=rectangle]
+	ps2_l3_mlp_fc2_9 [label="PS2 L3 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l3_mlp_res_9 [label="PS2 L3 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l3_norm_10 [label="PS2 L3 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l3_qkv_10 [label="PS2 L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 10" shape=rectangle]
+	ps2_l3_attn_10 [label="PS2 L3 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 10" shape=rectangle]
+	ps2_l3_attn_proj_10 [label="PS2 L3 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l3_attn_res_10 [label="PS2 L3 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l3_mlp_norm_10 [label="PS2 L3 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l3_mlp_fc1_10 [label="PS2 L3 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 10" shape=rectangle]
+	ps2_l3_mlp_act_10 [label="PS2 L3 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 10" shape=rectangle]
+	ps2_l3_mlp_fc2_10 [label="PS2 L3 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l3_mlp_res_10 [label="PS2 L3 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l3_norm_11 [label="PS2 L3 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l3_qkv_11 [label="PS2 L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 11" shape=rectangle]
+	ps2_l3_attn_11 [label="PS2 L3 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 11" shape=rectangle]
+	ps2_l3_attn_proj_11 [label="PS2 L3 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l3_attn_res_11 [label="PS2 L3 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l3_mlp_norm_11 [label="PS2 L3 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l3_mlp_fc1_11 [label="PS2 L3 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 11" shape=rectangle]
+	ps2_l3_mlp_act_11 [label="PS2 L3 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 11" shape=rectangle]
+	ps2_l3_mlp_fc2_11 [label="PS2 L3 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l3_mlp_res_11 [label="PS2 L3 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l3_norm_12 [label="PS2 L3 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l3_qkv_12 [label="PS2 L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 12" shape=rectangle]
+	ps2_l3_attn_12 [label="PS2 L3 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 12" shape=rectangle]
+	ps2_l3_attn_proj_12 [label="PS2 L3 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l3_attn_res_12 [label="PS2 L3 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l3_mlp_norm_12 [label="PS2 L3 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l3_mlp_fc1_12 [label="PS2 L3 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 12" shape=rectangle]
+	ps2_l3_mlp_act_12 [label="PS2 L3 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 12" shape=rectangle]
+	ps2_l3_mlp_fc2_12 [label="PS2 L3 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l3_mlp_res_12 [label="PS2 L3 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l3_norm_13 [label="PS2 L3 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l3_qkv_13 [label="PS2 L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 13" shape=rectangle]
+	ps2_l3_attn_13 [label="PS2 L3 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 13" shape=rectangle]
+	ps2_l3_attn_proj_13 [label="PS2 L3 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l3_attn_res_13 [label="PS2 L3 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l3_mlp_norm_13 [label="PS2 L3 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l3_mlp_fc1_13 [label="PS2 L3 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 13" shape=rectangle]
+	ps2_l3_mlp_act_13 [label="PS2 L3 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 13" shape=rectangle]
+	ps2_l3_mlp_fc2_13 [label="PS2 L3 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l3_mlp_res_13 [label="PS2 L3 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l3_norm_14 [label="PS2 L3 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l3_qkv_14 [label="PS2 L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 14" shape=rectangle]
+	ps2_l3_attn_14 [label="PS2 L3 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 14" shape=rectangle]
+	ps2_l3_attn_proj_14 [label="PS2 L3 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l3_attn_res_14 [label="PS2 L3 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l3_mlp_norm_14 [label="PS2 L3 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l3_mlp_fc1_14 [label="PS2 L3 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 14" shape=rectangle]
+	ps2_l3_mlp_act_14 [label="PS2 L3 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 14" shape=rectangle]
+	ps2_l3_mlp_fc2_14 [label="PS2 L3 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l3_mlp_res_14 [label="PS2 L3 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l3_norm_15 [label="PS2 L3 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l3_qkv_15 [label="PS2 L3 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 15" shape=rectangle]
+	ps2_l3_attn_15 [label="PS2 L3 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 15" shape=rectangle]
+	ps2_l3_attn_proj_15 [label="PS2 L3 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l3_attn_res_15 [label="PS2 L3 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l3_mlp_norm_15 [label="PS2 L3 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l3_mlp_fc1_15 [label="PS2 L3 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 15" shape=rectangle]
+	ps2_l3_mlp_act_15 [label="PS2 L3 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 15" shape=rectangle]
+	ps2_l3_mlp_fc2_15 [label="PS2 L3 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l3_mlp_res_15 [label="PS2 L3 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l4_norm_8 [label="PS2 L4 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l4_qkv_8 [label="PS2 L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 8" shape=rectangle]
+	ps2_l4_attn_8 [label="PS2 L4 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 8" shape=rectangle]
+	ps2_l4_attn_proj_8 [label="PS2 L4 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l4_attn_res_8 [label="PS2 L4 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l4_mlp_norm_8 [label="PS2 L4 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l4_mlp_fc1_8 [label="PS2 L4 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 8" shape=rectangle]
+	ps2_l4_mlp_act_8 [label="PS2 L4 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 8" shape=rectangle]
+	ps2_l4_mlp_fc2_8 [label="PS2 L4 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l4_mlp_res_8 [label="PS2 L4 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=rectangle]
+	ps2_l4_norm_9 [label="PS2 L4 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l4_qkv_9 [label="PS2 L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 9" shape=rectangle]
+	ps2_l4_attn_9 [label="PS2 L4 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 9" shape=rectangle]
+	ps2_l4_attn_proj_9 [label="PS2 L4 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l4_attn_res_9 [label="PS2 L4 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l4_mlp_norm_9 [label="PS2 L4 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l4_mlp_fc1_9 [label="PS2 L4 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 9" shape=rectangle]
+	ps2_l4_mlp_act_9 [label="PS2 L4 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 9" shape=rectangle]
+	ps2_l4_mlp_fc2_9 [label="PS2 L4 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l4_mlp_res_9 [label="PS2 L4 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=rectangle]
+	ps2_l4_norm_10 [label="PS2 L4 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l4_qkv_10 [label="PS2 L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 10" shape=rectangle]
+	ps2_l4_attn_10 [label="PS2 L4 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 10" shape=rectangle]
+	ps2_l4_attn_proj_10 [label="PS2 L4 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l4_attn_res_10 [label="PS2 L4 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l4_mlp_norm_10 [label="PS2 L4 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l4_mlp_fc1_10 [label="PS2 L4 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 10" shape=rectangle]
+	ps2_l4_mlp_act_10 [label="PS2 L4 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 10" shape=rectangle]
+	ps2_l4_mlp_fc2_10 [label="PS2 L4 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l4_mlp_res_10 [label="PS2 L4 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=rectangle]
+	ps2_l4_norm_11 [label="PS2 L4 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l4_qkv_11 [label="PS2 L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 11" shape=rectangle]
+	ps2_l4_attn_11 [label="PS2 L4 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 11" shape=rectangle]
+	ps2_l4_attn_proj_11 [label="PS2 L4 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l4_attn_res_11 [label="PS2 L4 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l4_mlp_norm_11 [label="PS2 L4 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l4_mlp_fc1_11 [label="PS2 L4 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 11" shape=rectangle]
+	ps2_l4_mlp_act_11 [label="PS2 L4 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 11" shape=rectangle]
+	ps2_l4_mlp_fc2_11 [label="PS2 L4 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l4_mlp_res_11 [label="PS2 L4 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=rectangle]
+	ps2_l4_norm_12 [label="PS2 L4 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l4_qkv_12 [label="PS2 L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 12" shape=rectangle]
+	ps2_l4_attn_12 [label="PS2 L4 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 12" shape=rectangle]
+	ps2_l4_attn_proj_12 [label="PS2 L4 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l4_attn_res_12 [label="PS2 L4 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l4_mlp_norm_12 [label="PS2 L4 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l4_mlp_fc1_12 [label="PS2 L4 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 12" shape=rectangle]
+	ps2_l4_mlp_act_12 [label="PS2 L4 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 12" shape=rectangle]
+	ps2_l4_mlp_fc2_12 [label="PS2 L4 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l4_mlp_res_12 [label="PS2 L4 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=rectangle]
+	ps2_l4_norm_13 [label="PS2 L4 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l4_qkv_13 [label="PS2 L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 13" shape=rectangle]
+	ps2_l4_attn_13 [label="PS2 L4 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 13" shape=rectangle]
+	ps2_l4_attn_proj_13 [label="PS2 L4 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l4_attn_res_13 [label="PS2 L4 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l4_mlp_norm_13 [label="PS2 L4 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l4_mlp_fc1_13 [label="PS2 L4 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 13" shape=rectangle]
+	ps2_l4_mlp_act_13 [label="PS2 L4 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 13" shape=rectangle]
+	ps2_l4_mlp_fc2_13 [label="PS2 L4 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l4_mlp_res_13 [label="PS2 L4 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=rectangle]
+	ps2_l4_norm_14 [label="PS2 L4 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l4_qkv_14 [label="PS2 L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 14" shape=rectangle]
+	ps2_l4_attn_14 [label="PS2 L4 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 14" shape=rectangle]
+	ps2_l4_attn_proj_14 [label="PS2 L4 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l4_attn_res_14 [label="PS2 L4 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l4_mlp_norm_14 [label="PS2 L4 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l4_mlp_fc1_14 [label="PS2 L4 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 14" shape=rectangle]
+	ps2_l4_mlp_act_14 [label="PS2 L4 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 14" shape=rectangle]
+	ps2_l4_mlp_fc2_14 [label="PS2 L4 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l4_mlp_res_14 [label="PS2 L4 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=rectangle]
+	ps2_l4_norm_15 [label="PS2 L4 Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l4_qkv_15 [label="PS2 L4 QKV Projection\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nGPU: 15" shape=rectangle]
+	ps2_l4_attn_15 [label="PS2 L4 Multi-Head Attention\nInput: [batch_size=1, seq_len=2048, heads=4, d_k=128]\nOutput: [batch_size=1, seq_len=2048, hidden=512]\nGPU: 15" shape=rectangle]
+	ps2_l4_attn_proj_15 [label="PS2 L4 Attention Output Proj\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l4_attn_res_15 [label="PS2 L4 Attention Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l4_mlp_norm_15 [label="PS2 L4 MLP Layer Norm\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l4_mlp_fc1_15 [label="PS2 L4 MLP FC1\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 15" shape=rectangle]
+	ps2_l4_mlp_act_15 [label="PS2 L4 MLP GELU\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nGPU: 15" shape=rectangle]
+	ps2_l4_mlp_fc2_15 [label="PS2 L4 MLP FC2\nInput: [batch_size=1, seq_len=2048, ffn_hidden=1024]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	ps2_l4_mlp_res_15 [label="PS2 L4 MLP Residual\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=rectangle]
+	output [label="Model Output\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, vocab_size]\nGPU: 15" shape=ellipse]
+	ps1_l1_attn_ar_8 [label="PS1 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps1_l1_mlp_ar_8 [label="PS1 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps1_l1_attn_ar_9 [label="PS1 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps1_l1_mlp_ar_9 [label="PS1 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps1_l1_attn_ar_10 [label="PS1 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps1_l1_mlp_ar_10 [label="PS1 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps1_l1_attn_ar_11 [label="PS1 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps1_l1_mlp_ar_11 [label="PS1 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps1_l1_attn_ar_12 [label="PS1 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps1_l1_mlp_ar_12 [label="PS1 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps1_l1_attn_ar_13 [label="PS1 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps1_l1_mlp_ar_13 [label="PS1 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps1_l1_attn_ar_14 [label="PS1 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps1_l1_mlp_ar_14 [label="PS1 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps1_l1_attn_ar_15 [label="PS1 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps1_l1_mlp_ar_15 [label="PS1 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps1_l2_attn_ar_8 [label="PS1 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps1_l2_mlp_ar_8 [label="PS1 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps1_l2_attn_ar_9 [label="PS1 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps1_l2_mlp_ar_9 [label="PS1 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps1_l2_attn_ar_10 [label="PS1 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps1_l2_mlp_ar_10 [label="PS1 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps1_l2_attn_ar_11 [label="PS1 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps1_l2_mlp_ar_11 [label="PS1 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps1_l2_attn_ar_12 [label="PS1 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps1_l2_mlp_ar_12 [label="PS1 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps1_l2_attn_ar_13 [label="PS1 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps1_l2_mlp_ar_13 [label="PS1 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps1_l2_attn_ar_14 [label="PS1 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps1_l2_mlp_ar_14 [label="PS1 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps1_l2_attn_ar_15 [label="PS1 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps1_l2_mlp_ar_15 [label="PS1 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps1_l3_attn_ar_8 [label="PS1 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps1_l3_mlp_ar_8 [label="PS1 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps1_l3_attn_ar_9 [label="PS1 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps1_l3_mlp_ar_9 [label="PS1 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps1_l3_attn_ar_10 [label="PS1 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps1_l3_mlp_ar_10 [label="PS1 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps1_l3_attn_ar_11 [label="PS1 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps1_l3_mlp_ar_11 [label="PS1 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps1_l3_attn_ar_12 [label="PS1 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps1_l3_mlp_ar_12 [label="PS1 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps1_l3_attn_ar_13 [label="PS1 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps1_l3_mlp_ar_13 [label="PS1 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps1_l3_attn_ar_14 [label="PS1 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps1_l3_mlp_ar_14 [label="PS1 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps1_l3_attn_ar_15 [label="PS1 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps1_l3_mlp_ar_15 [label="PS1 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps1_l4_attn_ar_8 [label="PS1 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps1_l4_mlp_ar_8 [label="PS1 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps1_l4_attn_ar_9 [label="PS1 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps1_l4_mlp_ar_9 [label="PS1 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps1_l4_attn_ar_10 [label="PS1 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps1_l4_mlp_ar_10 [label="PS1 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps1_l4_attn_ar_11 [label="PS1 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps1_l4_mlp_ar_11 [label="PS1 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps1_l4_attn_ar_12 [label="PS1 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps1_l4_mlp_ar_12 [label="PS1 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps1_l4_attn_ar_13 [label="PS1 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps1_l4_mlp_ar_13 [label="PS1 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps1_l4_attn_ar_14 [label="PS1 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps1_l4_mlp_ar_14 [label="PS1 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps1_l4_attn_ar_15 [label="PS1 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps1_l4_mlp_ar_15 [label="PS1 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps2_l1_attn_ar_8 [label="PS2 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps2_l1_mlp_ar_8 [label="PS2 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps2_l1_attn_ar_9 [label="PS2 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps2_l1_mlp_ar_9 [label="PS2 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps2_l1_attn_ar_10 [label="PS2 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps2_l1_mlp_ar_10 [label="PS2 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps2_l1_attn_ar_11 [label="PS2 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps2_l1_mlp_ar_11 [label="PS2 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps2_l1_attn_ar_12 [label="PS2 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps2_l1_mlp_ar_12 [label="PS2 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps2_l1_attn_ar_13 [label="PS2 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps2_l1_mlp_ar_13 [label="PS2 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps2_l1_attn_ar_14 [label="PS2 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps2_l1_mlp_ar_14 [label="PS2 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps2_l1_attn_ar_15 [label="PS2 L1 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps2_l1_mlp_ar_15 [label="PS2 L1 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps2_l2_attn_ar_8 [label="PS2 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps2_l2_mlp_ar_8 [label="PS2 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps2_l2_attn_ar_9 [label="PS2 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps2_l2_mlp_ar_9 [label="PS2 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps2_l2_attn_ar_10 [label="PS2 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps2_l2_mlp_ar_10 [label="PS2 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps2_l2_attn_ar_11 [label="PS2 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps2_l2_mlp_ar_11 [label="PS2 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps2_l2_attn_ar_12 [label="PS2 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps2_l2_mlp_ar_12 [label="PS2 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps2_l2_attn_ar_13 [label="PS2 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps2_l2_mlp_ar_13 [label="PS2 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps2_l2_attn_ar_14 [label="PS2 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps2_l2_mlp_ar_14 [label="PS2 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps2_l2_attn_ar_15 [label="PS2 L2 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps2_l2_mlp_ar_15 [label="PS2 L2 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps2_l3_attn_ar_8 [label="PS2 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps2_l3_mlp_ar_8 [label="PS2 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps2_l3_attn_ar_9 [label="PS2 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps2_l3_mlp_ar_9 [label="PS2 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps2_l3_attn_ar_10 [label="PS2 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps2_l3_mlp_ar_10 [label="PS2 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps2_l3_attn_ar_11 [label="PS2 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps2_l3_mlp_ar_11 [label="PS2 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps2_l3_attn_ar_12 [label="PS2 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps2_l3_mlp_ar_12 [label="PS2 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps2_l3_attn_ar_13 [label="PS2 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps2_l3_mlp_ar_13 [label="PS2 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps2_l3_attn_ar_14 [label="PS2 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps2_l3_mlp_ar_14 [label="PS2 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps2_l3_attn_ar_15 [label="PS2 L3 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps2_l3_mlp_ar_15 [label="PS2 L3 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps2_l4_attn_ar_8 [label="PS2 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps2_l4_mlp_ar_8 [label="PS2 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 8" shape=diamond]
+	ps2_l4_attn_ar_9 [label="PS2 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps2_l4_mlp_ar_9 [label="PS2 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 9" shape=diamond]
+	ps2_l4_attn_ar_10 [label="PS2 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps2_l4_mlp_ar_10 [label="PS2 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 10" shape=diamond]
+	ps2_l4_attn_ar_11 [label="PS2 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps2_l4_mlp_ar_11 [label="PS2 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 11" shape=diamond]
+	ps2_l4_attn_ar_12 [label="PS2 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps2_l4_mlp_ar_12 [label="PS2 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 12" shape=diamond]
+	ps2_l4_attn_ar_13 [label="PS2 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps2_l4_mlp_ar_13 [label="PS2 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 13" shape=diamond]
+	ps2_l4_attn_ar_14 [label="PS2 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps2_l4_mlp_ar_14 [label="PS2 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 14" shape=diamond]
+	ps2_l4_attn_ar_15 [label="PS2 L4 Attention All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=512]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	ps2_l4_mlp_ar_15 [label="PS2 L4 MLP All-Reduce\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPU: 15" shape=diamond]
+	pipeline_l2_send [label="Pipeline L2 Send\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7 → 8-15" shape=diamond]
+	pipeline_l3_send [label="Pipeline L3 Send\nInput: [batch_size=1, seq_len=2048, hidden=4096]\nOutput: [batch_size=1, seq_len=2048, hidden=4096]\nGPUs: 0-7 → 8-15" shape=diamond]
+	input -> ps1_l1_norm_0
+	ps1_l1_norm_0 -> ps1_l1_qkv_0
+	ps1_l1_qkv_0 -> ps1_l1_attn_0
+	ps1_l1_attn_0 -> ps1_l1_attn_ar_0
+	ps1_l1_attn_ar_0 -> ps1_l1_attn_proj_0
+	ps1_l1_attn_proj_0 -> ps1_l1_attn_res_0
+	input -> ps1_l1_attn_res_0
+	ps1_l1_attn_res_0 -> ps1_l1_mlp_norm_0
+	ps1_l1_mlp_norm_0 -> ps1_l1_mlp_fc1_0
+	ps1_l1_mlp_fc1_0 -> ps1_l1_mlp_act_0
+	ps1_l1_mlp_act_0 -> ps1_l1_mlp_fc2_0
+	ps1_l1_mlp_fc2_0 -> ps1_l1_mlp_ar_0
+	ps1_l1_mlp_ar_0 -> ps1_l1_mlp_res_0
+	ps1_l1_attn_res_0 -> ps1_l1_mlp_res_0
+	ps1_l1_mlp_res_0 -> ps1_l2_norm_0
+	ps1_l2_norm_0 -> ps1_l2_qkv_0
+	ps1_l2_qkv_0 -> ps1_l2_attn_0
+	ps1_l2_attn_0 -> ps1_l2_attn_ar_0
+	ps1_l2_attn_ar_0 -> ps1_l2_attn_proj_0
+	ps1_l2_attn_proj_0 -> ps1_l2_attn_res_0
+	ps1_l1_mlp_res_0 -> ps1_l2_attn_res_0
+	ps1_l2_attn_res_0 -> ps1_l2_mlp_norm_0
+	ps1_l2_mlp_norm_0 -> ps1_l2_mlp_fc1_0
+	ps1_l2_mlp_fc1_0 -> ps1_l2_mlp_act_0
+	ps1_l2_mlp_act_0 -> ps1_l2_mlp_fc2_0
+	ps1_l2_mlp_fc2_0 -> ps1_l2_mlp_ar_0
+	ps1_l2_mlp_ar_0 -> ps1_l2_mlp_res_0
+	ps1_l2_attn_res_0 -> ps1_l2_mlp_res_0
+	ps1_l2_mlp_res_0 -> pipeline_l2_send
+	input -> ps1_l1_norm_1
+	ps1_l1_norm_1 -> ps1_l1_qkv_1
+	ps1_l1_qkv_1 -> ps1_l1_attn_1
+	ps1_l1_attn_1 -> ps1_l1_attn_ar_1
+	ps1_l1_attn_ar_1 -> ps1_l1_attn_proj_1
+	ps1_l1_attn_proj_1 -> ps1_l1_attn_res_1
+	input -> ps1_l1_attn_res_1
+	ps1_l1_attn_res_1 -> ps1_l1_mlp_norm_1
+	ps1_l1_mlp_norm_1 -> ps1_l1_mlp_fc1_1
+	ps1_l1_mlp_fc1_1 -> ps1_l1_mlp_act_1
+	ps1_l1_mlp_act_1 -> ps1_l1_mlp_fc2_1
+	ps1_l1_mlp_fc2_1 -> ps1_l1_mlp_ar_1
+	ps1_l1_mlp_ar_1 -> ps1_l1_mlp_res_1
+	ps1_l1_attn_res_1 -> ps1_l1_mlp_res_1
+	ps1_l1_mlp_res_1 -> ps1_l2_norm_1
+	ps1_l2_norm_1 -> ps1_l2_qkv_1
+	ps1_l2_qkv_1 -> ps1_l2_attn_1
+	ps1_l2_attn_1 -> ps1_l2_attn_ar_1
+	ps1_l2_attn_ar_1 -> ps1_l2_attn_proj_1
+	ps1_l2_attn_proj_1 -> ps1_l2_attn_res_1
+	ps1_l1_mlp_res_1 -> ps1_l2_attn_res_1
+	ps1_l2_attn_res_1 -> ps1_l2_mlp_norm_1
+	ps1_l2_mlp_norm_1 -> ps1_l2_mlp_fc1_1
+	ps1_l2_mlp_fc1_1 -> ps1_l2_mlp_act_1
+	ps1_l2_mlp_act_1 -> ps1_l2_mlp_fc2_1
+	ps1_l2_mlp_fc2_1 -> ps1_l2_mlp_ar_1
+	ps1_l2_mlp_ar_1 -> ps1_l2_mlp_res_1
+	ps1_l2_attn_res_1 -> ps1_l2_mlp_res_1
+	ps1_l2_mlp_res_1 -> pipeline_l2_send
+	input -> ps1_l1_norm_2
+	ps1_l1_norm_2 -> ps1_l1_qkv_2
+	ps1_l1_qkv_2 -> ps1_l1_attn_2
+	ps1_l1_attn_2 -> ps1_l1_attn_ar_2
+	ps1_l1_attn_ar_2 -> ps1_l1_attn_proj_2
+	ps1_l1_attn_proj_2 -> ps1_l1_attn_res_2
+	input -> ps1_l1_attn_res_2
+	ps1_l1_attn_res_2 -> ps1_l1_mlp_norm_2
+	ps1_l1_mlp_norm_2 -> ps1_l1_mlp_fc1_2
+	ps1_l1_mlp_fc1_2 -> ps1_l1_mlp_act_2
+	ps1_l1_mlp_act_2 -> ps1_l1_mlp_fc2_2
+	ps1_l1_mlp_fc2_2 -> ps1_l1_mlp_ar_2
+	ps1_l1_mlp_ar_2 -> ps1_l1_mlp_res_2
+	ps1_l1_attn_res_2 -> ps1_l1_mlp_res_2
+	ps1_l1_mlp_res_2 -> ps1_l2_norm_2
+	ps1_l2_norm_2 -> ps1_l2_qkv_2
+	ps1_l2_qkv_2 -> ps1_l2_attn_2
+	ps1_l2_attn_2 -> ps1_l2_attn_ar_2
+	ps1_l2_attn_ar_2 -> ps1_l2_attn_proj_2
+	ps1_l2_attn_proj_2 -> ps1_l2_attn_res_2
+	ps1_l1_mlp_res_2 -> ps1_l2_attn_res_2
+	ps1_l2_attn_res_2 -> ps1_l2_mlp_norm_2
+	ps1_l2_mlp_norm_2 -> ps1_l2_mlp_fc1_2
+	ps1_l2_mlp_fc1_2 -> ps1_l2_mlp_act_2
+	ps1_l2_mlp_act_2 -> ps1_l2_mlp_fc2_2
+	ps1_l2_mlp_fc2_2 -> ps1_l2_mlp_ar_2
+	ps1_l2_mlp_ar_2 -> ps1_l2_mlp_res_2
+	ps1_l2_attn_res_2 -> ps1_l2_mlp_res_2
+	ps1_l2_mlp_res_2 -> pipeline_l2_send
+	input -> ps1_l1_norm_3
+	ps1_l1_norm_3 -> ps1_l1_qkv_3
+	ps1_l1_qkv_3 -> ps1_l1_attn_3
+	ps1_l1_attn_3 -> ps1_l1_attn_ar_3
+	ps1_l1_attn_ar_3 -> ps1_l1_attn_proj_3
+	ps1_l1_attn_proj_3 -> ps1_l1_attn_res_3
+	input -> ps1_l1_attn_res_3
+	ps1_l1_attn_res_3 -> ps1_l1_mlp_norm_3
+	ps1_l1_mlp_norm_3 -> ps1_l1_mlp_fc1_3
+	ps1_l1_mlp_fc1_3 -> ps1_l1_mlp_act_3
+	ps1_l1_mlp_act_3 -> ps1_l1_mlp_fc2_3
+	ps1_l1_mlp_fc2_3 -> ps1_l1_mlp_ar_3
+	ps1_l1_mlp_ar_3 -> ps1_l1_mlp_res_3
+	ps1_l1_attn_res_3 -> ps1_l1_mlp_res_3
+	ps1_l1_mlp_res_3 -> ps1_l2_norm_3
+	ps1_l2_norm_3 -> ps1_l2_qkv_3
+	ps1_l2_qkv_3 -> ps1_l2_attn_3
+	ps1_l2_attn_3 -> ps1_l2_attn_ar_3
+	ps1_l2_attn_ar_3 -> ps1_l2_attn_proj_3
+	ps1_l2_attn_proj_3 -> ps1_l2_attn_res_3
+	ps1_l1_mlp_res_3 -> ps1_l2_attn_res_3
+	ps1_l2_attn_res_3 -> ps1_l2_mlp_norm_3
+	ps1_l2_mlp_norm_3 -> ps1_l2_mlp_fc1_3
+	ps1_l2_mlp_fc1_3 -> ps1_l2_mlp_act_3
+	ps1_l2_mlp_act_3 -> ps1_l2_mlp_fc2_3
+	ps1_l2_mlp_fc2_3 -> ps1_l2_mlp_ar_3
+	ps1_l2_mlp_ar_3 -> ps1_l2_mlp_res_3
+	ps1_l2_attn_res_3 -> ps1_l2_mlp_res_3
+	ps1_l2_mlp_res_3 -> pipeline_l2_send
+	input -> ps1_l1_norm_4
+	ps1_l1_norm_4 -> ps1_l1_qkv_4
+	ps1_l1_qkv_4 -> ps1_l1_attn_4
+	ps1_l1_attn_4 -> ps1_l1_attn_ar_4
+	ps1_l1_attn_ar_4 -> ps1_l1_attn_proj_4
+	ps1_l1_attn_proj_4 -> ps1_l1_attn_res_4
+	input -> ps1_l1_attn_res_4
+	ps1_l1_attn_res_4 -> ps1_l1_mlp_norm_4
+	ps1_l1_mlp_norm_4 -> ps1_l1_mlp_fc1_4
+	ps1_l1_mlp_fc1_4 -> ps1_l1_mlp_act_4
+	ps1_l1_mlp_act_4 -> ps1_l1_mlp_fc2_4
+	ps1_l1_mlp_fc2_4 -> ps1_l1_mlp_ar_4
+	ps1_l1_mlp_ar_4 -> ps1_l1_mlp_res_4
+	ps1_l1_attn_res_4 -> ps1_l1_mlp_res_4
+	ps1_l1_mlp_res_4 -> ps1_l2_norm_4
+	ps1_l2_norm_4 -> ps1_l2_qkv_4
+	ps1_l2_qkv_4 -> ps1_l2_attn_4
+	ps1_l2_attn_4 -> ps1_l2_attn_ar_4
+	ps1_l2_attn_ar_4 -> ps1_l2_attn_proj_4
+	ps1_l2_attn_proj_4 -> ps1_l2_attn_res_4
+	ps1_l1_mlp_res_4 -> ps1_l2_attn_res_4
+	ps1_l2_attn_res_4 -> ps1_l2_mlp_norm_4
+	ps1_l2_mlp_norm_4 -> ps1_l2_mlp_fc1_4
+	ps1_l2_mlp_fc1_4 -> ps1_l2_mlp_act_4
+	ps1_l2_mlp_act_4 -> ps1_l2_mlp_fc2_4
+	ps1_l2_mlp_fc2_4 -> ps1_l2_mlp_ar_4
+	ps1_l2_mlp_ar_4 -> ps1_l2_mlp_res_4
+	ps1_l2_attn_res_4 -> ps1_l2_mlp_res_4
+	ps1_l2_mlp_res_4 -> pipeline_l2_send
+	input -> ps1_l1_norm_5
+	ps1_l1_norm_5 -> ps1_l1_qkv_5
+	ps1_l1_qkv_5 -> ps1_l1_attn_5
+	ps1_l1_attn_5 -> ps1_l1_attn_ar_5
+	ps1_l1_attn_ar_5 -> ps1_l1_attn_proj_5
+	ps1_l1_attn_proj_5 -> ps1_l1_attn_res_5
+	input -> ps1_l1_attn_res_5
+	ps1_l1_attn_res_5 -> ps1_l1_mlp_norm_5
+	ps1_l1_mlp_norm_5 -> ps1_l1_mlp_fc1_5
+	ps1_l1_mlp_fc1_5 -> ps1_l1_mlp_act_5
+	ps1_l1_mlp_act_5 -> ps1_l1_mlp_fc2_5
+	ps1_l1_mlp_fc2_5 -> ps1_l1_mlp_ar_5
+	ps1_l1_mlp_ar_5 -> ps1_l1_mlp_res_5
+	ps1_l1_attn_res_5 -> ps1_l1_mlp_res_5
+	ps1_l1_mlp_res_5 -> ps1_l2_norm_5
+	ps1_l2_norm_5 -> ps1_l2_qkv_5
+	ps1_l2_qkv_5 -> ps1_l2_attn_5
+	ps1_l2_attn_5 -> ps1_l2_attn_ar_5
+	ps1_l2_attn_ar_5 -> ps1_l2_attn_proj_5
+	ps1_l2_attn_proj_5 -> ps1_l2_attn_res_5
+	ps1_l1_mlp_res_5 -> ps1_l2_attn_res_5
+	ps1_l2_attn_res_5 -> ps1_l2_mlp_norm_5
+	ps1_l2_mlp_norm_5 -> ps1_l2_mlp_fc1_5
+	ps1_l2_mlp_fc1_5 -> ps1_l2_mlp_act_5
+	ps1_l2_mlp_act_5 -> ps1_l2_mlp_fc2_5
+	ps1_l2_mlp_fc2_5 -> ps1_l2_mlp_ar_5
+	ps1_l2_mlp_ar_5 -> ps1_l2_mlp_res_5
+	ps1_l2_attn_res_5 -> ps1_l2_mlp_res_5
+	ps1_l2_mlp_res_5 -> pipeline_l2_send
+	input -> ps1_l1_norm_6
+	ps1_l1_norm_6 -> ps1_l1_qkv_6
+	ps1_l1_qkv_6 -> ps1_l1_attn_6
+	ps1_l1_attn_6 -> ps1_l1_attn_ar_6
+	ps1_l1_attn_ar_6 -> ps1_l1_attn_proj_6
+	ps1_l1_attn_proj_6 -> ps1_l1_attn_res_6
+	input -> ps1_l1_attn_res_6
+	ps1_l1_attn_res_6 -> ps1_l1_mlp_norm_6
+	ps1_l1_mlp_norm_6 -> ps1_l1_mlp_fc1_6
+	ps1_l1_mlp_fc1_6 -> ps1_l1_mlp_act_6
+	ps1_l1_mlp_act_6 -> ps1_l1_mlp_fc2_6
+	ps1_l1_mlp_fc2_6 -> ps1_l1_mlp_ar_6
+	ps1_l1_mlp_ar_6 -> ps1_l1_mlp_res_6
+	ps1_l1_attn_res_6 -> ps1_l1_mlp_res_6
+	ps1_l1_mlp_res_6 -> ps1_l2_norm_6
+	ps1_l2_norm_6 -> ps1_l2_qkv_6
+	ps1_l2_qkv_6 -> ps1_l2_attn_6
+	ps1_l2_attn_6 -> ps1_l2_attn_ar_6
+	ps1_l2_attn_ar_6 -> ps1_l2_attn_proj_6
+	ps1_l2_attn_proj_6 -> ps1_l2_attn_res_6
+	ps1_l1_mlp_res_6 -> ps1_l2_attn_res_6
+	ps1_l2_attn_res_6 -> ps1_l2_mlp_norm_6
+	ps1_l2_mlp_norm_6 -> ps1_l2_mlp_fc1_6
+	ps1_l2_mlp_fc1_6 -> ps1_l2_mlp_act_6
+	ps1_l2_mlp_act_6 -> ps1_l2_mlp_fc2_6
+	ps1_l2_mlp_fc2_6 -> ps1_l2_mlp_ar_6
+	ps1_l2_mlp_ar_6 -> ps1_l2_mlp_res_6
+	ps1_l2_attn_res_6 -> ps1_l2_mlp_res_6
+	ps1_l2_mlp_res_6 -> pipeline_l2_send
+	input -> ps1_l1_norm_7
+	ps1_l1_norm_7 -> ps1_l1_qkv_7
+	ps1_l1_qkv_7 -> ps1_l1_attn_7
+	ps1_l1_attn_7 -> ps1_l1_attn_ar_7
+	ps1_l1_attn_ar_7 -> ps1_l1_attn_proj_7
+	ps1_l1_attn_proj_7 -> ps1_l1_attn_res_7
+	input -> ps1_l1_attn_res_7
+	ps1_l1_attn_res_7 -> ps1_l1_mlp_norm_7
+	ps1_l1_mlp_norm_7 -> ps1_l1_mlp_fc1_7
+	ps1_l1_mlp_fc1_7 -> ps1_l1_mlp_act_7
+	ps1_l1_mlp_act_7 -> ps1_l1_mlp_fc2_7
+	ps1_l1_mlp_fc2_7 -> ps1_l1_mlp_ar_7
+	ps1_l1_mlp_ar_7 -> ps1_l1_mlp_res_7
+	ps1_l1_attn_res_7 -> ps1_l1_mlp_res_7
+	ps1_l1_mlp_res_7 -> ps1_l2_norm_7
+	ps1_l2_norm_7 -> ps1_l2_qkv_7
+	ps1_l2_qkv_7 -> ps1_l2_attn_7
+	ps1_l2_attn_7 -> ps1_l2_attn_ar_7
+	ps1_l2_attn_ar_7 -> ps1_l2_attn_proj_7
+	ps1_l2_attn_proj_7 -> ps1_l2_attn_res_7
+	ps1_l1_mlp_res_7 -> ps1_l2_attn_res_7
+	ps1_l2_attn_res_7 -> ps1_l2_mlp_norm_7
+	ps1_l2_mlp_norm_7 -> ps1_l2_mlp_fc1_7
+	ps1_l2_mlp_fc1_7 -> ps1_l2_mlp_act_7
+	ps1_l2_mlp_act_7 -> ps1_l2_mlp_fc2_7
+	ps1_l2_mlp_fc2_7 -> ps1_l2_mlp_ar_7
+	ps1_l2_mlp_ar_7 -> ps1_l2_mlp_res_7
+	ps1_l2_attn_res_7 -> ps1_l2_mlp_res_7
+	ps1_l2_mlp_res_7 -> pipeline_l2_send
+	pipeline_l2_send -> ps2_l3_norm_8
+	pipeline_l2_send -> ps2_l3_norm_9
+	pipeline_l2_send -> ps2_l3_norm_10
+	pipeline_l2_send -> ps2_l3_norm_11
+	pipeline_l2_send -> ps2_l3_norm_12
+	pipeline_l2_send -> ps2_l3_norm_13
+	pipeline_l2_send -> ps2_l3_norm_14
+	pipeline_l2_send -> ps2_l3_norm_15
+	ps2_l3_norm_8 -> ps2_l3_qkv_8
+	ps2_l3_qkv_8 -> ps2_l3_attn_8
+	ps2_l3_attn_8 -> ps2_l3_attn_ar_8
+	ps2_l3_attn_ar_8 -> ps2_l3_attn_proj_8
+	ps2_l3_attn_proj_8 -> ps2_l3_attn_res_8
+	pipeline_l2_send -> ps2_l3_attn_res_8
+	ps2_l3_attn_res_8 -> ps2_l3_mlp_norm_8
+	ps2_l3_mlp_norm_8 -> ps2_l3_mlp_fc1_8
+	ps2_l3_mlp_fc1_8 -> ps2_l3_mlp_act_8
+	ps2_l3_mlp_act_8 -> ps2_l3_mlp_fc2_8
+	ps2_l3_mlp_fc2_8 -> ps2_l3_mlp_ar_8
+	ps2_l3_mlp_ar_8 -> ps2_l3_mlp_res_8
+	ps2_l3_attn_res_8 -> ps2_l3_mlp_res_8
+	ps2_l3_mlp_res_8 -> ps2_l4_norm_8
+	ps2_l4_norm_8 -> ps2_l4_qkv_8
+	ps2_l4_qkv_8 -> ps2_l4_attn_8
+	ps2_l4_attn_8 -> ps2_l4_attn_ar_8
+	ps2_l4_attn_ar_8 -> ps2_l4_attn_proj_8
+	ps2_l4_attn_proj_8 -> ps2_l4_attn_res_8
+	ps2_l3_mlp_res_8 -> ps2_l4_attn_res_8
+	ps2_l4_attn_res_8 -> ps2_l4_mlp_norm_8
+	ps2_l4_mlp_norm_8 -> ps2_l4_mlp_fc1_8
+	ps2_l4_mlp_fc1_8 -> ps2_l4_mlp_act_8
+	ps2_l4_mlp_act_8 -> ps2_l4_mlp_fc2_8
+	ps2_l4_mlp_fc2_8 -> ps2_l4_mlp_ar_8
+	ps2_l4_mlp_ar_8 -> ps2_l4_mlp_res_8
+	ps2_l4_attn_res_8 -> ps2_l4_mlp_res_8
+	ps2_l4_mlp_res_8 -> output
+	ps2_l3_norm_9 -> ps2_l3_qkv_9
+	ps2_l3_qkv_9 -> ps2_l3_attn_9
+	ps2_l3_attn_9 -> ps2_l3_attn_ar_9
+	ps2_l3_attn_ar_9 -> ps2_l3_attn_proj_9
+	ps2_l3_attn_proj_9 -> ps2_l3_attn_res_9
+	pipeline_l2_send -> ps2_l3_attn_res_9
+	ps2_l3_attn_res_9 -> ps2_l3_mlp_norm_9
+	ps2_l3_mlp_norm_9 -> ps2_l3_mlp_fc1_9
+	ps2_l3_mlp_fc1_9 -> ps2_l3_mlp_act_9
+	ps2_l3_mlp_act_9 -> ps2_l3_mlp_fc2_9
+	ps2_l3_mlp_fc2_9 -> ps2_l3_mlp_ar_9
+	ps2_l3_mlp_ar_9 -> ps2_l3_mlp_res_9
+	ps2_l3_attn_res_9 -> ps2_l3_mlp_res_9
+	ps2_l3_mlp_res_9 -> ps2_l4_norm_9
+	ps2_l4_norm_9 -> ps2_l4_qkv_9
+	ps2_l4_qkv_9 -> ps2_l4_attn_9
+	ps2_l4_attn_9 -> ps2_l4_attn_ar_9
+	ps2_l4_attn_ar_9 -> ps2_l4_attn_proj_9
+	ps2_l4_attn_proj_9 -> ps2_l4_attn_res_9
+	ps2_l3_mlp_res_9 -> ps2_l4_attn_res_9
+	ps2_l4_attn_res_9 -> ps2_l4_mlp_norm_9
+	ps2_l4_mlp_norm_9 -> ps2_l4_mlp_fc1_9
+	ps2_l4_mlp_fc1_9 -> ps2_l4_mlp_act_9
+	ps2_l4_mlp_act_9 -> ps2_l4_mlp_fc2_9
+	ps2_l4_mlp_fc2_9 -> ps2_l4_mlp_ar_9
+	ps2_l4_mlp_ar_9 -> ps2_l4_mlp_res_9
+	ps2_l4_attn_res_9 -> ps2_l4_mlp_res_9
+	ps2_l4_mlp_res_9 -> output
+	ps2_l3_norm_10 -> ps2_l3_qkv_10
+	ps2_l3_qkv_10 -> ps2_l3_attn_10
+	ps2_l3_attn_10 -> ps2_l3_attn_ar_10
+	ps2_l3_attn_ar_10 -> ps2_l3_attn_proj_10
+	ps2_l3_attn_proj_10 -> ps2_l3_attn_res_10
+	pipeline_l2_send -> ps2_l3_attn_res_10
+	ps2_l3_attn_res_10 -> ps2_l3_mlp_norm_10
+	ps2_l3_mlp_norm_10 -> ps2_l3_mlp_fc1_10
+	ps2_l3_mlp_fc1_10 -> ps2_l3_mlp_act_10
+	ps2_l3_mlp_act_10 -> ps2_l3_mlp_fc2_10
+	ps2_l3_mlp_fc2_10 -> ps2_l3_mlp_ar_10
+	ps2_l3_mlp_ar_10 -> ps2_l3_mlp_res_10
+	ps2_l3_attn_res_10 -> ps2_l3_mlp_res_10
+	ps2_l3_mlp_res_10 -> ps2_l4_norm_10
+	ps2_l4_norm_10 -> ps2_l4_qkv_10
+	ps2_l4_qkv_10 -> ps2_l4_attn_10
+	ps2_l4_attn_10 -> ps2_l4_attn_ar_10
+	ps2_l4_attn_ar_10 -> ps2_l4_attn_proj_10
+	ps2_l4_attn_proj_10 -> ps2_l4_attn_res_10
+	ps2_l3_mlp_res_10 -> ps2_l4_attn_res_10
+	ps2_l4_attn_res_10 -> ps2_l4_mlp_norm_10
+	ps2_l4_mlp_norm_10 -> ps2_l4_mlp_fc1_10
+	ps2_l4_mlp_fc1_10 -> ps2_l4_mlp_act_10
+	ps2_l4_mlp_act_10 -> ps2_l4_mlp_fc2_10
+	ps2_l4_mlp_fc2_10 -> ps2_l4_mlp_ar_10
+	ps2_l4_mlp_ar_10 -> ps2_l4_mlp_res_10
+	ps2_l4_attn_res_10 -> ps2_l4_mlp_res_10
+	ps2_l4_mlp_res_10 -> output
+	ps2_l3_norm_11 -> ps2_l3_qkv_11
+	ps2_l3_qkv_11 -> ps2_l3_attn_11
+	ps2_l3_attn_11 -> ps2_l3_attn_ar_11
+	ps2_l3_attn_ar_11 -> ps2_l3_attn_proj_11
+	ps2_l3_attn_proj_11 -> ps2_l3_attn_res_11
+	pipeline_l2_send -> ps2_l3_attn_res_11
+	ps2_l3_attn_res_11 -> ps2_l3_mlp_norm_11
+	ps2_l3_mlp_norm_11 -> ps2_l3_mlp_fc1_11
+	ps2_l3_mlp_fc1_11 -> ps2_l3_mlp_act_11
+	ps2_l3_mlp_act_11 -> ps2_l3_mlp_fc2_11
+	ps2_l3_mlp_fc2_11 -> ps2_l3_mlp_ar_11
+	ps2_l3_mlp_ar_11 -> ps2_l3_mlp_res_11
+	ps2_l3_attn_res_11 -> ps2_l3_mlp_res_11
+	ps2_l3_mlp_res_11 -> ps2_l4_norm_11
+	ps2_l4_norm_11 -> ps2_l4_qkv_11
+	ps2_l4_qkv_11 -> ps2_l4_attn_11
+	ps2_l4_attn_11 -> ps2_l4_attn_ar_11
+	ps2_l4_attn_ar_11 -> ps2_l4_attn_proj_11
+	ps2_l4_attn_proj_11 -> ps2_l4_attn_res_11
+	ps2_l3_mlp_res_11 -> ps2_l4_attn_res_11
+	ps2_l4_attn_res_11 -> ps2_l4_mlp_norm_11
+	ps2_l4_mlp_norm_11 -> ps2_l4_mlp_fc1_11
+	ps2_l4_mlp_fc1_11 -> ps2_l4_mlp_act_11
+	ps2_l4_mlp_act_11 -> ps2_l4_mlp_fc2_11
+	ps2_l4_mlp_fc2_11 -> ps2_l4_mlp_ar_11
+	ps2_l4_mlp_ar_11 -> ps2_l4_mlp_res_11
+	ps2_l4_attn_res_11 -> ps2_l4_mlp_res_11
+	ps2_l4_mlp_res_11 -> output
+	ps2_l3_norm_12 -> ps2_l3_qkv_12
+	ps2_l3_qkv_12 -> ps2_l3_attn_12
+	ps2_l3_attn_12 -> ps2_l3_attn_ar_12
+	ps2_l3_attn_ar_12 -> ps2_l3_attn_proj_12
+	ps2_l3_attn_proj_12 -> ps2_l3_attn_res_12
+	pipeline_l2_send -> ps2_l3_attn_res_12
+	ps2_l3_attn_res_12 -> ps2_l3_mlp_norm_12
+	ps2_l3_mlp_norm_12 -> ps2_l3_mlp_fc1_12
+	ps2_l3_mlp_fc1_12 -> ps2_l3_mlp_act_12
+	ps2_l3_mlp_act_12 -> ps2_l3_mlp_fc2_12
+	ps2_l3_mlp_fc2_12 -> ps2_l3_mlp_ar_12
+	ps2_l3_mlp_ar_12 -> ps2_l3_mlp_res_12
+	ps2_l3_attn_res_12 -> ps2_l3_mlp_res_12
+	ps2_l3_mlp_res_12 -> ps2_l4_norm_12
+	ps2_l4_norm_12 -> ps2_l4_qkv_12
+	ps2_l4_qkv_12 -> ps2_l4_attn_12
+	ps2_l4_attn_12 -> ps2_l4_attn_ar_12
+	ps2_l4_attn_ar_12 -> ps2_l4_attn_proj_12
+	ps2_l4_attn_proj_12 -> ps2_l4_attn_res_12
+	ps2_l3_mlp_res_12 -> ps2_l4_attn_res_12
+	ps2_l4_attn_res_12 -> ps2_l4_mlp_norm_12
+	ps2_l4_mlp_norm_12 -> ps2_l4_mlp_fc1_12
+	ps2_l4_mlp_fc1_12 -> ps2_l4_mlp_act_12
+	ps2_l4_mlp_act_12 -> ps2_l4_mlp_fc2_12
+	ps2_l4_mlp_fc2_12 -> ps2_l4_mlp_ar_12
+	ps2_l4_mlp_ar_12 -> ps2_l4_mlp_res_12
+	ps2_l4_attn_res_12 -> ps2_l4_mlp_res_12
+	ps2_l4_mlp_res_12 -> output
+	ps2_l3_norm_13 -> ps2_l3_qkv_13
+	ps2_l3_qkv_13 -> ps2_l3_attn_13
+	ps2_l3_attn_13 -> ps2_l3_attn_ar_13
+	ps2_l3_attn_ar_13 -> ps2_l3_attn_proj_13
+	ps2_l3_attn_proj_13 -> ps2_l3_attn_res_13
+	pipeline_l2_send -> ps2_l3_attn_res_13
+	ps2_l3_attn_res_13 -> ps2_l3_mlp_norm_13
+	ps2_l3_mlp_norm_13 -> ps2_l3_mlp_fc1_13
+	ps2_l3_mlp_fc1_13 -> ps2_l3_mlp_act_13
+	ps2_l3_mlp_act_13 -> ps2_l3_mlp_fc2_13
+	ps2_l3_mlp_fc2_13 -> ps2_l3_mlp_ar_13
+	ps2_l3_mlp_ar_13 -> ps2_l3_mlp_res_13
+	ps2_l3_attn_res_13 -> ps2_l3_mlp_res_13
+	ps2_l3_mlp_res_13 -> ps2_l4_norm_13
+	ps2_l4_norm_13 -> ps2_l4_qkv_13
+	ps2_l4_qkv_13 -> ps2_l4_attn_13
+	ps2_l4_attn_13 -> ps2_l4_attn_ar_13
+	ps2_l4_attn_ar_13 -> ps2_l4_attn_proj_13
+	ps2_l4_attn_proj_13 -> ps2_l4_attn_res_13
+	ps2_l3_mlp_res_13 -> ps2_l4_attn_res_13
+	ps2_l4_attn_res_13 -> ps2_l4_mlp_norm_13
+	ps2_l4_mlp_norm_13 -> ps2_l4_mlp_fc1_13
+	ps2_l4_mlp_fc1_13 -> ps2_l4_mlp_act_13
+	ps2_l4_mlp_act_13 -> ps2_l4_mlp_fc2_13
+	ps2_l4_mlp_fc2_13 -> ps2_l4_mlp_ar_13
+	ps2_l4_mlp_ar_13 -> ps2_l4_mlp_res_13
+	ps2_l4_attn_res_13 -> ps2_l4_mlp_res_13
+	ps2_l4_mlp_res_13 -> output
+	ps2_l3_norm_14 -> ps2_l3_qkv_14
+	ps2_l3_qkv_14 -> ps2_l3_attn_14
+	ps2_l3_attn_14 -> ps2_l3_attn_ar_14
+	ps2_l3_attn_ar_14 -> ps2_l3_attn_proj_14
+	ps2_l3_attn_proj_14 -> ps2_l3_attn_res_14
+	pipeline_l2_send -> ps2_l3_attn_res_14
+	ps2_l3_attn_res_14 -> ps2_l3_mlp_norm_14
+	ps2_l3_mlp_norm_14 -> ps2_l3_mlp_fc1_14
+	ps2_l3_mlp_fc1_14 -> ps2_l3_mlp_act_14
+	ps2_l3_mlp_act_14 -> ps2_l3_mlp_fc2_14
+	ps2_l3_mlp_fc2_14 -> ps2_l3_mlp_ar_14
+	ps2_l3_mlp_ar_14 -> ps2_l3_mlp_res_14
+	ps2_l3_attn_res_14 -> ps2_l3_mlp_res_14
+	ps2_l3_mlp_res_14 -> ps2_l4_norm_14
+	ps2_l4_norm_14 -> ps2_l4_qkv_14
+	ps2_l4_qkv_14 -> ps2_l4_attn_14
+	ps2_l4_attn_14 -> ps2_l4_attn_ar_14
+	ps2_l4_attn_ar_14 -> ps2_l4_attn_proj_14
+	ps2_l4_attn_proj_14 -> ps2_l4_attn_res_14
+	ps2_l3_mlp_res_14 -> ps2_l4_attn_res_14
+	ps2_l4_attn_res_14 -> ps2_l4_mlp_norm_14
+	ps2_l4_mlp_norm_14 -> ps2_l4_mlp_fc1_14
+	ps2_l4_mlp_fc1_14 -> ps2_l4_mlp_act_14
+	ps2_l4_mlp_act_14 -> ps2_l4_mlp_fc2_14
+	ps2_l4_mlp_fc2_14 -> ps2_l4_mlp_ar_14
+	ps2_l4_mlp_ar_14 -> ps2_l4_mlp_res_14
+	ps2_l4_attn_res_14 -> ps2_l4_mlp_res_14
+	ps2_l4_mlp_res_14 -> output
+	ps2_l3_norm_15 -> ps2_l3_qkv_15
+	ps2_l3_qkv_15 -> ps2_l3_attn_15
+	ps2_l3_attn_15 -> ps2_l3_attn_ar_15
+	ps2_l3_attn_ar_15 -> ps2_l3_attn_proj_15
+	ps2_l3_attn_proj_15 -> ps2_l3_attn_res_15
+	pipeline_l2_send -> ps2_l3_attn_res_15
+	ps2_l3_attn_res_15 -> ps2_l3_mlp_norm_15
+	ps2_l3_mlp_norm_15 -> ps2_l3_mlp_fc1_15
+	ps2_l3_mlp_fc1_15 -> ps2_l3_mlp_act_15
+	ps2_l3_mlp_act_15 -> ps2_l3_mlp_fc2_15
+	ps2_l3_mlp_fc2_15 -> ps2_l3_mlp_ar_15
+	ps2_l3_mlp_ar_15 -> ps2_l3_mlp_res_15
+	ps2_l3_attn_res_15 -> ps2_l3_mlp_res_15
+	ps2_l3_mlp_res_15 -> ps2_l4_norm_15
+	ps2_l4_norm_15 -> ps2_l4_qkv_15
+	ps2_l4_qkv_15 -> ps2_l4_attn_15
+	ps2_l4_attn_15 -> ps2_l4_attn_ar_15
+	ps2_l4_attn_ar_15 -> ps2_l4_attn_proj_15
+	ps2_l4_attn_proj_15 -> ps2_l4_attn_res_15
+	ps2_l3_mlp_res_15 -> ps2_l4_attn_res_15
+	ps2_l4_attn_res_15 -> ps2_l4_mlp_norm_15
+	ps2_l4_mlp_norm_15 -> ps2_l4_mlp_fc1_15
+	ps2_l4_mlp_fc1_15 -> ps2_l4_mlp_act_15
+	ps2_l4_mlp_act_15 -> ps2_l4_mlp_fc2_15
+	ps2_l4_mlp_fc2_15 -> ps2_l4_mlp_ar_15
+	ps2_l4_mlp_ar_15 -> ps2_l4_mlp_res_15
+	ps2_l4_attn_res_15 -> ps2_l4_mlp_res_15
+	ps2_l4_mlp_res_15 -> output
+}
