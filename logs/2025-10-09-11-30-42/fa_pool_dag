@@ -1,0 +1,1687 @@
+// FA Pool DAG: Dynamic Parallel Strategy (8 Base + 32 Pool GPUs)
+digraph {
+	rankdir=TB size="30,40"
+	node [fontname=Arial fontsize=10]
+	subgraph cluster_base_layer {
+		bgcolor=lightblue label="Base Layer (8 GPUs - Model Backbone)" style=rounded
+		embed_input [label="Input Embedding
+GPU 0
+Input: [batch_size=?, seq_len=?, vocab_size=?]
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=lightgreen shape=ellipse style=filled]
+		seq_check [label="Sequence Length Check
+GPU 0
+Threshold: 4096 tokens
+Decision: Base vs Pool" fillcolor=gold shape=diamond style=filled]
+		layer0_ffn1_base_gpu0 [label="FFN Layer 1
+Base GPU 0
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_ffn2_base_gpu0 [label="FFN Layer 2
+Base GPU 0
+Layer 0
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_res_base_gpu0 [label="Residual Add
+Base GPU 0
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer0_ffn1_base_gpu1 [label="FFN Layer 1
+Base GPU 1
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_ffn2_base_gpu1 [label="FFN Layer 2
+Base GPU 1
+Layer 0
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_res_base_gpu1 [label="Residual Add
+Base GPU 1
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer0_ffn1_base_gpu2 [label="FFN Layer 1
+Base GPU 2
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_ffn2_base_gpu2 [label="FFN Layer 2
+Base GPU 2
+Layer 0
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_res_base_gpu2 [label="Residual Add
+Base GPU 2
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer0_ffn1_base_gpu3 [label="FFN Layer 1
+Base GPU 3
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_ffn2_base_gpu3 [label="FFN Layer 2
+Base GPU 3
+Layer 0
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_res_base_gpu3 [label="Residual Add
+Base GPU 3
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer0_ffn1_base_gpu4 [label="FFN Layer 1
+Base GPU 4
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_ffn2_base_gpu4 [label="FFN Layer 2
+Base GPU 4
+Layer 0
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_res_base_gpu4 [label="Residual Add
+Base GPU 4
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer0_ffn1_base_gpu5 [label="FFN Layer 1
+Base GPU 5
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_ffn2_base_gpu5 [label="FFN Layer 2
+Base GPU 5
+Layer 0
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_res_base_gpu5 [label="Residual Add
+Base GPU 5
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer0_ffn1_base_gpu6 [label="FFN Layer 1
+Base GPU 6
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_ffn2_base_gpu6 [label="FFN Layer 2
+Base GPU 6
+Layer 0
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_res_base_gpu6 [label="Residual Add
+Base GPU 6
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer0_ffn1_base_gpu7 [label="FFN Layer 1
+Base GPU 7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_ffn2_base_gpu7 [label="FFN Layer 2
+Base GPU 7
+Layer 0
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer0_res_base_gpu7 [label="Residual Add
+Base GPU 7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer0_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 0
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer1_ffn1_base_gpu0 [label="FFN Layer 1
+Base GPU 0
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_ffn2_base_gpu0 [label="FFN Layer 2
+Base GPU 0
+Layer 1
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_res_base_gpu0 [label="Residual Add
+Base GPU 0
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer1_ffn1_base_gpu1 [label="FFN Layer 1
+Base GPU 1
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_ffn2_base_gpu1 [label="FFN Layer 2
+Base GPU 1
+Layer 1
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_res_base_gpu1 [label="Residual Add
+Base GPU 1
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer1_ffn1_base_gpu2 [label="FFN Layer 1
+Base GPU 2
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_ffn2_base_gpu2 [label="FFN Layer 2
+Base GPU 2
+Layer 1
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_res_base_gpu2 [label="Residual Add
+Base GPU 2
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer1_ffn1_base_gpu3 [label="FFN Layer 1
+Base GPU 3
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_ffn2_base_gpu3 [label="FFN Layer 2
+Base GPU 3
+Layer 1
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_res_base_gpu3 [label="Residual Add
+Base GPU 3
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer1_ffn1_base_gpu4 [label="FFN Layer 1
+Base GPU 4
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_ffn2_base_gpu4 [label="FFN Layer 2
+Base GPU 4
+Layer 1
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_res_base_gpu4 [label="Residual Add
+Base GPU 4
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer1_ffn1_base_gpu5 [label="FFN Layer 1
+Base GPU 5
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_ffn2_base_gpu5 [label="FFN Layer 2
+Base GPU 5
+Layer 1
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_res_base_gpu5 [label="Residual Add
+Base GPU 5
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer1_ffn1_base_gpu6 [label="FFN Layer 1
+Base GPU 6
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_ffn2_base_gpu6 [label="FFN Layer 2
+Base GPU 6
+Layer 1
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_res_base_gpu6 [label="Residual Add
+Base GPU 6
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer1_ffn1_base_gpu7 [label="FFN Layer 1
+Base GPU 7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_ffn2_base_gpu7 [label="FFN Layer 2
+Base GPU 7
+Layer 1
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer1_res_base_gpu7 [label="Residual Add
+Base GPU 7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer1_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 1
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer2_ffn1_base_gpu0 [label="FFN Layer 1
+Base GPU 0
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_ffn2_base_gpu0 [label="FFN Layer 2
+Base GPU 0
+Layer 2
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_res_base_gpu0 [label="Residual Add
+Base GPU 0
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer2_ffn1_base_gpu1 [label="FFN Layer 1
+Base GPU 1
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_ffn2_base_gpu1 [label="FFN Layer 2
+Base GPU 1
+Layer 2
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_res_base_gpu1 [label="Residual Add
+Base GPU 1
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer2_ffn1_base_gpu2 [label="FFN Layer 1
+Base GPU 2
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_ffn2_base_gpu2 [label="FFN Layer 2
+Base GPU 2
+Layer 2
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_res_base_gpu2 [label="Residual Add
+Base GPU 2
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer2_ffn1_base_gpu3 [label="FFN Layer 1
+Base GPU 3
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_ffn2_base_gpu3 [label="FFN Layer 2
+Base GPU 3
+Layer 2
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_res_base_gpu3 [label="Residual Add
+Base GPU 3
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer2_ffn1_base_gpu4 [label="FFN Layer 1
+Base GPU 4
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_ffn2_base_gpu4 [label="FFN Layer 2
+Base GPU 4
+Layer 2
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_res_base_gpu4 [label="Residual Add
+Base GPU 4
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer2_ffn1_base_gpu5 [label="FFN Layer 1
+Base GPU 5
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_ffn2_base_gpu5 [label="FFN Layer 2
+Base GPU 5
+Layer 2
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_res_base_gpu5 [label="Residual Add
+Base GPU 5
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer2_ffn1_base_gpu6 [label="FFN Layer 1
+Base GPU 6
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_ffn2_base_gpu6 [label="FFN Layer 2
+Base GPU 6
+Layer 2
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_res_base_gpu6 [label="Residual Add
+Base GPU 6
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer2_ffn1_base_gpu7 [label="FFN Layer 1
+Base GPU 7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_ffn2_base_gpu7 [label="FFN Layer 2
+Base GPU 7
+Layer 2
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer2_res_base_gpu7 [label="Residual Add
+Base GPU 7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer2_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 2
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer3_ffn1_base_gpu0 [label="FFN Layer 1
+Base GPU 0
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_ffn2_base_gpu0 [label="FFN Layer 2
+Base GPU 0
+Layer 3
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_res_base_gpu0 [label="Residual Add
+Base GPU 0
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer3_ffn1_base_gpu1 [label="FFN Layer 1
+Base GPU 1
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_ffn2_base_gpu1 [label="FFN Layer 2
+Base GPU 1
+Layer 3
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_res_base_gpu1 [label="Residual Add
+Base GPU 1
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer3_ffn1_base_gpu2 [label="FFN Layer 1
+Base GPU 2
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_ffn2_base_gpu2 [label="FFN Layer 2
+Base GPU 2
+Layer 3
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_res_base_gpu2 [label="Residual Add
+Base GPU 2
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer3_ffn1_base_gpu3 [label="FFN Layer 1
+Base GPU 3
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_ffn2_base_gpu3 [label="FFN Layer 2
+Base GPU 3
+Layer 3
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_res_base_gpu3 [label="Residual Add
+Base GPU 3
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer3_ffn1_base_gpu4 [label="FFN Layer 1
+Base GPU 4
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_ffn2_base_gpu4 [label="FFN Layer 2
+Base GPU 4
+Layer 3
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_res_base_gpu4 [label="Residual Add
+Base GPU 4
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer3_ffn1_base_gpu5 [label="FFN Layer 1
+Base GPU 5
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_ffn2_base_gpu5 [label="FFN Layer 2
+Base GPU 5
+Layer 3
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_res_base_gpu5 [label="Residual Add
+Base GPU 5
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer3_ffn1_base_gpu6 [label="FFN Layer 1
+Base GPU 6
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_ffn2_base_gpu6 [label="FFN Layer 2
+Base GPU 6
+Layer 3
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_res_base_gpu6 [label="Residual Add
+Base GPU 6
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		layer3_ffn1_base_gpu7 [label="FFN Layer 1
+Base GPU 7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, ffn_hidden_size=2048]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_ffn2_base_gpu7 [label="FFN Layer 2
+Base GPU 7
+Layer 3
+Input: [batch_size=?, seq_len=?, ffn_hidden_size=2048]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightblue shape=rectangle style=filled]
+		layer3_res_base_gpu7 [label="Residual Add
+Base GPU 7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512], [batch_size=?, seq_len=?, hidden_size=512]
+Output: [batch_size=?, seq_len=?, hidden_size=512]" fillcolor=lightgray shape=parallelogram style=filled]
+		layer3_allreduce_base [label="All-Reduce
+Across Base GPUs 0-7
+Layer 3
+Input: [batch_size=?, seq_len=?, hidden_size=512]×8
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+	}
+	subgraph cluster_attention_pool {
+		bgcolor=lightyellow label="Attention Pool (0-32 GPUs - Dynamic)" style=rounded
+		pool_calc [label="Pool Size Calculation
+GPU 0
+Formula: min(ceil(seq_len/2048), 32)
+Output: pool_size (1-32)" fillcolor=gold shape=ellipse style=filled]
+		gpu_alloc [label="Dynamic GPU Allocation
+Based on pool_size
+Allocate GPUs 8-39" fillcolor=gold shape=diamond style=filled]
+		block_calc_gpu8 [label="Block Size Calculation
+Pool GPU 8
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu8 [label="QKV Projection
+Pool GPU 8
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu8 [label="Scaled Dot-Product Attention
+Pool GPU 8
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu8 [label="Output Projection
+Pool GPU 8
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu8 [label="KV Cache Share
+Pool GPU 8
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu9 [label="Block Size Calculation
+Pool GPU 9
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu9 [label="QKV Projection
+Pool GPU 9
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu9 [label="Scaled Dot-Product Attention
+Pool GPU 9
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu9 [label="Output Projection
+Pool GPU 9
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu9 [label="KV Cache Share
+Pool GPU 9
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu10 [label="Block Size Calculation
+Pool GPU 10
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu10 [label="QKV Projection
+Pool GPU 10
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu10 [label="Scaled Dot-Product Attention
+Pool GPU 10
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu10 [label="Output Projection
+Pool GPU 10
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu10 [label="KV Cache Share
+Pool GPU 10
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu11 [label="Block Size Calculation
+Pool GPU 11
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu11 [label="QKV Projection
+Pool GPU 11
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu11 [label="Scaled Dot-Product Attention
+Pool GPU 11
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu11 [label="Output Projection
+Pool GPU 11
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu11 [label="KV Cache Share
+Pool GPU 11
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu12 [label="Block Size Calculation
+Pool GPU 12
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu12 [label="QKV Projection
+Pool GPU 12
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu12 [label="Scaled Dot-Product Attention
+Pool GPU 12
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu12 [label="Output Projection
+Pool GPU 12
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu12 [label="KV Cache Share
+Pool GPU 12
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu13 [label="Block Size Calculation
+Pool GPU 13
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu13 [label="QKV Projection
+Pool GPU 13
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu13 [label="Scaled Dot-Product Attention
+Pool GPU 13
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu13 [label="Output Projection
+Pool GPU 13
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu13 [label="KV Cache Share
+Pool GPU 13
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu14 [label="Block Size Calculation
+Pool GPU 14
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu14 [label="QKV Projection
+Pool GPU 14
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu14 [label="Scaled Dot-Product Attention
+Pool GPU 14
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu14 [label="Output Projection
+Pool GPU 14
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu14 [label="KV Cache Share
+Pool GPU 14
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu15 [label="Block Size Calculation
+Pool GPU 15
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu15 [label="QKV Projection
+Pool GPU 15
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu15 [label="Scaled Dot-Product Attention
+Pool GPU 15
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu15 [label="Output Projection
+Pool GPU 15
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu15 [label="KV Cache Share
+Pool GPU 15
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu16 [label="Block Size Calculation
+Pool GPU 16
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu16 [label="QKV Projection
+Pool GPU 16
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu16 [label="Scaled Dot-Product Attention
+Pool GPU 16
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu16 [label="Output Projection
+Pool GPU 16
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu16 [label="KV Cache Share
+Pool GPU 16
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu17 [label="Block Size Calculation
+Pool GPU 17
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu17 [label="QKV Projection
+Pool GPU 17
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu17 [label="Scaled Dot-Product Attention
+Pool GPU 17
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu17 [label="Output Projection
+Pool GPU 17
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu17 [label="KV Cache Share
+Pool GPU 17
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu18 [label="Block Size Calculation
+Pool GPU 18
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu18 [label="QKV Projection
+Pool GPU 18
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu18 [label="Scaled Dot-Product Attention
+Pool GPU 18
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu18 [label="Output Projection
+Pool GPU 18
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu18 [label="KV Cache Share
+Pool GPU 18
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu19 [label="Block Size Calculation
+Pool GPU 19
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu19 [label="QKV Projection
+Pool GPU 19
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu19 [label="Scaled Dot-Product Attention
+Pool GPU 19
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu19 [label="Output Projection
+Pool GPU 19
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu19 [label="KV Cache Share
+Pool GPU 19
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu20 [label="Block Size Calculation
+Pool GPU 20
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu20 [label="QKV Projection
+Pool GPU 20
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu20 [label="Scaled Dot-Product Attention
+Pool GPU 20
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu20 [label="Output Projection
+Pool GPU 20
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu20 [label="KV Cache Share
+Pool GPU 20
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu21 [label="Block Size Calculation
+Pool GPU 21
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu21 [label="QKV Projection
+Pool GPU 21
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu21 [label="Scaled Dot-Product Attention
+Pool GPU 21
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu21 [label="Output Projection
+Pool GPU 21
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu21 [label="KV Cache Share
+Pool GPU 21
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu22 [label="Block Size Calculation
+Pool GPU 22
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu22 [label="QKV Projection
+Pool GPU 22
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu22 [label="Scaled Dot-Product Attention
+Pool GPU 22
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu22 [label="Output Projection
+Pool GPU 22
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu22 [label="KV Cache Share
+Pool GPU 22
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu23 [label="Block Size Calculation
+Pool GPU 23
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu23 [label="QKV Projection
+Pool GPU 23
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu23 [label="Scaled Dot-Product Attention
+Pool GPU 23
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu23 [label="Output Projection
+Pool GPU 23
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu23 [label="KV Cache Share
+Pool GPU 23
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu24 [label="Block Size Calculation
+Pool GPU 24
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu24 [label="QKV Projection
+Pool GPU 24
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu24 [label="Scaled Dot-Product Attention
+Pool GPU 24
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu24 [label="Output Projection
+Pool GPU 24
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu24 [label="KV Cache Share
+Pool GPU 24
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu25 [label="Block Size Calculation
+Pool GPU 25
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu25 [label="QKV Projection
+Pool GPU 25
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu25 [label="Scaled Dot-Product Attention
+Pool GPU 25
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu25 [label="Output Projection
+Pool GPU 25
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu25 [label="KV Cache Share
+Pool GPU 25
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu26 [label="Block Size Calculation
+Pool GPU 26
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu26 [label="QKV Projection
+Pool GPU 26
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu26 [label="Scaled Dot-Product Attention
+Pool GPU 26
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu26 [label="Output Projection
+Pool GPU 26
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu26 [label="KV Cache Share
+Pool GPU 26
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu27 [label="Block Size Calculation
+Pool GPU 27
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu27 [label="QKV Projection
+Pool GPU 27
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu27 [label="Scaled Dot-Product Attention
+Pool GPU 27
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu27 [label="Output Projection
+Pool GPU 27
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu27 [label="KV Cache Share
+Pool GPU 27
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu28 [label="Block Size Calculation
+Pool GPU 28
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu28 [label="QKV Projection
+Pool GPU 28
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu28 [label="Scaled Dot-Product Attention
+Pool GPU 28
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu28 [label="Output Projection
+Pool GPU 28
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu28 [label="KV Cache Share
+Pool GPU 28
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu29 [label="Block Size Calculation
+Pool GPU 29
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu29 [label="QKV Projection
+Pool GPU 29
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu29 [label="Scaled Dot-Product Attention
+Pool GPU 29
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu29 [label="Output Projection
+Pool GPU 29
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu29 [label="KV Cache Share
+Pool GPU 29
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu30 [label="Block Size Calculation
+Pool GPU 30
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu30 [label="QKV Projection
+Pool GPU 30
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu30 [label="Scaled Dot-Product Attention
+Pool GPU 30
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu30 [label="Output Projection
+Pool GPU 30
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu30 [label="KV Cache Share
+Pool GPU 30
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu31 [label="Block Size Calculation
+Pool GPU 31
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu31 [label="QKV Projection
+Pool GPU 31
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu31 [label="Scaled Dot-Product Attention
+Pool GPU 31
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu31 [label="Output Projection
+Pool GPU 31
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu31 [label="KV Cache Share
+Pool GPU 31
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu32 [label="Block Size Calculation
+Pool GPU 32
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu32 [label="QKV Projection
+Pool GPU 32
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu32 [label="Scaled Dot-Product Attention
+Pool GPU 32
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu32 [label="Output Projection
+Pool GPU 32
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu32 [label="KV Cache Share
+Pool GPU 32
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu33 [label="Block Size Calculation
+Pool GPU 33
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu33 [label="QKV Projection
+Pool GPU 33
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu33 [label="Scaled Dot-Product Attention
+Pool GPU 33
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu33 [label="Output Projection
+Pool GPU 33
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu33 [label="KV Cache Share
+Pool GPU 33
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu34 [label="Block Size Calculation
+Pool GPU 34
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu34 [label="QKV Projection
+Pool GPU 34
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu34 [label="Scaled Dot-Product Attention
+Pool GPU 34
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu34 [label="Output Projection
+Pool GPU 34
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu34 [label="KV Cache Share
+Pool GPU 34
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu35 [label="Block Size Calculation
+Pool GPU 35
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu35 [label="QKV Projection
+Pool GPU 35
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu35 [label="Scaled Dot-Product Attention
+Pool GPU 35
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu35 [label="Output Projection
+Pool GPU 35
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu35 [label="KV Cache Share
+Pool GPU 35
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu36 [label="Block Size Calculation
+Pool GPU 36
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu36 [label="QKV Projection
+Pool GPU 36
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu36 [label="Scaled Dot-Product Attention
+Pool GPU 36
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu36 [label="Output Projection
+Pool GPU 36
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu36 [label="KV Cache Share
+Pool GPU 36
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu37 [label="Block Size Calculation
+Pool GPU 37
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu37 [label="QKV Projection
+Pool GPU 37
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu37 [label="Scaled Dot-Product Attention
+Pool GPU 37
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu37 [label="Output Projection
+Pool GPU 37
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu37 [label="KV Cache Share
+Pool GPU 37
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu38 [label="Block Size Calculation
+Pool GPU 38
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu38 [label="QKV Projection
+Pool GPU 38
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu38 [label="Scaled Dot-Product Attention
+Pool GPU 38
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu38 [label="Output Projection
+Pool GPU 38
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu38 [label="KV Cache Share
+Pool GPU 38
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+		block_calc_gpu39 [label="Block Size Calculation
+Pool GPU 39
+Formula: b = ceil(n/p)
+Output: block_size" fillcolor=lightgreen shape=ellipse style=filled]
+		qkv_pool_gpu39 [label="QKV Projection
+Pool GPU 39
+Input: [batch_size=?, block_size=?, hidden_size=4096]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		attn_pool_gpu39 [label="Scaled Dot-Product Attention
+Pool GPU 39
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, heads=32, d_k=128]" fillcolor=lightcoral shape=rectangle style=filled]
+		out_proj_pool_gpu39 [label="Output Projection
+Pool GPU 39
+Input: [batch_size=?, block_size=?, heads=32, d_k=128]
+Output: [batch_size=?, block_size=?, hidden_size=4096]" fillcolor=lightcoral shape=rectangle style=filled]
+		kv_cache_gpu39 [label="KV Cache Share
+Pool GPU 39
+Input: [batch_size=?, seq_len=?, heads=32, d_k=128]
+Output: [batch_size=?, seq_len=?, heads=32, d_k=128]" fillcolor=purple shape=ellipse style=dashed]
+	}
+	subgraph cluster_aggregation {
+		bgcolor=lightpink label="Result Aggregation" style=rounded
+		hier_reduce [label="Hierarchical Reduction
+Across Pool GPUs
+Input: [batch_size=?, seq_len=?, hidden_size=4096]×pool_size
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=orange shape=ellipse style=dashed]
+		overlap [label="Overlap Execution
+Attention + FFN
+GPU 0-7 & 8-39" fillcolor=gold shape=diamond style=filled]
+	}
+	subgraph cluster_output {
+		bgcolor=lightgreen label="Output Layer" style=rounded
+		final_norm [label="Layer Normalization
+GPU 0
+Input: [batch_size=?, seq_len=?, hidden_size=4096]
+Output: [batch_size=?, seq_len=?, hidden_size=4096]" fillcolor=lightgreen shape=rectangle style=filled]
+		output_proj [label="Output Projection
+GPU 0
+Input: [batch_size=?, seq_len=?, hidden_size=4096]
+Output: [batch_size=?, seq_len=?, vocab_size=?]" fillcolor=lightgreen shape=rectangle style=filled]
+	}
+	embed_input -> seq_check
+	seq_check -> pool_calc [label="seq_len > 4096"]
+	seq_check -> layer0_ffn1_base_gpu0 [label="seq_len <= 4096"]
+	pool_calc -> gpu_alloc
+	gpu_alloc -> block_calc_gpu8
+	block_calc_gpu8 -> qkv_pool_gpu8
+	qkv_pool_gpu8 -> kv_cache_gpu8
+	kv_cache_gpu8 -> attn_pool_gpu8
+	attn_pool_gpu8 -> out_proj_pool_gpu8
+	out_proj_pool_gpu8 -> hier_reduce
+	gpu_alloc -> block_calc_gpu9
+	block_calc_gpu9 -> qkv_pool_gpu9
+	qkv_pool_gpu9 -> kv_cache_gpu9
+	kv_cache_gpu9 -> attn_pool_gpu9
+	attn_pool_gpu9 -> out_proj_pool_gpu9
+	out_proj_pool_gpu9 -> hier_reduce
+	gpu_alloc -> block_calc_gpu10
+	block_calc_gpu10 -> qkv_pool_gpu10
+	qkv_pool_gpu10 -> kv_cache_gpu10
+	kv_cache_gpu10 -> attn_pool_gpu10
+	attn_pool_gpu10 -> out_proj_pool_gpu10
+	out_proj_pool_gpu10 -> hier_reduce
+	gpu_alloc -> block_calc_gpu11
+	block_calc_gpu11 -> qkv_pool_gpu11
+	qkv_pool_gpu11 -> kv_cache_gpu11
+	kv_cache_gpu11 -> attn_pool_gpu11
+	attn_pool_gpu11 -> out_proj_pool_gpu11
+	out_proj_pool_gpu11 -> hier_reduce
+	gpu_alloc -> block_calc_gpu12
+	block_calc_gpu12 -> qkv_pool_gpu12
+	qkv_pool_gpu12 -> kv_cache_gpu12
+	kv_cache_gpu12 -> attn_pool_gpu12
+	attn_pool_gpu12 -> out_proj_pool_gpu12
+	out_proj_pool_gpu12 -> hier_reduce
+	gpu_alloc -> block_calc_gpu13
+	block_calc_gpu13 -> qkv_pool_gpu13
+	qkv_pool_gpu13 -> kv_cache_gpu13
+	kv_cache_gpu13 -> attn_pool_gpu13
+	attn_pool_gpu13 -> out_proj_pool_gpu13
+	out_proj_pool_gpu13 -> hier_reduce
+	gpu_alloc -> block_calc_gpu14
+	block_calc_gpu14 -> qkv_pool_gpu14
+	qkv_pool_gpu14 -> kv_cache_gpu14
+	kv_cache_gpu14 -> attn_pool_gpu14
+	attn_pool_gpu14 -> out_proj_pool_gpu14
+	out_proj_pool_gpu14 -> hier_reduce
+	gpu_alloc -> block_calc_gpu15
+	block_calc_gpu15 -> qkv_pool_gpu15
+	qkv_pool_gpu15 -> kv_cache_gpu15
+	kv_cache_gpu15 -> attn_pool_gpu15
+	attn_pool_gpu15 -> out_proj_pool_gpu15
+	out_proj_pool_gpu15 -> hier_reduce
+	gpu_alloc -> block_calc_gpu16
+	block_calc_gpu16 -> qkv_pool_gpu16
+	qkv_pool_gpu16 -> kv_cache_gpu16
+	kv_cache_gpu16 -> attn_pool_gpu16
+	attn_pool_gpu16 -> out_proj_pool_gpu16
+	out_proj_pool_gpu16 -> hier_reduce
+	gpu_alloc -> block_calc_gpu17
+	block_calc_gpu17 -> qkv_pool_gpu17
+	qkv_pool_gpu17 -> kv_cache_gpu17
+	kv_cache_gpu17 -> attn_pool_gpu17
+	attn_pool_gpu17 -> out_proj_pool_gpu17
+	out_proj_pool_gpu17 -> hier_reduce
+	gpu_alloc -> block_calc_gpu18
+	block_calc_gpu18 -> qkv_pool_gpu18
+	qkv_pool_gpu18 -> kv_cache_gpu18
+	kv_cache_gpu18 -> attn_pool_gpu18
+	attn_pool_gpu18 -> out_proj_pool_gpu18
+	out_proj_pool_gpu18 -> hier_reduce
+	gpu_alloc -> block_calc_gpu19
+	block_calc_gpu19 -> qkv_pool_gpu19
+	qkv_pool_gpu19 -> kv_cache_gpu19
+	kv_cache_gpu19 -> attn_pool_gpu19
+	attn_pool_gpu19 -> out_proj_pool_gpu19
+	out_proj_pool_gpu19 -> hier_reduce
+	gpu_alloc -> block_calc_gpu20
+	block_calc_gpu20 -> qkv_pool_gpu20
+	qkv_pool_gpu20 -> kv_cache_gpu20
+	kv_cache_gpu20 -> attn_pool_gpu20
+	attn_pool_gpu20 -> out_proj_pool_gpu20
+	out_proj_pool_gpu20 -> hier_reduce
+	gpu_alloc -> block_calc_gpu21
+	block_calc_gpu21 -> qkv_pool_gpu21
+	qkv_pool_gpu21 -> kv_cache_gpu21
+	kv_cache_gpu21 -> attn_pool_gpu21
+	attn_pool_gpu21 -> out_proj_pool_gpu21
+	out_proj_pool_gpu21 -> hier_reduce
+	gpu_alloc -> block_calc_gpu22
+	block_calc_gpu22 -> qkv_pool_gpu22
+	qkv_pool_gpu22 -> kv_cache_gpu22
+	kv_cache_gpu22 -> attn_pool_gpu22
+	attn_pool_gpu22 -> out_proj_pool_gpu22
+	out_proj_pool_gpu22 -> hier_reduce
+	gpu_alloc -> block_calc_gpu23
+	block_calc_gpu23 -> qkv_pool_gpu23
+	qkv_pool_gpu23 -> kv_cache_gpu23
+	kv_cache_gpu23 -> attn_pool_gpu23
+	attn_pool_gpu23 -> out_proj_pool_gpu23
+	out_proj_pool_gpu23 -> hier_reduce
+	gpu_alloc -> block_calc_gpu24
+	block_calc_gpu24 -> qkv_pool_gpu24
+	qkv_pool_gpu24 -> kv_cache_gpu24
+	kv_cache_gpu24 -> attn_pool_gpu24
+	attn_pool_gpu24 -> out_proj_pool_gpu24
+	out_proj_pool_gpu24 -> hier_reduce
+	gpu_alloc -> block_calc_gpu25
+	block_calc_gpu25 -> qkv_pool_gpu25
+	qkv_pool_gpu25 -> kv_cache_gpu25
+	kv_cache_gpu25 -> attn_pool_gpu25
+	attn_pool_gpu25 -> out_proj_pool_gpu25
+	out_proj_pool_gpu25 -> hier_reduce
+	gpu_alloc -> block_calc_gpu26
+	block_calc_gpu26 -> qkv_pool_gpu26
+	qkv_pool_gpu26 -> kv_cache_gpu26
+	kv_cache_gpu26 -> attn_pool_gpu26
+	attn_pool_gpu26 -> out_proj_pool_gpu26
+	out_proj_pool_gpu26 -> hier_reduce
+	gpu_alloc -> block_calc_gpu27
+	block_calc_gpu27 -> qkv_pool_gpu27
+	qkv_pool_gpu27 -> kv_cache_gpu27
+	kv_cache_gpu27 -> attn_pool_gpu27
+	attn_pool_gpu27 -> out_proj_pool_gpu27
+	out_proj_pool_gpu27 -> hier_reduce
+	gpu_alloc -> block_calc_gpu28
+	block_calc_gpu28 -> qkv_pool_gpu28
+	qkv_pool_gpu28 -> kv_cache_gpu28
+	kv_cache_gpu28 -> attn_pool_gpu28
+	attn_pool_gpu28 -> out_proj_pool_gpu28
+	out_proj_pool_gpu28 -> hier_reduce
+	gpu_alloc -> block_calc_gpu29
+	block_calc_gpu29 -> qkv_pool_gpu29
+	qkv_pool_gpu29 -> kv_cache_gpu29
+	kv_cache_gpu29 -> attn_pool_gpu29
+	attn_pool_gpu29 -> out_proj_pool_gpu29
+	out_proj_pool_gpu29 -> hier_reduce
+	gpu_alloc -> block_calc_gpu30
+	block_calc_gpu30 -> qkv_pool_gpu30
+	qkv_pool_gpu30 -> kv_cache_gpu30
+	kv_cache_gpu30 -> attn_pool_gpu30
+	attn_pool_gpu30 -> out_proj_pool_gpu30
+	out_proj_pool_gpu30 -> hier_reduce
+	gpu_alloc -> block_calc_gpu31
+	block_calc_gpu31 -> qkv_pool_gpu31
+	qkv_pool_gpu31 -> kv_cache_gpu31
+	kv_cache_gpu31 -> attn_pool_gpu31
+	attn_pool_gpu31 -> out_proj_pool_gpu31
+	out_proj_pool_gpu31 -> hier_reduce
+	gpu_alloc -> block_calc_gpu32
+	block_calc_gpu32 -> qkv_pool_gpu32
+	qkv_pool_gpu32 -> kv_cache_gpu32
+	kv_cache_gpu32 -> attn_pool_gpu32
+	attn_pool_gpu32 -> out_proj_pool_gpu32
+	out_proj_pool_gpu32 -> hier_reduce
+	gpu_alloc -> block_calc_gpu33
+	block_calc_gpu33 -> qkv_pool_gpu33
+	qkv_pool_gpu33 -> kv_cache_gpu33
+	kv_cache_gpu33 -> attn_pool_gpu33
+	attn_pool_gpu33 -> out_proj_pool_gpu33
+	out_proj_pool_gpu33 -> hier_reduce
+	gpu_alloc -> block_calc_gpu34
+	block_calc_gpu34 -> qkv_pool_gpu34
+	qkv_pool_gpu34 -> kv_cache_gpu34
+	kv_cache_gpu34 -> attn_pool_gpu34
+	attn_pool_gpu34 -> out_proj_pool_gpu34
+	out_proj_pool_gpu34 -> hier_reduce
+	gpu_alloc -> block_calc_gpu35
+	block_calc_gpu35 -> qkv_pool_gpu35
+	qkv_pool_gpu35 -> kv_cache_gpu35
+	kv_cache_gpu35 -> attn_pool_gpu35
+	attn_pool_gpu35 -> out_proj_pool_gpu35
+	out_proj_pool_gpu35 -> hier_reduce
+	gpu_alloc -> block_calc_gpu36
+	block_calc_gpu36 -> qkv_pool_gpu36
+	qkv_pool_gpu36 -> kv_cache_gpu36
+	kv_cache_gpu36 -> attn_pool_gpu36
+	attn_pool_gpu36 -> out_proj_pool_gpu36
+	out_proj_pool_gpu36 -> hier_reduce
+	gpu_alloc -> block_calc_gpu37
+	block_calc_gpu37 -> qkv_pool_gpu37
+	qkv_pool_gpu37 -> kv_cache_gpu37
+	kv_cache_gpu37 -> attn_pool_gpu37
+	attn_pool_gpu37 -> out_proj_pool_gpu37
+	out_proj_pool_gpu37 -> hier_reduce
+	gpu_alloc -> block_calc_gpu38
+	block_calc_gpu38 -> qkv_pool_gpu38
+	qkv_pool_gpu38 -> kv_cache_gpu38
+	kv_cache_gpu38 -> attn_pool_gpu38
+	attn_pool_gpu38 -> out_proj_pool_gpu38
+	out_proj_pool_gpu38 -> hier_reduce
+	gpu_alloc -> block_calc_gpu39
+	block_calc_gpu39 -> qkv_pool_gpu39
+	qkv_pool_gpu39 -> kv_cache_gpu39
+	kv_cache_gpu39 -> attn_pool_gpu39
+	attn_pool_gpu39 -> out_proj_pool_gpu39
+	out_proj_pool_gpu39 -> hier_reduce
+	seq_check -> layer0_ffn1_base_gpu0
+	layer0_ffn1_base_gpu0 -> layer0_ffn2_base_gpu0
+	layer0_ffn2_base_gpu0 -> layer0_res_base_gpu0
+	layer0_res_base_gpu0 -> layer0_allreduce_base
+	seq_check -> layer0_ffn1_base_gpu1
+	layer0_ffn1_base_gpu1 -> layer0_ffn2_base_gpu1
+	layer0_ffn2_base_gpu1 -> layer0_res_base_gpu1
+	layer0_res_base_gpu1 -> layer0_allreduce_base
+	seq_check -> layer0_ffn1_base_gpu2
+	layer0_ffn1_base_gpu2 -> layer0_ffn2_base_gpu2
+	layer0_ffn2_base_gpu2 -> layer0_res_base_gpu2
+	layer0_res_base_gpu2 -> layer0_allreduce_base
+	seq_check -> layer0_ffn1_base_gpu3
+	layer0_ffn1_base_gpu3 -> layer0_ffn2_base_gpu3
+	layer0_ffn2_base_gpu3 -> layer0_res_base_gpu3
+	layer0_res_base_gpu3 -> layer0_allreduce_base
+	seq_check -> layer0_ffn1_base_gpu4
+	layer0_ffn1_base_gpu4 -> layer0_ffn2_base_gpu4
+	layer0_ffn2_base_gpu4 -> layer0_res_base_gpu4
+	layer0_res_base_gpu4 -> layer0_allreduce_base
+	seq_check -> layer0_ffn1_base_gpu5
+	layer0_ffn1_base_gpu5 -> layer0_ffn2_base_gpu5
+	layer0_ffn2_base_gpu5 -> layer0_res_base_gpu5
+	layer0_res_base_gpu5 -> layer0_allreduce_base
+	seq_check -> layer0_ffn1_base_gpu6
+	layer0_ffn1_base_gpu6 -> layer0_ffn2_base_gpu6
+	layer0_ffn2_base_gpu6 -> layer0_res_base_gpu6
+	layer0_res_base_gpu6 -> layer0_allreduce_base
+	seq_check -> layer0_ffn1_base_gpu7
+	layer0_ffn1_base_gpu7 -> layer0_ffn2_base_gpu7
+	layer0_ffn2_base_gpu7 -> layer0_res_base_gpu7
+	layer0_res_base_gpu7 -> layer0_allreduce_base
+	layer0_allreduce_base -> layer1_ffn1_base_gpu0
+	layer1_ffn1_base_gpu0 -> layer1_ffn2_base_gpu0
+	layer1_ffn2_base_gpu0 -> layer1_res_base_gpu0
+	layer1_res_base_gpu0 -> layer1_allreduce_base
+	layer0_allreduce_base -> layer1_ffn1_base_gpu1
+	layer1_ffn1_base_gpu1 -> layer1_ffn2_base_gpu1
+	layer1_ffn2_base_gpu1 -> layer1_res_base_gpu1
+	layer1_res_base_gpu1 -> layer1_allreduce_base
+	layer0_allreduce_base -> layer1_ffn1_base_gpu2
+	layer1_ffn1_base_gpu2 -> layer1_ffn2_base_gpu2
+	layer1_ffn2_base_gpu2 -> layer1_res_base_gpu2
+	layer1_res_base_gpu2 -> layer1_allreduce_base
+	layer0_allreduce_base -> layer1_ffn1_base_gpu3
+	layer1_ffn1_base_gpu3 -> layer1_ffn2_base_gpu3
+	layer1_ffn2_base_gpu3 -> layer1_res_base_gpu3
+	layer1_res_base_gpu3 -> layer1_allreduce_base
+	layer0_allreduce_base -> layer1_ffn1_base_gpu4
+	layer1_ffn1_base_gpu4 -> layer1_ffn2_base_gpu4
+	layer1_ffn2_base_gpu4 -> layer1_res_base_gpu4
+	layer1_res_base_gpu4 -> layer1_allreduce_base
+	layer0_allreduce_base -> layer1_ffn1_base_gpu5
+	layer1_ffn1_base_gpu5 -> layer1_ffn2_base_gpu5
+	layer1_ffn2_base_gpu5 -> layer1_res_base_gpu5
+	layer1_res_base_gpu5 -> layer1_allreduce_base
+	layer0_allreduce_base -> layer1_ffn1_base_gpu6
+	layer1_ffn1_base_gpu6 -> layer1_ffn2_base_gpu6
+	layer1_ffn2_base_gpu6 -> layer1_res_base_gpu6
+	layer1_res_base_gpu6 -> layer1_allreduce_base
+	layer0_allreduce_base -> layer1_ffn1_base_gpu7
+	layer1_ffn1_base_gpu7 -> layer1_ffn2_base_gpu7
+	layer1_ffn2_base_gpu7 -> layer1_res_base_gpu7
+	layer1_res_base_gpu7 -> layer1_allreduce_base
+	layer1_allreduce_base -> layer2_ffn1_base_gpu0
+	layer2_ffn1_base_gpu0 -> layer2_ffn2_base_gpu0
+	layer2_ffn2_base_gpu0 -> layer2_res_base_gpu0
+	layer2_res_base_gpu0 -> layer2_allreduce_base
+	layer1_allreduce_base -> layer2_ffn1_base_gpu1
+	layer2_ffn1_base_gpu1 -> layer2_ffn2_base_gpu1
+	layer2_ffn2_base_gpu1 -> layer2_res_base_gpu1
+	layer2_res_base_gpu1 -> layer2_allreduce_base
+	layer1_allreduce_base -> layer2_ffn1_base_gpu2
+	layer2_ffn1_base_gpu2 -> layer2_ffn2_base_gpu2
+	layer2_ffn2_base_gpu2 -> layer2_res_base_gpu2
+	layer2_res_base_gpu2 -> layer2_allreduce_base
+	layer1_allreduce_base -> layer2_ffn1_base_gpu3
+	layer2_ffn1_base_gpu3 -> layer2_ffn2_base_gpu3
+	layer2_ffn2_base_gpu3 -> layer2_res_base_gpu3
+	layer2_res_base_gpu3 -> layer2_allreduce_base
+	layer1_allreduce_base -> layer2_ffn1_base_gpu4
+	layer2_ffn1_base_gpu4 -> layer2_ffn2_base_gpu4
+	layer2_ffn2_base_gpu4 -> layer2_res_base_gpu4
+	layer2_res_base_gpu4 -> layer2_allreduce_base
+	layer1_allreduce_base -> layer2_ffn1_base_gpu5
+	layer2_ffn1_base_gpu5 -> layer2_ffn2_base_gpu5
+	layer2_ffn2_base_gpu5 -> layer2_res_base_gpu5
+	layer2_res_base_gpu5 -> layer2_allreduce_base
+	layer1_allreduce_base -> layer2_ffn1_base_gpu6
+	layer2_ffn1_base_gpu6 -> layer2_ffn2_base_gpu6
+	layer2_ffn2_base_gpu6 -> layer2_res_base_gpu6
+	layer2_res_base_gpu6 -> layer2_allreduce_base
+	layer1_allreduce_base -> layer2_ffn1_base_gpu7
+	layer2_ffn1_base_gpu7 -> layer2_ffn2_base_gpu7
+	layer2_ffn2_base_gpu7 -> layer2_res_base_gpu7
+	layer2_res_base_gpu7 -> layer2_allreduce_base
+	layer2_allreduce_base -> layer3_ffn1_base_gpu0
+	layer3_ffn1_base_gpu0 -> layer3_ffn2_base_gpu0
+	layer3_ffn2_base_gpu0 -> layer3_res_base_gpu0
+	layer3_res_base_gpu0 -> layer3_allreduce_base
+	layer2_allreduce_base -> layer3_ffn1_base_gpu1
+	layer3_ffn1_base_gpu1 -> layer3_ffn2_base_gpu1
+	layer3_ffn2_base_gpu1 -> layer3_res_base_gpu1
+	layer3_res_base_gpu1 -> layer3_allreduce_base
+	layer2_allreduce_base -> layer3_ffn1_base_gpu2
+	layer3_ffn1_base_gpu2 -> layer3_ffn2_base_gpu2
+	layer3_ffn2_base_gpu2 -> layer3_res_base_gpu2
+	layer3_res_base_gpu2 -> layer3_allreduce_base
+	layer2_allreduce_base -> layer3_ffn1_base_gpu3
+	layer3_ffn1_base_gpu3 -> layer3_ffn2_base_gpu3
+	layer3_ffn2_base_gpu3 -> layer3_res_base_gpu3
+	layer3_res_base_gpu3 -> layer3_allreduce_base
+	layer2_allreduce_base -> layer3_ffn1_base_gpu4
+	layer3_ffn1_base_gpu4 -> layer3_ffn2_base_gpu4
+	layer3_ffn2_base_gpu4 -> layer3_res_base_gpu4
+	layer3_res_base_gpu4 -> layer3_allreduce_base
+	layer2_allreduce_base -> layer3_ffn1_base_gpu5
+	layer3_ffn1_base_gpu5 -> layer3_ffn2_base_gpu5
+	layer3_ffn2_base_gpu5 -> layer3_res_base_gpu5
+	layer3_res_base_gpu5 -> layer3_allreduce_base
+	layer2_allreduce_base -> layer3_ffn1_base_gpu6
+	layer3_ffn1_base_gpu6 -> layer3_ffn2_base_gpu6
+	layer3_ffn2_base_gpu6 -> layer3_res_base_gpu6
+	layer3_res_base_gpu6 -> layer3_allreduce_base
+	layer2_allreduce_base -> layer3_ffn1_base_gpu7
+	layer3_ffn1_base_gpu7 -> layer3_ffn2_base_gpu7
+	layer3_ffn2_base_gpu7 -> layer3_res_base_gpu7
+	layer3_res_base_gpu7 -> layer3_allreduce_base
+	hier_reduce -> overlap
+	layer3_allreduce_base -> overlap
+	overlap -> final_norm
+	final_norm -> output_proj
+	embed_input -> qkv_pool_gpu8 [label=broadcast style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu9 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu10 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu11 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu12 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu13 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu14 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu15 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu16 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu17 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu18 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu19 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu20 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu21 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu22 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu23 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu24 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu25 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu26 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu27 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu28 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu29 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu30 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu31 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu32 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu33 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu34 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu35 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu36 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu37 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu38 [label="KV cache" style=dashed]
+	qkv_pool_gpu8 -> qkv_pool_gpu39 [label="KV cache" style=dashed]
+}

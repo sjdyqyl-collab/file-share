@@ -1,0 +1,20 @@
+{
+  "baseline_dag": {
+    "dot_path": "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/baseline_dag.dot",
+    "svg_path": "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/baseline_dag.svg",
+    "description": "Baseline DAG showing TP=8, PP=2 static parallelization strategy with 16 GPUs total"
+  },
+  "fa_pool_dag": {
+    "dot_path": "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/fa_pool_dag.dot",
+    "svg_path": "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/fa_pool_dag.svg",
+    "description": "FA Pool DAG showing dynamic parallel strategy with 8 base GPUs + up to 32 attention pool GPUs"
+  },
+  "generated_files": [
+    "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/baseline_dag.dot",
+    "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/baseline_dag.svg",
+    "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/fa_pool_dag.dot",
+    "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/fa_pool_dag.svg",
+    "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/baseline_dag.py",
+    "/home/wzc/data/file-share/logs/2025-10-09-11-30-42/fa_pool_dag.py"
+  ]
+}
