@@ -1,0 +1,192 @@
+{
+  "models": {
+    "baseline": {
+      "name": "4-layer Dense Model (Baseline)",
+      "parameters": "13B",
+      "architecture": {
+        "layers": 4,
+        "hidden_dimension": 4096,
+        "attention_heads": 32,
+        "feed_forward_dimension": 16384,
+        "activation": "GELU",
+        "normalization": "pre-norm RMSNorm"
+      },
+      "parallel_strategy": {
+        "type": "static",
+        "tensor_parallelism": {
+          "degree": 8,
+          "partitioning": "column_and_row_parallel"
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": 2
+        },
+        "total_gpus": 16,
+        "gpu_model": "NVIDIA A100 80GB"
+      },
+      "module_mapping": {
+        "stage_0": {
+          "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+          "layers": ["layer_0", "layer_1"],
+          "modules": {
+            "layer_0": {
+              "attention": "8-way tensor parallel across GPUs 0-7",
+              "feed_forward": "8-way tensor parallel across GPUs 0-7"
+            },
+            "layer_1": {
+              "attention": "8-way tensor parallel across GPUs 0-7",
+              "feed_forward": "8-way tensor parallel across GPUs 0-7"
+            }
+          }
+        },
+        "stage_1": {
+          "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+          "layers": ["layer_2", "layer_3"],
+          "modules": {
+            "layer_2": {
+              "attention": "8-way tensor parallel across GPUs 8-15",
+              "feed_forward": "8-way tensor parallel across GPUs 8-15"
+            },
+            "layer_3": {
+              "attention": "8-way tensor parallel across GPUs 8-15",
+              "feed_forward": "8-way tensor parallel across GPUs 8-15"
+            }
+          }
+        }
+      }
+    },
+    "fa_pool": {
+      "name": "4-layer Dense Model (FA Pool)",
+      "parameters": "13B",
+      "architecture": {
+        "layers": 4,
+        "hidden_dimension": 4096,
+        "attention_heads": 32,
+        "feed_forward_dimension": 16384,
+        "activation": "GELU",
+        "normalization": "pre-norm RMSNorm"
+      },
+      "parallel_strategy": {
+        "type": "dynamic",
+        "base_layer": {
+          "gpus": 8,
+          "gpu_ids": [0, 1, 2, 3, 4, 5, 6, 7],
+          "memory_per_gpu": "65GB",
+          "components": ["embedding", "positional_encoding", "output_layers", "all_feed_forward_networks"]
+        },
+        "attention_pool": {
+          "min_gpus": 0,
+          "max_gpus": 32,
+          "gpu_ids_range": [8, 39],
+          "memory_per_gpu": "45GB",
+          "activation_threshold": 4096,
+          "strategy": "block_wise_parallel"
+        },
+        "total_maximum_gpus": 40,
+        "gpu_model": "NVIDIA A100 80GB"
+      },
+      "module_mapping": {
+        "base_layer": {
+          "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+          "fixed_allocation": true,
+          "modules": {
+            "embedding": {
+              "gpu": 0,
+              "type": "embedding_layer",
+              "dimensions": [vocab_size, 4096]
+            },
+            "positional_encoding": {
+              "gpu": 0,
+              "type": "positional_encoding",
+              "max_sequence_length": 32768
+            },
+            "feed_forward_layers": {
+              "distribution": "across_all_base_gpus",
+              "layers": ["layer_0_ffn", "layer_1_ffn", "layer_2_ffn", "layer_3_ffn"],
+              "mapping": {
+                "layer_0_ffn": {"gpus": [0, 1], "tensor_parallel": 2},
+                "layer_1_ffn": {"gpus": [2, 3], "tensor_parallel": 2},
+                "layer_2_ffn": {"gpus": [4, 5], "tensor_parallel": 2},
+                "layer_3_ffn": {"gpus": [6, 7], "tensor_parallel": 2}
+              }
+            },
+            "output_layers": {
+              "gpu": 7,
+              "type": "language_model_head",
+              "dimensions": [4096, vocab_size]
+            }
+          }
+        },
+        "attention_pool": {
+          "gpus": "dynamic_allocation",
+          "available_gpu_range": [8, 39],
+          "allocation_strategy": {
+            "type": "sequence_length_based",
+            "threshold": 4096,
+            "calculation": "num_gpus = ceil(sequence_length / 512)",
+            "max_gpus": 32,
+            "min_gpus": 1
+          },
+          "modules": {
+            "attention_computation": {
+              "type": "flash_attention_parallel",
+              "block_size_calculation": "ceil(sequence_length / num_active_gpus)",
+              "memory_optimization": "kv_cache_sharing",
+              "communication": {
+                "protocol": "hierarchical_reduction",
+                "tree_depth": "ceil(log2(num_active_gpus))",
+                "synchronization": "asynchronous_with_ffn"
+              }
+            }
+          },
+          "layer_distribution": {
+            "layer_0_attention": "distributed_across_pool",
+            "layer_1_attention": "distributed_across_pool",
+            "layer_2_attention": "distributed_across_pool",
+            "layer_3_attention": "distributed_across_pool"
+          }
+        }
+      },
+      "resource_manager": {
+        "monitoring": {
+          "metric": "sequence_length",
+          "frequency": "per_inference_batch",
+          "threshold_check": "sequence_length > 4096"
+        },
+        "allocation_logic": {
+          "if_sequence_length": "<= 4096",
+          "then": "attention_pool_gpus = 0",
+          "else": "attention_pool_gpus = min(32, ceil(sequence_length / 512))"
+        },
+        "gpu_mapping_function": {
+          "base_gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+          "pool_gpus_available": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39],
+          "dynamic_assignment": "sequential_allocation_from_available"
+        }
+      }
+    }
+  },
+  "deployment_parameters": {
+    "hardware_requirements": {
+      "minimum_gpus": 8,
+      "maximum_gpus": 40,
+      "gpu_model": "NVIDIA A100 80GB",
+      "interconnect": ["NVLink 3.0", "InfiniBand"],
+      "cpu": "AMD EPYC 7763",
+      "system_memory": "2TB DDR4",
+      "storage": "NVMe SSD array"
+    },
+    "performance_thresholds": {
+      "sequence_length_threshold": 4096,
+      "optimal_pool_size": 24,
+      "communication_overhead_limit": 0.15,
+      "gpu_utilization_target": 0.85
+    },
+    "memory_specifications": {
+      "base_layer_per_gpu": "65GB",
+      "attention_pool_per_gpu": "45GB",
+      "kv_cache_sharing": true,
+      "flash_attention_enabled": true
+    }
+  }
+}

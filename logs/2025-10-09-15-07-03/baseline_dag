@@ -1,0 +1,161 @@
+// Baseline TP=8, PP=2 DAG
+digraph baseline_model {
+	rankdir=TB size="20,30"
+	node [shape=rectangle style=filled]
+	input [label="Input
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: All GPUs" fillcolor=lightblue shape=ellipse]
+	embed [label="Embedding
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightgreen]
+	ln1 [label="LayerNorm
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightyellow]
+	q_proj [label="Q Projection
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 0-7 (TP=8)" fillcolor=lightcoral]
+	k_proj [label="K Projection
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 0-7 (TP=8)" fillcolor=lightcoral]
+	v_proj [label="V Projection
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 0-7 (TP=8)" fillcolor=lightcoral]
+	flash_attn [label="Flash Attention
+Input: [batch_size=B, seq_len=S, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 0-7 (TP=8)" fillcolor=orange]
+	o_proj [label="O Projection
+Input: [batch_size=B, seq_len=S, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7 (TP=8)" fillcolor=lightcoral]
+	res1 [label="Residual Add
+Input: [batch_size=B, seq_len=S, hidden_size=4096], [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightgray]
+	ln2 [label="LayerNorm
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightyellow]
+	mlp1 [label="MLP First Linear
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, ffn_hidden_size=16384]
+GPU: 0-7 (TP=8)" fillcolor=lightpink]
+	gelu [label="GELU Activation
+Input: [batch_size=B, seq_len=S, ffn_hidden_size=16384]
+Output: [batch_size=B, seq_len=S, ffn_hidden_size=16384]
+GPU: 0-7" fillcolor=lightcyan]
+	mlp2 [label="MLP Second Linear
+Input: [batch_size=B, seq_len=S, ffn_hidden_size=16384]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7 (TP=8)" fillcolor=lightpink]
+	res2 [label="Residual Add
+Input: [batch_size=B, seq_len=S, hidden_size=4096], [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightgray]
+	comm1 [label="All-Reduce
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightsteelblue shape=parallelogram]
+	pipeline_comm [label="Pipeline Communication
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 7→8" fillcolor=lightsteelblue shape=parallelogram]
+	ln3 [label="LayerNorm (Layer 2)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 8-15" fillcolor=lightyellow]
+	q_proj2 [label="Q Projection (Layer 2)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 8-15 (TP=8)" fillcolor=lightcoral]
+	k_proj2 [label="K Projection (Layer 2)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 8-15 (TP=8)" fillcolor=lightcoral]
+	v_proj2 [label="V Projection (Layer 2)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 8-15 (TP=8)" fillcolor=lightcoral]
+	flash_attn2 [label="Flash Attention (Layer 2)
+Input: [batch_size=B, seq_len=S, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 8-15 (TP=8)" fillcolor=orange]
+	o_proj2 [label="O Projection (Layer 2)
+Input: [batch_size=B, seq_len=S, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 8-15 (TP=8)" fillcolor=lightcoral]
+	res3 [label="Residual Add (Layer 2)
+Input: [batch_size=B, seq_len=S, hidden_size=4096], [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 8-15" fillcolor=lightgray]
+	ln4 [label="LayerNorm (Layer 2)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 8-15" fillcolor=lightyellow]
+	mlp3 [label="MLP First Linear (Layer 2)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, ffn_hidden_size=16384]
+GPU: 8-15 (TP=8)" fillcolor=lightpink]
+	gelu2 [label="GELU Activation (Layer 2)
+Input: [batch_size=B, seq_len=S, ffn_hidden_size=16384]
+Output: [batch_size=B, seq_len=S, ffn_hidden_size=16384]
+GPU: 8-15" fillcolor=lightcyan]
+	mlp4 [label="MLP Second Linear (Layer 2)
+Input: [batch_size=B, seq_len=S, ffn_hidden_size=16384]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 8-15 (TP=8)" fillcolor=lightpink]
+	res4 [label="Residual Add (Layer 2)
+Input: [batch_size=B, seq_len=S, hidden_size=4096], [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 8-15" fillcolor=lightgray]
+	layer3 [label="Layers 3-4
+[Same structure as above]
+GPU: 8-15" fillcolor=lightgreen]
+	output [label="Output
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, vocab_size=V]
+GPU: 8-15" fillcolor=lightblue shape=ellipse]
+	input -> embed
+	embed -> ln1
+	ln1 -> q_proj
+	ln1 -> k_proj
+	ln1 -> v_proj
+	q_proj -> flash_attn
+	k_proj -> flash_attn
+	v_proj -> flash_attn
+	flash_attn -> o_proj
+	o_proj -> res1
+	ln1 -> res1
+	res1 -> ln2
+	ln2 -> mlp1
+	mlp1 -> gelu
+	gelu -> mlp2
+	mlp2 -> res2
+	res1 -> res2
+	res2 -> comm1
+	comm1 -> pipeline_comm
+	pipeline_comm -> ln3
+	ln3 -> q_proj2
+	ln3 -> k_proj2
+	ln3 -> v_proj2
+	q_proj2 -> flash_attn2
+	k_proj2 -> flash_attn2
+	v_proj2 -> flash_attn2
+	flash_attn2 -> o_proj2
+	o_proj2 -> res3
+	ln3 -> res3
+	res3 -> ln4
+	ln4 -> mlp3
+	mlp3 -> gelu2
+	gelu2 -> mlp4
+	mlp4 -> res4
+	res3 -> res4
+	res4 -> layer3
+	layer3 -> output
+}

@@ -1,0 +1,1072 @@
+// FA Pool Dynamic Parallel Strategy DAG
+digraph fa_pool_model {
+	rankdir=TB size="25,35"
+	node [shape=rectangle style=filled]
+	input [label="Input
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: All GPUs" fillcolor=lightblue shape=ellipse]
+	monitor [label="Sequence Length Monitor
+Input: [batch_size=B, seq_len=S]
+Output: [threshold_check=bool]
+GPU: 0" fillcolor=gold shape=diamond]
+	embed [label="Embedding (Base)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightgreen]
+	ln1_base [label="LayerNorm (Base)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightyellow]
+	ffn1 [label="FFN Layer 1
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightpink]
+	ffn2 [label="FFN Layer 2
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightpink]
+	ffn3 [label="FFN Layer 3
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightpink]
+	ffn4 [label="FFN Layer 4
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightpink]
+	pool_gate [label="Pool Gate
+Input: [threshold_check=bool]
+Output: [pool_activation=bool]
+GPU: 0" fillcolor=gold shape=parallelogram]
+	q_proj_base [label="Q Projection (Base)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 0-7 (TP=8)" fillcolor=lightcoral]
+	k_proj_base [label="K Projection (Base)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 0-7 (TP=8)" fillcolor=lightcoral]
+	v_proj_base [label="V Projection (Base)
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 0-7 (TP=8)" fillcolor=lightcoral]
+	flash_attn_base [label="Flash Attention (Base)
+Input: [batch_size=B, seq_len=S, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 0-7 (TP=8)" fillcolor=orange]
+	o_proj_base [label="O Projection (Base)
+Input: [batch_size=B, seq_len=S, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7 (TP=8)" fillcolor=lightcoral]
+	split_tokens [label="Token Splitter
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/p, hidden_size=4096]
+GPU: 8-39" fillcolor=gold shape=parallelogram]
+	q_proj_pool_0 [label="Q Projection Pool GPU 0
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 8" fillcolor=lightcoral]
+	k_proj_pool_0 [label="K Projection Pool GPU 0
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 8" fillcolor=lightcoral]
+	v_proj_pool_0 [label="V Projection Pool GPU 0
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 8" fillcolor=lightcoral]
+	flash_attn_pool_0 [label="Flash Attention Pool GPU 0
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 8" fillcolor=orange]
+	o_proj_pool_0 [label="O Projection Pool GPU 0
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 8" fillcolor=lightcoral]
+	q_proj_pool_1 [label="Q Projection Pool GPU 1
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 9" fillcolor=lightcoral]
+	k_proj_pool_1 [label="K Projection Pool GPU 1
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 9" fillcolor=lightcoral]
+	v_proj_pool_1 [label="V Projection Pool GPU 1
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 9" fillcolor=lightcoral]
+	flash_attn_pool_1 [label="Flash Attention Pool GPU 1
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 9" fillcolor=orange]
+	o_proj_pool_1 [label="O Projection Pool GPU 1
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 9" fillcolor=lightcoral]
+	q_proj_pool_2 [label="Q Projection Pool GPU 2
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 10" fillcolor=lightcoral]
+	k_proj_pool_2 [label="K Projection Pool GPU 2
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 10" fillcolor=lightcoral]
+	v_proj_pool_2 [label="V Projection Pool GPU 2
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 10" fillcolor=lightcoral]
+	flash_attn_pool_2 [label="Flash Attention Pool GPU 2
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 10" fillcolor=orange]
+	o_proj_pool_2 [label="O Projection Pool GPU 2
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 10" fillcolor=lightcoral]
+	q_proj_pool_3 [label="Q Projection Pool GPU 3
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 11" fillcolor=lightcoral]
+	k_proj_pool_3 [label="K Projection Pool GPU 3
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 11" fillcolor=lightcoral]
+	v_proj_pool_3 [label="V Projection Pool GPU 3
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 11" fillcolor=lightcoral]
+	flash_attn_pool_3 [label="Flash Attention Pool GPU 3
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 11" fillcolor=orange]
+	o_proj_pool_3 [label="O Projection Pool GPU 3
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 11" fillcolor=lightcoral]
+	q_proj_pool_4 [label="Q Projection Pool GPU 4
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 12" fillcolor=lightcoral]
+	k_proj_pool_4 [label="K Projection Pool GPU 4
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 12" fillcolor=lightcoral]
+	v_proj_pool_4 [label="V Projection Pool GPU 4
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 12" fillcolor=lightcoral]
+	flash_attn_pool_4 [label="Flash Attention Pool GPU 4
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 12" fillcolor=orange]
+	o_proj_pool_4 [label="O Projection Pool GPU 4
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 12" fillcolor=lightcoral]
+	q_proj_pool_5 [label="Q Projection Pool GPU 5
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 13" fillcolor=lightcoral]
+	k_proj_pool_5 [label="K Projection Pool GPU 5
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 13" fillcolor=lightcoral]
+	v_proj_pool_5 [label="V Projection Pool GPU 5
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 13" fillcolor=lightcoral]
+	flash_attn_pool_5 [label="Flash Attention Pool GPU 5
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 13" fillcolor=orange]
+	o_proj_pool_5 [label="O Projection Pool GPU 5
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 13" fillcolor=lightcoral]
+	q_proj_pool_6 [label="Q Projection Pool GPU 6
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 14" fillcolor=lightcoral]
+	k_proj_pool_6 [label="K Projection Pool GPU 6
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 14" fillcolor=lightcoral]
+	v_proj_pool_6 [label="V Projection Pool GPU 6
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 14" fillcolor=lightcoral]
+	flash_attn_pool_6 [label="Flash Attention Pool GPU 6
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 14" fillcolor=orange]
+	o_proj_pool_6 [label="O Projection Pool GPU 6
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 14" fillcolor=lightcoral]
+	q_proj_pool_7 [label="Q Projection Pool GPU 7
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 15" fillcolor=lightcoral]
+	k_proj_pool_7 [label="K Projection Pool GPU 7
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 15" fillcolor=lightcoral]
+	v_proj_pool_7 [label="V Projection Pool GPU 7
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 15" fillcolor=lightcoral]
+	flash_attn_pool_7 [label="Flash Attention Pool GPU 7
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 15" fillcolor=orange]
+	o_proj_pool_7 [label="O Projection Pool GPU 7
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 15" fillcolor=lightcoral]
+	q_proj_pool_8 [label="Q Projection Pool GPU 8
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 16" fillcolor=lightcoral]
+	k_proj_pool_8 [label="K Projection Pool GPU 8
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 16" fillcolor=lightcoral]
+	v_proj_pool_8 [label="V Projection Pool GPU 8
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 16" fillcolor=lightcoral]
+	flash_attn_pool_8 [label="Flash Attention Pool GPU 8
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 16" fillcolor=orange]
+	o_proj_pool_8 [label="O Projection Pool GPU 8
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 16" fillcolor=lightcoral]
+	q_proj_pool_9 [label="Q Projection Pool GPU 9
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 17" fillcolor=lightcoral]
+	k_proj_pool_9 [label="K Projection Pool GPU 9
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 17" fillcolor=lightcoral]
+	v_proj_pool_9 [label="V Projection Pool GPU 9
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 17" fillcolor=lightcoral]
+	flash_attn_pool_9 [label="Flash Attention Pool GPU 9
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 17" fillcolor=orange]
+	o_proj_pool_9 [label="O Projection Pool GPU 9
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 17" fillcolor=lightcoral]
+	q_proj_pool_10 [label="Q Projection Pool GPU 10
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 18" fillcolor=lightcoral]
+	k_proj_pool_10 [label="K Projection Pool GPU 10
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 18" fillcolor=lightcoral]
+	v_proj_pool_10 [label="V Projection Pool GPU 10
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 18" fillcolor=lightcoral]
+	flash_attn_pool_10 [label="Flash Attention Pool GPU 10
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 18" fillcolor=orange]
+	o_proj_pool_10 [label="O Projection Pool GPU 10
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 18" fillcolor=lightcoral]
+	q_proj_pool_11 [label="Q Projection Pool GPU 11
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 19" fillcolor=lightcoral]
+	k_proj_pool_11 [label="K Projection Pool GPU 11
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 19" fillcolor=lightcoral]
+	v_proj_pool_11 [label="V Projection Pool GPU 11
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 19" fillcolor=lightcoral]
+	flash_attn_pool_11 [label="Flash Attention Pool GPU 11
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 19" fillcolor=orange]
+	o_proj_pool_11 [label="O Projection Pool GPU 11
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 19" fillcolor=lightcoral]
+	q_proj_pool_12 [label="Q Projection Pool GPU 12
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 20" fillcolor=lightcoral]
+	k_proj_pool_12 [label="K Projection Pool GPU 12
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 20" fillcolor=lightcoral]
+	v_proj_pool_12 [label="V Projection Pool GPU 12
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 20" fillcolor=lightcoral]
+	flash_attn_pool_12 [label="Flash Attention Pool GPU 12
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 20" fillcolor=orange]
+	o_proj_pool_12 [label="O Projection Pool GPU 12
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 20" fillcolor=lightcoral]
+	q_proj_pool_13 [label="Q Projection Pool GPU 13
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 21" fillcolor=lightcoral]
+	k_proj_pool_13 [label="K Projection Pool GPU 13
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 21" fillcolor=lightcoral]
+	v_proj_pool_13 [label="V Projection Pool GPU 13
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 21" fillcolor=lightcoral]
+	flash_attn_pool_13 [label="Flash Attention Pool GPU 13
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 21" fillcolor=orange]
+	o_proj_pool_13 [label="O Projection Pool GPU 13
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 21" fillcolor=lightcoral]
+	q_proj_pool_14 [label="Q Projection Pool GPU 14
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 22" fillcolor=lightcoral]
+	k_proj_pool_14 [label="K Projection Pool GPU 14
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 22" fillcolor=lightcoral]
+	v_proj_pool_14 [label="V Projection Pool GPU 14
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 22" fillcolor=lightcoral]
+	flash_attn_pool_14 [label="Flash Attention Pool GPU 14
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 22" fillcolor=orange]
+	o_proj_pool_14 [label="O Projection Pool GPU 14
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 22" fillcolor=lightcoral]
+	q_proj_pool_15 [label="Q Projection Pool GPU 15
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 23" fillcolor=lightcoral]
+	k_proj_pool_15 [label="K Projection Pool GPU 15
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 23" fillcolor=lightcoral]
+	v_proj_pool_15 [label="V Projection Pool GPU 15
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 23" fillcolor=lightcoral]
+	flash_attn_pool_15 [label="Flash Attention Pool GPU 15
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 23" fillcolor=orange]
+	o_proj_pool_15 [label="O Projection Pool GPU 15
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 23" fillcolor=lightcoral]
+	q_proj_pool_16 [label="Q Projection Pool GPU 16
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 24" fillcolor=lightcoral]
+	k_proj_pool_16 [label="K Projection Pool GPU 16
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 24" fillcolor=lightcoral]
+	v_proj_pool_16 [label="V Projection Pool GPU 16
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 24" fillcolor=lightcoral]
+	flash_attn_pool_16 [label="Flash Attention Pool GPU 16
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 24" fillcolor=orange]
+	o_proj_pool_16 [label="O Projection Pool GPU 16
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 24" fillcolor=lightcoral]
+	q_proj_pool_17 [label="Q Projection Pool GPU 17
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 25" fillcolor=lightcoral]
+	k_proj_pool_17 [label="K Projection Pool GPU 17
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 25" fillcolor=lightcoral]
+	v_proj_pool_17 [label="V Projection Pool GPU 17
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 25" fillcolor=lightcoral]
+	flash_attn_pool_17 [label="Flash Attention Pool GPU 17
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 25" fillcolor=orange]
+	o_proj_pool_17 [label="O Projection Pool GPU 17
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 25" fillcolor=lightcoral]
+	q_proj_pool_18 [label="Q Projection Pool GPU 18
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 26" fillcolor=lightcoral]
+	k_proj_pool_18 [label="K Projection Pool GPU 18
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 26" fillcolor=lightcoral]
+	v_proj_pool_18 [label="V Projection Pool GPU 18
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 26" fillcolor=lightcoral]
+	flash_attn_pool_18 [label="Flash Attention Pool GPU 18
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 26" fillcolor=orange]
+	o_proj_pool_18 [label="O Projection Pool GPU 18
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 26" fillcolor=lightcoral]
+	q_proj_pool_19 [label="Q Projection Pool GPU 19
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 27" fillcolor=lightcoral]
+	k_proj_pool_19 [label="K Projection Pool GPU 19
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 27" fillcolor=lightcoral]
+	v_proj_pool_19 [label="V Projection Pool GPU 19
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 27" fillcolor=lightcoral]
+	flash_attn_pool_19 [label="Flash Attention Pool GPU 19
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 27" fillcolor=orange]
+	o_proj_pool_19 [label="O Projection Pool GPU 19
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 27" fillcolor=lightcoral]
+	q_proj_pool_20 [label="Q Projection Pool GPU 20
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 28" fillcolor=lightcoral]
+	k_proj_pool_20 [label="K Projection Pool GPU 20
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 28" fillcolor=lightcoral]
+	v_proj_pool_20 [label="V Projection Pool GPU 20
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 28" fillcolor=lightcoral]
+	flash_attn_pool_20 [label="Flash Attention Pool GPU 20
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 28" fillcolor=orange]
+	o_proj_pool_20 [label="O Projection Pool GPU 20
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 28" fillcolor=lightcoral]
+	q_proj_pool_21 [label="Q Projection Pool GPU 21
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 29" fillcolor=lightcoral]
+	k_proj_pool_21 [label="K Projection Pool GPU 21
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 29" fillcolor=lightcoral]
+	v_proj_pool_21 [label="V Projection Pool GPU 21
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 29" fillcolor=lightcoral]
+	flash_attn_pool_21 [label="Flash Attention Pool GPU 21
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 29" fillcolor=orange]
+	o_proj_pool_21 [label="O Projection Pool GPU 21
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 29" fillcolor=lightcoral]
+	q_proj_pool_22 [label="Q Projection Pool GPU 22
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 30" fillcolor=lightcoral]
+	k_proj_pool_22 [label="K Projection Pool GPU 22
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 30" fillcolor=lightcoral]
+	v_proj_pool_22 [label="V Projection Pool GPU 22
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 30" fillcolor=lightcoral]
+	flash_attn_pool_22 [label="Flash Attention Pool GPU 22
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 30" fillcolor=orange]
+	o_proj_pool_22 [label="O Projection Pool GPU 22
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 30" fillcolor=lightcoral]
+	q_proj_pool_23 [label="Q Projection Pool GPU 23
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 31" fillcolor=lightcoral]
+	k_proj_pool_23 [label="K Projection Pool GPU 23
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 31" fillcolor=lightcoral]
+	v_proj_pool_23 [label="V Projection Pool GPU 23
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 31" fillcolor=lightcoral]
+	flash_attn_pool_23 [label="Flash Attention Pool GPU 23
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 31" fillcolor=orange]
+	o_proj_pool_23 [label="O Projection Pool GPU 23
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 31" fillcolor=lightcoral]
+	q_proj_pool_24 [label="Q Projection Pool GPU 24
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 32" fillcolor=lightcoral]
+	k_proj_pool_24 [label="K Projection Pool GPU 24
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 32" fillcolor=lightcoral]
+	v_proj_pool_24 [label="V Projection Pool GPU 24
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 32" fillcolor=lightcoral]
+	flash_attn_pool_24 [label="Flash Attention Pool GPU 24
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 32" fillcolor=orange]
+	o_proj_pool_24 [label="O Projection Pool GPU 24
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 32" fillcolor=lightcoral]
+	q_proj_pool_25 [label="Q Projection Pool GPU 25
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 33" fillcolor=lightcoral]
+	k_proj_pool_25 [label="K Projection Pool GPU 25
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 33" fillcolor=lightcoral]
+	v_proj_pool_25 [label="V Projection Pool GPU 25
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 33" fillcolor=lightcoral]
+	flash_attn_pool_25 [label="Flash Attention Pool GPU 25
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 33" fillcolor=orange]
+	o_proj_pool_25 [label="O Projection Pool GPU 25
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 33" fillcolor=lightcoral]
+	q_proj_pool_26 [label="Q Projection Pool GPU 26
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 34" fillcolor=lightcoral]
+	k_proj_pool_26 [label="K Projection Pool GPU 26
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 34" fillcolor=lightcoral]
+	v_proj_pool_26 [label="V Projection Pool GPU 26
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 34" fillcolor=lightcoral]
+	flash_attn_pool_26 [label="Flash Attention Pool GPU 26
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 34" fillcolor=orange]
+	o_proj_pool_26 [label="O Projection Pool GPU 26
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 34" fillcolor=lightcoral]
+	q_proj_pool_27 [label="Q Projection Pool GPU 27
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 35" fillcolor=lightcoral]
+	k_proj_pool_27 [label="K Projection Pool GPU 27
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 35" fillcolor=lightcoral]
+	v_proj_pool_27 [label="V Projection Pool GPU 27
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 35" fillcolor=lightcoral]
+	flash_attn_pool_27 [label="Flash Attention Pool GPU 27
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 35" fillcolor=orange]
+	o_proj_pool_27 [label="O Projection Pool GPU 27
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 35" fillcolor=lightcoral]
+	q_proj_pool_28 [label="Q Projection Pool GPU 28
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 36" fillcolor=lightcoral]
+	k_proj_pool_28 [label="K Projection Pool GPU 28
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 36" fillcolor=lightcoral]
+	v_proj_pool_28 [label="V Projection Pool GPU 28
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 36" fillcolor=lightcoral]
+	flash_attn_pool_28 [label="Flash Attention Pool GPU 28
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 36" fillcolor=orange]
+	o_proj_pool_28 [label="O Projection Pool GPU 28
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 36" fillcolor=lightcoral]
+	q_proj_pool_29 [label="Q Projection Pool GPU 29
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 37" fillcolor=lightcoral]
+	k_proj_pool_29 [label="K Projection Pool GPU 29
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 37" fillcolor=lightcoral]
+	v_proj_pool_29 [label="V Projection Pool GPU 29
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 37" fillcolor=lightcoral]
+	flash_attn_pool_29 [label="Flash Attention Pool GPU 29
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 37" fillcolor=orange]
+	o_proj_pool_29 [label="O Projection Pool GPU 29
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 37" fillcolor=lightcoral]
+	q_proj_pool_30 [label="Q Projection Pool GPU 30
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 38" fillcolor=lightcoral]
+	k_proj_pool_30 [label="K Projection Pool GPU 30
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 38" fillcolor=lightcoral]
+	v_proj_pool_30 [label="V Projection Pool GPU 30
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 38" fillcolor=lightcoral]
+	flash_attn_pool_30 [label="Flash Attention Pool GPU 30
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 38" fillcolor=orange]
+	o_proj_pool_30 [label="O Projection Pool GPU 30
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 38" fillcolor=lightcoral]
+	q_proj_pool_31 [label="Q Projection Pool GPU 31
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 39" fillcolor=lightcoral]
+	k_proj_pool_31 [label="K Projection Pool GPU 31
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 39" fillcolor=lightcoral]
+	v_proj_pool_31 [label="V Projection Pool GPU 31
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 39" fillcolor=lightcoral]
+	flash_attn_pool_31 [label="Flash Attention Pool GPU 31
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+GPU: 39" fillcolor=orange]
+	o_proj_pool_31 [label="O Projection Pool GPU 31
+Input: [batch_size=B, seq_len=S/32, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S/32, hidden_size=4096]
+GPU: 39" fillcolor=lightcoral]
+	concat_attn [label="Attention Concat
+Input: [batch_size=B, seq_len=S/32, hidden_size=4096]×32
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightsteelblue shape=parallelogram]
+	kv_cache [label="KV Cache Share
+Input: [batch_size=B, seq_len=S, heads=32, d_k=128]
+Output: [batch_size=B, seq_len=S, heads=32, d_k=128]
+GPU: 8-39" fillcolor=lightsteelblue shape=parallelogram style=dashed]
+	res1 [label="Residual Add Layer 1
+Input: [batch_size=B, seq_len=S, hidden_size=4096], [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightgray]
+	ln1 [label="LayerNorm Layer 1
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightyellow]
+	res2 [label="Residual Add Layer 2
+Input: [batch_size=B, seq_len=S, hidden_size=4096], [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightgray]
+	ln2 [label="LayerNorm Layer 2
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightyellow]
+	res3 [label="Residual Add Layer 3
+Input: [batch_size=B, seq_len=S, hidden_size=4096], [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightgray]
+	ln3 [label="LayerNorm Layer 3
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightyellow]
+	res4 [label="Residual Add Layer 4
+Input: [batch_size=B, seq_len=S, hidden_size=4096], [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, hidden_size=4096]
+GPU: 0-7" fillcolor=lightgray]
+	output [label="Output
+Input: [batch_size=B, seq_len=S, hidden_size=4096]
+Output: [batch_size=B, seq_len=S, vocab_size=V]
+GPU: 0-7" fillcolor=lightblue shape=ellipse]
+	resource_mgr [label="Resource Manager
+Input: [pool_activation=bool]
+Output: [gpu_allocation=32]
+GPU: 0" fillcolor=gold shape=hexagon]
+	input -> monitor
+	monitor -> pool_gate
+	input -> embed
+	embed -> ln1_base
+	pool_gate -> q_proj_base [label="seq <= 4096"]
+	pool_gate -> k_proj_base [label="seq <= 4096"]
+	pool_gate -> v_proj_base [label="seq <= 4096"]
+	ln1_base -> q_proj_base
+	ln1_base -> k_proj_base
+	ln1_base -> v_proj_base
+	q_proj_base -> flash_attn_base
+	k_proj_base -> flash_attn_base
+	v_proj_base -> flash_attn_base
+	flash_attn_base -> o_proj_base
+	o_proj_base -> res1
+	ln1_base -> res1
+	pool_gate -> resource_mgr [label="seq > 4096"]
+	resource_mgr -> split_tokens
+	ln1_base -> split_tokens
+	split_tokens -> q_proj_pool_0
+	split_tokens -> k_proj_pool_0
+	split_tokens -> v_proj_pool_0
+	q_proj_pool_0 -> flash_attn_pool_0
+	k_proj_pool_0 -> flash_attn_pool_0
+	v_proj_pool_0 -> flash_attn_pool_0
+	flash_attn_pool_0 -> o_proj_pool_0
+	o_proj_pool_0 -> concat_attn
+	kv_cache -> flash_attn_pool_0 [style=dashed]
+	split_tokens -> q_proj_pool_1
+	split_tokens -> k_proj_pool_1
+	split_tokens -> v_proj_pool_1
+	q_proj_pool_1 -> flash_attn_pool_1
+	k_proj_pool_1 -> flash_attn_pool_1
+	v_proj_pool_1 -> flash_attn_pool_1
+	flash_attn_pool_1 -> o_proj_pool_1
+	o_proj_pool_1 -> concat_attn
+	kv_cache -> flash_attn_pool_1 [style=dashed]
+	split_tokens -> q_proj_pool_2
+	split_tokens -> k_proj_pool_2
+	split_tokens -> v_proj_pool_2
+	q_proj_pool_2 -> flash_attn_pool_2
+	k_proj_pool_2 -> flash_attn_pool_2
+	v_proj_pool_2 -> flash_attn_pool_2
+	flash_attn_pool_2 -> o_proj_pool_2
+	o_proj_pool_2 -> concat_attn
+	kv_cache -> flash_attn_pool_2 [style=dashed]
+	split_tokens -> q_proj_pool_3
+	split_tokens -> k_proj_pool_3
+	split_tokens -> v_proj_pool_3
+	q_proj_pool_3 -> flash_attn_pool_3
+	k_proj_pool_3 -> flash_attn_pool_3
+	v_proj_pool_3 -> flash_attn_pool_3
+	flash_attn_pool_3 -> o_proj_pool_3
+	o_proj_pool_3 -> concat_attn
+	kv_cache -> flash_attn_pool_3 [style=dashed]
+	split_tokens -> q_proj_pool_4
+	split_tokens -> k_proj_pool_4
+	split_tokens -> v_proj_pool_4
+	q_proj_pool_4 -> flash_attn_pool_4
+	k_proj_pool_4 -> flash_attn_pool_4
+	v_proj_pool_4 -> flash_attn_pool_4
+	flash_attn_pool_4 -> o_proj_pool_4
+	o_proj_pool_4 -> concat_attn
+	kv_cache -> flash_attn_pool_4 [style=dashed]
+	split_tokens -> q_proj_pool_5
+	split_tokens -> k_proj_pool_5
+	split_tokens -> v_proj_pool_5
+	q_proj_pool_5 -> flash_attn_pool_5
+	k_proj_pool_5 -> flash_attn_pool_5
+	v_proj_pool_5 -> flash_attn_pool_5
+	flash_attn_pool_5 -> o_proj_pool_5
+	o_proj_pool_5 -> concat_attn
+	kv_cache -> flash_attn_pool_5 [style=dashed]
+	split_tokens -> q_proj_pool_6
+	split_tokens -> k_proj_pool_6
+	split_tokens -> v_proj_pool_6
+	q_proj_pool_6 -> flash_attn_pool_6
+	k_proj_pool_6 -> flash_attn_pool_6
+	v_proj_pool_6 -> flash_attn_pool_6
+	flash_attn_pool_6 -> o_proj_pool_6
+	o_proj_pool_6 -> concat_attn
+	kv_cache -> flash_attn_pool_6 [style=dashed]
+	split_tokens -> q_proj_pool_7
+	split_tokens -> k_proj_pool_7
+	split_tokens -> v_proj_pool_7
+	q_proj_pool_7 -> flash_attn_pool_7
+	k_proj_pool_7 -> flash_attn_pool_7
+	v_proj_pool_7 -> flash_attn_pool_7
+	flash_attn_pool_7 -> o_proj_pool_7
+	o_proj_pool_7 -> concat_attn
+	kv_cache -> flash_attn_pool_7 [style=dashed]
+	split_tokens -> q_proj_pool_8
+	split_tokens -> k_proj_pool_8
+	split_tokens -> v_proj_pool_8
+	q_proj_pool_8 -> flash_attn_pool_8
+	k_proj_pool_8 -> flash_attn_pool_8
+	v_proj_pool_8 -> flash_attn_pool_8
+	flash_attn_pool_8 -> o_proj_pool_8
+	o_proj_pool_8 -> concat_attn
+	kv_cache -> flash_attn_pool_8 [style=dashed]
+	split_tokens -> q_proj_pool_9
+	split_tokens -> k_proj_pool_9
+	split_tokens -> v_proj_pool_9
+	q_proj_pool_9 -> flash_attn_pool_9
+	k_proj_pool_9 -> flash_attn_pool_9
+	v_proj_pool_9 -> flash_attn_pool_9
+	flash_attn_pool_9 -> o_proj_pool_9
+	o_proj_pool_9 -> concat_attn
+	kv_cache -> flash_attn_pool_9 [style=dashed]
+	split_tokens -> q_proj_pool_10
+	split_tokens -> k_proj_pool_10
+	split_tokens -> v_proj_pool_10
+	q_proj_pool_10 -> flash_attn_pool_10
+	k_proj_pool_10 -> flash_attn_pool_10
+	v_proj_pool_10 -> flash_attn_pool_10
+	flash_attn_pool_10 -> o_proj_pool_10
+	o_proj_pool_10 -> concat_attn
+	kv_cache -> flash_attn_pool_10 [style=dashed]
+	split_tokens -> q_proj_pool_11
+	split_tokens -> k_proj_pool_11
+	split_tokens -> v_proj_pool_11
+	q_proj_pool_11 -> flash_attn_pool_11
+	k_proj_pool_11 -> flash_attn_pool_11
+	v_proj_pool_11 -> flash_attn_pool_11
+	flash_attn_pool_11 -> o_proj_pool_11
+	o_proj_pool_11 -> concat_attn
+	kv_cache -> flash_attn_pool_11 [style=dashed]
+	split_tokens -> q_proj_pool_12
+	split_tokens -> k_proj_pool_12
+	split_tokens -> v_proj_pool_12
+	q_proj_pool_12 -> flash_attn_pool_12
+	k_proj_pool_12 -> flash_attn_pool_12
+	v_proj_pool_12 -> flash_attn_pool_12
+	flash_attn_pool_12 -> o_proj_pool_12
+	o_proj_pool_12 -> concat_attn
+	kv_cache -> flash_attn_pool_12 [style=dashed]
+	split_tokens -> q_proj_pool_13
+	split_tokens -> k_proj_pool_13
+	split_tokens -> v_proj_pool_13
+	q_proj_pool_13 -> flash_attn_pool_13
+	k_proj_pool_13 -> flash_attn_pool_13
+	v_proj_pool_13 -> flash_attn_pool_13
+	flash_attn_pool_13 -> o_proj_pool_13
+	o_proj_pool_13 -> concat_attn
+	kv_cache -> flash_attn_pool_13 [style=dashed]
+	split_tokens -> q_proj_pool_14
+	split_tokens -> k_proj_pool_14
+	split_tokens -> v_proj_pool_14
+	q_proj_pool_14 -> flash_attn_pool_14
+	k_proj_pool_14 -> flash_attn_pool_14
+	v_proj_pool_14 -> flash_attn_pool_14
+	flash_attn_pool_14 -> o_proj_pool_14
+	o_proj_pool_14 -> concat_attn
+	kv_cache -> flash_attn_pool_14 [style=dashed]
+	split_tokens -> q_proj_pool_15
+	split_tokens -> k_proj_pool_15
+	split_tokens -> v_proj_pool_15
+	q_proj_pool_15 -> flash_attn_pool_15
+	k_proj_pool_15 -> flash_attn_pool_15
+	v_proj_pool_15 -> flash_attn_pool_15
+	flash_attn_pool_15 -> o_proj_pool_15
+	o_proj_pool_15 -> concat_attn
+	kv_cache -> flash_attn_pool_15 [style=dashed]
+	split_tokens -> q_proj_pool_16
+	split_tokens -> k_proj_pool_16
+	split_tokens -> v_proj_pool_16
+	q_proj_pool_16 -> flash_attn_pool_16
+	k_proj_pool_16 -> flash_attn_pool_16
+	v_proj_pool_16 -> flash_attn_pool_16
+	flash_attn_pool_16 -> o_proj_pool_16
+	o_proj_pool_16 -> concat_attn
+	kv_cache -> flash_attn_pool_16 [style=dashed]
+	split_tokens -> q_proj_pool_17
+	split_tokens -> k_proj_pool_17
+	split_tokens -> v_proj_pool_17
+	q_proj_pool_17 -> flash_attn_pool_17
+	k_proj_pool_17 -> flash_attn_pool_17
+	v_proj_pool_17 -> flash_attn_pool_17
+	flash_attn_pool_17 -> o_proj_pool_17
+	o_proj_pool_17 -> concat_attn
+	kv_cache -> flash_attn_pool_17 [style=dashed]
+	split_tokens -> q_proj_pool_18
+	split_tokens -> k_proj_pool_18
+	split_tokens -> v_proj_pool_18
+	q_proj_pool_18 -> flash_attn_pool_18
+	k_proj_pool_18 -> flash_attn_pool_18
+	v_proj_pool_18 -> flash_attn_pool_18
+	flash_attn_pool_18 -> o_proj_pool_18
+	o_proj_pool_18 -> concat_attn
+	kv_cache -> flash_attn_pool_18 [style=dashed]
+	split_tokens -> q_proj_pool_19
+	split_tokens -> k_proj_pool_19
+	split_tokens -> v_proj_pool_19
+	q_proj_pool_19 -> flash_attn_pool_19
+	k_proj_pool_19 -> flash_attn_pool_19
+	v_proj_pool_19 -> flash_attn_pool_19
+	flash_attn_pool_19 -> o_proj_pool_19
+	o_proj_pool_19 -> concat_attn
+	kv_cache -> flash_attn_pool_19 [style=dashed]
+	split_tokens -> q_proj_pool_20
+	split_tokens -> k_proj_pool_20
+	split_tokens -> v_proj_pool_20
+	q_proj_pool_20 -> flash_attn_pool_20
+	k_proj_pool_20 -> flash_attn_pool_20
+	v_proj_pool_20 -> flash_attn_pool_20
+	flash_attn_pool_20 -> o_proj_pool_20
+	o_proj_pool_20 -> concat_attn
+	kv_cache -> flash_attn_pool_20 [style=dashed]
+	split_tokens -> q_proj_pool_21
+	split_tokens -> k_proj_pool_21
+	split_tokens -> v_proj_pool_21
+	q_proj_pool_21 -> flash_attn_pool_21
+	k_proj_pool_21 -> flash_attn_pool_21
+	v_proj_pool_21 -> flash_attn_pool_21
+	flash_attn_pool_21 -> o_proj_pool_21
+	o_proj_pool_21 -> concat_attn
+	kv_cache -> flash_attn_pool_21 [style=dashed]
+	split_tokens -> q_proj_pool_22
+	split_tokens -> k_proj_pool_22
+	split_tokens -> v_proj_pool_22
+	q_proj_pool_22 -> flash_attn_pool_22
+	k_proj_pool_22 -> flash_attn_pool_22
+	v_proj_pool_22 -> flash_attn_pool_22
+	flash_attn_pool_22 -> o_proj_pool_22
+	o_proj_pool_22 -> concat_attn
+	kv_cache -> flash_attn_pool_22 [style=dashed]
+	split_tokens -> q_proj_pool_23
+	split_tokens -> k_proj_pool_23
+	split_tokens -> v_proj_pool_23
+	q_proj_pool_23 -> flash_attn_pool_23
+	k_proj_pool_23 -> flash_attn_pool_23
+	v_proj_pool_23 -> flash_attn_pool_23
+	flash_attn_pool_23 -> o_proj_pool_23
+	o_proj_pool_23 -> concat_attn
+	kv_cache -> flash_attn_pool_23 [style=dashed]
+	split_tokens -> q_proj_pool_24
+	split_tokens -> k_proj_pool_24
+	split_tokens -> v_proj_pool_24
+	q_proj_pool_24 -> flash_attn_pool_24
+	k_proj_pool_24 -> flash_attn_pool_24
+	v_proj_pool_24 -> flash_attn_pool_24
+	flash_attn_pool_24 -> o_proj_pool_24
+	o_proj_pool_24 -> concat_attn
+	kv_cache -> flash_attn_pool_24 [style=dashed]
+	split_tokens -> q_proj_pool_25
+	split_tokens -> k_proj_pool_25
+	split_tokens -> v_proj_pool_25
+	q_proj_pool_25 -> flash_attn_pool_25
+	k_proj_pool_25 -> flash_attn_pool_25
+	v_proj_pool_25 -> flash_attn_pool_25
+	flash_attn_pool_25 -> o_proj_pool_25
+	o_proj_pool_25 -> concat_attn
+	kv_cache -> flash_attn_pool_25 [style=dashed]
+	split_tokens -> q_proj_pool_26
+	split_tokens -> k_proj_pool_26
+	split_tokens -> v_proj_pool_26
+	q_proj_pool_26 -> flash_attn_pool_26
+	k_proj_pool_26 -> flash_attn_pool_26
+	v_proj_pool_26 -> flash_attn_pool_26
+	flash_attn_pool_26 -> o_proj_pool_26
+	o_proj_pool_26 -> concat_attn
+	kv_cache -> flash_attn_pool_26 [style=dashed]
+	split_tokens -> q_proj_pool_27
+	split_tokens -> k_proj_pool_27
+	split_tokens -> v_proj_pool_27
+	q_proj_pool_27 -> flash_attn_pool_27
+	k_proj_pool_27 -> flash_attn_pool_27
+	v_proj_pool_27 -> flash_attn_pool_27
+	flash_attn_pool_27 -> o_proj_pool_27
+	o_proj_pool_27 -> concat_attn
+	kv_cache -> flash_attn_pool_27 [style=dashed]
+	split_tokens -> q_proj_pool_28
+	split_tokens -> k_proj_pool_28
+	split_tokens -> v_proj_pool_28
+	q_proj_pool_28 -> flash_attn_pool_28
+	k_proj_pool_28 -> flash_attn_pool_28
+	v_proj_pool_28 -> flash_attn_pool_28
+	flash_attn_pool_28 -> o_proj_pool_28
+	o_proj_pool_28 -> concat_attn
+	kv_cache -> flash_attn_pool_28 [style=dashed]
+	split_tokens -> q_proj_pool_29
+	split_tokens -> k_proj_pool_29
+	split_tokens -> v_proj_pool_29
+	q_proj_pool_29 -> flash_attn_pool_29
+	k_proj_pool_29 -> flash_attn_pool_29
+	v_proj_pool_29 -> flash_attn_pool_29
+	flash_attn_pool_29 -> o_proj_pool_29
+	o_proj_pool_29 -> concat_attn
+	kv_cache -> flash_attn_pool_29 [style=dashed]
+	split_tokens -> q_proj_pool_30
+	split_tokens -> k_proj_pool_30
+	split_tokens -> v_proj_pool_30
+	q_proj_pool_30 -> flash_attn_pool_30
+	k_proj_pool_30 -> flash_attn_pool_30
+	v_proj_pool_30 -> flash_attn_pool_30
+	flash_attn_pool_30 -> o_proj_pool_30
+	o_proj_pool_30 -> concat_attn
+	kv_cache -> flash_attn_pool_30 [style=dashed]
+	split_tokens -> q_proj_pool_31
+	split_tokens -> k_proj_pool_31
+	split_tokens -> v_proj_pool_31
+	q_proj_pool_31 -> flash_attn_pool_31
+	k_proj_pool_31 -> flash_attn_pool_31
+	v_proj_pool_31 -> flash_attn_pool_31
+	flash_attn_pool_31 -> o_proj_pool_31
+	o_proj_pool_31 -> concat_attn
+	kv_cache -> flash_attn_pool_31 [style=dashed]
+	concat_attn -> res1
+	ln1_base -> res1
+	res1 -> ffn1
+	ffn1 -> res2
+	res1 -> res2
+	res2 -> ln1
+	ln1 -> ffn2
+	ffn2 -> res3
+	ln1 -> res3
+	res3 -> ln2
+	ln2 -> ffn3
+	ffn3 -> res4
+	ln2 -> res4
+	res4 -> ln3
+	ln3 -> ffn4
+	ffn4 -> output
+}
