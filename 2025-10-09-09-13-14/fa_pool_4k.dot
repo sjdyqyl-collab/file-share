@@ -1,0 +1,190 @@
+// FA Pool Model SeqLen_4096
+digraph fa_pool_model {
+	graph [nodesep=0.5 rankdir=TB ranksep=1.0 splines=ortho]
+	node [fillcolor="#F8F9FA" shape=rectangle style=filled]
+	input [label="Model Input\nInput: [batch_size, seq_len=4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#E8F4FD" shape=ellipse]
+	embedding [label="Embedding Layer\nInput: [batch_size, seq_len=4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	pos_encoding [label="RoPE Positional Encoding\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_input [label="Layer 0 Input\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer0_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_attn_input [label="Attention Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer0_q_proj [label="Q Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer0_k_proj [label="K Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer0_v_proj [label="V Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer0_reshape_q [label="Reshape Q\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_reshape_k [label="Reshape K\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_reshape_v [label="Reshape V\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_attention [label="Multi-Head Attention\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Distributed FlashAttention" fillcolor="#F8F9FA"]
+	layer0_reshape_out [label="Reshape Output\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_out_proj [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer0_attn_input -> layer0_q_proj
+	layer0_attn_input -> layer0_k_proj
+	layer0_attn_input -> layer0_v_proj
+	layer0_q_proj -> layer0_reshape_q
+	layer0_k_proj -> layer0_reshape_k
+	layer0_v_proj -> layer0_reshape_v
+	layer0_reshape_q -> layer0_attention
+	layer0_reshape_k -> layer0_attention
+	layer0_reshape_v -> layer0_attention
+	layer0_attention -> layer0_reshape_out
+	layer0_reshape_out -> layer0_out_proj
+	layer0_res1 [label="Residual Add 1\nInput: [batch_size, seq_len=4096, 4096], [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer0_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer0_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer0_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer0_ffn_input -> layer0_ffn_up
+	layer0_ffn_up -> layer0_gelu
+	layer0_gelu -> layer0_ffn_down
+	layer0_res2 [label="Residual Add 2\nInput: [batch_size, seq_len=4096, 4096], [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer0_output [label="Layer 0 Output\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer0_input -> layer0_norm1
+	layer0_norm1 -> layer0_attn_input
+	layer0_attn_output -> layer0_res1
+	layer0_input -> layer0_res1
+	layer0_res1 -> layer0_norm2
+	layer0_norm2 -> layer0_ffn_input
+	layer0_ffn_output -> layer0_res2
+	layer0_res1 -> layer0_res2
+	layer0_res2 -> layer0_output
+	layer1_input [label="Layer 1 Input\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer1_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_attn_input [label="Attention Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer1_q_proj [label="Q Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer1_k_proj [label="K Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer1_v_proj [label="V Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer1_reshape_q [label="Reshape Q\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_reshape_k [label="Reshape K\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_reshape_v [label="Reshape V\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_attention [label="Multi-Head Attention\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Distributed FlashAttention" fillcolor="#F8F9FA"]
+	layer1_reshape_out [label="Reshape Output\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_out_proj [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer1_attn_input -> layer1_q_proj
+	layer1_attn_input -> layer1_k_proj
+	layer1_attn_input -> layer1_v_proj
+	layer1_q_proj -> layer1_reshape_q
+	layer1_k_proj -> layer1_reshape_k
+	layer1_v_proj -> layer1_reshape_v
+	layer1_reshape_q -> layer1_attention
+	layer1_reshape_k -> layer1_attention
+	layer1_reshape_v -> layer1_attention
+	layer1_attention -> layer1_reshape_out
+	layer1_reshape_out -> layer1_out_proj
+	layer1_res1 [label="Residual Add 1\nInput: [batch_size, seq_len=4096, 4096], [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer1_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer1_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer1_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer1_ffn_input -> layer1_ffn_up
+	layer1_ffn_up -> layer1_gelu
+	layer1_gelu -> layer1_ffn_down
+	layer1_res2 [label="Residual Add 2\nInput: [batch_size, seq_len=4096, 4096], [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer1_output [label="Layer 1 Output\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer1_input -> layer1_norm1
+	layer1_norm1 -> layer1_attn_input
+	layer1_attn_output -> layer1_res1
+	layer1_input -> layer1_res1
+	layer1_res1 -> layer1_norm2
+	layer1_norm2 -> layer1_ffn_input
+	layer1_ffn_output -> layer1_res2
+	layer1_res1 -> layer1_res2
+	layer1_res2 -> layer1_output
+	layer2_input [label="Layer 2 Input\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer2_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_attn_input [label="Attention Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer2_q_proj [label="Q Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer2_k_proj [label="K Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer2_v_proj [label="V Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer2_reshape_q [label="Reshape Q\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_reshape_k [label="Reshape K\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_reshape_v [label="Reshape V\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_attention [label="Multi-Head Attention\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Distributed FlashAttention" fillcolor="#F8F9FA"]
+	layer2_reshape_out [label="Reshape Output\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_out_proj [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer2_attn_input -> layer2_q_proj
+	layer2_attn_input -> layer2_k_proj
+	layer2_attn_input -> layer2_v_proj
+	layer2_q_proj -> layer2_reshape_q
+	layer2_k_proj -> layer2_reshape_k
+	layer2_v_proj -> layer2_reshape_v
+	layer2_reshape_q -> layer2_attention
+	layer2_reshape_k -> layer2_attention
+	layer2_reshape_v -> layer2_attention
+	layer2_attention -> layer2_reshape_out
+	layer2_reshape_out -> layer2_out_proj
+	layer2_res1 [label="Residual Add 1\nInput: [batch_size, seq_len=4096, 4096], [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer2_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer2_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer2_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer2_ffn_input -> layer2_ffn_up
+	layer2_ffn_up -> layer2_gelu
+	layer2_gelu -> layer2_ffn_down
+	layer2_res2 [label="Residual Add 2\nInput: [batch_size, seq_len=4096, 4096], [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer2_output [label="Layer 2 Output\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer2_input -> layer2_norm1
+	layer2_norm1 -> layer2_attn_input
+	layer2_attn_output -> layer2_res1
+	layer2_input -> layer2_res1
+	layer2_res1 -> layer2_norm2
+	layer2_norm2 -> layer2_ffn_input
+	layer2_ffn_output -> layer2_res2
+	layer2_res1 -> layer2_res2
+	layer2_res2 -> layer2_output
+	layer3_input [label="Layer 3 Input\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer3_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_attn_input [label="Attention Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer3_q_proj [label="Q Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer3_k_proj [label="K Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer3_v_proj [label="V Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer3_reshape_q [label="Reshape Q\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_reshape_k [label="Reshape K\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_reshape_v [label="Reshape V\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_attention [label="Multi-Head Attention\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Distributed FlashAttention" fillcolor="#F8F9FA"]
+	layer3_reshape_out [label="Reshape Output\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_out_proj [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer3_attn_input -> layer3_q_proj
+	layer3_attn_input -> layer3_k_proj
+	layer3_attn_input -> layer3_v_proj
+	layer3_q_proj -> layer3_reshape_q
+	layer3_k_proj -> layer3_reshape_k
+	layer3_v_proj -> layer3_reshape_v
+	layer3_reshape_q -> layer3_attention
+	layer3_reshape_k -> layer3_attention
+	layer3_reshape_v -> layer3_attention
+	layer3_attention -> layer3_reshape_out
+	layer3_reshape_out -> layer3_out_proj
+	layer3_res1 [label="Residual Add 1\nInput: [batch_size, seq_len=4096, 4096], [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer3_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer3_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer3_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer3_ffn_input -> layer3_ffn_up
+	layer3_ffn_up -> layer3_gelu
+	layer3_gelu -> layer3_ffn_down
+	layer3_res2 [label="Residual Add 2\nInput: [batch_size, seq_len=4096, 4096], [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer3_output [label="Layer 3 Output\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer3_input -> layer3_norm1
+	layer3_norm1 -> layer3_attn_input
+	layer3_attn_output -> layer3_res1
+	layer3_input -> layer3_res1
+	layer3_res1 -> layer3_norm2
+	layer3_norm2 -> layer3_ffn_input
+	layer3_ffn_output -> layer3_res2
+	layer3_res1 -> layer3_res2
+	layer3_res2 -> layer3_output
+	output_layer [label="Output Projection\nInput: [batch_size, seq_len=4096, 4096]\nOutput: [batch_size, seq_len=4096, 50256]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	output [label="Model Output\nInput: [batch_size, seq_len=4096, 50256]\nOutput: [batch_size, seq_len=4096, 50256]" fillcolor="#D1E7DD" shape=ellipse]
+	input -> embedding
+	embedding -> pos_encoding
+	pos_encoding -> layer0_input
+	layer0_output -> layer1_input
+	layer1_output -> layer2_input
+	layer2_output -> layer3_input
+	layer3_output -> output_layer
+	output_layer -> output
+}

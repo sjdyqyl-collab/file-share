@@ -1,0 +1,376 @@
+{
+  "models": {
+    "baseline": {
+      "name": "4-layer Dense Model (Baseline)",
+      "parameters": "13B",
+      "config": {
+        "layers": 4,
+        "hidden_dimension": 4096,
+        "attention_heads": 32,
+        "feed_forward_dimension": 16384,
+        "vocabulary_size": 50256,
+        "activation_function": "GELU",
+        "normalization": "RMSNorm",
+        "positional_encoding": "RoPE"
+      },
+      "parallel_strategy": {
+        "type": "static",
+        "tensor_parallelism": {
+          "degree": 8,
+          "method": "row_column_split",
+          "devices": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"]
+        },
+        "pipeline_parallelism": {
+          "degree": 2,
+          "stages": [
+            {
+              "stage_id": 0,
+              "layers": [0, 1],
+              "devices": ["gpu_0", "gpu_1", "gpu_2", "gpu_3"]
+            },
+            {
+              "stage_id": 1,
+              "layers": [2, 3],
+              "devices": ["gpu_4", "gpu_5", "gpu_6", "gpu_7"]
+            }
+          ]
+        }
+      },
+      "total_gpus": 16,
+      "memory_per_gpu_gb": 65,
+      "hardware": {
+        "gpu_model": "NVIDIA A100 80GB",
+        "interconnect": "NVLink 3.0 + InfiniBand"
+      }
+    },
+    "fa_pool": {
+      "name": "4-layer Dense Model (FA Pool)",
+      "parameters": "13B",
+      "config": {
+        "layers": 4,
+        "hidden_dimension": 4096,
+        "attention_heads": 32,
+        "feed_forward_dimension": 16384,
+        "vocabulary_size": 50256,
+        "activation_function": "GELU",
+        "normalization": "RMSNorm",
+        "positional_encoding": "RoPE"
+      },
+      "parallel_strategy": {
+        "type": "dynamic",
+        "base_layer": {
+          "gpus": 8,
+          "tensor_parallelism": {
+            "degree": 8,
+            "method": "row_column_split",
+            "devices": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"]
+          }
+        },
+        "attention_pool": {
+          "max_gpus": 32,
+          "allocation_strategy": "sequence_length_threshold",
+          "thresholds": {
+            "4096": {
+              "sequence_range": "4097-8192",
+              "pool_gpus": 8,
+              "devices": ["gpu_8", "gpu_9", "gpu_10", "gpu_11", "gpu_12", "gpu_13", "gpu_14", "gpu_15"]
+            },
+            "8192": {
+              "sequence_range": "8193-16384",
+              "pool_gpus": 16,
+              "devices": ["gpu_8", "gpu_9", "gpu_10", "gpu_11", "gpu_12", "gpu_13", "gpu_14", "gpu_15", "gpu_16", "gpu_17", "gpu_18", "gpu_19", "gpu_20", "gpu_21", "gpu_22", "gpu_23"]
+            },
+            "16384": {
+              "sequence_range": "16385-32768",
+              "pool_gpus": 24,
+              "devices": ["gpu_8", "gpu_9", "gpu_10", "gpu_11", "gpu_12", "gpu_13", "gpu_14", "gpu_15", "gpu_16", "gpu_17", "gpu_18", "gpu_19", "gpu_20", "gpu_21", "gpu_22", "gpu_23", "gpu_24", "gpu_25", "gpu_26", "gpu_27", "gpu_28", "gpu_29", "gpu_30", "gpu_31"]
+            },
+            "32768": {
+              "sequence_range": "32768+",
+              "pool_gpus": 32,
+              "devices": ["gpu_8", "gpu_9", "gpu_10", "gpu_11", "gpu_12", "gpu_13", "gpu_14", "gpu_15", "gpu_16", "gpu_17", "gpu_18", "gpu_19", "gpu_20", "gpu_21", "gpu_22", "gpu_23", "gpu_24", "gpu_25", "gpu_26", "gpu_27", "gpu_28", "gpu_29", "gpu_30", "gpu_31", "gpu_32", "gpu_33", "gpu_34", "gpu_35", "gpu_36", "gpu_37", "gpu_38", "gpu_39"]
+            }
+          }
+        }
+      },
+      "total_gpus": 40,
+      "memory_per_gpu_gb": {
+        "base_layer": 65,
+        "attention_pool": 45
+      },
+      "hardware": {
+        "gpu_model": "NVIDIA A100 80GB",
+        "interconnect": "NVLink 3.0 + InfiniBand"
+      }
+    }
+  },
+  "modules": {
+    "embedding": {
+      "type": "embedding_layer",
+      "parameters": "~128M",
+      "dimensions": [50256, 4096],
+      "mapping": {
+        "baseline": {
+          "replicated_across": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"],
+          "memory_gb": 0.2
+        },
+        "fa_pool": {
+          "replicated_across": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"],
+          "memory_gb": 0.2
+        }
+      }
+    },
+    "positional_encoding": {
+      "type": "rope_embedding",
+      "parameters": "~1M",
+      "dimensions": [4096],
+      "mapping": {
+        "baseline": {
+          "replicated_across": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"],
+          "memory_gb": 0.004
+        },
+        "fa_pool": {
+          "replicated_across": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"],
+          "memory_gb": 0.004
+        }
+      }
+    },
+    "transformer_layers": {
+      "layers": 4,
+      "layer_config": {
+        "attention": {
+          "type": "multi_head_attention",
+          "heads": 32,
+          "head_dim": 128,
+          "parameters_per_layer": "~67M"
+        },
+        "ffn": {
+          "type": "feed_forward_network",
+          "hidden_dim": 16384,
+          "activation": "GELU",
+          "parameters_per_layer": "~67M"
+        },
+        "layernorm": {
+          "type": "rms_norm",
+          "parameters": "~8K"
+        }
+      },
+      "mapping": {
+        "baseline": {
+          "pipeline_stages": [
+            {
+              "stage_id": 0,
+              "layers": [0, 1],
+              "devices": ["gpu_0", "gpu_1", "gpu_2", "gpu_3"],
+              "tensor_parallel": 4
+            },
+            {
+              "stage_id": 1,
+              "layers": [2, 3],
+              "devices": ["gpu_4", "gpu_5", "gpu_6", "gpu_7"],
+              "tensor_parallel": 4
+            }
+          ]
+        },
+        "fa_pool": {
+          "base_layer": {
+            "ffn_computation": {
+              "layers": [0, 1, 2, 3],
+              "devices": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"],
+              "tensor_parallel": 8
+            }
+          },
+          "attention_pool": {
+            "attention_computation": {
+              "layers": [0, 1, 2, 3],
+              "dynamic_allocation": true,
+              "block_size_formula": "ceil(sequence_length / num_pool_gpus)",
+              "devices": "dynamic_based_on_threshold"
+            }
+          }
+        }
+      }
+    },
+    "output_layer": {
+      "type": "linear_projection",
+      "parameters": "~204M",
+      "dimensions": [4096, 50256],
+      "mapping": {
+        "baseline": {
+          "tensor_parallel": {
+            "degree": 8,
+            "method": "row_parallel",
+            "devices": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"]
+          },
+          "memory_gb": 0.3
+        },
+        "fa_pool": {
+          "tensor_parallel": {
+            "degree": 8,
+            "method": "row_parallel",
+            "devices": ["gpu_0", "gpu_1", "gpu_2", "gpu_3", "gpu_4", "gpu_5", "gpu_6", "gpu_7"]
+          },
+          "memory_gb": 0.3
+        }
+      }
+    }
+  },
+  "communication": {
+    "baseline": {
+      "tensor_parallel_communication": {
+        "type": "all_reduce",
+        "backend": "nccl",
+        "bandwidth": "600GB/s_nvlink"
+      },
+      "pipeline_parallel_communication": {
+        "type": "send_recv",
+        "backend": "nccl",
+        "bandwidth": "600GB/s_nvlink"
+      }
+    },
+    "fa_pool": {
+      "base_layer_communication": {
+        "tensor_parallel": {
+          "type": "all_reduce",
+          "backend": "nccl",
+          "bandwidth": "600GB/s_nvlink"
+        }
+      },
+      "attention_pool_communication": {
+        "kv_cache_broadcast": {
+          "type": "broadcast",
+          "backend": "nccl",
+          "bandwidth": "600GB/s_nvlink"
+        },
+        "result_aggregation": {
+          "type": "all_gather",
+          "method": "hierarchical_tree_reduction",
+          "steps": "log2(num_pool_gpus)",
+          "bandwidth": "600GB/s_nvlink"
+        },
+        "synchronization": {
+          "type": "cuda_events",
+          "overlap_with_ffn": true
+        }
+      }
+    }
+  },
+  "resource_management": {
+    "sequence_monitoring": {
+      "frequency": "per_forward_pass",
+      "threshold": 4096,
+      "hysteresis": 256,
+      "allocation_latency_ms": 10,
+      "deallocation_latency_ms": 5,
+      "deactivation_delay_seconds": 5
+    },
+    "dynamic_allocation": {
+      "algorithm": "sequence_length_threshold",
+      "pool_size_mapping": {
+        "4096": 8,
+        "8192": 16,
+        "16384": 24,
+        "32768": 32
+      }
+    }
+  },
+  "performance_metrics": {
+    "baseline": {
+      "tpot_improvements": {
+        "512": "1.10x",
+        "2048": "1.39x",
+        "8192": "2.09x",
+        "16384": "3.20x"
+      },
+      "tps_improvements": {
+        "512": "1.20x",
+        "2048": "1.60x",
+        "8192": "2.50x",
+        "16384": "2.80x"
+      }
+    }
+  },
+  "device_mapping": {
+    "gpu_0": {
+      "model": "NVIDIA A100 80GB",
+      "node": 0,
+      "interconnect": "NVLink_3.0",
+      "role": {
+        "baseline": "tensor_parallel_rank_0_pipeline_stage_0",
+        "fa_pool": "base_layer_tensor_parallel_rank_0"
+      }
+    },
+    "gpu_1": {
+      "model": "NVIDIA A100 80GB",
+      "node": 0,
+      "interconnect": "NVLink_3.0",
+      "role": {
+        "baseline": "tensor_parallel_rank_1_pipeline_stage_0",
+        "fa_pool": "base_layer_tensor_parallel_rank_1"
+      }
+    },
+    "gpu_2": {
+      "model": "NVIDIA A100 80GB",
+      "node": 0,
+      "interconnect": "NVLink_3.0",
+      "role": {
+        "baseline": "tensor_parallel_rank_2_pipeline_stage_0",
+        "fa_pool": "base_layer_tensor_parallel_rank_2"
+      }
+    },
+    "gpu_3": {
+      "model": "NVIDIA A100 80GB",
+      "node": 0,
+      "interconnect": "NVLink_3.0",
+      "role": {
+        "baseline": "tensor_parallel_rank_3_pipeline_stage_0",
+        "fa_pool": "base_layer_tensor_parallel_rank_3"
+      }
+    },
+    "gpu_4": {
+      "model": "NVIDIA A100 80GB",
+      "node": 1,
+      "interconnect": "NVLink_3.0",
+      "role": {
+        "baseline": "tensor_parallel_rank_0_pipeline_stage_1",
+        "fa_pool": "base_layer_tensor_parallel_rank_4"
+      }
+    },
+    "gpu_5": {
+      "model": "NVIDIA A100 80GB",
+      "node": 1,
+      "interconnect": "NVLink_3.0",
+      "role": {
+        "baseline": "tensor_parallel_rank_1_pipeline_stage_1",
+        "fa_pool": "base_layer_tensor_parallel_rank_5"
+      }
+    },
+    "gpu_6": {
+      "model": "NVIDIA A100 80GB",
+      "node": 1,
+      "interconnect": "NVLink_3.0",
+      "role": {
+        "baseline": "tensor_parallel_rank_2_pipeline_stage_1",
+        "fa_pool": "base_layer_tensor_parallel_rank_6"
+      }
+    },
+    "gpu_7": {
+      "model": "NVIDIA A100 80GB",
+      "node": 1,
+      "interconnect": "NVLink_3.0",
+      "role": {
+        "baseline": "tensor_parallel_rank_3_pipeline_stage_1",
+        "fa_pool": "base_layer_tensor_parallel_rank_7"
+      }
+    },
+    "gpu_8_to_39": {
+      "model": "NVIDIA A100 80GB",
+      "nodes": "2-4",
+      "interconnect": "NVLink_3.0_InfiniBand",
+      "role": {
+        "baseline": "not_used",
+        "fa_pool": "attention_pool_dynamic_allocation"
+      }
+    }
+  }
+}

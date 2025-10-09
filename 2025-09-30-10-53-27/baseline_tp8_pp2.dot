@@ -1,0 +1,104 @@
+// Baseline Static TP=8 PP=2 Configuration
+digraph baseline_tp8_pp2 {
+	rankdir=TB size="20,30"
+	node [fillcolor=lightblue shape=rectangle style=filled]
+	input [label="Input\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: all GPUs" fillcolor=lightgreen shape=ellipse]
+	embed_0 [label="Embedding Layer\nInput: [batch_size=?, seq_len=?]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightyellow]
+	pos_enc_0 [label="Positional Encoding\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightyellow]
+	layer0_norm1_0 [label="LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer0_qkv_0 [label="QKV Linear (TP=8)\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, heads=32, d_k=128]\nGPU: 0-7" fillcolor=lightcoral]
+	layer0_attn_0 [label="Multi-Head Attention\nInput: [batch_size=?, seq_len=?, heads=32, d_k=128]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer0_add1_0 [label="Residual Add\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer0_norm2_0 [label="LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer0_ffn1_0 [label="FFN Linear 1 (TP=8)\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nGPU: 0-7" fillcolor=lightcoral]
+	layer0_gelu_0 [label="GELU Activation\nInput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nOutput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nGPU: 0-7" fillcolor=lightcoral]
+	layer0_ffn2_0 [label="FFN Linear 2 (TP=8)\nInput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer0_add2_0 [label="Residual Add\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	pipeline_comm_0_1 [label="Pipeline Communication\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7 → 8-15" fillcolor=orange shape=parallelogram]
+	layer1_norm1_1 [label="LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer1_qkv_1 [label="QKV Linear (TP=8)\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, heads=32, d_k=128]\nGPU: 8-15" fillcolor=lightblue]
+	layer1_attn_1 [label="Multi-Head Attention\nInput: [batch_size=?, seq_len=?, heads=32, d_k=128]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer1_add1_1 [label="Residual Add\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer1_norm2_1 [label="LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer1_ffn1_1 [label="FFN Linear 1 (TP=8)\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nGPU: 8-15" fillcolor=lightblue]
+	layer1_gelu_1 [label="GELU Activation\nInput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nOutput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nGPU: 8-15" fillcolor=lightblue]
+	layer1_ffn2_1 [label="FFN Linear 2 (TP=8)\nInput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer1_add2_1 [label="Residual Add\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	pipeline_comm_1_0 [label="Pipeline Communication\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15 → 0-7" fillcolor=orange shape=parallelogram]
+	layer2_norm1_0 [label="LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer2_qkv_0 [label="QKV Linear (TP=8)\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, heads=32, d_k=128]\nGPU: 0-7" fillcolor=lightcoral]
+	layer2_attn_0 [label="Multi-Head Attention\nInput: [batch_size=?, seq_len=?, heads=32, d_k=128]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer2_add1_0 [label="Residual Add\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer2_norm2_0 [label="LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer2_ffn1_0 [label="FFN Linear 1 (TP=8)\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nGPU: 0-7" fillcolor=lightcoral]
+	layer2_gelu_0 [label="GELU Activation\nInput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nOutput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nGPU: 0-7" fillcolor=lightcoral]
+	layer2_ffn2_0 [label="FFN Linear 2 (TP=8)\nInput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	layer2_add2_0 [label="Residual Add\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightcoral]
+	pipeline_comm_0_1_2 [label="Pipeline Communication\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7 → 8-15" fillcolor=orange shape=parallelogram]
+	layer3_norm1_1 [label="LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer3_qkv_1 [label="QKV Linear (TP=8)\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, heads=32, d_k=128]\nGPU: 8-15" fillcolor=lightblue]
+	layer3_attn_1 [label="Multi-Head Attention\nInput: [batch_size=?, seq_len=?, heads=32, d_k=128]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer3_add1_1 [label="Residual Add\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer3_norm2_1 [label="LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer3_ffn1_1 [label="FFN Linear 1 (TP=8)\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nGPU: 8-15" fillcolor=lightblue]
+	layer3_gelu_1 [label="GELU Activation\nInput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nOutput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nGPU: 8-15" fillcolor=lightblue]
+	layer3_ffn2_1 [label="FFN Linear 2 (TP=8)\nInput: [batch_size=?, seq_len=?, ffn_hidden=16384]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	layer3_add2_1 [label="Residual Add\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15" fillcolor=lightblue]
+	pipeline_comm_final [label="Pipeline Communication\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 8-15 → 0-7" fillcolor=orange shape=parallelogram]
+	final_norm [label="Final LayerNorm\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, hidden_dim=4096]\nGPU: 0-7" fillcolor=lightyellow]
+	output_proj [label="Output Projection\nInput: [batch_size=?, seq_len=?, hidden_dim=4096]\nOutput: [batch_size=?, seq_len=?, vocab_size]\nGPU: 0-7" fillcolor=lightyellow]
+	output [label="Output\nInput: [batch_size=?, seq_len=?, vocab_size]\nOutput: [batch_size=?, seq_len=?, vocab_size]\nGPU: 0-7" fillcolor=lightgreen shape=ellipse]
+	input -> embed_0
+	embed_0 -> pos_enc_0
+	pos_enc_0 -> layer0_norm1_0
+	layer0_norm1_0 -> layer0_qkv_0
+	layer0_qkv_0 -> layer0_attn_0
+	layer0_attn_0 -> layer0_add1_0
+	pos_enc_0 -> layer0_add1_0
+	layer0_add1_0 -> layer0_norm2_0
+	layer0_norm2_0 -> layer0_ffn1_0
+	layer0_ffn1_0 -> layer0_gelu_0
+	layer0_gelu_0 -> layer0_ffn2_0
+	layer0_ffn2_0 -> layer0_add2_0
+	layer0_add1_0 -> layer0_add2_0
+	layer0_add2_0 -> pipeline_comm_0_1
+	pipeline_comm_0_1 -> layer1_norm1_1
+	layer1_norm1_1 -> layer1_qkv_1
+	layer1_qkv_1 -> layer1_attn_1
+	layer1_attn_1 -> layer1_add1_1
+	pipeline_comm_0_1 -> layer1_add1_1
+	layer1_add1_1 -> layer1_norm2_1
+	layer1_norm2_1 -> layer1_ffn1_1
+	layer1_ffn1_1 -> layer1_gelu_1
+	layer1_gelu_1 -> layer1_ffn2_1
+	layer1_ffn2_1 -> layer1_add2_1
+	layer1_add1_1 -> layer1_add2_1
+	layer1_add2_1 -> pipeline_comm_1_0
+	pipeline_comm_1_0 -> layer2_norm1_0
+	layer2_norm1_0 -> layer2_qkv_0
+	layer2_qkv_0 -> layer2_attn_0
+	layer2_attn_0 -> layer2_add1_0
+	pipeline_comm_1_0 -> layer2_add1_0
+	layer2_add1_0 -> layer2_norm2_0
+	layer2_norm2_0 -> layer2_ffn1_0
+	layer2_ffn1_0 -> layer2_gelu_0
+	layer2_gelu_0 -> layer2_ffn2_0
+	layer2_ffn2_0 -> layer2_add2_0
+	layer2_add1_0 -> layer2_add2_0
+	layer2_add2_0 -> pipeline_comm_0_1_2
+	pipeline_comm_0_1_2 -> layer3_norm1_1
+	layer3_norm1_1 -> layer3_qkv_1
+	layer3_qkv_1 -> layer3_attn_1
+	layer3_attn_1 -> layer3_add1_1
+	pipeline_comm_0_1_2 -> layer3_add1_1
+	layer3_add1_1 -> layer3_norm2_1
+	layer3_norm2_1 -> layer3_ffn1_1
+	layer3_ffn1_1 -> layer3_gelu_1
+	layer3_gelu_1 -> layer3_ffn2_1
+	layer3_ffn2_1 -> layer3_add2_1
+	layer3_add1_1 -> layer3_add2_1
+	layer3_add2_1 -> pipeline_comm_final
+	pipeline_comm_final -> final_norm
+	final_norm -> output_proj
+	output_proj -> output
+}

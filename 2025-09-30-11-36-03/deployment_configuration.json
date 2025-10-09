@@ -1,0 +1,290 @@
+{
+  "model_deployments": {
+    "baseline": {
+      "name": "Static TP=8 PP=2 Baseline",
+      "model_config": {
+        "layers": 4,
+        "hidden_dimension": 4096,
+        "attention_heads": 32,
+        "feed_forward_dimension": 16384,
+        "parameters": "~13B"
+      },
+      "parallel_strategy": {
+        "type": "static_tensor_pipeline",
+        "tensor_parallelism": 8,
+        "pipeline_parallelism": 2,
+        "total_gpus": 16,
+        "gpu_mapping": {
+          "stage_0": {
+            "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+            "tensor_parallel_group": "tp_group_0",
+            "pipeline_stage": 0,
+            "layers": [0, 1]
+          },
+          "stage_1": {
+            "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+            "tensor_parallel_group": "tp_group_1",
+            "pipeline_stage": 1,
+            "layers": [2, 3]
+          }
+        }
+      },
+      "memory_per_gpu": "65GB",
+      "communication": {
+        "tensor_parallel_comm": "all_reduce_within_tp_group",
+        "pipeline_parallel_comm": "send_recv_between_stages"
+      }
+    },
+    "fa_pool": {
+      "name": "FA Pool Dynamic Strategy",
+      "model_config": {
+        "layers": 4,
+        "hidden_dimension": 4096,
+        "attention_heads": 32,
+        "feed_forward_dimension": 16384,
+        "parameters": "~13B"
+      },
+      "parallel_strategy": {
+        "type": "dynamic_attention_pool",
+        "sequence_threshold": 4096,
+        "base_layer": {
+          "gpus": 8,
+          "components": ["embedding", "positional_encoding", "ffn_layers", "output_projection", "resource_manager"],
+          "memory_per_gpu": "65GB",
+          "gpu_mapping": {
+            "base_gpu_0": {
+              "device_id": 0,
+              "components": ["embedding", "layer_0_ffn", "layer_1_ffn"],
+              "parameters": "~1.6B"
+            },
+            "base_gpu_1": {
+              "device_id": 1,
+              "components": ["positional_encoding", "layer_0_ffn", "layer_1_ffn"],
+              "parameters": "~1.6B"
+            },
+            "base_gpu_2": {
+              "device_id": 2,
+              "components": ["layer_0_attention_weights", "layer_1_attention_weights"],
+              "parameters": "~1.6B"
+            },
+            "base_gpu_3": {
+              "device_id": 3,
+              "components": ["layer_0_attention_weights", "layer_1_attention_weights"],
+              "parameters": "~1.6B"
+            },
+            "base_gpu_4": {
+              "device_id": 4,
+              "components": ["layer_2_ffn", "layer_3_ffn"],
+              "parameters": "~1.6B"
+            },
+            "base_gpu_5": {
+              "device_id": 5,
+              "components": ["layer_2_ffn", "layer_3_ffn"],
+              "parameters": "~1.6B"
+            },
+            "base_gpu_6": {
+              "device_id": 6,
+              "components": ["layer_2_attention_weights", "layer_3_attention_weights"],
+              "parameters": "~1.6B"
+            },
+            "base_gpu_7": {
+              "device_id": 7,
+              "components": ["layer_2_attention_weights", "layer_3_attention_weights", "output_projection", "resource_manager"],
+              "parameters": "~1.6B"
+            }
+          }
+        },
+        "attention_pool": {
+          "max_gpus": 32,
+          "memory_per_gpu": "45GB",
+          "allocation_strategy": "sequence_length_based",
+          "gpu_mapping_function": {
+            "formula": "min(ceil(sequence_length / 4096), 32)",
+            "min_gpus": 0,
+            "max_gpus": 32
+          },
+          "dynamic_mapping": {
+            "sequence_512": {
+              "pool_gpus": 0,
+              "active_devices": [0, 1, 2, 3, 4, 5, 6, 7],
+              "attention_computation": "base_layer_only"
+            },
+            "sequence_2048": {
+              "pool_gpus": 0,
+              "active_devices": [0, 1, 2, 3, 4, 5, 6, 7],
+              "attention_computation": "base_layer_only"
+            },
+            "sequence_4096": {
+              "pool_gpus": 1,
+              "active_devices": [0, 1, 2, 3, 4, 5, 6, 7, 16],
+              "attention_computation": "pool_gpu_16"
+            },
+            "sequence_8192": {
+              "pool_gpus": 2,
+              "active_devices": [0, 1, 2, 3, 4, 5, 6, 7, 16, 17],
+              "attention_computation": "distributed_across_16_17"
+            },
+            "sequence_16384": {
+              "pool_gpus": 4,
+              "active_devices": [0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 19],
+              "attention_computation": "distributed_across_pool"
+            },
+            "sequence_32768": {
+              "pool_gpus": 8,
+              "active_devices": [0, 1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 19, 20, 21, 22, 23],
+              "attention_computation": "distributed_across_pool"
+            }
+          }
+        }
+      },
+      "attention_computation": {
+        "algorithm": "flash_attention_block_parallel",
+        "block_size_formula": "ceil(sequence_length / num_pool_gpus)",
+        "kv_cache_strategy": "full_replication",
+        "communication": {
+          "type": "hierarchical_reduction",
+          "tree_pattern": "log2(num_pool_gpus)_steps",
+          "bandwidth": "nvlink_3.0",
+          "overhead": "<15_percent"
+        }
+      },
+      "resource_management": {
+        "monitoring": "continuous_sequence_length",
+        "allocation_latency": "<100ms",
+        "deallocation_latency": "<50ms",
+        "failure_recovery": "graceful_degradation"
+      }
+    }
+  },
+  "device_mapping": {
+    "gpu_0": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "base_layer",
+      "memory": "65GB_allocated",
+      "components": ["embedding", "layer_0_ffn", "layer_1_ffn"]
+    },
+    "gpu_1": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "base_layer",
+      "memory": "65GB_allocated",
+      "components": ["positional_encoding", "layer_0_ffn", "layer_1_ffn"]
+    },
+    "gpu_2": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "base_layer",
+      "memory": "65GB_allocated",
+      "components": ["layer_0_attention_weights", "layer_1_attention_weights"]
+    },
+    "gpu_3": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "base_layer",
+      "memory": "65GB_allocated",
+      "components": ["layer_0_attention_weights", "layer_1_attention_weights"]
+    },
+    "gpu_4": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "base_layer",
+      "memory": "65GB_allocated",
+      "components": ["layer_2_ffn", "layer_3_ffn"]
+    },
+    "gpu_5": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "base_layer",
+      "memory": "65GB_allocated",
+      "components": ["layer_2_ffn", "layer_3_ffn"]
+    },
+    "gpu_6": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "base_layer",
+      "memory": "65GB_allocated",
+      "components": ["layer_2_attention_weights", "layer_3_attention_weights"]
+    },
+    "gpu_7": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "base_layer",
+      "memory": "65GB_allocated",
+      "components": ["layer_2_attention_weights", "layer_3_attention_weights", "output_projection", "resource_manager"]
+    },
+    "gpu_16": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "attention_pool",
+      "memory": "45GB_allocated",
+      "activation_condition": "sequence_length > 4096",
+      "block_computation": "attention_block_0"
+    },
+    "gpu_17": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "attention_pool",
+      "memory": "45GB_allocated",
+      "activation_condition": "sequence_length > 8192",
+      "block_computation": "attention_block_1"
+    },
+    "gpu_18": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "attention_pool",
+      "memory": "45GB_allocated",
+      "activation_condition": "sequence_length > 12288",
+      "block_computation": "attention_block_2"
+    },
+    "gpu_19": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "attention_pool",
+      "memory": "45GB_allocated",
+      "activation_condition": "sequence_length > 16384",
+      "block_computation": "attention_block_3"
+    },
+    "gpu_20": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "attention_pool",
+      "memory": "45GB_allocated",
+      "activation_condition": "sequence_length > 20480",
+      "block_computation": "attention_block_4"
+    },
+    "gpu_21": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "attention_pool",
+      "memory": "45GB_allocated",
+      "activation_condition": "sequence_length > 24576",
+      "block_computation": "attention_block_5"
+    },
+    "gpu_22": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "attention_pool",
+      "memory": "45GB_allocated",
+      "activation_condition": "sequence_length > 28672",
+      "block_computation": "attention_block_6"
+    },
+    "gpu_23": {
+      "model": "NVIDIA_A100_80GB",
+      "role": "attention_pool",
+      "memory": "45GB_allocated",
+      "activation_condition": "sequence_length > 32768",
+      "block_computation": "attention_block_7"
+    }
+  },
+  "communication_topology": {
+    "nvlink_groups": {
+      "base_layer_mesh": [0, 1, 2, 3, 4, 5, 6, 7],
+      "attention_pool_mesh": [16, 17, 18, 19, 20, 21, 22, 23],
+      "cross_group": "infiniband_between_base_and_pool"
+    },
+    "bandwidth": {
+      "nvlink_3.0": "600GBps",
+      "infiniband": "200Gbps"
+    }
+  },
+  "performance_targets": {
+    "tpot_improvement": {
+      "512_tokens": "1.1x",
+      "2048_tokens": "1.4x", 
+      "8192_tokens": "2.1x",
+      "16384_tokens": "3.2x"
+    },
+    "tps_improvement": {
+      "512_tokens": "1.2x",
+      "2048_tokens": "1.6x",
+      "8192_tokens": "2.5x", 
+      "16384_tokens": "2.8x"
+    }
+  }
+}

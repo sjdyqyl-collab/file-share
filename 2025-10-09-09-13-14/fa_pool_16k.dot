@@ -1,0 +1,478 @@
+// FA Pool Model SeqLen_16384
+digraph fa_pool_model {
+	graph [nodesep=0.5 rankdir=TB ranksep=1.0 splines=ortho]
+	node [fillcolor="#F8F9FA" shape=rectangle style=filled]
+	input [label="Model Input\nInput: [batch_size, seq_len=16384]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#E8F4FD" shape=ellipse]
+	embedding [label="Embedding Layer\nInput: [batch_size, seq_len=16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	pos_encoding [label="RoPE Positional Encoding\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_input [label="Layer 0 Input\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer0_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_kv_broadcast [label="KV Cache Broadcast\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nFrom: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nTo: ['gpu_8', 'gpu_9', 'gpu_10', 'gpu_11', 'gpu_12', 'gpu_13', 'gpu_14', 'gpu_15', 'gpu_16', 'gpu_17', 'gpu_18', 'gpu_19', 'gpu_20', 'gpu_21', 'gpu_22', 'gpu_23']" fillcolor="#FFF3CD" shape=ellipse]
+	layer0_attn_input [label="Attention Input\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer0_q_proj [label="Q Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_k_proj [label="K Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_v_proj [label="V Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_block_0 [label="FlashAttention Block 0\nGPU: gpu_8\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_1 [label="FlashAttention Block 1\nGPU: gpu_9\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_2 [label="FlashAttention Block 2\nGPU: gpu_10\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_3 [label="FlashAttention Block 3\nGPU: gpu_11\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_4 [label="FlashAttention Block 4\nGPU: gpu_12\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_5 [label="FlashAttention Block 5\nGPU: gpu_13\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_6 [label="FlashAttention Block 6\nGPU: gpu_14\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_7 [label="FlashAttention Block 7\nGPU: gpu_15\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_8 [label="FlashAttention Block 8\nGPU: gpu_16\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_9 [label="FlashAttention Block 9\nGPU: gpu_17\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_10 [label="FlashAttention Block 10\nGPU: gpu_18\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_11 [label="FlashAttention Block 11\nGPU: gpu_19\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_12 [label="FlashAttention Block 12\nGPU: gpu_20\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_13 [label="FlashAttention Block 13\nGPU: gpu_21\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_14 [label="FlashAttention Block 14\nGPU: gpu_22\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_block_15 [label="FlashAttention Block 15\nGPU: gpu_23\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer0_result_agg [label="Result Aggregation\nInput: 16 x [batch_size, block_len, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_8', 'gpu_9', 'gpu_10', 'gpu_11', 'gpu_12', 'gpu_13', 'gpu_14', 'gpu_15', 'gpu_16', 'gpu_17', 'gpu_18', 'gpu_19', 'gpu_20', 'gpu_21', 'gpu_22', 'gpu_23']\nType: Concatenation" fillcolor="#FFF3CD" shape=ellipse]
+	layer0_out_proj [label="Output Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_attn_input -> layer0_q_proj
+	layer0_attn_input -> layer0_k_proj
+	layer0_attn_input -> layer0_v_proj
+	layer0_q_proj -> layer0_block_0
+	layer0_k_proj -> layer0_block_0
+	layer0_v_proj -> layer0_block_0
+	layer0_block_0 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_1
+	layer0_k_proj -> layer0_block_1
+	layer0_v_proj -> layer0_block_1
+	layer0_block_1 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_2
+	layer0_k_proj -> layer0_block_2
+	layer0_v_proj -> layer0_block_2
+	layer0_block_2 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_3
+	layer0_k_proj -> layer0_block_3
+	layer0_v_proj -> layer0_block_3
+	layer0_block_3 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_4
+	layer0_k_proj -> layer0_block_4
+	layer0_v_proj -> layer0_block_4
+	layer0_block_4 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_5
+	layer0_k_proj -> layer0_block_5
+	layer0_v_proj -> layer0_block_5
+	layer0_block_5 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_6
+	layer0_k_proj -> layer0_block_6
+	layer0_v_proj -> layer0_block_6
+	layer0_block_6 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_7
+	layer0_k_proj -> layer0_block_7
+	layer0_v_proj -> layer0_block_7
+	layer0_block_7 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_8
+	layer0_k_proj -> layer0_block_8
+	layer0_v_proj -> layer0_block_8
+	layer0_block_8 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_9
+	layer0_k_proj -> layer0_block_9
+	layer0_v_proj -> layer0_block_9
+	layer0_block_9 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_10
+	layer0_k_proj -> layer0_block_10
+	layer0_v_proj -> layer0_block_10
+	layer0_block_10 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_11
+	layer0_k_proj -> layer0_block_11
+	layer0_v_proj -> layer0_block_11
+	layer0_block_11 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_12
+	layer0_k_proj -> layer0_block_12
+	layer0_v_proj -> layer0_block_12
+	layer0_block_12 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_13
+	layer0_k_proj -> layer0_block_13
+	layer0_v_proj -> layer0_block_13
+	layer0_block_13 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_14
+	layer0_k_proj -> layer0_block_14
+	layer0_v_proj -> layer0_block_14
+	layer0_block_14 -> layer0_result_agg
+	layer0_q_proj -> layer0_block_15
+	layer0_k_proj -> layer0_block_15
+	layer0_v_proj -> layer0_block_15
+	layer0_block_15 -> layer0_result_agg
+	layer0_result_agg -> layer0_out_proj
+	layer0_res1 [label="Residual Add 1\nInput: [batch_size, seq_len=16384, 4096], [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer0_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer0_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer0_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer0_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer0_ffn_input -> layer0_ffn_up
+	layer0_ffn_up -> layer0_gelu
+	layer0_gelu -> layer0_ffn_down
+	layer0_res2 [label="Residual Add 2\nInput: [batch_size, seq_len=16384, 4096], [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer0_output [label="Layer 0 Output\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer0_input -> layer0_norm1
+	layer0_norm1 -> layer0_kv_broadcast
+	layer0_kv_broadcast -> layer0_attn_input
+	layer0_attn_output -> layer0_result_agg
+	layer0_result_agg -> layer0_res1
+	layer0_input -> layer0_res1
+	layer0_res1 -> layer0_norm2
+	layer0_norm2 -> layer0_ffn_input
+	layer0_ffn_output -> layer0_res2
+	layer0_res1 -> layer0_res2
+	layer0_res2 -> layer0_output
+	layer1_input [label="Layer 1 Input\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer1_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_kv_broadcast [label="KV Cache Broadcast\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nFrom: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nTo: ['gpu_8', 'gpu_9', 'gpu_10', 'gpu_11', 'gpu_12', 'gpu_13', 'gpu_14', 'gpu_15', 'gpu_16', 'gpu_17', 'gpu_18', 'gpu_19', 'gpu_20', 'gpu_21', 'gpu_22', 'gpu_23']" fillcolor="#FFF3CD" shape=ellipse]
+	layer1_attn_input [label="Attention Input\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer1_q_proj [label="Q Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_k_proj [label="K Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_v_proj [label="V Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_block_0 [label="FlashAttention Block 0\nGPU: gpu_8\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_1 [label="FlashAttention Block 1\nGPU: gpu_9\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_2 [label="FlashAttention Block 2\nGPU: gpu_10\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_3 [label="FlashAttention Block 3\nGPU: gpu_11\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_4 [label="FlashAttention Block 4\nGPU: gpu_12\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_5 [label="FlashAttention Block 5\nGPU: gpu_13\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_6 [label="FlashAttention Block 6\nGPU: gpu_14\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_7 [label="FlashAttention Block 7\nGPU: gpu_15\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_8 [label="FlashAttention Block 8\nGPU: gpu_16\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_9 [label="FlashAttention Block 9\nGPU: gpu_17\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_10 [label="FlashAttention Block 10\nGPU: gpu_18\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_11 [label="FlashAttention Block 11\nGPU: gpu_19\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_12 [label="FlashAttention Block 12\nGPU: gpu_20\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_13 [label="FlashAttention Block 13\nGPU: gpu_21\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_14 [label="FlashAttention Block 14\nGPU: gpu_22\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_block_15 [label="FlashAttention Block 15\nGPU: gpu_23\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer1_result_agg [label="Result Aggregation\nInput: 16 x [batch_size, block_len, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_8', 'gpu_9', 'gpu_10', 'gpu_11', 'gpu_12', 'gpu_13', 'gpu_14', 'gpu_15', 'gpu_16', 'gpu_17', 'gpu_18', 'gpu_19', 'gpu_20', 'gpu_21', 'gpu_22', 'gpu_23']\nType: Concatenation" fillcolor="#FFF3CD" shape=ellipse]
+	layer1_out_proj [label="Output Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_attn_input -> layer1_q_proj
+	layer1_attn_input -> layer1_k_proj
+	layer1_attn_input -> layer1_v_proj
+	layer1_q_proj -> layer1_block_0
+	layer1_k_proj -> layer1_block_0
+	layer1_v_proj -> layer1_block_0
+	layer1_block_0 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_1
+	layer1_k_proj -> layer1_block_1
+	layer1_v_proj -> layer1_block_1
+	layer1_block_1 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_2
+	layer1_k_proj -> layer1_block_2
+	layer1_v_proj -> layer1_block_2
+	layer1_block_2 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_3
+	layer1_k_proj -> layer1_block_3
+	layer1_v_proj -> layer1_block_3
+	layer1_block_3 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_4
+	layer1_k_proj -> layer1_block_4
+	layer1_v_proj -> layer1_block_4
+	layer1_block_4 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_5
+	layer1_k_proj -> layer1_block_5
+	layer1_v_proj -> layer1_block_5
+	layer1_block_5 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_6
+	layer1_k_proj -> layer1_block_6
+	layer1_v_proj -> layer1_block_6
+	layer1_block_6 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_7
+	layer1_k_proj -> layer1_block_7
+	layer1_v_proj -> layer1_block_7
+	layer1_block_7 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_8
+	layer1_k_proj -> layer1_block_8
+	layer1_v_proj -> layer1_block_8
+	layer1_block_8 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_9
+	layer1_k_proj -> layer1_block_9
+	layer1_v_proj -> layer1_block_9
+	layer1_block_9 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_10
+	layer1_k_proj -> layer1_block_10
+	layer1_v_proj -> layer1_block_10
+	layer1_block_10 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_11
+	layer1_k_proj -> layer1_block_11
+	layer1_v_proj -> layer1_block_11
+	layer1_block_11 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_12
+	layer1_k_proj -> layer1_block_12
+	layer1_v_proj -> layer1_block_12
+	layer1_block_12 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_13
+	layer1_k_proj -> layer1_block_13
+	layer1_v_proj -> layer1_block_13
+	layer1_block_13 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_14
+	layer1_k_proj -> layer1_block_14
+	layer1_v_proj -> layer1_block_14
+	layer1_block_14 -> layer1_result_agg
+	layer1_q_proj -> layer1_block_15
+	layer1_k_proj -> layer1_block_15
+	layer1_v_proj -> layer1_block_15
+	layer1_block_15 -> layer1_result_agg
+	layer1_result_agg -> layer1_out_proj
+	layer1_res1 [label="Residual Add 1\nInput: [batch_size, seq_len=16384, 4096], [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer1_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer1_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer1_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer1_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer1_ffn_input -> layer1_ffn_up
+	layer1_ffn_up -> layer1_gelu
+	layer1_gelu -> layer1_ffn_down
+	layer1_res2 [label="Residual Add 2\nInput: [batch_size, seq_len=16384, 4096], [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer1_output [label="Layer 1 Output\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer1_input -> layer1_norm1
+	layer1_norm1 -> layer1_kv_broadcast
+	layer1_kv_broadcast -> layer1_attn_input
+	layer1_attn_output -> layer1_result_agg
+	layer1_result_agg -> layer1_res1
+	layer1_input -> layer1_res1
+	layer1_res1 -> layer1_norm2
+	layer1_norm2 -> layer1_ffn_input
+	layer1_ffn_output -> layer1_res2
+	layer1_res1 -> layer1_res2
+	layer1_res2 -> layer1_output
+	layer2_input [label="Layer 2 Input\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer2_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_kv_broadcast [label="KV Cache Broadcast\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nFrom: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nTo: ['gpu_8', 'gpu_9', 'gpu_10', 'gpu_11', 'gpu_12', 'gpu_13', 'gpu_14', 'gpu_15', 'gpu_16', 'gpu_17', 'gpu_18', 'gpu_19', 'gpu_20', 'gpu_21', 'gpu_22', 'gpu_23']" fillcolor="#FFF3CD" shape=ellipse]
+	layer2_attn_input [label="Attention Input\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer2_q_proj [label="Q Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_k_proj [label="K Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_v_proj [label="V Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_block_0 [label="FlashAttention Block 0\nGPU: gpu_8\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_1 [label="FlashAttention Block 1\nGPU: gpu_9\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_2 [label="FlashAttention Block 2\nGPU: gpu_10\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_3 [label="FlashAttention Block 3\nGPU: gpu_11\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_4 [label="FlashAttention Block 4\nGPU: gpu_12\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_5 [label="FlashAttention Block 5\nGPU: gpu_13\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_6 [label="FlashAttention Block 6\nGPU: gpu_14\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_7 [label="FlashAttention Block 7\nGPU: gpu_15\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_8 [label="FlashAttention Block 8\nGPU: gpu_16\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_9 [label="FlashAttention Block 9\nGPU: gpu_17\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_10 [label="FlashAttention Block 10\nGPU: gpu_18\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_11 [label="FlashAttention Block 11\nGPU: gpu_19\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_12 [label="FlashAttention Block 12\nGPU: gpu_20\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_13 [label="FlashAttention Block 13\nGPU: gpu_21\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_14 [label="FlashAttention Block 14\nGPU: gpu_22\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_block_15 [label="FlashAttention Block 15\nGPU: gpu_23\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer2_result_agg [label="Result Aggregation\nInput: 16 x [batch_size, block_len, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_8', 'gpu_9', 'gpu_10', 'gpu_11', 'gpu_12', 'gpu_13', 'gpu_14', 'gpu_15', 'gpu_16', 'gpu_17', 'gpu_18', 'gpu_19', 'gpu_20', 'gpu_21', 'gpu_22', 'gpu_23']\nType: Concatenation" fillcolor="#FFF3CD" shape=ellipse]
+	layer2_out_proj [label="Output Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_attn_input -> layer2_q_proj
+	layer2_attn_input -> layer2_k_proj
+	layer2_attn_input -> layer2_v_proj
+	layer2_q_proj -> layer2_block_0
+	layer2_k_proj -> layer2_block_0
+	layer2_v_proj -> layer2_block_0
+	layer2_block_0 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_1
+	layer2_k_proj -> layer2_block_1
+	layer2_v_proj -> layer2_block_1
+	layer2_block_1 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_2
+	layer2_k_proj -> layer2_block_2
+	layer2_v_proj -> layer2_block_2
+	layer2_block_2 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_3
+	layer2_k_proj -> layer2_block_3
+	layer2_v_proj -> layer2_block_3
+	layer2_block_3 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_4
+	layer2_k_proj -> layer2_block_4
+	layer2_v_proj -> layer2_block_4
+	layer2_block_4 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_5
+	layer2_k_proj -> layer2_block_5
+	layer2_v_proj -> layer2_block_5
+	layer2_block_5 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_6
+	layer2_k_proj -> layer2_block_6
+	layer2_v_proj -> layer2_block_6
+	layer2_block_6 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_7
+	layer2_k_proj -> layer2_block_7
+	layer2_v_proj -> layer2_block_7
+	layer2_block_7 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_8
+	layer2_k_proj -> layer2_block_8
+	layer2_v_proj -> layer2_block_8
+	layer2_block_8 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_9
+	layer2_k_proj -> layer2_block_9
+	layer2_v_proj -> layer2_block_9
+	layer2_block_9 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_10
+	layer2_k_proj -> layer2_block_10
+	layer2_v_proj -> layer2_block_10
+	layer2_block_10 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_11
+	layer2_k_proj -> layer2_block_11
+	layer2_v_proj -> layer2_block_11
+	layer2_block_11 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_12
+	layer2_k_proj -> layer2_block_12
+	layer2_v_proj -> layer2_block_12
+	layer2_block_12 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_13
+	layer2_k_proj -> layer2_block_13
+	layer2_v_proj -> layer2_block_13
+	layer2_block_13 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_14
+	layer2_k_proj -> layer2_block_14
+	layer2_v_proj -> layer2_block_14
+	layer2_block_14 -> layer2_result_agg
+	layer2_q_proj -> layer2_block_15
+	layer2_k_proj -> layer2_block_15
+	layer2_v_proj -> layer2_block_15
+	layer2_block_15 -> layer2_result_agg
+	layer2_result_agg -> layer2_out_proj
+	layer2_res1 [label="Residual Add 1\nInput: [batch_size, seq_len=16384, 4096], [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer2_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer2_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer2_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer2_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer2_ffn_input -> layer2_ffn_up
+	layer2_ffn_up -> layer2_gelu
+	layer2_gelu -> layer2_ffn_down
+	layer2_res2 [label="Residual Add 2\nInput: [batch_size, seq_len=16384, 4096], [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer2_output [label="Layer 2 Output\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer2_input -> layer2_norm1
+	layer2_norm1 -> layer2_kv_broadcast
+	layer2_kv_broadcast -> layer2_attn_input
+	layer2_attn_output -> layer2_result_agg
+	layer2_result_agg -> layer2_res1
+	layer2_input -> layer2_res1
+	layer2_res1 -> layer2_norm2
+	layer2_norm2 -> layer2_ffn_input
+	layer2_ffn_output -> layer2_res2
+	layer2_res1 -> layer2_res2
+	layer2_res2 -> layer2_output
+	layer3_input [label="Layer 3 Input\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer3_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_kv_broadcast [label="KV Cache Broadcast\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nFrom: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nTo: ['gpu_8', 'gpu_9', 'gpu_10', 'gpu_11', 'gpu_12', 'gpu_13', 'gpu_14', 'gpu_15', 'gpu_16', 'gpu_17', 'gpu_18', 'gpu_19', 'gpu_20', 'gpu_21', 'gpu_22', 'gpu_23']" fillcolor="#FFF3CD" shape=ellipse]
+	layer3_attn_input [label="Attention Input\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer3_q_proj [label="Q Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_k_proj [label="K Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_v_proj [label="V Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_block_0 [label="FlashAttention Block 0\nGPU: gpu_8\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_1 [label="FlashAttention Block 1\nGPU: gpu_9\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_2 [label="FlashAttention Block 2\nGPU: gpu_10\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_3 [label="FlashAttention Block 3\nGPU: gpu_11\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_4 [label="FlashAttention Block 4\nGPU: gpu_12\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_5 [label="FlashAttention Block 5\nGPU: gpu_13\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_6 [label="FlashAttention Block 6\nGPU: gpu_14\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_7 [label="FlashAttention Block 7\nGPU: gpu_15\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_8 [label="FlashAttention Block 8\nGPU: gpu_16\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_9 [label="FlashAttention Block 9\nGPU: gpu_17\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_10 [label="FlashAttention Block 10\nGPU: gpu_18\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_11 [label="FlashAttention Block 11\nGPU: gpu_19\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_12 [label="FlashAttention Block 12\nGPU: gpu_20\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_13 [label="FlashAttention Block 13\nGPU: gpu_21\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_14 [label="FlashAttention Block 14\nGPU: gpu_22\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_block_15 [label="FlashAttention Block 15\nGPU: gpu_23\nInput: [batch_size, block_len=1024, 4096]\nOutput: [batch_size, block_len=1024, 4096]\nQ: [batch_size, block_len=1024, 4096]\nK/V: [batch_size, seq_len=16384, 4096]" fillcolor="#F8F9FA"]
+	layer3_result_agg [label="Result Aggregation\nInput: 16 x [batch_size, block_len, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_8', 'gpu_9', 'gpu_10', 'gpu_11', 'gpu_12', 'gpu_13', 'gpu_14', 'gpu_15', 'gpu_16', 'gpu_17', 'gpu_18', 'gpu_19', 'gpu_20', 'gpu_21', 'gpu_22', 'gpu_23']\nType: Concatenation" fillcolor="#FFF3CD" shape=ellipse]
+	layer3_out_proj [label="Output Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_attn_input -> layer3_q_proj
+	layer3_attn_input -> layer3_k_proj
+	layer3_attn_input -> layer3_v_proj
+	layer3_q_proj -> layer3_block_0
+	layer3_k_proj -> layer3_block_0
+	layer3_v_proj -> layer3_block_0
+	layer3_block_0 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_1
+	layer3_k_proj -> layer3_block_1
+	layer3_v_proj -> layer3_block_1
+	layer3_block_1 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_2
+	layer3_k_proj -> layer3_block_2
+	layer3_v_proj -> layer3_block_2
+	layer3_block_2 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_3
+	layer3_k_proj -> layer3_block_3
+	layer3_v_proj -> layer3_block_3
+	layer3_block_3 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_4
+	layer3_k_proj -> layer3_block_4
+	layer3_v_proj -> layer3_block_4
+	layer3_block_4 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_5
+	layer3_k_proj -> layer3_block_5
+	layer3_v_proj -> layer3_block_5
+	layer3_block_5 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_6
+	layer3_k_proj -> layer3_block_6
+	layer3_v_proj -> layer3_block_6
+	layer3_block_6 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_7
+	layer3_k_proj -> layer3_block_7
+	layer3_v_proj -> layer3_block_7
+	layer3_block_7 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_8
+	layer3_k_proj -> layer3_block_8
+	layer3_v_proj -> layer3_block_8
+	layer3_block_8 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_9
+	layer3_k_proj -> layer3_block_9
+	layer3_v_proj -> layer3_block_9
+	layer3_block_9 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_10
+	layer3_k_proj -> layer3_block_10
+	layer3_v_proj -> layer3_block_10
+	layer3_block_10 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_11
+	layer3_k_proj -> layer3_block_11
+	layer3_v_proj -> layer3_block_11
+	layer3_block_11 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_12
+	layer3_k_proj -> layer3_block_12
+	layer3_v_proj -> layer3_block_12
+	layer3_block_12 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_13
+	layer3_k_proj -> layer3_block_13
+	layer3_v_proj -> layer3_block_13
+	layer3_block_13 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_14
+	layer3_k_proj -> layer3_block_14
+	layer3_v_proj -> layer3_block_14
+	layer3_block_14 -> layer3_result_agg
+	layer3_q_proj -> layer3_block_15
+	layer3_k_proj -> layer3_block_15
+	layer3_v_proj -> layer3_block_15
+	layer3_block_15 -> layer3_result_agg
+	layer3_result_agg -> layer3_out_proj
+	layer3_res1 [label="Residual Add 1\nInput: [batch_size, seq_len=16384, 4096], [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer3_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer3_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	layer3_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	layer3_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	layer3_ffn_input -> layer3_ffn_up
+	layer3_ffn_up -> layer3_gelu
+	layer3_gelu -> layer3_ffn_down
+	layer3_res2 [label="Residual Add 2\nInput: [batch_size, seq_len=16384, 4096], [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	layer3_output [label="Layer 3 Output\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	layer3_input -> layer3_norm1
+	layer3_norm1 -> layer3_kv_broadcast
+	layer3_kv_broadcast -> layer3_attn_input
+	layer3_attn_output -> layer3_result_agg
+	layer3_result_agg -> layer3_res1
+	layer3_input -> layer3_res1
+	layer3_res1 -> layer3_norm2
+	layer3_norm2 -> layer3_ffn_input
+	layer3_ffn_output -> layer3_res2
+	layer3_res1 -> layer3_res2
+	layer3_res2 -> layer3_output
+	output_layer [label="Output Projection\nInput: [batch_size, seq_len=16384, 4096]\nOutput: [batch_size, seq_len=16384, 50256]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3', 'gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	output [label="Model Output\nInput: [batch_size, seq_len=16384, 50256]\nOutput: [batch_size, seq_len=16384, 50256]" fillcolor="#D1E7DD" shape=ellipse]
+	input -> embedding
+	embedding -> pos_encoding
+	pos_encoding -> layer0_input
+	layer0_output -> layer1_input
+	layer1_output -> layer2_input
+	layer2_output -> layer3_input
+	layer3_output -> output_layer
+	output_layer -> output
+}

@@ -1,0 +1,194 @@
+// 4-layer Dense Model - Baseline Configuration
+digraph baseline_model {
+	graph [nodesep=0.5 rankdir=TB ranksep=1.0 splines=ortho]
+	node [fillcolor="#F8F9FA" shape=rectangle style=filled]
+	input [label="Model Input\nInput: [batch_size, seq_len]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#E8F4FD" shape=ellipse]
+	embedding [label="Embedding Layer\nInput: [batch_size, seq_len]\nOutput: [batch_size, seq_len, 4096]\nGPUs: [0-7]" fillcolor="#F8F9FA"]
+	pos_encoding [label="RoPE Positional Encoding\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: [0-7]" fillcolor="#F8F9FA"]
+	stage0_input [label="Pipeline Stage 0\nLayers: 0-1\nGPUs: [0-3]\nInput Processing" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer0_input [label="Layer 0 Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer0_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer0_attn_input [label="Attention Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer0_q_proj [label="Q Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer0_k_proj [label="K Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer0_v_proj [label="V Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer0_reshape_q [label="Reshape Q\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer0_reshape_k [label="Reshape K\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer0_reshape_v [label="Reshape V\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer0_attention [label="Multi-Head Attention\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Distributed FlashAttention" fillcolor="#F8F9FA"]
+	stage0_layer0_reshape_out [label="Reshape Output\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer0_out_proj [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer0_attn_input -> stage0_layer0_q_proj
+	stage0_layer0_attn_input -> stage0_layer0_k_proj
+	stage0_layer0_attn_input -> stage0_layer0_v_proj
+	stage0_layer0_q_proj -> stage0_layer0_reshape_q
+	stage0_layer0_k_proj -> stage0_layer0_reshape_k
+	stage0_layer0_v_proj -> stage0_layer0_reshape_v
+	stage0_layer0_reshape_q -> stage0_layer0_attention
+	stage0_layer0_reshape_k -> stage0_layer0_attention
+	stage0_layer0_reshape_v -> stage0_layer0_attention
+	stage0_layer0_attention -> stage0_layer0_reshape_out
+	stage0_layer0_reshape_out -> stage0_layer0_out_proj
+	stage0_layer0_res1 [label="Residual Add 1\nInput: [batch_size, seq_len, 4096], [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#D4EDDA"]
+	stage0_layer0_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer0_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer0_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer0_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer0_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer0_ffn_input -> stage0_layer0_ffn_up
+	stage0_layer0_ffn_up -> stage0_layer0_gelu
+	stage0_layer0_gelu -> stage0_layer0_ffn_down
+	stage0_layer0_res2 [label="Residual Add 2\nInput: [batch_size, seq_len, 4096], [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#D4EDDA"]
+	stage0_layer0_output [label="Layer 0 Output\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer0_input -> stage0_layer0_norm1
+	stage0_layer0_norm1 -> stage0_layer0_attn_input
+	stage0_layer0_attn_output -> stage0_layer0_res1
+	stage0_layer0_input -> stage0_layer0_res1
+	stage0_layer0_res1 -> stage0_layer0_norm2
+	stage0_layer0_norm2 -> stage0_layer0_ffn_input
+	stage0_layer0_ffn_output -> stage0_layer0_res2
+	stage0_layer0_res1 -> stage0_layer0_res2
+	stage0_layer0_res2 -> stage0_layer0_output
+	stage0_layer1_input [label="Layer 1 Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer1_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer1_attn_input [label="Attention Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer1_q_proj [label="Q Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer1_k_proj [label="K Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer1_v_proj [label="V Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer1_reshape_q [label="Reshape Q\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer1_reshape_k [label="Reshape K\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer1_reshape_v [label="Reshape V\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer1_attention [label="Multi-Head Attention\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Distributed FlashAttention" fillcolor="#F8F9FA"]
+	stage0_layer1_reshape_out [label="Reshape Output\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer1_out_proj [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer1_attn_input -> stage0_layer1_q_proj
+	stage0_layer1_attn_input -> stage0_layer1_k_proj
+	stage0_layer1_attn_input -> stage0_layer1_v_proj
+	stage0_layer1_q_proj -> stage0_layer1_reshape_q
+	stage0_layer1_k_proj -> stage0_layer1_reshape_k
+	stage0_layer1_v_proj -> stage0_layer1_reshape_v
+	stage0_layer1_reshape_q -> stage0_layer1_attention
+	stage0_layer1_reshape_k -> stage0_layer1_attention
+	stage0_layer1_reshape_v -> stage0_layer1_attention
+	stage0_layer1_attention -> stage0_layer1_reshape_out
+	stage0_layer1_reshape_out -> stage0_layer1_out_proj
+	stage0_layer1_res1 [label="Residual Add 1\nInput: [batch_size, seq_len, 4096], [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#D4EDDA"]
+	stage0_layer1_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer1_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer1_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer1_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#F8F9FA"]
+	stage0_layer1_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	stage0_layer1_ffn_input -> stage0_layer1_ffn_up
+	stage0_layer1_ffn_up -> stage0_layer1_gelu
+	stage0_layer1_gelu -> stage0_layer1_ffn_down
+	stage0_layer1_res2 [label="Residual Add 2\nInput: [batch_size, seq_len, 4096], [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_0', 'gpu_1', 'gpu_2', 'gpu_3']" fillcolor="#D4EDDA"]
+	stage0_layer1_output [label="Layer 1 Output\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage0_layer1_input -> stage0_layer1_norm1
+	stage0_layer1_norm1 -> stage0_layer1_attn_input
+	stage0_layer1_attn_output -> stage0_layer1_res1
+	stage0_layer1_input -> stage0_layer1_res1
+	stage0_layer1_res1 -> stage0_layer1_norm2
+	stage0_layer1_norm2 -> stage0_layer1_ffn_input
+	stage0_layer1_ffn_output -> stage0_layer1_res2
+	stage0_layer1_res1 -> stage0_layer1_res2
+	stage0_layer1_res2 -> stage0_layer1_output
+	stage0_input -> stage0_layer0_input
+	stage0_layer0_output -> stage0_layer1_input
+	stage1_input [label="Pipeline Stage 1\nLayers: 2-3\nGPUs: [4-7]\nInput Processing" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer2_input [label="Layer 2 Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer2_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer2_attn_input [label="Attention Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer2_q_proj [label="Q Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer2_k_proj [label="K Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer2_v_proj [label="V Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer2_reshape_q [label="Reshape Q\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer2_reshape_k [label="Reshape K\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer2_reshape_v [label="Reshape V\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer2_attention [label="Multi-Head Attention\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Distributed FlashAttention" fillcolor="#F8F9FA"]
+	stage1_layer2_reshape_out [label="Reshape Output\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer2_out_proj [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer2_attn_input -> stage1_layer2_q_proj
+	stage1_layer2_attn_input -> stage1_layer2_k_proj
+	stage1_layer2_attn_input -> stage1_layer2_v_proj
+	stage1_layer2_q_proj -> stage1_layer2_reshape_q
+	stage1_layer2_k_proj -> stage1_layer2_reshape_k
+	stage1_layer2_v_proj -> stage1_layer2_reshape_v
+	stage1_layer2_reshape_q -> stage1_layer2_attention
+	stage1_layer2_reshape_k -> stage1_layer2_attention
+	stage1_layer2_reshape_v -> stage1_layer2_attention
+	stage1_layer2_attention -> stage1_layer2_reshape_out
+	stage1_layer2_reshape_out -> stage1_layer2_out_proj
+	stage1_layer2_res1 [label="Residual Add 1\nInput: [batch_size, seq_len, 4096], [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	stage1_layer2_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer2_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer2_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer2_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer2_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer2_ffn_input -> stage1_layer2_ffn_up
+	stage1_layer2_ffn_up -> stage1_layer2_gelu
+	stage1_layer2_gelu -> stage1_layer2_ffn_down
+	stage1_layer2_res2 [label="Residual Add 2\nInput: [batch_size, seq_len, 4096], [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	stage1_layer2_output [label="Layer 2 Output\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer2_input -> stage1_layer2_norm1
+	stage1_layer2_norm1 -> stage1_layer2_attn_input
+	stage1_layer2_attn_output -> stage1_layer2_res1
+	stage1_layer2_input -> stage1_layer2_res1
+	stage1_layer2_res1 -> stage1_layer2_norm2
+	stage1_layer2_norm2 -> stage1_layer2_ffn_input
+	stage1_layer2_ffn_output -> stage1_layer2_res2
+	stage1_layer2_res1 -> stage1_layer2_res2
+	stage1_layer2_res2 -> stage1_layer2_output
+	stage1_layer3_input [label="Layer 3 Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer3_norm1 [label="RMSNorm 1\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer3_attn_input [label="Attention Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer3_q_proj [label="Q Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer3_k_proj [label="K Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer3_v_proj [label="V Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer3_reshape_q [label="Reshape Q\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer3_reshape_k [label="Reshape K\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer3_reshape_v [label="Reshape V\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer3_attention [label="Multi-Head Attention\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 32, 128]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Distributed FlashAttention" fillcolor="#F8F9FA"]
+	stage1_layer3_reshape_out [label="Reshape Output\nInput: [batch_size, seq_len, 32, 128]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer3_out_proj [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer3_attn_input -> stage1_layer3_q_proj
+	stage1_layer3_attn_input -> stage1_layer3_k_proj
+	stage1_layer3_attn_input -> stage1_layer3_v_proj
+	stage1_layer3_q_proj -> stage1_layer3_reshape_q
+	stage1_layer3_k_proj -> stage1_layer3_reshape_k
+	stage1_layer3_v_proj -> stage1_layer3_reshape_v
+	stage1_layer3_reshape_q -> stage1_layer3_attention
+	stage1_layer3_reshape_k -> stage1_layer3_attention
+	stage1_layer3_reshape_v -> stage1_layer3_attention
+	stage1_layer3_attention -> stage1_layer3_reshape_out
+	stage1_layer3_reshape_out -> stage1_layer3_out_proj
+	stage1_layer3_res1 [label="Residual Add 1\nInput: [batch_size, seq_len, 4096], [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	stage1_layer3_norm2 [label="RMSNorm 2\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer3_ffn_input [label="FFN Input\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer3_ffn_up [label="FFN Up Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Column-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer3_gelu [label="GELU Activation\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 16384]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#F8F9FA"]
+	stage1_layer3_ffn_down [label="FFN Down Projection\nInput: [batch_size, seq_len, 16384]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']\nType: Row-Parallel" fillcolor="#F8F9FA"]
+	stage1_layer3_ffn_input -> stage1_layer3_ffn_up
+	stage1_layer3_ffn_up -> stage1_layer3_gelu
+	stage1_layer3_gelu -> stage1_layer3_ffn_down
+	stage1_layer3_res2 [label="Residual Add 2\nInput: [batch_size, seq_len, 4096], [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]\nGPUs: ['gpu_4', 'gpu_5', 'gpu_6', 'gpu_7']" fillcolor="#D4EDDA"]
+	stage1_layer3_output [label="Layer 3 Output\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 4096]" fillcolor="#FFE6CC" shape=parallelogram]
+	stage1_layer3_input -> stage1_layer3_norm1
+	stage1_layer3_norm1 -> stage1_layer3_attn_input
+	stage1_layer3_attn_output -> stage1_layer3_res1
+	stage1_layer3_input -> stage1_layer3_res1
+	stage1_layer3_res1 -> stage1_layer3_norm2
+	stage1_layer3_norm2 -> stage1_layer3_ffn_input
+	stage1_layer3_ffn_output -> stage1_layer3_res2
+	stage1_layer3_res1 -> stage1_layer3_res2
+	stage1_layer3_res2 -> stage1_layer3_output
+	stage1_input -> stage1_layer2_input
+	stage1_layer2_output -> stage1_layer3_input
+	output_layer [label="Output Projection\nInput: [batch_size, seq_len, 4096]\nOutput: [batch_size, seq_len, 50256]\nGPUs: [4-7]" fillcolor="#F8F9FA"]
+	output [label="Model Output\nInput: [batch_size, seq_len, 50256]\nOutput: [batch_size, seq_len, 50256]" fillcolor="#D1E7DD" shape=ellipse]
+	input -> embedding
+	embedding -> pos_encoding
+	pos_encoding -> stage0_layer0_input
+	stage0_layer1_output -> stage1_layer2_input
+	stage1_layer3_output -> output_layer
+	output_layer -> output
+}
