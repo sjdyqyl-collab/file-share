@@ -1,0 +1,154 @@
+digraph Compact_Attention_DAG {
+	rankdir=TB size="25,25"
+	input [label="Input Video Tokens
+[f, h, w, hidden_dim]" fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	ln1 [label="LayerNorm
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	tile_group [label="Tile Grouping
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, num_tiles, tile_size, hidden_dim]
+GPU: all GPUs" fillcolor=yellow shape=parallelogram]
+	frame_group [label="Frame Group Assignment
+Input: [batch_size, num_tiles, tile_size, hidden_dim]
+Output: Grouped by temporal distance
+GPU: all GPUs" fillcolor=yellow shape=parallelogram]
+	q_proj [label="Query Projection
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	k_proj [label="Key Projection
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	v_proj [label="Value Projection
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	reshape_q [label="Reshape Q
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, num_heads, head_dim]
+GPU: all GPUs"]
+	reshape_k [label="Reshape K
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, num_heads, head_dim]
+GPU: all GPUs"]
+	reshape_v [label="Reshape V
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, num_heads, head_dim]
+GPU: all GPUs"]
+	mask_local [label="Local Pattern Mask
+Pattern: Spherical around query
+Coverage: ~15% of tokens
+GPU: all GPUs" fillcolor=orange shape=hexagon]
+	mask_cross [label="Cross-shaped Pattern Mask
+Pattern: Horizontal + Vertical corridors
+Coverage: ~25% of tokens
+GPU: all GPUs" fillcolor=orange shape=hexagon]
+	mask_global [label="Global Pattern Mask
+Pattern: Full spatial connectivity
+Coverage: ~8% of tokens
+GPU: all GPUs" fillcolor=orange shape=hexagon]
+	mask_time_variant [label="Time-Variant Mask
+Pattern: Distance-based temporal decay
+Coverage: Variable by frame distance
+GPU: all GPUs" fillcolor=orange shape=hexagon]
+	mask_time_invariant [label="Time-Invariant Mask
+Pattern: Consistent across frames
+Coverage: ~30% of tokens
+GPU: all GPUs" fillcolor=orange shape=hexagon]
+	dual_window [label="Dual Window Composition
+Combines local + cross + global patterns
+Adaptive per frame group
+GPU: all GPUs" fillcolor=yellow shape=parallelogram]
+	compact_scores [label="Compact Attention Scores
+Input: Q, K with masks applied
+Output: [batch_size, num_heads, active_tokens, active_tokens]
+Sparsity: 33-62%
+GPU: all GPUs" fillcolor=lightblue]
+	compact_weights [label="Sparse Softmax
+Input: [batch_size, num_heads, active_tokens, active_tokens]
+Output: [batch_size, num_heads, active_tokens, active_tokens]
+GPU: all GPUs"]
+	compact_output [label="Sparse Attention Output
+Input: Sparse weights x V
+Output: [batch_size, active_tokens, num_heads, head_dim]
+GPU: all GPUs"]
+	scatter_back [label="Scatter to Full Sequence
+Input: [batch_size, active_tokens, num_heads, head_dim]
+Output: [batch_size, f*h*w, num_heads, head_dim]
+GPU: all GPUs" fillcolor=yellow shape=parallelogram]
+	reshape_back [label="Reshape Back
+Input: [batch_size, f*h*w, num_heads, head_dim]
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	out_proj [label="Output Projection
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	residual1 [label="Add & LayerNorm
+Input: [batch_size, f*h*w, hidden_dim] x2
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	mlp_ln [label="LayerNorm
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	mlp_fc1 [label="MLP FC1
+Input: [batch_size, f*h*w, hidden_dim]
+Output: [batch_size, f*h*w, ffn_hidden_size]
+GPU: all GPUs"]
+	mlp_gelu [label="GELU Activation
+Input: [batch_size, f*h*w, ffn_hidden_size]
+Output: [batch_size, f*h*w, ffn_hidden_size]
+GPU: all GPUs"]
+	mlp_fc2 [label="MLP FC2
+Input: [batch_size, f*h*w, ffn_hidden_size]
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	residual2 [label="Add
+Input: [batch_size, f*h*w, hidden_dim] x2
+Output: [batch_size, f*h*w, hidden_dim]
+GPU: all GPUs"]
+	output [label="Output Video Tokens
+[f, h, w, hidden_dim]" fillcolor=lightcoral shape=ellipse style=filled]
+	input -> ln1
+	ln1 -> tile_group
+	tile_group -> frame_group
+	ln1 -> q_proj
+	ln1 -> k_proj
+	ln1 -> v_proj
+	q_proj -> reshape_q
+	k_proj -> reshape_k
+	v_proj -> reshape_v
+	frame_group -> mask_local [style=dashed]
+	frame_group -> mask_cross [style=dashed]
+	frame_group -> mask_global [style=dashed]
+	frame_group -> mask_time_variant [style=dashed]
+	frame_group -> mask_time_invariant [style=dashed]
+	mask_local -> dual_window
+	mask_cross -> dual_window
+	mask_global -> dual_window
+	mask_time_variant -> dual_window
+	mask_time_invariant -> dual_window
+	dual_window -> compact_scores
+	reshape_q -> compact_scores
+	reshape_k -> compact_scores
+	compact_scores -> compact_weights
+	compact_weights -> compact_output
+	reshape_v -> compact_output
+	compact_output -> scatter_back
+	scatter_back -> reshape_back
+	reshape_back -> out_proj
+	ln1 -> residual1
+	out_proj -> residual1
+	residual1 -> mlp_ln
+	mlp_ln -> mlp_fc1
+	mlp_fc1 -> mlp_gelu
+	mlp_gelu -> mlp_fc2
+	residual1 -> residual2
+	mlp_fc2 -> residual2
+	residual2 -> output
+}

@@ -1,0 +1,286 @@
+{
+  "models": {
+    "ma_separation_model": {
+      "name": "MA Separation 4-layer MoE",
+      "parallel_strategy": {
+        "type": "ma_separation",
+        "total_gpus": 16,
+        "attention_gpus": 8,
+        "moe_gpus": 8,
+        "replication_factor": 2
+      },
+      "modules": {
+        "attention_modules": {
+          "type": "attention_parallel",
+          "parameters": {
+            "num_layers": 4,
+            "hidden_dim": 4096,
+            "num_heads": 32,
+            "sequence_length": 2048,
+            "heads_per_gpu": 4,
+            "replication_factor": 2
+          },
+          "communication": {
+            "all_reduce": "hierarchical",
+            "compression": "8bit_quantization",
+            "overlap_computation": true
+          }
+        },
+        "moe_modules": {
+          "type": "moe_parallel",
+          "parameters": {
+            "num_layers": 4,
+            "num_experts": 16,
+            "experts_per_gpu": 2,
+            "expert_hidden_dim": 16384,
+            "top_k": 2,
+            "capacity_factor": 1.0
+          },
+          "communication": {
+            "all_to_all": true,
+            "load_balancing": "dynamic"
+          }
+        },
+        "synchronization": {
+          "type": "time_prediction",
+          "parameters": {
+            "model": "neural_network_3layers",
+            "sync_interval": 100,
+            "threshold": 0.05,
+            "cuda_events": true
+          }
+        }
+      },
+      "device_mapping": {
+        "node_0": {
+          "gpus": [0, 1, 2, 3],
+          "attention_gpus": [0, 1],
+          "moe_gpus": [2, 3]
+        },
+        "node_1": {
+          "gpus": [4, 5, 6, 7],
+          "attention_gpus": [4, 5],
+          "moe_gpus": [6, 7]
+        },
+        "node_2": {
+          "gpus": [8, 9, 10, 11],
+          "attention_gpus": [8, 9],
+          "moe_gpus": [10, 11]
+        },
+        "node_3": {
+          "gpus": [12, 13, 14, 15],
+          "attention_gpus": [12, 13],
+          "moe_gpus": [14, 15]
+        }
+      },
+      "memory_allocation": {
+        "model_parameters_gb": 23.1,
+        "activations_gb": 18.7,
+        "gradients_gb": 23.1,
+        "optimizer_states_gb": 46.2,
+        "communication_buffers_gb": 12.6,
+        "total_per_gpu_gb": 123.7
+      }
+    },
+    "baseline_tp8": {
+      "name": "Tensor Parallelism Baseline",
+      "parallel_strategy": {
+        "type": "tensor_parallelism",
+        "tp_degree": 8,
+        "total_gpus": 8
+      },
+      "modules": {
+        "attention_modules": {
+          "type": "tensor_parallel",
+          "parameters": {
+            "parallel_degree": 8,
+            "split_dimension": "hidden",
+            "sequence_parallel": false
+          }
+        },
+        "moe_modules": {
+          "type": "tensor_parallel",
+          "parameters": {
+            "parallel_degree": 8,
+            "expert_split": "column_parallel"
+          }
+        }
+      },
+      "device_mapping": {
+        "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+        "model_parallel_group": "all_gpus"
+      },
+      "memory_allocation": {
+        "model_parameters_gb": 18.2,
+        "activations_gb": 22.4,
+        "gradients_gb": 18.2,
+        "optimizer_states_gb": 36.4,
+        "communication_buffers_gb": 8.3,
+        "total_per_gpu_gb": 103.5
+      }
+    },
+    "baseline_pp2": {
+      "name": "Pipeline Parallelism Baseline",
+      "parallel_strategy": {
+        "type": "pipeline_parallelism",
+        "pp_degree": 2,
+        "layers_per_stage": 2,
+        "total_gpus": 8
+      },
+      "modules": {
+        "stage_0": {
+          "type": "pipeline_stage",
+          "parameters": {
+            "layers": [0, 1],
+            "gpus_per_stage": 4
+          }
+        },
+        "stage_1": {
+          "type": "pipeline_stage",
+          "parameters": {
+            "layers": [2, 3],
+            "gpus_per_stage": 4
+          }
+        }
+      },
+      "device_mapping": {
+        "stage_0": {
+          "gpus": [0, 1, 2, 3],
+          "layers": [0, 1]
+        },
+        "stage_1": {
+          "gpus": [4, 5, 6, 7],
+          "layers": [2, 3]
+        }
+      },
+      "memory_allocation": {
+        "model_parameters_gb": 36.4,
+        "activations_gb": 11.2,
+        "gradients_gb": 36.4,
+        "optimizer_states_gb": 72.8,
+        "communication_buffers_gb": 4.1,
+        "total_per_gpu_gb": 160.9
+      }
+    },
+    "baseline_tp8_pp2": {
+      "name": "Hybrid TP+PP Baseline",
+      "parallel_strategy": {
+        "type": "hybrid_parallelism",
+        "tp_degree": 8,
+        "pp_degree": 2,
+        "total_gpus": 16
+      },
+      "modules": {
+        "stage_0": {
+          "type": "pipeline_stage",
+          "parameters": {
+            "layers": [0, 1],
+            "tp_degree": 8,
+            "gpus": 8
+          }
+        },
+        "stage_1": {
+          "type": "pipeline_stage",
+          "parameters": {
+            "layers": [2, 3],
+            "tp_degree": 8,
+            "gpus": 8
+          }
+        }
+      },
+      "device_mapping": {
+        "stage_0": {
+          "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+          "layers": [0, 1],
+          "tp_group": "intra_stage"
+        },
+        "stage_1": {
+          "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+          "layers": [2, 3],
+          "tp_group": "intra_stage"
+        }
+      },
+      "memory_allocation": {
+        "model_parameters_gb": 18.2,
+        "activations_gb": 22.4,
+        "gradients_gb": 18.2,
+        "optimizer_states_gb": 36.4,
+        "communication_buffers_gb": 8.3,
+        "total_per_gpu_gb": 103.5
+      }
+    }
+  },
+  "hardware_requirements": {
+    "gpu_specifications": {
+      "model": "NVIDIA A100 80GB",
+      "memory": "80GB HBM2e",
+      "interconnect": {
+        "intra_node": "NVLink 3.0 (600 GB/s)",
+        "inter_node": "InfiniBand HDR (200 Gb/s)"
+      }
+    },
+    "system_architecture": {
+      "nodes": 4,
+      "gpus_per_node": 4,
+      "cpu": "AMD EPYC 7763 64-Core",
+      "memory_per_node": "1TB DDR4"
+    }
+  },
+  "communication_patterns": {
+    "ma_separation": {
+      "attention_all_reduce": {
+        "type": "hierarchical",
+        "intra_node": "nvlink",
+        "inter_node": "infiniband",
+        "overhead": "8.4%"
+      },
+      "moe_all_to_all": {
+        "type": "direct",
+        "overhead": "6.2%"
+      },
+      "gradient_sync": {
+        "type": "all_reduce",
+        "compression": "8bit",
+        "overhead": "2.9%"
+      }
+    }
+  },
+  "deployment_commands": {
+    "ma_separation": {
+      "launcher": "torchrun",
+      "nnodes": 4,
+      "nproc_per_node": 4,
+      "master_addr": "node0",
+      "master_port": 29500,
+      "script": "train_ma_separation.py",
+      "args": [
+        "--model_config", "4_layer_moe_16_experts",
+        "--parallel_strategy", "ma_separation",
+        "--attention_gpus", "8",
+        "--moe_gpus", "8",
+        "--sync_interval", "100"
+      ]
+    },
+    "baseline_tp8": {
+      "launcher": "torchrun",
+      "nnodes": 2,
+      "nproc_per_node": 4,
+      "script": "train_baseline.py",
+      "args": [
+        "--parallel_strategy", "tensor_parallel",
+        "--tp_degree", "8"
+      ]
+    },
+    "baseline_pp2": {
+      "launcher": "torchrun",
+      "nnodes": 2,
+      "nproc_per_node": 4,
+      "script": "train_baseline.py",
+      "args": [
+        "--parallel_strategy", "pipeline_parallel",
+        "--pp_degree", "2",
+        "--layers_per_stage", "2"
+      ]
+    }
+  }
+}

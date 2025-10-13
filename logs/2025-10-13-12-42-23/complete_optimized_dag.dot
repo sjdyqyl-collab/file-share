@@ -1,0 +1,338 @@
+digraph G {
+    rankdir=TB
+    size="60,40"
+    
+    // Input node
+    input [label="Input\n[batch_size=1024, seq_len=10000, token_dim=8192]" fillcolor=lightgray shape=ellipse style=filled]
+    
+    // Layer 0
+    subgraph cluster_layer0 {
+        fillcolor=lightyellow style=rounded label="Layer 0 (TP=4, EP=4 across 16 GPUs)"
+        
+        // MHA with Tensor Parallelism
+        mha_qkv_l0 [label="QKV Linear\n[batch_size=1024, seq_len=10000, heads=16, d_k=512]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_attn_l0 [label="Multi-Head Attention\n[batch_size=1024, seq_len=10000, heads=16, d_k=512]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_out_l0 [label="Output Linear\n[batch_size=1024, seq_len=10000, token_dim=8192]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_residual_l0 [label="Residual Add MHA\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=orange shape=parallelogram style=filled]
+        mha_layernorm_l0 [label="LayerNorm MHA\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightcoral shape=rectangle style=filled]
+        
+        // Expert Layer with Expert Parallelism
+        gate_l0 [label="Expert Gate\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightgreen shape=parallelogram style=filled]
+        
+        // Expert distribution: 4 experts per GPU across 16 GPUs = 64 total experts
+        expert_l0_gpu0 [label="Experts 0-3\n[batch_size=64, token_dim=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu1 [label="Experts 4-7\n[batch_size=64, token_dim=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu2 [label="Experts 8-11\n[batch_size=64, token_dim=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu3 [label="Experts 12-15\n[batch_size=64, token_dim=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu4 [label="Experts 16-19\n[batch_size=64, token_dim=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu5 [label="Experts 20-23\n[batch_size=64, token_dim=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu6 [label="Experts 24-27\n[batch_size=64, token_dim=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu7 [label="Experts 28-31\n[batch_size=64, token_dim=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu8 [label="Experts 32-35\n[batch_size=64, token_dim=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu9 [label="Experts 36-39\n[batch_size=64, token_dim=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu10 [label="Experts 40-43\n[batch_size=64, token_dim=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu11 [label="Experts 44-47\n[batch_size=64, token_dim=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu12 [label="Experts 48-51\n[batch_size=64, token_dim=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu13 [label="Experts 52-55\n[batch_size=64, token_dim=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu14 [label="Experts 56-59\n[batch_size=64, token_dim=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l0_gpu15 [label="Experts 60-63\n[batch_size=64, token_dim=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+        
+        expert_agg_l0 [label="Expert All-to-All\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=yellow shape=parallelogram style=filled]
+        expert_residual_l0 [label="Residual Add Expert\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=orange shape=parallelogram style=filled]
+        expert_layernorm_l0 [label="LayerNorm Expert\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightcoral shape=rectangle style=filled]
+    }
+    
+    // Layer 1
+    subgraph cluster_layer1 {
+        fillcolor=lightyellow style=rounded label="Layer 1 (TP=4, EP=4 across 16 GPUs)"
+        
+        mha_qkv_l1 [label="QKV Linear\n[batch_size=1024, seq_len=10000, heads=16, d_k=512]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_attn_l1 [label="Multi-Head Attention\n[batch_size=1024, seq_len=10000, heads=16, d_k=512]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_out_l1 [label="Output Linear\n[batch_size=1024, seq_len=10000, token_dim=8192]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_residual_l1 [label="Residual Add MHA\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=orange shape=parallelogram style=filled]
+        mha_layernorm_l1 [label="LayerNorm MHA\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightcoral shape=rectangle style=filled]
+        
+        gate_l1 [label="Expert Gate\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightgreen shape=parallelogram style=filled]
+        
+        expert_l1_gpu0 [label="Experts 0-3\n[batch_size=64, token_dim=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu1 [label="Experts 4-7\n[batch_size=64, token_dim=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu2 [label="Experts 8-11\n[batch_size=64, token_dim=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu3 [label="Experts 12-15\n[batch_size=64, token_dim=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu4 [label="Experts 16-19\n[batch_size=64, token_dim=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu5 [label="Experts 20-23\n[batch_size=64, token_dim=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu6 [label="Experts 24-27\n[batch_size=64, token_dim=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu7 [label="Experts 28-31\n[batch_size=64, token_dim=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu8 [label="Experts 32-35\n[batch_size=64, token_dim=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu9 [label="Experts 36-39\n[batch_size=64, token_dim=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu10 [label="Experts 40-43\n[batch_size=64, token_dim=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu11 [label="Experts 44-47\n[batch_size=64, token_dim=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu12 [label="Experts 48-51\n[batch_size=64, token_dim=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu13 [label="Experts 52-55\n[batch_size=64, token_dim=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu14 [label="Experts 56-59\n[batch_size=64, token_dim=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l1_gpu15 [label="Experts 60-63\n[batch_size=64, token_dim=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+        
+        expert_agg_l1 [label="Expert All-to-All\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=yellow shape=parallelogram style=filled]
+        expert_residual_l1 [label="Residual Add Expert\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=orange shape=parallelogram style=filled]
+        expert_layernorm_l1 [label="LayerNorm Expert\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightcoral shape=rectangle style=filled]
+    }
+    
+    // Layer 2
+    subgraph cluster_layer2 {
+        fillcolor=lightyellow style=rounded label="Layer 2 (TP=4, EP=4 across 16 GPUs)"
+        
+        mha_qkv_l2 [label="QKV Linear\n[batch_size=1024, seq_len=10000, heads=16, d_k=512]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_attn_l2 [label="Multi-Head Attention\n[batch_size=1024, seq_len=10000, heads=16, d_k=512]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_out_l2 [label="Output Linear\n[batch_size=1024, seq_len=10000, token_dim=8192]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_residual_l2 [label="Residual Add MHA\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=orange shape=parallelogram style=filled]
+        mha_layernorm_l2 [label="LayerNorm MHA\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightcoral shape=rectangle style=filled]
+        
+        gate_l2 [label="Expert Gate\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightgreen shape=parallelogram style=filled]
+        
+        expert_l2_gpu0 [label="Experts 0-3\n[batch_size=64, token_dim=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu1 [label="Experts 4-7\n[batch_size=64, token_dim=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu2 [label="Experts 8-11\n[batch_size=64, token_dim=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu3 [label="Experts 12-15\n[batch_size=64, token_dim=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu4 [label="Experts 16-19\n[batch_size=64, token_dim=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu5 [label="Experts 20-23\n[batch_size=64, token_dim=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu6 [label="Experts 24-27\n[batch_size=64, token_dim=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu7 [label="Experts 28-31\n[batch_size=64, token_dim=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu8 [label="Experts 32-35\n[batch_size=64, token_dim=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu9 [label="Experts 36-39\n[batch_size=64, token_dim=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu10 [label="Experts 40-43\n[batch_size=64, token_dim=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu11 [label="Experts 44-47\n[batch_size=64, token_dim=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu12 [label="Experts 48-51\n[batch_size=64, token_dim=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu13 [label="Experts 52-55\n[batch_size=64, token_dim=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu14 [label="Experts 56-59\n[batch_size=64, token_dim=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l2_gpu15 [label="Experts 60-63\n[batch_size=64, token_dim=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+        
+        expert_agg_l2 [label="Expert All-to-All\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=yellow shape=parallelogram style=filled]
+        expert_residual_l2 [label="Residual Add Expert\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=orange shape=parallelogram style=filled]
+        expert_layernorm_l2 [label="LayerNorm Expert\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightcoral shape=rectangle style=filled]
+    }
+    
+    // Layer 3
+    subgraph cluster_layer3 {
+        fillcolor=lightyellow style=rounded label="Layer 3 (TP=4, EP=4 across 16 GPUs)"
+        
+        mha_qkv_l3 [label="QKV Linear\n[batch_size=1024, seq_len=10000, heads=16, d_k=512]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_attn_l3 [label="Multi-Head Attention\n[batch_size=1024, seq_len=10000, heads=16, d_k=512]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_out_l3 [label="Output Linear\n[batch_size=1024, seq_len=10000, token_dim=8192]\nTP: GPUs 0-15" fillcolor=lightblue shape=rectangle style=filled]
+        mha_residual_l3 [label="Residual Add MHA\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=orange shape=parallelogram style=filled]
+        mha_layernorm_l3 [label="LayerNorm MHA\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightcoral shape=rectangle style=filled]
+        
+        gate_l3 [label="Expert Gate\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightgreen shape=parallelogram style=filled]
+        
+        expert_l3_gpu0 [label="Experts 0-3\n[batch_size=64, token_dim=8192]\nGPU: 0" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu1 [label="Experts 4-7\n[batch_size=64, token_dim=8192]\nGPU: 1" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu2 [label="Experts 8-11\n[batch_size=64, token_dim=8192]\nGPU: 2" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu3 [label="Experts 12-15\n[batch_size=64, token_dim=8192]\nGPU: 3" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu4 [label="Experts 16-19\n[batch_size=64, token_dim=8192]\nGPU: 4" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu5 [label="Experts 20-23\n[batch_size=64, token_dim=8192]\nGPU: 5" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu6 [label="Experts 24-27\n[batch_size=64, token_dim=8192]\nGPU: 6" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu7 [label="Experts 28-31\n[batch_size=64, token_dim=8192]\nGPU: 7" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu8 [label="Experts 32-35\n[batch_size=64, token_dim=8192]\nGPU: 8" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu9 [label="Experts 36-39\n[batch_size=64, token_dim=8192]\nGPU: 9" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu10 [label="Experts 40-43\n[batch_size=64, token_dim=8192]\nGPU: 10" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu11 [label="Experts 44-47\n[batch_size=64, token_dim=8192]\nGPU: 11" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu12 [label="Experts 48-51\n[batch_size=64, token_dim=8192]\nGPU: 12" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu13 [label="Experts 52-55\n[batch_size=64, token_dim=8192]\nGPU: 13" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu14 [label="Experts 56-59\n[batch_size=64, token_dim=8192]\nGPU: 14" fillcolor=lightgreen shape=rectangle style=filled]
+        expert_l3_gpu15 [label="Experts 60-63\n[batch_size=64, token_dim=8192]\nGPU: 15" fillcolor=lightgreen shape=rectangle style=filled]
+        
+        expert_agg_l3 [label="Expert All-to-All\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=yellow shape=parallelogram style=filled]
+        expert_residual_l3 [label="Residual Add Expert\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=orange shape=parallelogram style=filled]
+        expert_layernorm_l3 [label="LayerNorm Expert\n[batch_size=1024, seq_len=10000, token_dim=8192]\nAll GPUs" fillcolor=lightcoral shape=rectangle style=filled]
+    }
+    
+    // Output node
+    output [label="Output\n[batch_size=1024, seq_len=10000, token_dim=8192]" fillcolor=lightgray shape=ellipse style=filled]
+    
+    // Connections - Layer 0
+    input -> mha_qkv_l0
+    mha_qkv_l0 -> mha_attn_l0
+    mha_attn_l0 -> mha_out_l0
+    mha_out_l0 -> mha_residual_l0
+    input -> mha_residual_l0
+    mha_residual_l0 -> mha_layernorm_l0
+    mha_layernorm_l0 -> gate_l0
+    
+    gate_l0 -> expert_l0_gpu0 [style=dashed]
+    gate_l0 -> expert_l0_gpu1 [style=dashed]
+    gate_l0 -> expert_l0_gpu2 [style=dashed]
+    gate_l0 -> expert_l0_gpu3 [style=dashed]
+    gate_l0 -> expert_l0_gpu4 [style=dashed]
+    gate_l0 -> expert_l0_gpu5 [style=dashed]
+    gate_l0 -> expert_l0_gpu6 [style=dashed]
+    gate_l0 -> expert_l0_gpu7 [style=dashed]
+    gate_l0 -> expert_l0_gpu8 [style=dashed]
+    gate_l0 -> expert_l0_gpu9 [style=dashed]
+    gate_l0 -> expert_l0_gpu10 [style=dashed]
+    gate_l0 -> expert_l0_gpu11 [style=dashed]
+    gate_l0 -> expert_l0_gpu12 [style=dashed]
+    gate_l0 -> expert_l0_gpu13 [style=dashed]
+    gate_l0 -> expert_l0_gpu14 [style=dashed]
+    gate_l0 -> expert_l0_gpu15 [style=dashed]
+    
+    expert_l0_gpu0 -> expert_agg_l0
+    expert_l0_gpu1 -> expert_agg_l0
+    expert_l0_gpu2 -> expert_agg_l0
+    expert_l0_gpu3 -> expert_agg_l0
+    expert_l0_gpu4 -> expert_agg_l0
+    expert_l0_gpu5 -> expert_agg_l0
+    expert_l0_gpu6 -> expert_agg_l0
+    expert_l0_gpu7 -> expert_agg_l0
+    expert_l0_gpu8 -> expert_agg_l0
+    expert_l0_gpu9 -> expert_agg_l0
+    expert_l0_gpu10 -> expert_agg_l0
+    expert_l0_gpu11 -> expert_agg_l0
+    expert_l0_gpu12 -> expert_agg_l0
+    expert_l0_gpu13 -> expert_agg_l0
+    expert_l0_gpu14 -> expert_agg_l0
+    expert_l0_gpu15 -> expert_agg_l0
+    
+    expert_agg_l0 -> expert_residual_l0
+    mha_layernorm_l0 -> expert_residual_l0
+    expert_residual_l0 -> expert_layernorm_l0
+    
+    // Connections - Layer 1
+    expert_layernorm_l0 -> mha_qkv_l1
+    mha_qkv_l1 -> mha_attn_l1
+    mha_attn_l1 -> mha_out_l1
+    mha_out_l1 -> mha_residual_l1
+    expert_layernorm_l0 -> mha_residual_l1
+    mha_residual_l1 -> mha_layernorm_l1
+    mha_layernorm_l1 -> gate_l1
+    
+    gate_l1 -> expert_l1_gpu0 [style=dashed]
+    gate_l1 -> expert_l1_gpu1 [style=dashed]
+    gate_l1 -> expert_l1_gpu2 [style=dashed]
+    gate_l1 -> expert_l1_gpu3 [style=dashed]
+    gate_l1 -> expert_l1_gpu4 [style=dashed]
+    gate_l1 -> expert_l1_gpu5 [style=dashed]
+    gate_l1 -> expert_l1_gpu6 [style=dashed]
+    gate_l1 -> expert_l1_gpu7 [style=dashed]
+    gate_l1 -> expert_l1_gpu8 [style=dashed]
+    gate_l1 -> expert_l1_gpu9 [style=dashed]
+    gate_l1 -> expert_l1_gpu10 [style=dashed]
+    gate_l1 -> expert_l1_gpu11 [style=dashed]
+    gate_l1 -> expert_l1_gpu12 [style=dashed]
+    gate_l1 -> expert_l1_gpu13 [style=dashed]
+    gate_l1 -> expert_l1_gpu14 [style=dashed]
+    gate_l1 -> expert_l1_gpu15 [style=dashed]
+    
+    expert_l1_gpu0 -> expert_agg_l1
+    expert_l1_gpu1 -> expert_agg_l1
+    expert_l1_gpu2 -> expert_agg_l1
+    expert_l1_gpu3 -> expert_agg_l1
+    expert_l1_gpu4 -> expert_agg_l1
+    expert_l1_gpu5 -> expert_agg_l1
+    expert_l1_gpu6 -> expert_agg_l1
+    expert_l1_gpu7 -> expert_agg_l1
+    expert_l1_gpu8 -> expert_agg_l1
+    expert_l1_gpu9 -> expert_agg_l1
+    expert_l1_gpu10 -> expert_agg_l1
+    expert_l1_gpu11 -> expert_agg_l1
+    expert_l1_gpu12 -> expert_agg_l1
+    expert_l1_gpu13 -> expert_agg_l1
+    expert_l1_gpu14 -> expert_agg_l1
+    expert_l1_gpu15 -> expert_agg_l1
+    
+    expert_agg_l1 -> expert_residual_l1
+    mha_layernorm_l1 -> expert_residual_l1
+    expert_residual_l1 -> expert_layernorm_l1
+    
+    // Connections - Layer 2
+    expert_layernorm_l1 -> mha_qkv_l2
+    mha_qkv_l2 -> mha_attn_l2
+    mha_attn_l2 -> mha_out_l2
+    mha_out_l2 -> mha_residual_l2
+    expert_layernorm_l1 -> mha_residual_l2
+    mha_residual_l2 -> mha_layernorm_l2
+    mha_layernorm_l2 -> gate_l2
+    
+    gate_l2 -> expert_l2_gpu0 [style=dashed]
+    gate_l2 -> expert_l2_gpu1 [style=dashed]
+    gate_l2 -> expert_l2_gpu2 [style=dashed]
+    gate_l2 -> expert_l2_gpu3 [style=dashed]
+    gate_l2 -> expert_l2_gpu4 [style=dashed]
+    gate_l2 -> expert_l2_gpu5 [style=dashed]
+    gate_l2 -> expert_l2_gpu6 [style=dashed]
+    gate_l2 -> expert_l2_gpu7 [style=dashed]
+    gate_l2 -> expert_l2_gpu8 [style=dashed]
+    gate_l2 -> expert_l2_gpu9 [style=dashed]
+    gate_l2 -> expert_l2_gpu10 [style=dashed]
+    gate_l2 -> expert_l2_gpu11 [style=dashed]
+    gate_l2 -> expert_l2_gpu12 [style=dashed]
+    gate_l2 -> expert_l2_gpu13 [style=dashed]
+    gate_l2 -> expert_l2_gpu14 [style=dashed]
+    gate_l2 -> expert_l2_gpu15 [style=dashed]
+    
+    expert_l2_gpu0 -> expert_agg_l2
+    expert_l2_gpu1 -> expert_agg_l2
+    expert_l2_gpu2 -> expert_agg_l2
+    expert_l2_gpu3 -> expert_agg_l2
+    expert_l2_gpu4 -> expert_agg_l2
+    expert_l2_gpu5 -> expert_agg_l2
+    expert_l2_gpu6 -> expert_agg_l2
+    expert_l2_gpu7 -> expert_agg_l2
+    expert_l2_gpu8 -> expert_agg_l2
+    expert_l2_gpu9 -> expert_agg_l2
+    expert_l2_gpu10 -> expert_agg_l2
+    expert_l2_gpu11 -> expert_agg_l2
+    expert_l2_gpu12 -> expert_agg_l2
+    expert_l2_gpu13 -> expert_agg_l2
+    expert_l2_gpu14 -> expert_agg_l2
+    expert_l2_gpu15 -> expert_agg_l2
+    
+    expert_agg_l2 -> expert_residual_l2
+    mha_layernorm_l2 -> expert_residual_l2
+    expert_residual_l2 -> expert_layernorm_l2
+    
+    // Connections - Layer 3
+    expert_layernorm_l2 -> mha_qkv_l3
+    mha_qkv_l3 -> mha_attn_l3
+    mha_attn_l3 -> mha_out_l3
+    mha_out_l3 -> mha_residual_l3
+    expert_layernorm_l2 -> mha_residual_l3
+    mha_residual_l3 -> mha_layernorm_l3
+    mha_layernorm_l3 -> gate_l3
+    
+    gate_l3 -> expert_l3_gpu0 [style=dashed]
+    gate_l3 -> expert_l3_gpu1 [style=dashed]
+    gate_l3 -> expert_l3_gpu2 [style=dashed]
+    gate_l3 -> expert_l3_gpu3 [style=dashed]
+    gate_l3 -> expert_l3_gpu4 [style=dashed]
+    gate_l3 -> expert_l3_gpu5 [style=dashed]
+    gate_l3 -> expert_l3_gpu6 [style=dashed]
+    gate_l3 -> expert_l3_gpu7 [style=dashed]
+    gate_l3 -> expert_l3_gpu8 [style=dashed]
+    gate_l3 -> expert_l3_gpu9 [style=dashed]
+    gate_l3 -> expert_l3_gpu10 [style=dashed]
+    gate_l3 -> expert_l3_gpu11 [style=dashed]
+    gate_l3 -> expert_l3_gpu12 [style=dashed]
+    gate_l3 -> expert_l3_gpu13 [style=dashed]
+    gate_l3 -> expert_l3_gpu14 [style=dashed]
+    gate_l3 -> expert_l3_gpu15 [style=dashed]
+    
+    expert_l3_gpu0 -> expert_agg_l3
+    expert_l3_gpu1 -> expert_agg_l3
+    expert_l3_gpu2 -> expert_agg_l3
+    expert_l3_gpu3 -> expert_agg_l3
+    expert_l3_gpu4 -> expert_agg_l3
+    expert_l3_gpu5 -> expert_agg_l3
+    expert_l3_gpu6 -> expert_agg_l3
+    expert_l3_gpu7 -> expert_agg_l3
+    expert_l3_gpu8 -> expert_agg_l3
+    expert_l3_gpu9 -> expert_agg_l3
+    expert_l3_gpu10 -> expert_agg_l3
+    expert_l3_gpu11 -> expert_agg_l3
+    expert_l3_gpu12 -> expert_agg_l3
+    expert_l3_gpu13 -> expert_agg_l3
+    expert_l3_gpu14 -> expert_agg_l3
+    expert_l3_gpu15 -> expert_agg_l3
+    
+    expert_agg_l3 -> expert_residual_l3
+    mha_layernorm_l3 -> expert_residual_l3
+    expert_residual_l3 -> expert_layernorm_l3
+    expert_layernorm_l3 -> output
+}

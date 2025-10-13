@@ -1,0 +1,161 @@
+{
+  "deployment_plan": {
+    "model_architecture": {
+      "layers": 4,
+      "experts_per_layer": 16,
+      "token_dimension": 8192,
+      "mha_heads": 16,
+      "mha_head_dimension": 512,
+      "mlp_hidden_size": 32768,
+      "precision": "fp16"
+    },
+    "configurations": {
+      "baseline": {
+        "name": "TP=8 PP=2 Baseline",
+        "parallel_strategy": {
+          "tensor_parallelism": 8,
+          "pipeline_parallelism": 2,
+          "expert_parallelism": 1
+        },
+        "gpu_mapping": {
+          "stage_0": {
+            "gpus": [0, 1, 2, 3, 4, 5, 6, 7],
+            "experts_per_gpu": 8,
+            "tensor_shard": "1/8 of model parameters"
+          },
+          "stage_1": {
+            "gpus": [8, 9, 10, 11, 12, 13, 14, 15],
+            "experts_per_gpu": 8,
+            "tensor_shard": "1/8 of model parameters"
+          }
+        },
+        "performance": {
+          "tps": 120000,
+          "tpot_ms": 8.3,
+          "gpu_utilization": 0.65
+        }
+      },
+      "proposed": {
+        "name": "EP=16 Cross-Node Expert Parallelism",
+        "parallel_strategy": {
+          "tensor_parallelism": 1,
+          "pipeline_parallelism": 1,
+          "expert_parallelism": 16
+        },
+        "gpu_mapping": {
+          "expert_distribution": {
+            "layer_0": {
+              "expert_0": {"gpu": 0, "memory_mb": 8000},
+              "expert_1": {"gpu": 1, "memory_mb": 8000},
+              "expert_2": {"gpu": 2, "memory_mb": 8000},
+              "expert_3": {"gpu": 3, "memory_mb": 8000},
+              "expert_4": {"gpu": 4, "memory_mb": 8000},
+              "expert_5": {"gpu": 5, "memory_mb": 8000},
+              "expert_6": {"gpu": 6, "memory_mb": 8000},
+              "expert_7": {"gpu": 7, "memory_mb": 8000},
+              "expert_8": {"gpu": 8, "memory_mb": 8000},
+              "expert_9": {"gpu": 9, "memory_mb": 8000},
+              "expert_10": {"gpu": 10, "memory_mb": 8000},
+              "expert_11": {"gpu": 11, "memory_mb": 8000},
+              "expert_12": {"gpu": 12, "memory_mb": 8000},
+              "expert_13": {"gpu": 13, "memory_mb": 8000},
+              "expert_14": {"gpu": 14, "memory_mb": 8000},
+              "expert_15": {"gpu": 15, "memory_mb": 8000}
+            },
+            "layer_1": {
+              "expert_0": {"gpu": 0, "memory_mb": 8000},
+              "expert_1": {"gpu": 1, "memory_mb": 8000},
+              "expert_2": {"gpu": 2, "memory_mb": 8000},
+              "expert_3": {"gpu": 3, "memory_mb": 8000},
+              "expert_4": {"gpu": 4, "memory_mb": 8000},
+              "expert_5": {"gpu": 5, "memory_mb": 8000},
+              "expert_6": {"gpu": 6, "memory_mb": 8000},
+              "expert_7": {"gpu": 7, "memory_mb": 8000},
+              "expert_8": {"gpu": 8, "memory_mb": 8000},
+              "expert_9": {"gpu": 9, "memory_mb": 8000},
+              "expert_10": {"gpu": 10, "memory_mb": 8000},
+              "expert_11": {"gpu": 11, "memory_mb": 8000},
+              "expert_12": {"gpu": 12, "memory_mb": 8000},
+              "expert_13": {"gpu": 13, "memory_mb": 8000},
+              "expert_14": {"gpu": 14, "memory_mb": 8000},
+              "expert_15": {"gpu": 15, "memory_mb": 8000}
+            },
+            "layer_2": {
+              "expert_0": {"gpu": 0, "memory_mb": 8000},
+              "expert_1": {"gpu": 1, "memory_mb": 8000},
+              "expert_2": {"gpu": 2, "memory_mb": 8000},
+              "expert_3": {"gpu": 3, "memory_mb": 8000},
+              "expert_4": {"gpu": 4, "memory_mb": 8000},
+              "expert_5": {"gpu": 5, "memory_mb": 8000},
+              "expert_6": {"gpu": 6, "memory_mb": 8000},
+              "expert_7": {"gpu": 7, "memory_mb": 8000},
+              "expert_8": {"gpu": 8, "memory_mb": 8000},
+              "expert_9": {"gpu": 9, "memory_mb": 8000},
+              "expert_10": {"gpu": 10, "memory_mb": 8000},
+              "expert_11": {"gpu": 11, "memory_mb": 8000},
+              "expert_12": {"gpu": 12, "memory_mb": 8000},
+              "expert_13": {"gpu": 13, "memory_mb": 8000},
+              "expert_14": {"gpu": 14, "memory_mb": 8000},
+              "expert_15": {"gpu": 15, "memory_mb": 8000}
+            },
+            "layer_3": {
+              "expert_0": {"gpu": 0, "memory_mb": 8000},
+              "expert_1": {"gpu": 1, "memory_mb": 8000},
+              "expert_2": {"gpu": 2, "memory_mb": 8000},
+              "expert_3": {"gpu": 3, "memory_mb": 8000},
+              "expert_4": {"gpu": 4, "memory_mb": 8000},
+              "expert_5": {"gpu": 5, "memory_mb": 8000},
+              "expert_6": {"gpu": 6, "memory_mb": 8000},
+              "expert_7": {"gpu": 7, "memory_mb": 8000},
+              "expert_8": {"gpu": 8, "memory_mb": 8000},
+              "expert_9": {"gpu": 9, "memory_mb": 8000},
+              "expert_10": {"gpu": 10, "memory_mb": 8000},
+              "expert_11": {"gpu": 11, "memory_mb": 8000},
+              "expert_12": {"gpu": 12, "memory_mb": 8000},
+              "expert_13": {"gpu": 13, "memory_mb": 8000},
+              "expert_14": {"gpu": 14, "memory_mb": 8000},
+              "expert_15": {"gpu": 15, "memory_mb": 8000}
+            }
+          }
+        },
+        "performance": {
+          "tps": 450000,
+          "tpot_ms": 2.2,
+          "gpu_utilization": 0.95
+        },
+        "communication": {
+          "token_routing": "asynchronous_all_to_all",
+          "bandwidth_gbps": 600,
+          "latency_us": 2,
+          "overlap_compute": true,
+          "gating": {
+            "type": "top_k",
+            "k": 2,
+            "load_balancing": "adaptive"
+          }
+        }
+      }
+    },
+    "hardware_requirements": {
+      "total_gpus": 16,
+      "gpu_model": "NVIDIA_H100",
+      "gpu_memory_gb": 80,
+      "interconnect": "NVLink_InfiniBand",
+      "bandwidth_gbps": 600
+    }
+  },
+  "generated_dags": {
+    "baseline": {
+      "svg_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/baseline_dag.svg",
+      "dot_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/baseline_dag.dot"
+    },
+    "proposed": {
+      "svg_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/proposed_dag.svg",
+      "dot_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/proposed_dag.dot"
+    },
+    "proposed_detailed": {
+      "svg_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/proposed_detailed_dag.svg",
+      "dot_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/proposed_detailed_dag.dot"
+    }
+  }
+}

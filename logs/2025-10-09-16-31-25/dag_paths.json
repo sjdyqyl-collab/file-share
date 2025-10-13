@@ -1,0 +1,33 @@
+{
+  "ma_separation": {
+    "dot_file": "/home/wzc/data/file-share/logs/2025-10-09-16-31-25/ma_separation_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/logs/2025-10-09-16-31-25/ma_separation_dag.svg",
+    "description": "MA Separation: Novel parallel strategy for MoE-Attention co-execution with 16 GPUs (8 attention GPUs + 8 MoE GPUs)"
+  },
+  "baseline": {
+    "dot_file": "/home/wzc/data/file-share/logs/2025-10-09-16-31-25/baseline_dag.dot",
+    "svg_file": "/home/wzc/data/file-share/logs/2025-10-09-16-31-25/baseline_dag.svg",
+    "description": "Baseline: Traditional tensor parallelism (TP=8) + pipeline parallelism (PP=2) with 16 GPUs"
+  },
+  "generation_details": {
+    "total_gpus": 16,
+    "model_layers": 4,
+    "batch_size": 1024,
+    "sequence_length": 2048,
+    "hidden_dimension": 4096,
+    "attention_heads": 32,
+    "experts_per_layer": 16,
+    "ma_separation_strategy": {
+      "attention_gpus": "0-7 (8 GPUs)",
+      "moe_gpus": "8-15 (8 GPUs)",
+      "attention_heads_per_gpu": 4,
+      "experts_per_gpu": 2
+    },
+    "baseline_strategy": {
+      "pipeline_stages": 2,
+      "gpus_per_stage": 8,
+      "layers_per_stage": 2,
+      "tensor_parallelism": 8
+    }
+  }
+}

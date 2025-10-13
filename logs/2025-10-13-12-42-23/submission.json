@@ -1,0 +1,16 @@
+{
+  "full_attention_dag": {
+    "svg_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/full_attention_dag.svg",
+    "dot_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/full_attention_dag.dot"
+  },
+  "compact_attention_dag": {
+    "svg_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/compact_attention_dag.svg",
+    "dot_path": "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/compact_attention_dag.dot"
+  },
+  "generated_files": [
+    "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/full_attention_dag.svg",
+    "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/full_attention_dag.dot",
+    "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/compact_attention_dag.svg",
+    "/home/wzc/data/file-share/logs/2025-10-13-12-42-23/compact_attention_dag.dot"
+  ]
+}

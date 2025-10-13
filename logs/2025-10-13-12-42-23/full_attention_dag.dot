@@ -1,0 +1,101 @@
+digraph Full_Attention_DAG {
+	rankdir=TB size="20,20"
+	input [label="Input Video Tokens" fillcolor=lightblue shape=ellipse style=filled]
+	node [fillcolor=lightgreen shape=rectangle style=filled]
+	ln1 [label="LayerNorm
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	q_proj [label="Query Projection
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	k_proj [label="Key Projection
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	v_proj [label="Value Projection
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	reshape_q [label="Reshape Q
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, num_heads, head_dim]
+GPU: all GPUs"]
+	reshape_k [label="Reshape K
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, num_heads, head_dim]
+GPU: all GPUs"]
+	reshape_v [label="Reshape V
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, num_heads, head_dim]
+GPU: all GPUs"]
+	attn_scores [label="Attention Scores
+Input: [batch_size, seq_len, num_heads, head_dim] x2
+Output: [batch_size, num_heads, seq_len, seq_len]
+GPU: all GPUs"]
+	attn_weights [label="Softmax
+Input: [batch_size, num_heads, seq_len, seq_len]
+Output: [batch_size, num_heads, seq_len, seq_len]
+GPU: all GPUs"]
+	attn_output [label="Attention Output
+Input: [batch_size, num_heads, seq_len, seq_len] x [batch_size, seq_len, num_heads, head_dim]
+Output: [batch_size, seq_len, num_heads, head_dim]
+GPU: all GPUs"]
+	reshape_back [label="Reshape Back
+Input: [batch_size, seq_len, num_heads, head_dim]
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	out_proj [label="Output Projection
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	residual1 [label="Add & LayerNorm
+Input: [batch_size, seq_len, hidden_dim] x2
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	mlp_ln [label="LayerNorm
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	mlp_fc1 [label="MLP FC1
+Input: [batch_size, seq_len, hidden_dim]
+Output: [batch_size, seq_len, ffn_hidden_size]
+GPU: all GPUs"]
+	mlp_gelu [label="GELU Activation
+Input: [batch_size, seq_len, ffn_hidden_size]
+Output: [batch_size, seq_len, ffn_hidden_size]
+GPU: all GPUs"]
+	mlp_fc2 [label="MLP FC2
+Input: [batch_size, seq_len, ffn_hidden_size]
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	residual2 [label="Add
+Input: [batch_size, seq_len, hidden_dim] x2
+Output: [batch_size, seq_len, hidden_dim]
+GPU: all GPUs"]
+	output [label="Output Video Tokens" fillcolor=lightcoral shape=ellipse style=filled]
+	input -> ln1
+	ln1 -> q_proj
+	ln1 -> k_proj
+	ln1 -> v_proj
+	q_proj -> reshape_q
+	k_proj -> reshape_k
+	v_proj -> reshape_v
+	reshape_q -> attn_scores
+	reshape_k -> attn_scores
+	attn_scores -> attn_weights
+	attn_weights -> attn_output
+	reshape_v -> attn_output
+	attn_output -> reshape_back
+	reshape_back -> out_proj
+	ln1 -> residual1
+	out_proj -> residual1
+	residual1 -> mlp_ln
+	mlp_ln -> mlp_fc1
+	mlp_fc1 -> mlp_gelu
+	mlp_gelu -> mlp_fc2
+	residual1 -> residual2
+	mlp_fc2 -> residual2
+	residual2 -> output
+}
